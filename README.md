@@ -1,7 +1,7 @@
 # knapsack-pro ruby gem
 
+[![Circle CI](https://circleci.com/gh/KnapsackPro/knapsack-pro-ruby.svg)](https://circleci.com/gh/KnapsackPro/knapsack-pro-ruby)
 [![Gem Version](https://badge.fury.io/rb/knapsack-pro.svg)](https://rubygems.org/gems/knapsack-pro)
-[![Circle CI](https://circleci.com/gh/KnapsackPro/knapsack-pro-ruby.svg?style=svg)](https://circleci.com/gh/KnapsackPro/knapsack-pro-ruby)
 [![Code Climate](https://codeclimate.com/github/KnapsackPro/knapsack-pro-ruby/badges/gpa.svg)](https://codeclimate.com/github/KnapsackPro/knapsack-pro-ruby)
 [![Test Coverage](https://codeclimate.com/github/KnapsackPro/knapsack-pro-ruby/badges/coverage.svg)](https://codeclimate.com/github/KnapsackPro/knapsack-pro-ruby)
 
