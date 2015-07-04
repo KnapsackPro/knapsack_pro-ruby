@@ -9,8 +9,10 @@ Knapsack Pro gem splits tests across CI nodes and makes sure that tests will run
 
 The gem supports:
 
-* RSpec
-* Cucumber
+* [RSpec](http://rspec.info)
+* [Cucumber](https://cucumber.io)
+* [Minitest](http://docs.seattlerb.org/minitest/)
+* [Turnip](https://github.com/jnicklas/turnip)
 
 # Basic info
 
