@@ -1,4 +1,18 @@
+require 'singleton'
+require 'rake/testtask'
 require_relative 'knapsack_pro/version'
+require_relative 'knapsack_pro/credentials'
+require_relative 'knapsack_pro/config/env'
+require_relative 'knapsack_pro/allocator'
+require_relative 'knapsack_pro/allocator_builder'
+#require_relative 'knapsack_pro/task_loader'
+#require_relative 'knapsack_pro/adapters/base_adapter'
+#require_relative 'knapsack_pro/adapters/rspec_adapter'
+#require_relative 'knapsack_pro/adapters/cucumber_adapter'
+#require_relative 'knapsack_pro/adapters/minitest_adapter'
+require_relative 'knapsack_pro/runners/rspec_runner'
+#require_relative 'knapsack_pro/runners/cucumber_runner'
+#require_relative 'knapsack_pro/runners/minitest_runner'
 
 module KnapsackPro
   class << self
