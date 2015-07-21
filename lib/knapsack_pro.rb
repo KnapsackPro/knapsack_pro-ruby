@@ -1,3 +1,4 @@
+require 'logger'
 require 'singleton'
 require 'rake/testtask'
 require_relative 'knapsack_pro/version'
@@ -18,6 +19,17 @@ module KnapsackPro
   class << self
     def root
       File.expand_path('../..', __FILE__)
+    end
+
+    def logger
+      return @logger if @logger
+      log = ::Logger.new(STDOUT)
+      log.level = ::Logger::WARN
+      @logger = log
+    end
+
+    def logger=(value)
+      @logger = value
     end
   end
 end
