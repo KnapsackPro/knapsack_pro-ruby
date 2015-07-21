@@ -2,7 +2,6 @@ require 'singleton'
 require 'rake/testtask'
 require_relative 'knapsack_pro/version'
 require_relative 'knapsack_pro/credentials'
-require_relative 'knapsack_pro/logger'
 require_relative 'knapsack_pro/config/env'
 require_relative 'knapsack_pro/allocator'
 require_relative 'knapsack_pro/allocator_builder'
@@ -19,17 +18,6 @@ module KnapsackPro
   class << self
     def root
       File.expand_path('../..', __FILE__)
-    end
-
-    def logger
-      return @logger if @logger
-      log = KnapsackPro::Logger.new
-      log.level = KnapsackPro::Logger::INFO
-      @logger = log
-    end
-
-    def logger=(value)
-      @logger = value
     end
   end
 end
