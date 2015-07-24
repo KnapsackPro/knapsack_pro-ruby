@@ -1,7 +1,7 @@
 describe KnapsackPro::RepositoryAdapters::GitAdapter do
   before do
     described_class.credentials.set = {
-      git_working_dir: KnapsackPro.root + '/spec/fixtures/repositories/fake_git_repo'
+      git_working_dir: KnapsackPro.root
     }
   end
 
