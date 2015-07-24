@@ -8,12 +8,15 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 
-    it { should eq 'd2566533ed58eae18870cbd0454ee57b938b40f4' }
+    it { should_not be_nil }
+    its(:size) { should eq 40 }
+    it { should eq ENV['CIRCLE_SHA1'] } if ENV['CIRCLE_SHA1']
   end
 
   describe '#branch' do
     subject { described_class.new.branch }
 
-    it { should eq 'new-feature' }
+    it { should_not be_nil }
+    it { should eq ENV['CIRCLE_BRANCH'] } if ENV['CIRCLE_BRANCH']
   end
 end
