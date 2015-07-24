@@ -17,3 +17,25 @@ The gem supports:
 # Basic info
 
 knapsack_pro gem is not ready yet. Please see https://github.com/ArturT/knapsack - it's working version you can use in your project for now.
+
+# Requirements
+
+* >= Ruby 2.0
+
+## Update gem
+
+Please check [changelog](CHANGELOG.md) before update gem. Knapsack Pro follows [semantic versioning](http://semver.org).
+
+## Installation
+
+Add those lines to your application's Gemfile:
+
+```ruby
+group :test, :development do
+  gem 'knapsack_pro'
+end
+```
+
+And then execute:
+
+    $ bundle
