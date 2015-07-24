@@ -7,21 +7,15 @@ module KnapsackPro
         end
       end
 
-      def initialize
-        @git = Git.open(working_dir)
-      end
-
       def commit_hash
-        git.gcommit('HEAD').sha
+        `git -C "#{working_dir}" rev-parse HEAD`.strip
       end
 
       def branch
-        git.branch.name
+        `git -C "#{working_dir}" rev-parse --abbrev-ref HEAD`.strip
       end
 
       private
-
-      attr_reader :git
 
       def credentials
         self.class.credentials.get
