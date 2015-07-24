@@ -18,7 +18,7 @@ module KnapsackPro
       end
 
       def errors?
-        !!response['errors']
+        !!(response && response['errors'])
       end
 
       private
