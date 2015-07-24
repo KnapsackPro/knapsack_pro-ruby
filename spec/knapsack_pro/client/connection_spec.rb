@@ -45,6 +45,28 @@ describe KnapsackPro::Client::Connection do
     end
   end
 
+  describe '#success?' do
+    subject { connection.success? }
+
+    before do
+      allow(connection).to receive(:response).and_return(response)
+    end
+
+    context 'when response has no value' do
+      let(:response) { nil }
+
+      it { should be false }
+    end
+
+    context 'when response has value' do
+      let(:response) do
+        { 'fake' => 'response' }
+      end
+
+      it { should be true }
+    end
+  end
+
   describe '#errors?' do
     subject { connection.errors? }
 

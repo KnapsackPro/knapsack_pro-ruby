@@ -17,6 +17,10 @@ module KnapsackPro
         send(action.http_method)
       end
 
+      def success?
+        !!response
+      end
+
       def errors?
         !!(response && response['errors'])
       end
