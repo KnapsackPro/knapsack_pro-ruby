@@ -41,6 +41,9 @@ GEM
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
+    rspec-its (1.2.0)
+      rspec-core (>= 3.0.0)
+      rspec-expectations (>= 3.0.0)
     rspec-mocks (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
@@ -63,6 +66,7 @@ DEPENDENCIES
   knapsack_pro!
   pry (~> 0)
   rspec (~> 3.0, >= 2.0.0)
+  rspec-its (~> 1.2.0)
   timecop (~> 0)
 
 BUNDLED WITH
