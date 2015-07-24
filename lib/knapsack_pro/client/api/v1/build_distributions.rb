@@ -13,11 +13,11 @@ module KnapsackPro
                 endpoint_path: '/v1/build_distributions/subset',
                 http_method: :post,
                 request_hash: {
-                  'commit_hash' => commit_hash,
-                  'branch' => branch,
-                  'node_total' => node_total,
-                  'node_index' => node_index,
-                  'test_files' => test_files
+                  :commit_hash => commit_hash,
+                  :branch => branch,
+                  :node_total => node_total,
+                  :node_index => node_index,
+                  :test_files => test_files
                 }
               )
             end
