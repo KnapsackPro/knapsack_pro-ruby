@@ -16,8 +16,22 @@ describe 'API Request Integration' do
     let(:test_suite_token) { valid_test_suite_token }
 
     it do
-      connection = KnapsackPro::Client::Connection.new(:node_tests)
-      response = connection.post
+      action = KnapsackPro::Client::API::V1::BuildDistributions.subset(
+        commit_hash: 'abc',
+        branch: 'master',
+        node_total: '2',
+        node_index: '1',
+        test_files: [
+          {
+            'path' => 'a_spec.rb'
+          },
+          {
+            'path' => 'b_spec.rb'
+          }
+        ],
+      )
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
       puts response
 
       expect(connection.errors?).to be false

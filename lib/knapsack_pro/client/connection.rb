@@ -3,42 +3,18 @@ module KnapsackPro
     class Connection
       TIMEOUT = 5
 
-      MAP = {
-        node_tests: {
-          endpoint_path: '/v1/build_distributions/subset',
-          request_builder: KnapsackPro::Client::API::V1::BuildDistributions,
-          request_action: :subset,
-
-        }
-      }
-
       class << self
         def credentials
           @credentials ||= KnapsackPro::Credentials.new(:test_suite_token, :endpoint)
         end
       end
 
-      def initialize(key)
-        request_details = MAP[key] || raise('Wrong action')
-        @endpoint_path = request_details[:endpoint_path]
-        @request_builder = request_details[:request_builder]
-        @request_action = request_details[:request_action]
+      def initialize(action)
+        @action = action
       end
 
-      def post
-        uri = URI.parse(endpoint_url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.open_timeout = TIMEOUT
-        http.read_timeout = TIMEOUT
-
-        http_response = http.post(uri.path, request_hash.to_json, json_headers)
-        @response = parse_response(http_response.body)
-
-        logger.error(response) if errors?
-
-        response
-      rescue Errno::ECONNREFUSED, Net::OpenTimeout, Net::ReadTimeout => e
-        logger.warn(e.pretty_inspect)
+      def call
+        send(action.http_method)
       end
 
       def errors?
@@ -47,10 +23,7 @@ module KnapsackPro
 
       private
 
-      attr_reader :response,
-        :endpoint_path,
-        :request_builder,
-        :request_action
+      attr_reader :action, :response
 
       def logger
         KnapsackPro.logger
@@ -60,20 +33,24 @@ module KnapsackPro
         self.class.credentials.get
       end
 
-      def endpoint_url
-        endpoint + endpoint_path
-      end
-
       def endpoint
         credentials[:endpoint]
       end
 
+      def endpoint_url
+        endpoint + action.endpoint_path
+      end
+
       def request_hash
-        request_builder
-        .send(request_action)
+        action
+        .request_hash
         .merge({
           test_suite_token: test_suite_token
         })
+      end
+
+      def request_body
+        request_hash.to_json
       end
 
       def test_suite_token
@@ -89,6 +66,22 @@ module KnapsackPro
 
       def parse_response(body)
         JSON.parse(body)
+      end
+
+      def post
+        uri = URI.parse(endpoint_url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.open_timeout = TIMEOUT
+        http.read_timeout = TIMEOUT
+
+        http_response = http.post(uri.path, request_body, json_headers)
+        @response = parse_response(http_response.body)
+
+        logger.error(response) if errors?
+
+        response
+      rescue Errno::ECONNREFUSED, Net::OpenTimeout, Net::ReadTimeout => e
+        logger.warn(e.pretty_inspect)
       end
     end
   end
