@@ -1,9 +1,15 @@
 module KnapsackPro
   class Allocator
-    def initialize(args={})
-      @test_file_pattern = args[:test_file_pattern]
-      @ci_node_total = args[:ci_node_total]
-      @ci_node_index = args[:ci_node_index]
+    attr_reader :test_dir
+
+    def initialize(test_file_pattern:,
+                   test_dir:,
+                   ci_node_total:,
+                   ci_node_index:)
+      @test_file_pattern = test_file_pattern
+      @test_dir = test_dir
+      @ci_node_total = ci_node_total
+      @ci_node_index = ci_node_index
     end
 
     def node_tests
@@ -13,5 +19,11 @@ module KnapsackPro
     def stringify_node_tests
       node_tests.join(' ')
     end
+
+    private
+
+    attr_reader :test_file_pattern,
+      :ci_node_total,
+      :ci_node_index
   end
 end
