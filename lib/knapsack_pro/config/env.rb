@@ -4,18 +4,29 @@ module KnapsackPro
       class << self
         def ci_node_total
           ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] ||
-            ENV['CIRCLE_NODE_TOTAL'] ||
-            ENV['SEMAPHORE_THREAD_COUNT'] ||
-            ENV['BUILDKITE_PARALLEL_JOB_COUNT'] ||
+            ci_env_for(:ci_node_total) ||
             1
         end
 
         def ci_node_index
           ENV['KNAPSACK_PRO_CI_NODE_INDEX'] ||
-            ENV['CIRCLE_NODE_INDEX'] ||
-            semaphore_current_thread ||
-            ENV['BUILDKITE_PARALLEL_JOB'] ||
+            ci_env_for(:ci_node_index) ||
             0
+        end
+
+        def commit_hash
+          ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
+            ci_env_for(:commit_hash)
+        end
+
+        def branch
+          ENV['KNAPSACK_PRO_BRANCH'] ||
+            ci_env_for(:branch)
+        end
+
+        def project_dir
+          ENV['KNAPSACK_PRO_PROJECT_DIR'] ||
+            ci_env_for(:project_dir)
         end
 
         def test_file_pattern
@@ -24,9 +35,20 @@ module KnapsackPro
 
         private
 
-        def semaphore_current_thread
-          index = ENV['SEMAPHORE_CURRENT_THREAD']
-          index.to_i - 1 if index
+        CI_LIST = [
+          KnapsackPro::Config::CI::Circle,
+          KnapsackPro::Config::CI::Semaphore,
+          KnapsackPro::Config::CI::Buildkite,
+        ]
+
+        def ci_env_for(env_name)
+          value = nil
+          CI_LIST.each do |ci_class|
+            ci = ci_class.new
+            value = ci.send(env_name)
+            break unless value.nil?
+          end
+          value
         end
       end
     end
