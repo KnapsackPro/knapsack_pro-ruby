@@ -4,13 +4,13 @@ module KnapsackPro
       class << self
         def ci_node_total
           ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] ||
-            ci_env_for(:ci_node_total) ||
+            ci_env_for(:node_total) ||
             1
         end
 
         def ci_node_index
           ENV['KNAPSACK_PRO_CI_NODE_INDEX'] ||
-            ci_env_for(:ci_node_index) ||
+            ci_env_for(:node_index) ||
             0
         end
 

@@ -2,11 +2,11 @@ module KnapsackPro
   module Config
     module CI
       class Circle < Base
-        def ci_node_total
+        def node_total
           ENV['CIRCLE_NODE_TOTAL']
         end
 
-        def ci_node_index
+        def node_index
           ENV['CIRCLE_NODE_INDEX']
         end
 

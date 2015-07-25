@@ -2,11 +2,11 @@ module KnapsackPro
   module Config
     module CI
       class Semaphore < Base
-        def ci_node_total
+        def node_total
           ENV['SEMAPHORE_THREAD_COUNT']
         end
 
-        def ci_node_index
+        def node_index
           index = ENV['SEMAPHORE_CURRENT_THREAD']
           index.to_i - 1 if index
         end
