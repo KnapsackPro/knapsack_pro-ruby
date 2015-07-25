@@ -8,18 +8,11 @@ describe KnapsackPro::Config::Env do
         it { should eql 5 }
       end
 
-      context 'when CIRCLE_NODE_TOTAL has value' do
-        before { stub_const("ENV", { 'CIRCLE_NODE_TOTAL' => 4 }) }
-        it { should eql 4 }
-      end
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:node_total).and_return(4)
+        end
 
-      context 'when SEMAPHORE_THREAD_COUNT has value' do
-        before { stub_const("ENV", { 'SEMAPHORE_THREAD_COUNT' => 3 }) }
-        it { should eql 3 }
-      end
-
-      context 'when BUILDKITE_PARALLEL_JOB_COUNT has value' do
-        before { stub_const("ENV", { 'BUILDKITE_PARALLEL_JOB_COUNT' => 4 }) }
         it { should eql 4 }
       end
     end
@@ -38,24 +31,86 @@ describe KnapsackPro::Config::Env do
         it { should eql 3 }
       end
 
-      context 'when CIRCLE_NODE_INDEX has value' do
-        before { stub_const("ENV", { 'CIRCLE_NODE_INDEX' => 2 }) }
-        it { should eql 2 }
-      end
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:node_index).and_return(2)
+        end
 
-      context 'when SEMAPHORE_CURRENT_THREAD has value' do
-        before { stub_const("ENV", { 'SEMAPHORE_CURRENT_THREAD' => 1 }) }
-        it { should eql 0 }
-      end
-
-      context 'when BUILDKITE_PARALLEL_JOB has value' do
-        before { stub_const("ENV", { 'BUILDKITE_PARALLEL_JOB' => 2 }) }
         it { should eql 2 }
       end
     end
 
     context "when ENV doesn't exist" do
       it { should eql 0 }
+    end
+  end
+
+  describe '.commit_hash' do
+    subject { described_class.commit_hash }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_COMMIT_HASH has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_COMMIT_HASH' => '3fa64859337f6e56409d49f865d13fd7' }) }
+        it { should eql '3fa64859337f6e56409d49f865d13fd7' }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:commit_hash).and_return('fe61a08118d0d52e97c38666eba1eaf3')
+        end
+
+        it { should eql 'fe61a08118d0d52e97c38666eba1eaf3' }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '.branch' do
+    subject { described_class.branch }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_BRANCH has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_BRANCH' => 'master' }) }
+        it { should eql 'master' }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:branch).and_return('feature-branch')
+        end
+
+        it { should eql 'feature-branch' }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '.project_dir' do
+    subject { described_class.project_dir }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_PROJECT_DIR has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_PROJECT_DIR' => '/home/user/myapp' }) }
+        it { should eql '/home/user/myapp' }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:project_dir).and_return('/home/runner/myapp')
+        end
+
+        it { should eql '/home/runner/myapp' }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be nil }
     end
   end
 
