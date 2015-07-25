@@ -127,4 +127,49 @@ describe KnapsackPro::Config::Env do
       it { should be_nil }
     end
   end
+
+  describe '.ci_env_for' do
+    let(:env_name) { :node_total }
+
+    subject { described_class.ci_env_for(env_name) }
+
+    context 'when CI has no value for env_name method' do
+      before do
+        expect(KnapsackPro::Config::CI::Circle).to receive_message_chain(:new, env_name).and_return(nil)
+        expect(KnapsackPro::Config::CI::Semaphore).to receive_message_chain(:new, env_name).and_return(nil)
+        expect(KnapsackPro::Config::CI::Buildkite).to receive_message_chain(:new, env_name).and_return(nil)
+      end
+
+      it do
+        expect(subject).to be_nil
+      end
+    end
+
+    context 'when CI has value for env_name method' do
+      let(:circle_env) { double(:circle) }
+      let(:semaphore_env) { double(:semaphore) }
+      let(:buildkite_env) { double(:buildkite) }
+
+      before do
+        allow(KnapsackPro::Config::CI::Circle).to receive_message_chain(:new, env_name).and_return(circle_env)
+        allow(KnapsackPro::Config::CI::Semaphore).to receive_message_chain(:new, env_name).and_return(semaphore_env)
+        allow(KnapsackPro::Config::CI::Buildkite).to receive_message_chain(:new, env_name).and_return(buildkite_env)
+      end
+
+      it { should eq circle_env }
+
+      context do
+        let(:circle_env) { nil }
+
+        it { should eq semaphore_env }
+      end
+
+      context do
+        let(:circle_env) { nil }
+        let(:semaphore_env) { nil }
+
+        it { should eq buildkite_env }
+      end
+    end
+  end
 end
