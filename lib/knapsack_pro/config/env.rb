@@ -35,15 +35,11 @@ module KnapsackPro
 
         private
 
-        CI_LIST = [
-          KnapsackPro::Config::CI::Circle,
-          KnapsackPro::Config::CI::Semaphore,
-          KnapsackPro::Config::CI::Buildkite,
-        ]
-
         def ci_env_for(env_name)
           value = nil
-          CI_LIST.each do |ci_class|
+          ci_list = KnapsackPro::Config::CI.constants - [:Base]
+          ci_list.each do |ci_name|
+            ci_class = Object.const_get("KnapsackPro::Config::CI::#{ci_name}")
             ci = ci_class.new
             value = ci.send(env_name)
             break unless value.nil?
