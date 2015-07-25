@@ -22,7 +22,7 @@ module KnapsackPro
       end
 
       def working_dir
-        credentials[:git_working_dir]
+        KnapsackPro::Config::Env.project_dir || credentials[:git_working_dir]
       end
     end
   end
