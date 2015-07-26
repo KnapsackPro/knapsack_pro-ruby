@@ -142,6 +142,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.recording_enabled' do
+    subject { described_class.recording_enabled }
+
+    context 'when ENV exists' do
+      let(:recording_enabled) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
+      it { should eql recording_enabled }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.ci_env_for' do
     let(:env_name) { :node_total }
 

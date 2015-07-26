@@ -37,6 +37,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_REPOSITORY_ADAPTER']
         end
 
+        def recording_enabled
+          ENV['KNAPSACK_PRO_RECORDING_ENABLED']
+        end
+
         def ci_env_for(env_name)
           value = nil
           ci_list = KnapsackPro::Config::CI.constants - [:Base]
