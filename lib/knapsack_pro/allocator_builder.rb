@@ -1,20 +1,20 @@
 module KnapsackPro
   class AllocatorBuilder
-    def self.call(adapter_class)
-      new(adapter_class).allocator
-    end
-
     def initialize(adapter_class)
       @adapter_class = adapter_class
     end
 
     def allocator
       KnapsackPro::Allocator.new(
-        test_file_pattern: test_file_pattern,
-        test_dir: test_dir,
+        test_files: test_files,
         ci_node_total: env.ci_node_total,
         ci_node_index: env.ci_node_index,
+        repository_adapter: repository_adapter,
       )
+    end
+
+    def test_dir
+      test_file_pattern.split('/').first
     end
 
     private
@@ -25,12 +25,16 @@ module KnapsackPro
       KnapsackPro::Config::Env
     end
 
-    def test_file_pattern
-      env.test_file_pattern || adapter_class::TEST_DIR_PATTERN
+    def repository_adapter
+      KnapsackPro::RepositoryAdapterInitiator.call
     end
 
-    def test_dir
-      test_file_pattern.split('/').first
+    def test_file_pattern
+      TestFilePattern.call(adapter_class)
+    end
+
+    def test_files
+      KnapsackPro::TestFileFinder.call(test_file_pattern)
     end
   end
 end
