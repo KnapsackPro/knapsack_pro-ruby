@@ -1,4 +1,6 @@
 describe KnapsackPro::Config::Env do
+  before { stub_const("ENV", {}) }
+
   describe '.ci_node_total' do
     subject { described_class.ci_node_total }
 
