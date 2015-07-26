@@ -128,6 +128,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.repository_adapter' do
+    subject { described_class.repository_adapter }
+
+    context 'when ENV exists' do
+      let(:repository_adapter) { 'git' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_REPOSITORY_ADAPTER' => repository_adapter }) }
+      it { should eql repository_adapter }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.ci_env_for' do
     let(:env_name) { :node_total }
 
