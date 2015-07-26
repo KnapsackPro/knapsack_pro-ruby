@@ -87,7 +87,7 @@ module KnapsackPro
 
         response
       rescue Errno::ECONNREFUSED, Net::OpenTimeout, Net::ReadTimeout => e
-        logger.warn(e.pretty_inspect)
+        logger.warn(e.inspect)
       end
     end
   end
