@@ -11,8 +11,8 @@ module KnapsackPro
 
         cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true bundle exec rspec #{args} --default-path #{test_dir} -- #{test_file_paths}]
 
-        system(cmd)
-        exit($?.exitstatus)
+        Kernel.system(cmd)
+        Kernel.exit($?.exitstatus)
       end
     end
   end
