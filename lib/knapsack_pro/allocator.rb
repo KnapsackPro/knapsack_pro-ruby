@@ -24,7 +24,7 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         KnapsackPro::TestFilePresenter.paths(response['test_files'])
       else
-        test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_files)
+        test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_files, ci_node_total)
         test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
         KnapsackPro::TestFilePresenter.paths(test_files_for_node_index)
       end

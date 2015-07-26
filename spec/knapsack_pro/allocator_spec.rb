@@ -67,7 +67,7 @@ describe KnapsackPro::Allocator do
 
       before do
         test_flat_distributor = instance_double(KnapsackPro::TestFlatDistributor)
-        expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(test_files).and_return(test_flat_distributor)
+        expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(test_files, ci_node_total).and_return(test_flat_distributor)
         expect(test_flat_distributor).to receive(:test_files_for_node).with(ci_node_index).and_return([
           { 'path' => 'c_spec.rb' },
           { 'path' => 'd_spec.rb' },
