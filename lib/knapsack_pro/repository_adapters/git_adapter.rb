@@ -1,6 +1,6 @@
 module KnapsackPro
   module RepositoryAdapters
-    class GitAdapter
+    class GitAdapter < BaseAdapter
       class << self
         def credentials
           @credentials ||= KnapsackPro::Credentials.new(:git_working_dir)

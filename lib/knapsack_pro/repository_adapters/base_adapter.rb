@@ -1,0 +1,14 @@
+module KnapsackPro
+  module RepositoryAdapters
+    class BaseAdapter
+      def commit_hash
+        raise NotImplementedError
+      end
+
+      def branch
+        raise NotImplementedError
+      end
+    end
+  end
+end
+

@@ -5,6 +5,8 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
     }
   end
 
+  it { should be_kind_of KnapsackPro::RepositoryAdapters::BaseAdapter }
+
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 
