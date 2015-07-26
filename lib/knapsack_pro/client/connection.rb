@@ -70,6 +70,8 @@ module KnapsackPro
 
       def parse_response(body)
         JSON.parse(body)
+      rescue JSON::ParserError
+        nil
       end
 
       def post
