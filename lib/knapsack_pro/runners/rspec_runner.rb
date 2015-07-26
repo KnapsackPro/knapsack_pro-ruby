@@ -7,10 +7,9 @@ module KnapsackPro
         test_dir = allocator_builder.test_dir
 
         allocator = allocator_builder.allocator
-        allocator.call
-        stringify_node_test_files = allocator.stringify_node_test_files
+        test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(allocator.test_file_paths)
 
-        cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true bundle exec rspec #{args} --default-path #{test_dir} -- #{stringify_node_test_files}]
+        cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true bundle exec rspec #{args} --default-path #{test_dir} -- #{test_file_paths}]
 
         system(cmd)
         exit($?.exitstatus)

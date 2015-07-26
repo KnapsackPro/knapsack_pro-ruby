@@ -10,7 +10,7 @@ module KnapsackPro
       @repository_adapter = repository_adapter
     end
 
-    def call
+    def test_file_paths
       action = KnapsackPro::Client::API::V1::BuildDistributions.subset(
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
@@ -19,21 +19,15 @@ module KnapsackPro
         test_files: test_files,
       )
       connection = KnapsackPro::Client::Connection.new(action)
-      @response = connection.call
+      response = connection.call
       if connection.success?
-        raise response if connection.errors?
-        @node_test_files = parse_test_files
+        raise ArgumentError.new(response) if connection.errors?
+        KnapsackPro::TestFilePresenter.paths(response['test_files'])
       else
-        # TODO dumb test suite split when API doesn't respond
+        test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_files)
+        test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
+        KnapsackPro::TestFilePresenter.paths(test_files_for_node_index)
       end
-    end
-
-    def node_test_files
-      @node_test_files
-    end
-
-    def stringify_node_test_files
-      node_test_files.join(' ')
     end
 
     private
@@ -41,11 +35,6 @@ module KnapsackPro
     attr_reader :test_files,
       :ci_node_total,
       :ci_node_index,
-      :repository_adapter,
-      :response
-
-    def parse_test_files
-      response['test_file'].map { |t| t['path'] }
-    end
+      :repository_adapter
   end
 end
