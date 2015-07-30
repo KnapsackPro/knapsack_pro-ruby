@@ -59,5 +59,16 @@ describe KnapsackPro::Config::CI::Buildkite do
     end
   end
 
-  its(:project_dir) { should be nil }
+  describe '#project_dir' do
+    subject { described_class.new.project_dir }
+
+    context 'when environment exists' do
+      let(:env) { { 'BUILDKITE_BUILD_CHECKOUT_PATH' => '/home/user/knapsack_pro-ruby' } }
+      it { should eql '/home/user/knapsack_pro-ruby' }
+    end
+
+    context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
 end

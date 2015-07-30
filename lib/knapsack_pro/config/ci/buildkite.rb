@@ -17,6 +17,10 @@ module KnapsackPro
         def branch
           ENV['BUILDKITE_BRANCH']
         end
+
+        def project_dir
+          ENV['BUILDKITE_BUILD_CHECKOUT_PATH']
+        end
       end
     end
   end
