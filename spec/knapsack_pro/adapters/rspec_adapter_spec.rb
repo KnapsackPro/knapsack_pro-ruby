@@ -54,7 +54,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(config).to receive(:after).with(:suite).and_yield
         expect(::RSpec).to receive(:configure).and_yield(config)
 
-        # TODO
+        expect(KnapsackPro::Report).to receive(:save)
 
         subject.bind_save_report
       end

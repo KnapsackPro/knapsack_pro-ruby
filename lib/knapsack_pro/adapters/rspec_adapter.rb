@@ -39,7 +39,7 @@ module KnapsackPro
       def bind_save_report
         ::RSpec.configure do |config|
           config.after(:suite) do
-            # TODO push results to API
+            KnapsackPro::Report.save
           end
         end
       end
