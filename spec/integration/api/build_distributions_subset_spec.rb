@@ -21,6 +21,8 @@ describe 'Request API /v1/build_distributions/subset' do
     )
   end
   let(:connection) { KnapsackPro::Client::Connection.new(action) }
+  let(:endpoint) { valid_endpoint }
+  let(:test_suite_token) { valid_test_suite_token }
 
   before do
     KnapsackPro::Client::Connection.credentials.set = {
@@ -30,11 +32,8 @@ describe 'Request API /v1/build_distributions/subset' do
   end
 
   context 'when success' do
-    let(:endpoint) { valid_endpoint }
-    let(:test_suite_token) { valid_test_suite_token }
-
     it do
-      VCR.use_cassette("api/v1/build_distributions/subset") do
+      VCR.use_cassette('api/v1/build_distributions/subset/success') do
         response = connection.call
         puts response
       end
@@ -44,13 +43,31 @@ describe 'Request API /v1/build_distributions/subset' do
     end
   end
 
-  context 'when failure' do
-    context 'when invalid test suite token' do
+  context 'when invalid test suite token' do
+    let(:test_suite_token) { invalid_test_suite_token }
 
+    it do
+      VCR.use_cassette('api/v1/build_distributions/subset/invalid_test_suite_token') do
+        response = connection.call
+        puts response
+      end
+
+      expect(connection.errors?).to be true
+      expect(connection.success?).to be true
     end
+  end
 
-    context 'when timeout' do
+  context 'when timeout' do
+    let(:endpoint) { invalid_endpoint }
 
+    it do
+      VCR.use_cassette('api/v1/build_distributions/subset/timeout') do
+        response = connection.call
+        puts response
+      end
+
+      expect(connection.errors?).to be false
+      expect(connection.success?).to be false
     end
   end
 end
