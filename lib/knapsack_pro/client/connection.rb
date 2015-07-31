@@ -69,6 +69,7 @@ module KnapsackPro
       end
 
       def parse_response(body)
+        return body if body == ''
         JSON.parse(body)
       rescue JSON::ParserError
         nil

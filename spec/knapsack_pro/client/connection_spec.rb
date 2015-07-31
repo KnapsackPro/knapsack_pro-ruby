@@ -22,7 +22,7 @@ describe KnapsackPro::Client::Connection do
     subject { connection.call }
 
     context 'when http method is POST' do
-      it do
+      before do
         http = instance_double(Net::HTTP)
 
         expect(Net::HTTP).to receive(:new).with('api.knapsackpro.dev', 3000).and_return(http)
@@ -30,17 +30,35 @@ describe KnapsackPro::Client::Connection do
         expect(http).to receive(:open_timeout=).with(5)
         expect(http).to receive(:read_timeout=).with(5)
 
-        http_response = instance_double(Net::HTTPOK, body: '{"errors": "value"}')
+        http_response = instance_double(Net::HTTPOK, body: body)
         expect(http).to receive(:post).with(
           endpoint_path,
           "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
           { "Content-Type" => "application/json", "Accept" => "application/json" }
         ).and_return(http_response)
+      end
 
-        parsed_response = { 'errors' => 'value' }
-        expect(KnapsackPro.logger).to receive(:error).with(parsed_response)
+      context 'when body response is json' do
+        let(:body) { '{"errors": "value"}' }
 
-        expect(subject).to eq(parsed_response)
+        it do
+          parsed_response = { 'errors' => 'value' }
+          expect(KnapsackPro.logger).to receive(:error).with(parsed_response)
+
+          expect(subject).to eq(parsed_response)
+          expect(connection.success?).to be true
+          expect(connection.errors?).to be true
+        end
+      end
+
+      context 'when body response is empty' do
+        let(:body) { '' }
+
+        it do
+          expect(subject).to eq('')
+          expect(connection.success?).to be true
+          expect(connection.errors?).to be false
+        end
       end
     end
   end
