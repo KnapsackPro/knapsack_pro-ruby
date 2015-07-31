@@ -99,12 +99,4 @@ describe KnapsackPro::Tracker do
 
     it_behaves_like 'default trakcer attributes'
   end
-
-  describe '#to_json' do
-    it do
-      array = [{ path: 'a_spec.rb', time_execution: 1.2 }]
-      expect(tracker).to receive(:to_a).and_return(array)
-      expect(tracker.to_json).to eq '[{"path":"a_spec.rb","time_execution":1.2}]'
-    end
-  end
 end

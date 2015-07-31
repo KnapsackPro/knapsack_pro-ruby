@@ -40,10 +40,6 @@ module KnapsackPro
       test_files
     end
 
-    def to_json
-      to_a.to_json
-    end
-
     private
 
     def set_defaults
