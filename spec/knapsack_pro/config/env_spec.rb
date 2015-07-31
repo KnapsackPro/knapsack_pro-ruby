@@ -158,6 +158,26 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.recording_enabled?' do
+    subject { described_class.recording_enabled? }
+
+    before do
+      expect(described_class).to receive(:recording_enabled).and_return(recording_enabled)
+    end
+
+    context 'when enabled' do
+      let(:recording_enabled) { 'true' }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:recording_enabled) { nil }
+
+      it { should be false }
+    end
+  end
+
   describe '.ci_env_for' do
     let(:env_name) { :node_total }
 
