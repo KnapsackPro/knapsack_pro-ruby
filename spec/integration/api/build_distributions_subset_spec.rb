@@ -61,6 +61,7 @@ describe 'Request API /v1/build_distributions/subset' do
     let(:endpoint) { invalid_endpoint }
 
     it do
+      stub_const('KnapsackPro::Client::Connection::TIMEOUT', 0.01)
       VCR.use_cassette('api/v1/build_distributions/subset/timeout') do
         response = connection.call
         puts response
