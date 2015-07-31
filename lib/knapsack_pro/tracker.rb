@@ -29,6 +29,21 @@ module KnapsackPro
       @current_test_path.sub(/^\.\//, '')
     end
 
+    def to_a
+      test_files = []
+      @test_files_with_time.each do |path, time_execution|
+        test_files << {
+          path: path,
+          time_execution: time_execution
+        }
+      end
+      test_files
+    end
+
+    def to_json
+      to_a.to_json
+    end
+
     private
 
     def set_defaults
