@@ -41,6 +41,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_RECORDING_ENABLED']
         end
 
+        def recording_enabled?
+          recording_enabled == 'true'
+        end
+
         def ci_env_for(env_name)
           value = nil
           ci_list = KnapsackPro::Config::CI.constants - [:Base]
