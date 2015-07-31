@@ -3,7 +3,7 @@ module KnapsackPro
     class << self
       def global_time
         global_time = pretty_seconds(KnapsackPro.tracker.global_time)
-        "\nKnapsack Pro global time execution for tests: #{global_time}"
+        "\n[Knapsack Pro] Global time execution for tests: #{global_time}"
       end
 
       def pretty_seconds(seconds)
