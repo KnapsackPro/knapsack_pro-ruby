@@ -31,10 +31,13 @@ describe 'Request API /v1/build_distributions/subset' do
         ],
       )
       connection = KnapsackPro::Client::Connection.new(action)
-      response = connection.call
-      puts response
+      VCR.use_cassette("api/v1/build_distributions/subset") do
+        response = connection.call
+        puts response
+      end
 
       expect(connection.errors?).to be false
+      expect(connection.success?).to be true
     end
   end
 
