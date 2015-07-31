@@ -11,7 +11,19 @@ module KnapsackPro
       end
 
       def bind
-        # TODO
+        if KnapsackPro::Config::Env.recording_enabled?
+          KnapsackPro.logger.info('Knapsack Pro test suite time execution recording enabled.')
+          bind_time_tracker
+          bind_save_report
+        end
+      end
+
+      def bind_time_tracker
+        raise NotImplementedError
+      end
+
+      def bind_save_report
+        raise NotImplementedError
       end
     end
   end
