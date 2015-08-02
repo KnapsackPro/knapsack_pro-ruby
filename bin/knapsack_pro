@@ -8,7 +8,7 @@ arguments = ARGV[1]
 MAP = {
   'rspec' => KnapsackPro::Runners::RSpecRunner,
   'cucumber' => KnapsackPro::Runners::CucumberRunner,
-  #'minitest' => KnapsackPro::Runners::MinitestRunner,
+  'minitest' => KnapsackPro::Runners::MinitestRunner,
 }
 
 runner_class = MAP[runner]
