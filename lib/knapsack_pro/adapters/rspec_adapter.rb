@@ -1,6 +1,6 @@
 module KnapsackPro
   module Adapters
-    class RSpecAdapter
+    class RSpecAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'spec/**/*_spec.rb'
 
       def self.test_path(example_group)
