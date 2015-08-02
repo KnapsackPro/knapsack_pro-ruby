@@ -36,7 +36,7 @@ require_relative 'knapsack_pro/adapters/rspec_adapter'
 require_relative 'knapsack_pro/adapters/cucumber_adapter'
 #require_relative 'knapsack_pro/adapters/minitest_adapter'
 require_relative 'knapsack_pro/runners/rspec_runner'
-#require_relative 'knapsack_pro/runners/cucumber_runner'
+require_relative 'knapsack_pro/runners/cucumber_runner'
 #require_relative 'knapsack_pro/runners/minitest_runner'
 
 module KnapsackPro
