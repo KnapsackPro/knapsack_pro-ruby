@@ -46,8 +46,8 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     let(:config) { double }
 
     describe '#bind_time_tracker' do
-      let(:logger) { instance_double(Logger) }
       let(:tracker) { instance_double(KnapsackPro::Tracker) }
+      let(:logger) { instance_double(Logger) }
       let(:test_path) { 'spec/a_spec.rb' }
       let(:global_time) { 'Global time: 01m 05s' }
       let(:example_group) { double }
@@ -55,10 +55,6 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         OpenStruct.new(metadata: {
           example_group: example_group
         })
-      end
-
-      before do
-        expect(KnapsackPro).to receive(:logger).and_return(logger)
       end
 
       it do
@@ -77,6 +73,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(tracker).to receive(:stop_timer)
 
         expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
+        expect(KnapsackPro).to receive(:logger).and_return(logger)
         expect(logger).to receive(:info).with(global_time)
 
         subject.bind_time_tracker
