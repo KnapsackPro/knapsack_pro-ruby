@@ -1,6 +1,10 @@
 module KnapsackPro
   module Runners
     class BaseRunner
+      def self.run(args)
+        raise NotImplementedError
+      end
+
       def initialize(adapter_class)
         @allocator_builder = KnapsackPro::AllocatorBuilder.new(adapter_class)
         @allocator = allocator_builder.allocator
