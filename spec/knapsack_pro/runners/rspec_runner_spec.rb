@@ -1,27 +1,24 @@
 describe KnapsackPro::Runners::RSpecRunner do
+  subject { described_class.new(KnapsackPro::Adapters::RSpecAdapter) }
+
+  it { should be_kind_of KnapsackPro::Runners::BaseRunner }
+
   describe '.run' do
     let(:args) { '--profile --color' }
 
-    subject { described_class.run(args) }
+    after { described_class.run(args) }
 
     it do
-      allocator = instance_double(KnapsackPro::Allocator, test_file_paths: double)
-      allocator_builder = instance_double(KnapsackPro::AllocatorBuilder,
-                                          test_dir: 'fake_spec_dir',
-                                          allocator: allocator)
-      expect(KnapsackPro::AllocatorBuilder).to receive(:new)
-      .with(KnapsackPro::Adapters::RSpecAdapter)
-      .and_return(allocator_builder)
+      stringify_test_file_paths = 'spec/a_spec.rb spec/b_spec.rb'
+      runner = instance_double(described_class,
+                               test_dir: 'spec',
+                               stringify_test_file_paths: stringify_test_file_paths)
+      expect(described_class).to receive(:new)
+      .with(KnapsackPro::Adapters::RSpecAdapter).and_return(runner)
 
-      expect(KnapsackPro::TestFilePresenter).to receive(:stringify_paths)
-      .with(allocator.test_file_paths)
-      .and_return('fake_spec_dir/a_spec.rb fake_spec_dir/b_spec.rb')
-
-      expect(Kernel).to receive(:system)
-      .with('KNAPSACK_PRO_RECORDING_ENABLED=true bundle exec rspec --profile --color --default-path fake_spec_dir -- fake_spec_dir/a_spec.rb fake_spec_dir/b_spec.rb')
       expect(Kernel).to receive(:exit)
-
-      subject
+      expect(Kernel).to receive(:system)
+      .with('KNAPSACK_PRO_RECORDING_ENABLED=true bundle exec rspec --profile --color --default-path spec -- spec/a_spec.rb spec/b_spec.rb')
     end
   end
 end
