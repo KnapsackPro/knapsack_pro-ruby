@@ -1,15 +1,10 @@
 module KnapsackPro
   module Runners
-    class CucumberRunner
+    class CucumberRunner < BaseRunner
       def self.run(args)
-        adapter_class = KnapsackPro::Adapters::CucumberAdapter
-        allocator_builder = KnapsackPro::AllocatorBuilder.new(adapter_class)
-        #test_dir = allocator_builder.test_dir
+        runner = new(KnapsackPro::Adapters::CucumberAdapter)
 
-        allocator = allocator_builder.allocator
-        test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(allocator.test_file_paths)
-
-        cmd = %Q[bundle exec cucumber #{args} -- #{test_file_paths}]
+        cmd = %Q[bundle exec cucumber #{args} -- #{runner.stringify_test_file_paths}]
 
         Kernel.system(cmd)
         Kernel.exit($?.exitstatus)

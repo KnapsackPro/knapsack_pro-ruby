@@ -1,11 +1,8 @@
 module KnapsackPro
   module Runners
-    class MinitestRunner
+    class MinitestRunner < BaseRunner
       def self.run(args)
-        adapter_class = KnapsackPro::Adapters::MinitestAdapter
-        allocator_builder = KnapsackPro::AllocatorBuilder.new(adapter_class)
-        test_dir = allocator_builder.test_dir
-        allocator = allocator_builder.allocator
+        runner = new(KnapsackPro::Adapters::MinitestAdapter)
 
         task_name = 'knapsack_pro:minitest_run'
 
@@ -14,8 +11,8 @@ module KnapsackPro
         end
 
         Rake::TestTask.new(task_name) do |t|
-          t.libs << test_dir
-          t.test_files = allocator.test_file_paths
+          t.libs << runner.test_dir
+          t.test_files = runner.test_file_paths
           t.options = args
         end
 
