@@ -28,7 +28,7 @@ require_relative 'knapsack_pro/report'
 require_relative 'knapsack_pro/test_flat_distributor'
 require_relative 'knapsack_pro/allocator'
 require_relative 'knapsack_pro/allocator_builder'
-#require_relative 'knapsack_pro/task_loader'
+require_relative 'knapsack_pro/task_loader'
 require_relative 'knapsack_pro/tracker'
 require_relative 'knapsack_pro/presenter'
 require_relative 'knapsack_pro/adapters/base_adapter'
@@ -59,6 +59,11 @@ module KnapsackPro
 
     def tracker
       KnapsackPro::Tracker.instance
+    end
+
+    def load_tasks
+      task_loader = KnapsackPro::TaskLoader.new
+      task_loader.load_tasks
     end
   end
 end
