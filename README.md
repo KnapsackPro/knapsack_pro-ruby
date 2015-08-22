@@ -5,7 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/KnapsackPro/knapsack_pro-ruby/badges/gpa.svg)](https://codeclimate.com/github/KnapsackPro/knapsack_pro-ruby)
 [![Test Coverage](https://codeclimate.com/github/KnapsackPro/knapsack_pro-ruby/badges/coverage.svg)](https://codeclimate.com/github/KnapsackPro/knapsack_pro-ruby)
 
-Knapsack Pro gem splits tests across CI nodes and makes sure that tests will run comparable time on each node. It uses KnapsackPro.com API.
+Knapsack Pro gem splits tests across CI nodes and makes sure that tests will run comparable time on each node. It uses [KnapsackPro.com API](http://docs.knapsackpro.com).
 
 The gem supports:
 
