@@ -111,3 +111,212 @@ require 'logger'
 KnapsackPro.logger = Logger.new(STDOUT)
 KnapsackPro.logger.level = Logger::INFO
 ```
+
+## Setup your CI server
+
+On your CI server run this command for the first CI node. Update `KNAPSACK_PRO_CI_NODE_INDEX` for the next one.
+
+    # Step for RSpec
+    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber
+    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest
+    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+
+You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default directory. For instance:
+
+    # Step for RSpec
+    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_specs/**/*_spec.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber
+    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**/*.feature" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest
+    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+
+### Info about ENV variables
+
+By default knapsack_pro gem [supports a few CI providers](#supported-ci-providers) so you don't need to set environment variables.
+In case when you use other CI provider for instance [Jenkins](https://jenkins-ci.org) etc then you need to provide configuration via below environment variables.
+
+`KNAPSACK_PRO_CI_NODE_TOTAL` - total number CI nodes you have.
+
+`KNAPSACK_PRO_CI_NODE_INDEX` - index of current CI node starts from 0. Second CI node should have `KNAPSACK_PRO_CI_NODE_INDEX=1`.
+
+#### Repository adapter
+
+`KNAPSACK_PRO_REPOSITORY_ADAPTER` - When it has value `git` then your local version of git on CI server will be used to get info about branch name, commit hash and project directory path.
+By default this variable has no value so knapsack_pro will try to get those info from [supported CI](#supported-ci-providers) (CI providers have branch, commit, project directory stored as environment variables). In case when you use other CI provider like Jenkins then please set below variables on your own.
+
+`KNAPSACK_PRO_BRANCH` - It's branch name. You run tests on this branch.
+
+`KNAPSACK_PRO_COMMIT_HASH` - Commit hash. You run tests for this commit.
+
+`KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
+
+### Passing arguments to rake task
+
+#### Passing arguments to rspec
+
+Knapsack Pro allows you to pass arguments through to rspec. For example if you want to run only specs that have the tag `focus`. If you do this with rspec directly it would look like:
+
+    $ bundle exec rake rspec --tag focus
+
+To do this with Knapsack Pro you simply add your rspec arguments as parameters to the knapsack_pro rake task.
+
+    $ bundle exec rake "knapsack_pro:rspec[--tag focus]"
+
+#### Passing arguments to cucumber
+
+Add arguments to knapsack_pro cucumber task like this:
+
+    $ bundle exec rake "knapsack_pro:cucumber[--name feature]"
+
+#### Passing arguments to minitest
+
+Add arguments to knapsack_pro minitest task like this:
+
+    $ bundle exec rake "knapsack_pro:minitest[--arg_name value]"
+
+For instance to run verbose tests:
+
+    $ bundle exec rake "knapsack_pro:minitest[--verbose]"
+
+### Knapsack Pro binary
+
+You can install knapsack_pro globally and use binary. For instance:
+
+    $ knapsack_pro rspec "--tag custom_tag_name --profile"
+    $ knapsack_pro cucumber "--name feature"
+    $ knapsack_pro minitest "--verbose --pride"
+
+This is optional way of using knapsack_pro when you don't want to add it to `Gemfile`.
+
+### Supported CI providers
+
+#### Info for CircleCI users
+
+If you are using circleci.com you can omit `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX`. Knapsack Pro will use `KNAPSACK_PRO_CIRCLE_NODE_TOTAL` and `KNAPSACK_PRO_CIRCLE_NODE_INDEX` provided by CircleCI.
+
+Here is an example for test configuration in your `circleci.yml` file.
+
+```yaml
+test:
+  override:
+    # Step for RSpec
+    - bundle exec rake knapsack_pro:rspec:
+        parallel: true # Caution: there are 8 spaces indentation!
+
+    # Step for Cucumber
+    - bundle exec rake knapsack_pro:cucumber:
+        parallel: true # Caution: there are 8 spaces indentation!
+
+    # Step for Minitest
+    - bundle exec rake knapsack_pro:minitest:
+        parallel: true # Caution: there are 8 spaces indentation!
+```
+
+Please remember to add additional containers for your project in CircleCI settings.
+
+#### Info for Travis users
+
+You can parallel your builds across virtual machines with [travis matrix feature](http://docs.travis-ci.com/user/speeding-up-the-build/#Parallelizing-your-builds-across-virtual-machines). Edit `.travis.yml`
+
+```yaml
+script:
+  # Step for RSpec
+  - "bundle exec rake knapsack_pro:rspec"
+
+  # Step for Cucumber
+  - "bundle exec rake knapsack_pro:cucumber"
+
+  # Step for Minitest
+  - "bundle exec rake knapsack_pro:minitest"
+
+env:
+  - KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0
+  - KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1
+```
+
+If you want to have some global ENVs and matrix of ENVs then do it like this:
+
+```yaml
+script:
+  # Step for RSpec
+  - "bundle exec rake knapsack_pro:rspec"
+
+  # Step for Cucumber
+  - "bundle exec rake knapsack_pro:cucumber"
+
+  # Step for Minitest
+  - "bundle exec rake knapsack_pro:minitest"
+
+env:
+  global:
+    - RAILS_ENV=test
+    - MY_GLOBAL_VAR=123
+    - KNAPSACK_PRO_CI_NODE_TOTAL=2
+  matrix:
+    - KNAPSACK_PRO_CI_NODE_INDEX=0
+    - KNAPSACK_PRO_CI_NODE_INDEX=1
+```
+
+Such configuration will generate matrix with 2 following ENV rows:
+
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 RAILS_ENV=test MY_GLOBAL_VAR=123
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 RAILS_ENV=test MY_GLOBAL_VAR=123
+
+More info about global and matrix ENV configuration in [travis docs](http://docs.travis-ci.com/user/build-configuration/#Environment-variables).
+
+#### Info for semaphoreapp.com users
+
+Knapsack Pro supports semaphoreapp ENVs `SEMAPHORE_THREAD_COUNT` and `SEMAPHORE_CURRENT_THREAD`. The only thing you need to do is set up knapsack_pro rspec/cucumber/minitest command for as many threads as you need. Here is an example:
+
+    # Thread 1
+    ## Step for RSpec
+    bundle exec rake knapsack_pro:rspec
+    ## Step for Cucumber
+    bundle exec rake knapsack_pro:cucumber
+    ## Step for Minitest
+    bundle exec rake knapsack_pro:minitest
+
+    # Thread 2
+    ## Step for RSpec
+    bundle exec rake knapsack_pro:rspec
+    ## Step for Cucumber
+    bundle exec rake knapsack_pro:cucumber
+    ## Step for Minitest
+    bundle exec rake knapsack_pro:minitest
+
+Tests will be split across threads.
+
+#### Info for buildkite.com users
+
+Knapsack Pro supports buildkite ENVs `BUILDKITE_PARALLEL_JOB_COUNT` and `BUILDKITE_PARALLEL_JOB`. The only thing you need to do is to configure the parallelism parameter in your build step and run the appropiate command in your build
+
+    # Step for RSpec
+    bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber
+    bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest
+    bundle exec rake knapsack_pro:minitest
+
+## Gem tests
+
+### Spec
+
+To run specs for Knapsack Pro gem type:
+
+    $ bundle exec rspec spec
+
+## Contributing
+
+1. Fork it ( https://github.com/ArturT/knapsack/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
