@@ -39,3 +39,75 @@ end
 And then execute:
 
     $ bundle
+
+
+Add this line at the bottom of `Rakefile` if your project has it:
+
+```ruby
+KnapsackPro.load_tasks if defined?(KnapsackPro)
+```
+
+## Usage
+
+You can find here example of rails app with already configured knapsack_pro.
+
+https://github.com/KnapsackPro/rails-app-with-knapsack_pro
+
+### Step for RSpec
+
+Add at the beginning of your `spec_helper.rb`:
+
+```ruby
+require 'knapsack_pro'
+
+# CUSTOM_CONFIG_GOES_HERE
+
+KnapsackPro::Adapters::RSpecAdapter.bind
+```
+
+### Step for Cucumber
+
+Create file `features/support/knapsack_pro.rb` and add there:
+
+```ruby
+require 'knapsack_pro'
+
+# CUSTOM_CONFIG_GOES_HERE
+
+KnapsackPro::Adapters::CucumberAdapter.bind
+```
+
+### Step for Minitest
+
+Add at the beginning of your `test_helper.rb`:
+
+```ruby
+require 'knapsack_pro'
+
+# CUSTOM_CONFIG_GOES_HERE
+
+knapsack_pro_adapter = KnapsackPro::Adapters::MinitestAdapter.bind
+knapsack_pro_adapter.set_test_helper_path(__FILE__)
+```
+
+### Custom configuration
+
+You can change default Knapsack Pro configuration for RSpec, Cucumber or Minitest tests. Here are examples what you can do. Put below configuration instead of `CUSTOM_CONFIG_GOES_HERE`.
+
+```ruby
+# mandatory step
+# set test suite token and endpoint url
+KnapsackPro::Client::Connection.credentials.set = {
+  # token for rspec test suite
+  # test suite for cucumber must have different token etc
+  test_suite_token: 'xyz',
+
+  # endpoint for production API
+  endpoint: 'http://api.knapsackpro.com'
+}
+
+# you can use your own logger
+require 'logger'
+KnapsackPro.logger = Logger.new(STDOUT)
+KnapsackPro.logger.level = Logger::INFO
+```
