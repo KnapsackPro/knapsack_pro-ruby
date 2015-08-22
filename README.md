@@ -22,6 +22,41 @@ knapsack_pro gem is not ready yet. Please see https://github.com/ArturT/knapsack
 
 * >= Ruby 2.0
 
+# Table of Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [knapsack_pro ruby gem](#knapsack_pro-ruby-gem)
+- [Basic info](#basic-info)
+- [Requirements](#requirements)
+  - [Update gem](#update-gem)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Step for RSpec](#step-for-rspec)
+    - [Step for Cucumber](#step-for-cucumber)
+    - [Step for Minitest](#step-for-minitest)
+    - [Custom configuration](#custom-configuration)
+  - [Setup your CI server](#setup-your-ci-server)
+    - [Info about ENV variables](#info-about-env-variables)
+      - [Repository adapter](#repository-adapter)
+    - [Passing arguments to rake task](#passing-arguments-to-rake-task)
+      - [Passing arguments to rspec](#passing-arguments-to-rspec)
+      - [Passing arguments to cucumber](#passing-arguments-to-cucumber)
+      - [Passing arguments to minitest](#passing-arguments-to-minitest)
+    - [Knapsack Pro binary](#knapsack-pro-binary)
+    - [Supported CI providers](#supported-ci-providers)
+      - [Info for CircleCI users](#info-for-circleci-users)
+      - [Info for Travis users](#info-for-travis-users)
+      - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
+      - [Info for buildkite.com users](#info-for-buildkitecom-users)
+  - [Gem tests](#gem-tests)
+    - [Spec](#spec)
+  - [Contributing](#contributing)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Update gem
 
 Please check [changelog](CHANGELOG.md) before update gem. Knapsack Pro follows [semantic versioning](http://semver.org).
