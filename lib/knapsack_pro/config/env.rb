@@ -45,6 +45,14 @@ module KnapsackPro
           recording_enabled == 'true'
         end
 
+        def endpoint
+          required_env('KNAPSACK_PRO_ENDPOINT')
+        end
+
+        def test_suite_token
+          required_env('KNAPSACK_PRO_TEST_SUITE_TOKEN')
+        end
+
         def test_suite_token_rspec
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC']
         end
@@ -67,6 +75,12 @@ module KnapsackPro
             break unless value.nil?
           end
           value
+        end
+
+        private
+
+        def required_env(env_name)
+          ENV[env_name] || raise("Missing environment variable #{env_name}")
         end
       end
     end

@@ -178,6 +178,38 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.endpoint' do
+    subject { described_class.endpoint }
+
+    context 'when ENV exists' do
+      let(:endpoint) { 'http://api.knapsackpro.com' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_ENDPOINT' => endpoint }) }
+      it { should eq endpoint }
+    end
+
+    context "when ENV doesn't exist" do
+      it do
+        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_ENDPOINT')
+      end
+    end
+  end
+
+  describe '.test_suite_token' do
+    subject { described_class.test_suite_token }
+
+    context 'when ENV exists' do
+      let(:token) { 'xyz' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN' => 'xyz' }) }
+      it { should eq token }
+    end
+
+    context "when ENV doesn't exist" do
+      it do
+        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_TEST_SUITE_TOKEN')
+      end
+    end
+  end
+
   describe '.test_suite_token_rspec' do
     subject { described_class.test_suite_token_rspec }
 
