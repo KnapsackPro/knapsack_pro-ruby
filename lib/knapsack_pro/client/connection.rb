@@ -38,7 +38,7 @@ module KnapsackPro
       end
 
       def endpoint
-        credentials[:endpoint]
+        KnapsackPro::Config::Env.endpoint
       end
 
       def endpoint_url
@@ -58,7 +58,7 @@ module KnapsackPro
       end
 
       def test_suite_token
-        credentials[:test_suite_token]
+        KnapsackPro::Config::Env.test_suite_token
       end
 
       def json_headers

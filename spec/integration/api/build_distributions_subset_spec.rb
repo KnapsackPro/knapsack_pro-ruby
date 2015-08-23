@@ -25,10 +25,10 @@ describe 'Request API /v1/build_distributions/subset' do
   let(:test_suite_token) { valid_test_suite_token }
 
   before do
-    KnapsackPro::Client::Connection.credentials.set = {
-      endpoint: endpoint,
-      test_suite_token: test_suite_token
-    }
+    stub_const('ENV', {
+      'KNAPSACK_PRO_ENDPOINT' => endpoint,
+      'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
+    })
   end
 
   context 'when success' do

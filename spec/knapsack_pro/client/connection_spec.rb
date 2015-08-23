@@ -12,10 +12,10 @@ describe KnapsackPro::Client::Connection do
   let(:connection) { described_class.new(action) }
 
   before do
-    described_class.credentials.set = {
-      test_suite_token: '3fa64859337f6e56409d49f865d13fd7',
-      endpoint: 'http://api.knapsackpro.dev:3000'
-    }
+    stub_const('ENV', {
+      'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.dev:3000',
+      'KNAPSACK_PRO_TEST_SUITE_TOKEN' => '3fa64859337f6e56409d49f865d13fd7',
+    })
   end
 
   describe '#call' do
