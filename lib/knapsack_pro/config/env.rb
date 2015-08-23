@@ -45,6 +45,18 @@ module KnapsackPro
           recording_enabled == 'true'
         end
 
+        def test_suite_token_rspec
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC']
+        end
+
+        def test_suite_token_minitest
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST']
+        end
+
+        def test_suite_token_cucumber
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER']
+        end
+
         def ci_env_for(env_name)
           value = nil
           ci_list = KnapsackPro::Config::CI.constants - [:Base]

@@ -178,6 +178,48 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_suite_token_rspec' do
+    subject { described_class.test_suite_token_rspec }
+
+    context 'when ENV exists' do
+      let(:test_suite_token_rspec) { 'rspec-token' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC' => test_suite_token_rspec }) }
+      it { should eql test_suite_token_rspec }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.test_suite_token_minitest' do
+    subject { described_class.test_suite_token_minitest }
+
+    context 'when ENV exists' do
+      let(:test_suite_token_minitest) { 'minitest-token' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST' => test_suite_token_minitest }) }
+      it { should eql test_suite_token_minitest }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.test_suite_token_cucumber' do
+    subject { described_class.test_suite_token_cucumber }
+
+    context 'when ENV exists' do
+      let(:test_suite_token_cucumber) { 'cucumber-token' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER' => test_suite_token_cucumber }) }
+      it { should eql test_suite_token_cucumber }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.ci_env_for' do
     let(:env_name) { :node_total }
 
