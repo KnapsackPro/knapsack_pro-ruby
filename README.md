@@ -127,17 +127,6 @@ knapsack_pro_adapter.set_test_helper_path(__FILE__)
 You can change default Knapsack Pro configuration for RSpec, Cucumber or Minitest tests. Here are examples what you can do. Put below configuration instead of `CUSTOM_CONFIG_GOES_HERE`.
 
 ```ruby
-# mandatory step
-# set test suite token and endpoint url
-KnapsackPro::Client::Connection.credentials.set = {
-  # token for rspec test suite
-  # test suite for cucumber must have different token etc
-  test_suite_token: 'xyz',
-
-  # endpoint for production API
-  endpoint: 'http://api.knapsackpro.com'
-}
-
 # you can use your own logger
 require 'logger'
 KnapsackPro.logger = Logger.new(STDOUT)
