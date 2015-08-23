@@ -27,7 +27,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
       it do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:info).with('[Knapsack Pro] Test suite time execution recording enabled.')
+        expect(logger).to receive(:info).with('Test suite time execution recording enabled.')
         expect(subject).to receive(:bind_time_tracker)
         expect(subject).to receive(:bind_save_report)
         subject.bind

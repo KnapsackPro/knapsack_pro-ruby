@@ -13,7 +13,7 @@ module KnapsackPro
       response = connection.call
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
-        KnapsackPro.logger.info('[Knapsack Pro] Saved time execution report on API server.')
+        KnapsackPro.logger.info('Saved time execution report on API server.')
       end
     end
   end
