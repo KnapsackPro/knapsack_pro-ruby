@@ -6,6 +6,10 @@ describe KnapsackPro::Runners::CucumberRunner do
   describe '.run' do
     let(:args) { '--custom-arg' }
 
+    before do
+      stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER' => 'cucumber-token' })
+    end
+
     after { described_class.run(args) }
 
     it do
@@ -16,7 +20,7 @@ describe KnapsackPro::Runners::CucumberRunner do
       .with(KnapsackPro::Adapters::CucumberAdapter).and_return(runner)
 
       expect(Kernel).to receive(:exit)
-      expect(Kernel).to receive(:system).with('bundle exec cucumber --custom-arg -- features/a.feature features/b.feature')
+      expect(Kernel).to receive(:system).with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=cucumber-token bundle exec cucumber --custom-arg -- features/a.feature features/b.feature')
     end
   end
 end

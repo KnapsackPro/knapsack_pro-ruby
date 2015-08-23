@@ -6,6 +6,10 @@ describe KnapsackPro::Runners::RSpecRunner do
   describe '.run' do
     let(:args) { '--profile --color' }
 
+    before do
+      stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC' => 'rspec-token' })
+    end
+
     after { described_class.run(args) }
 
     it do
@@ -18,7 +22,7 @@ describe KnapsackPro::Runners::RSpecRunner do
 
       expect(Kernel).to receive(:exit)
       expect(Kernel).to receive(:system)
-      .with('KNAPSACK_PRO_RECORDING_ENABLED=true bundle exec rspec --profile --color --default-path spec -- spec/a_spec.rb spec/b_spec.rb')
+      .with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=rspec-token bundle exec rspec --profile --color --default-path spec -- spec/a_spec.rb spec/b_spec.rb')
     end
   end
 end

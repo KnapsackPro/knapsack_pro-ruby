@@ -9,6 +9,10 @@ describe KnapsackPro::Runners::MinitestRunner do
 
     subject { described_class.run(args) }
 
+    before do
+      stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST' => 'minitest-token' })
+    end
+
     it do
       test_file_paths = ['test_fake/a_test.rb', 'test_fake/b_test.rb']
       runner = instance_double(described_class,
@@ -22,6 +26,9 @@ describe KnapsackPro::Runners::MinitestRunner do
       subject
 
       expect(Rake::Task.task_defined?(task_name)).to be true
+
+      expect(ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']).to eq 'minitest-token'
+      expect(ENV['KNAPSACK_PRO_RECORDING_ENABLED']).to eq 'true'
     end
   end
 end
