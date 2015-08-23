@@ -49,10 +49,12 @@ module KnapsackPro
       return @logger if @logger
       log = ::Logger.new(STDOUT)
       log.level = ::Logger::WARN
+      set_progname(log)
       @logger = log
     end
 
     def logger=(value)
+      set_progname(value)
       @logger = value
     end
 
@@ -63,6 +65,12 @@ module KnapsackPro
     def load_tasks
       task_loader = KnapsackPro::TaskLoader.new
       task_loader.load_tasks
+    end
+
+    private
+
+    def set_progname(logger)
+      logger.progname = '[knapsack_pro]' if logger
     end
   end
 end

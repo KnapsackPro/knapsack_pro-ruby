@@ -17,6 +17,7 @@ describe KnapsackPro do
       before do
         expect(Logger).to receive(:new).and_return(logger)
         expect(logger).to receive(:level=).with(Logger::WARN)
+        expect(logger).to receive(:progname=).with('[knapsack_pro]')
       end
 
       it { should eql logger }
@@ -26,6 +27,7 @@ describe KnapsackPro do
       let(:logger) { double('custom logger') }
 
       before do
+        expect(logger).to receive(:progname=).with('[knapsack_pro]')
         described_class.logger = logger
       end
 
