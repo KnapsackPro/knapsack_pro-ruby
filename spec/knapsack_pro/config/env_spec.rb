@@ -7,7 +7,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_CI_NODE_TOTAL has value' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_TOTAL' => 5 }) }
-        it { should eql 5 }
+        it { should eq 5 }
       end
 
       context 'when CI environment has value' do
@@ -15,12 +15,12 @@ describe KnapsackPro::Config::Env do
           expect(described_class).to receive(:ci_env_for).with(:node_total).and_return(4)
         end
 
-        it { should eql 4 }
+        it { should eq 4 }
       end
     end
 
     context "when ENV doesn't exist" do
-      it { should eql 1 }
+      it { should eq 1 }
     end
   end
 
@@ -30,7 +30,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_CI_NODE_INDEX has value' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_INDEX' => 3 }) }
-        it { should eql 3 }
+        it { should eq 3 }
       end
 
       context 'when CI environment has value' do
@@ -38,12 +38,12 @@ describe KnapsackPro::Config::Env do
           expect(described_class).to receive(:ci_env_for).with(:node_index).and_return(2)
         end
 
-        it { should eql 2 }
+        it { should eq 2 }
       end
     end
 
     context "when ENV doesn't exist" do
-      it { should eql 0 }
+      it { should eq 0 }
     end
   end
 
@@ -53,7 +53,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_COMMIT_HASH has value' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_COMMIT_HASH' => '3fa64859337f6e56409d49f865d13fd7' }) }
-        it { should eql '3fa64859337f6e56409d49f865d13fd7' }
+        it { should eq '3fa64859337f6e56409d49f865d13fd7' }
       end
 
       context 'when CI environment has value' do
@@ -61,7 +61,7 @@ describe KnapsackPro::Config::Env do
           expect(described_class).to receive(:ci_env_for).with(:commit_hash).and_return('fe61a08118d0d52e97c38666eba1eaf3')
         end
 
-        it { should eql 'fe61a08118d0d52e97c38666eba1eaf3' }
+        it { should eq 'fe61a08118d0d52e97c38666eba1eaf3' }
       end
     end
 
@@ -76,7 +76,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_BRANCH has value' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_BRANCH' => 'master' }) }
-        it { should eql 'master' }
+        it { should eq 'master' }
       end
 
       context 'when CI environment has value' do
@@ -84,7 +84,7 @@ describe KnapsackPro::Config::Env do
           expect(described_class).to receive(:ci_env_for).with(:branch).and_return('feature-branch')
         end
 
-        it { should eql 'feature-branch' }
+        it { should eq 'feature-branch' }
       end
     end
 
@@ -99,7 +99,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_PROJECT_DIR has value' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_PROJECT_DIR' => '/home/user/myapp' }) }
-        it { should eql '/home/user/myapp' }
+        it { should eq '/home/user/myapp' }
       end
 
       context 'when CI environment has value' do
@@ -107,7 +107,7 @@ describe KnapsackPro::Config::Env do
           expect(described_class).to receive(:ci_env_for).with(:project_dir).and_return('/home/runner/myapp')
         end
 
-        it { should eql '/home/runner/myapp' }
+        it { should eq '/home/runner/myapp' }
       end
     end
 
@@ -122,7 +122,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       let(:test_file_pattern) { 'custom_spec/**/*_spec.rb' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_PATTERN' => test_file_pattern }) }
-      it { should eql test_file_pattern }
+      it { should eq test_file_pattern }
     end
 
     context "when ENV doesn't exist" do
@@ -136,7 +136,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       let(:repository_adapter) { 'git' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_REPOSITORY_ADAPTER' => repository_adapter }) }
-      it { should eql repository_adapter }
+      it { should eq repository_adapter }
     end
 
     context "when ENV doesn't exist" do
@@ -150,7 +150,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       let(:recording_enabled) { 'true' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
-      it { should eql recording_enabled }
+      it { should eq recording_enabled }
     end
 
     context "when ENV doesn't exist" do
@@ -216,7 +216,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       let(:test_suite_token_rspec) { 'rspec-token' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC' => test_suite_token_rspec }) }
-      it { should eql test_suite_token_rspec }
+      it { should eq test_suite_token_rspec }
     end
 
     context "when ENV doesn't exist" do
@@ -230,7 +230,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       let(:test_suite_token_minitest) { 'minitest-token' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST' => test_suite_token_minitest }) }
-      it { should eql test_suite_token_minitest }
+      it { should eq test_suite_token_minitest }
     end
 
     context "when ENV doesn't exist" do
@@ -244,7 +244,7 @@ describe KnapsackPro::Config::Env do
     context 'when ENV exists' do
       let(:test_suite_token_cucumber) { 'cucumber-token' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER' => test_suite_token_cucumber }) }
-      it { should eql test_suite_token_cucumber }
+      it { should eq test_suite_token_cucumber }
     end
 
     context "when ENV doesn't exist" do
