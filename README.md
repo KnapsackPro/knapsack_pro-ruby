@@ -135,6 +135,16 @@ KnapsackPro.logger.level = Logger::INFO
 
 ## Setup your CI server
 
+Set environment variables on your CI:
+
+`KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.com` - this is endpoint to [Knapsack Pro API](http://docs.knapsackpro.com).
+
+Set one or a few tokens depend on how many test suites you run on CI server.
+
+`KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` - as value set token for rspec test suite. Token can be generated when you sign in to [knapsackpro.com](http://www.knapsackpro.com).
+`KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` - token for cucumber test suite.
+`KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST` - token for minitest test suite.
+
 On your CI server run this command for the first CI node. Update `KNAPSACK_PRO_CI_NODE_INDEX` for the next one.
 
     # Step for RSpec
