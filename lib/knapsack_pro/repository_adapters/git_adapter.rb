@@ -1,12 +1,6 @@
 module KnapsackPro
   module RepositoryAdapters
     class GitAdapter < BaseAdapter
-      class << self
-        def credentials
-          @credentials ||= KnapsackPro::Credentials.new(:git_working_dir)
-        end
-      end
-
       def commit_hash
         `git -C "#{working_dir}" rev-parse HEAD`.strip
       end
@@ -17,12 +11,8 @@ module KnapsackPro
 
       private
 
-      def credentials
-        self.class.credentials.get
-      end
-
       def working_dir
-        KnapsackPro::Config::Env.project_dir || credentials[:git_working_dir]
+        KnapsackPro::Config::Env.project_dir
       end
     end
   end

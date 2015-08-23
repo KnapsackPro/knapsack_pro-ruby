@@ -3,12 +3,6 @@ module KnapsackPro
     class Connection
       TIMEOUT = 5
 
-      class << self
-        def credentials
-          @credentials ||= KnapsackPro::Credentials.new(:test_suite_token, :endpoint)
-        end
-      end
-
       def initialize(action)
         @action = action
       end
@@ -31,10 +25,6 @@ module KnapsackPro
 
       def logger
         KnapsackPro.logger
-      end
-
-      def credentials
-        self.class.credentials.get
       end
 
       def endpoint

@@ -1,8 +1,8 @@
 describe KnapsackPro::RepositoryAdapters::GitAdapter do
   before do
-    described_class.credentials.set = {
-      git_working_dir: KnapsackPro.root
-    }
+    stub_const('ENV', {
+      'KNAPSACK_PRO_PROJECT_DIR' => KnapsackPro.root,
+    })
   end
 
   it { should be_kind_of KnapsackPro::RepositoryAdapters::BaseAdapter }
