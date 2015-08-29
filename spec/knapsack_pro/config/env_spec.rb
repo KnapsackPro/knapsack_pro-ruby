@@ -182,14 +182,39 @@ describe KnapsackPro::Config::Env do
     subject { described_class.endpoint }
 
     context 'when ENV exists' do
-      let(:endpoint) { 'http://api.knapsackpro.com' }
+      let(:endpoint) { 'http://api-custom-url.knapsackpro.com' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_ENDPOINT' => endpoint }) }
       it { should eq endpoint }
     end
 
     context "when ENV doesn't exist" do
-      it do
-        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_ENDPOINT')
+      context 'when default mode' do
+        it { should eq 'http://api.knapsackpro.com' }
+      end
+
+      context 'when development mode' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'development' }) }
+        it { should eq 'http://api.knapsackpro.dev:3000' }
+      end
+
+      context 'when test mode' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'test' }) }
+        it { should eq 'http://api-staging.knapsackpro.com' }
+      end
+
+      context 'when production mode' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'production' }) }
+        it { should eq 'http://api.knapsackpro.com' }
+      end
+
+      context 'when unknown mode' do
+        before do
+          expect(described_class).to receive(:mode).and_return(:fake)
+        end
+
+        it do
+          expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_ENDPOINT')
+        end
       end
     end
   end

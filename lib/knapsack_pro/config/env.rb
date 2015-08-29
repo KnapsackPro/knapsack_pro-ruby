@@ -46,7 +46,19 @@ module KnapsackPro
         end
 
         def endpoint
-          required_env('KNAPSACK_PRO_ENDPOINT')
+          env_name = 'KNAPSACK_PRO_ENDPOINT'
+          return ENV[env_name] if ENV[env_name]
+
+          case mode
+          when :development
+            'http://api.knapsackpro.dev:3000'
+          when :test
+            'http://api-staging.knapsackpro.com'
+          when :production
+            'http://api.knapsackpro.com'
+          else
+            required_env(env_name)
+          end
         end
 
         def test_suite_token
