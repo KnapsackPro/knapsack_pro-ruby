@@ -4,7 +4,9 @@ require 'net/http'
 require 'json'
 require 'uri'
 require 'rake/testtask'
+require 'active_support/tagged_logging'
 require_relative 'knapsack_pro/version'
+require_relative 'knapsack_pro/logger_wrapper'
 require_relative 'knapsack_pro/config/ci/base'
 require_relative 'knapsack_pro/config/ci/circle'
 require_relative 'knapsack_pro/config/ci/semaphore'
@@ -46,16 +48,20 @@ module KnapsackPro
     end
 
     def logger
-      return @logger if @logger
-      log = ::Logger.new(STDOUT)
-      log.level = ::Logger::WARN
-      set_progname(log)
-      @logger = log
+      unless @logger
+        default_logger = ::Logger.new(STDOUT)
+        default_logger.level = ::Logger::WARN
+        self.logger = default_logger
+      end
+      @logger
     end
 
-    def logger=(value)
-      set_progname(value)
-      @logger = value
+    def logger=(logger)
+      @logger = KnapsackPro::LoggerWrapper.new(logger)
+    end
+
+    def reset_logger!
+      @logger = nil
     end
 
     def tracker

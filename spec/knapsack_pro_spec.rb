@@ -6,32 +6,34 @@ describe KnapsackPro do
   end
 
   describe '.logger' do
+    let(:logger_wrapper) { double }
+
     subject { described_class.logger }
 
-    before { described_class.logger = nil }
-    after  { described_class.logger = nil }
+    before { described_class.reset_logger! }
+    after { described_class.reset_logger! }
 
     context 'when default logger' do
       let(:logger) { instance_double(Logger) }
 
       before do
-        expect(Logger).to receive(:new).and_return(logger)
+        expect(Logger).to receive(:new).with(STDOUT).and_return(logger)
         expect(logger).to receive(:level=).with(Logger::WARN)
-        expect(logger).to receive(:progname=).with('[knapsack_pro]')
+        expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
       end
 
-      it { should eql logger }
+      it { should eql logger_wrapper }
     end
 
     context 'when custom logger' do
       let(:logger) { double('custom logger') }
 
       before do
-        expect(logger).to receive(:progname=).with('[knapsack_pro]')
+        expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
         described_class.logger = logger
       end
 
-      it { should eql logger }
+      it { should eql logger_wrapper }
     end
   end
 

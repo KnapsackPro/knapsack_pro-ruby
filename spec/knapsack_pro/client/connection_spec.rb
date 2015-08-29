@@ -43,7 +43,10 @@ describe KnapsackPro::Client::Connection do
 
         it do
           parsed_response = { 'errors' => 'value' }
-          expect(KnapsackPro.logger).to receive(:error).with(parsed_response)
+
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:error).with(parsed_response)
 
           expect(subject).to eq(parsed_response)
           expect(connection.success?).to be true
