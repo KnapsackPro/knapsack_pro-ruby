@@ -65,6 +65,17 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER']
         end
 
+        def mode
+          mode = ENV['KNAPSACK_PRO_MODE']
+          return :production if mode.nil?
+          mode = mode.to_sym
+          if [:development, :test, :production].include?(mode)
+            mode
+          else
+            raise ArgumentError.new('Wrong mode name')
+          end
+        end
+
         def ci_env_for(env_name)
           value = nil
           ci_list = KnapsackPro::Config::CI.constants - [:Base]
