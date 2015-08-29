@@ -38,6 +38,7 @@ knapsack_pro gem is not ready yet. Please see https://github.com/ArturT/knapsack
 - [Setup your CI server](#setup-your-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [Repository adapter](#repository-adapter)
+    - [Environment variables for debugging gem](#environment-variables-for-debugging-gem)
   - [Passing arguments to rake task](#passing-arguments-to-rake-task)
     - [Passing arguments to rspec](#passing-arguments-to-rspec)
     - [Passing arguments to cucumber](#passing-arguments-to-cucumber)
@@ -135,10 +136,6 @@ KnapsackPro.logger.level = Logger::INFO
 
 ## Setup your CI server
 
-Set environment variables on your CI:
-
-`KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.com` - this is endpoint to [Knapsack Pro API](http://docs.knapsackpro.com).
-
 Set one or a few tokens depend on how many test suites you run on CI server.
 
 `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` - as value set token for rspec test suite. Token can be generated when you sign in to [knapsackpro.com](http://www.knapsackpro.com).
@@ -186,6 +183,12 @@ By default this variable has no value so knapsack_pro will try to get those info
 `KNAPSACK_PRO_COMMIT_HASH` - Commit hash. You run tests for this commit.
 
 `KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
+
+#### Environment variables for debugging gem
+
+`KNAPSACK_PRO_ENDPOINT` - Default value is `http://api.knapsackpro.com` which is endpoint for [Knapsack Pro API](http://docs.knapsackpro.com).
+
+`KNAPSACK_PRO_MODE` - Default value is `production`. When mode is `development` then endpoint is `http://api.knapsackpro.dev:3000`. When mode is `test` then endpoint is `http://api-staging.knapsackpro.com`.
 
 ### Passing arguments to rake task
 
