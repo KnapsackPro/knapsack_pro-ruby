@@ -68,6 +68,7 @@ module KnapsackPro
       def post
         uri = URI.parse(endpoint_url)
         http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = (uri.scheme == 'https')
         http.open_timeout = TIMEOUT
         http.read_timeout = TIMEOUT
 
