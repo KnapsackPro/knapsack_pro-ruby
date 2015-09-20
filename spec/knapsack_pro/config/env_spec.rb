@@ -6,7 +6,7 @@ describe KnapsackPro::Config::Env do
 
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_CI_NODE_TOTAL has value' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_TOTAL' => 5 }) }
+        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_TOTAL' => '5' }) }
         it { should eq 5 }
       end
 
@@ -29,7 +29,7 @@ describe KnapsackPro::Config::Env do
 
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_CI_NODE_INDEX has value' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_INDEX' => 3 }) }
+        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_INDEX' => '3' }) }
         it { should eq 3 }
       end
 

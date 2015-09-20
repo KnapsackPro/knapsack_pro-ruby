@@ -3,15 +3,15 @@ module KnapsackPro
     class Env
       class << self
         def ci_node_total
-          ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] ||
+          (ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] ||
             ci_env_for(:node_total) ||
-            1
+            1).to_i
         end
 
         def ci_node_index
-          ENV['KNAPSACK_PRO_CI_NODE_INDEX'] ||
+          (ENV['KNAPSACK_PRO_CI_NODE_INDEX'] ||
             ci_env_for(:node_index) ||
-            0
+            0).to_i
         end
 
         def commit_hash
