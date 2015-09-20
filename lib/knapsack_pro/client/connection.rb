@@ -77,7 +77,7 @@ module KnapsackPro
         logger.error(response) if errors?
 
         response
-      rescue Errno::ECONNREFUSED, Net::OpenTimeout, Net::ReadTimeout => e
+      rescue Errno::ECONNREFUSED, EOFError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
       end
     end
