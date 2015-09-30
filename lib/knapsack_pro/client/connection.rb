@@ -78,7 +78,7 @@ module KnapsackPro
         if errors?
           logger.error(response)
         else
-          logger.debug(response)
+          logger.info(response)
         end
 
         response

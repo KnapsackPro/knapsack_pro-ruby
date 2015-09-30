@@ -61,7 +61,7 @@ describe KnapsackPro::Client::Connection do
         let(:body) { '' }
 
         it do
-          expect(logger).to receive(:debug).with('')
+          expect(logger).to receive(:info).with('')
 
           expect(subject).to eq('')
           expect(connection.success?).to be true
