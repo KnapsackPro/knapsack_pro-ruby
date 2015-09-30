@@ -122,6 +122,14 @@ describe KnapsackPro::Client::Connection do
 
         it { should be true }
       end
+
+      context 'when response has error (i.e. internal server error)' do
+        let(:response) do
+          { 'error' => 'Internal Server Error' }
+        end
+
+        it { should be true }
+      end
     end
   end
 end
