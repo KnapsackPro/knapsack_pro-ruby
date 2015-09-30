@@ -75,7 +75,11 @@ module KnapsackPro
         http_response = http.post(uri.path, request_body, json_headers)
         @response = parse_response(http_response.body)
 
-        logger.error(response) if errors?
+        if errors?
+          logger.error(response)
+        else
+          logger.debug(response)
+        end
 
         response
       rescue Errno::ECONNREFUSED, EOFError, Net::OpenTimeout, Net::ReadTimeout => e

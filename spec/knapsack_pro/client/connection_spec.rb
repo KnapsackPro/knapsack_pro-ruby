@@ -19,6 +19,8 @@ describe KnapsackPro::Client::Connection do
   end
 
   describe '#call' do
+    let(:logger) { instance_double(Logger) }
+
     subject { connection.call }
 
     context 'when http method is POST' do
@@ -37,6 +39,8 @@ describe KnapsackPro::Client::Connection do
           "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
           { "Content-Type" => "application/json", "Accept" => "application/json" }
         ).and_return(http_response)
+
+        expect(KnapsackPro).to receive(:logger).and_return(logger)
       end
 
       context 'when body response is json' do
@@ -45,8 +49,6 @@ describe KnapsackPro::Client::Connection do
         it do
           parsed_response = { 'errors' => 'value' }
 
-          logger = instance_double(Logger)
-          expect(KnapsackPro).to receive(:logger).and_return(logger)
           expect(logger).to receive(:error).with(parsed_response)
 
           expect(subject).to eq(parsed_response)
@@ -59,6 +61,8 @@ describe KnapsackPro::Client::Connection do
         let(:body) { '' }
 
         it do
+          expect(logger).to receive(:debug).with('')
+
           expect(subject).to eq('')
           expect(connection.success?).to be true
           expect(connection.errors?).to be false
