@@ -107,7 +107,7 @@ describe KnapsackPro::Client::Connection do
     end
 
     context 'when response has value' do
-      context 'when response has errors' do
+      context 'when response has no errors' do
         let(:response) do
           { 'fake' => 'response' }
         end
@@ -115,7 +115,7 @@ describe KnapsackPro::Client::Connection do
         it { should be false }
       end
 
-      context 'when response has no errors' do
+      context 'when response has errors' do
         let(:response) do
           { 'errors' => [{ 'field' => 'is wrong' }] }
         end
