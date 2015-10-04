@@ -75,6 +75,7 @@ module KnapsackPro
         http_response = http.post(uri.path, request_body, json_headers)
         @response = parse_response(http_response.body)
 
+        logger.info('API response:')
         if errors?
           logger.error(response)
         else

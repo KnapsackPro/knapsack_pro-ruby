@@ -40,7 +40,8 @@ describe KnapsackPro::Client::Connection do
           { "Content-Type" => "application/json", "Accept" => "application/json" }
         ).and_return(http_response)
 
-        expect(KnapsackPro).to receive(:logger).and_return(logger)
+        expect(KnapsackPro).to receive(:logger).twice.and_return(logger)
+        expect(logger).to receive(:info).with('API response:')
       end
 
       context 'when body response is json' do
