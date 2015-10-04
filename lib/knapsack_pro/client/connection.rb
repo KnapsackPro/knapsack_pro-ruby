@@ -78,7 +78,12 @@ module KnapsackPro
         if errors?
           logger.error(response)
         else
+          puts 'test info:'
           logger.info(response)
+          puts 'test error:'
+          logger.error(response)
+          puts 'test puts:'
+          puts response
         end
 
         response
