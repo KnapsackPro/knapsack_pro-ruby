@@ -8,7 +8,7 @@ describe KnapsackPro::Presenter do
       expect(KnapsackPro).to receive(:tracker).and_return(tracker)
     end
 
-    it { should eql "\n[Knapsack Pro] Global time execution for tests: 01h 02m 03s" }
+    it { should eql "Global time execution for tests: 01h 02m 03s" }
   end
 
   describe '.pretty_seconds' do
