@@ -1,7 +1,7 @@
 module KnapsackPro
   module Client
     class Connection
-      TIMEOUT = 5
+      TIMEOUT = 15
 
       def initialize(action)
         @action = action

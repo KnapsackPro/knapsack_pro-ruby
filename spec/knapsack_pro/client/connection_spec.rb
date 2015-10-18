@@ -30,8 +30,8 @@ describe KnapsackPro::Client::Connection do
         expect(Net::HTTP).to receive(:new).with('api.knapsackpro.dev', 3000).and_return(http)
 
         expect(http).to receive(:use_ssl=).with(false)
-        expect(http).to receive(:open_timeout=).with(5)
-        expect(http).to receive(:read_timeout=).with(5)
+        expect(http).to receive(:open_timeout=).with(15)
+        expect(http).to receive(:read_timeout=).with(15)
 
         http_response = instance_double(Net::HTTPOK, body: body)
         expect(http).to receive(:post).with(
