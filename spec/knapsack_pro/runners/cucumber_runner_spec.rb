@@ -6,21 +6,42 @@ describe KnapsackPro::Runners::CucumberRunner do
   describe '.run' do
     let(:args) { '--custom-arg' }
 
-    before do
-      stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER' => 'cucumber-token' })
-    end
-
     after { described_class.run(args) }
 
-    it do
+    before do
+      stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER' => 'cucumber-token' })
+
       stringify_test_file_paths = 'features/a.feature features/b.feature'
       runner = instance_double(described_class,
                                stringify_test_file_paths: stringify_test_file_paths)
       expect(described_class).to receive(:new)
       .with(KnapsackPro::Adapters::CucumberAdapter).and_return(runner)
 
-      expect(Kernel).to receive(:exit)
       expect(Kernel).to receive(:system).with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=cucumber-token bundle exec cucumber --custom-arg -- features/a.feature features/b.feature')
+    end
+
+    context 'when command exit with success code' do
+      let(:exitstatus) { 0 }
+
+      before do
+        expect($?).to receive(:exitstatus).and_return(exitstatus)
+      end
+
+      it do
+        expect(Kernel).not_to receive(:exit)
+      end
+    end
+
+    context 'when command exit without success code' do
+      let(:exitstatus) { 1 }
+
+      before do
+        expect($?).to receive(:exitstatus).twice.and_return(exitstatus)
+      end
+
+      it do
+        expect(Kernel).to receive(:exit).with(exitstatus)
+      end
     end
   end
 end
