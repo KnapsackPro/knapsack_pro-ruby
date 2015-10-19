@@ -9,7 +9,7 @@ module KnapsackPro
         cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=#{ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']} bundle exec rspec #{args} --default-path #{runner.test_dir} -- #{runner.stringify_test_file_paths}]
 
         Kernel.system(cmd)
-        Kernel.exit($?.exitstatus)
+        Kernel.exit($?.exitstatus) unless $?.exitstatus == 0
       end
     end
   end
