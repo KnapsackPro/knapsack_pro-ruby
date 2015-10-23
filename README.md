@@ -132,11 +132,17 @@ KnapsackPro.logger.level = Logger::INFO
 
 ## Setup your CI server
 
+### Set API key token
+
 Set one or a few tokens depend on how many test suites you run on CI server.
 
-`KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` - as value set token for rspec test suite. Token can be generated when you sign in to [knapsackpro.com](http://www.knapsackpro.com).
-`KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` - token for cucumber test suite.
-`KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST` - token for minitest test suite.
+* `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` - as value set token for rspec test suite. Token can be generated when you sign in to [knapsackpro.com](http://www.knapsackpro.com).
+* `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` - token for cucumber test suite.
+* `KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST` - token for minitest test suite.
+
+__Tip:__ In case you have for instance multiple rspec test suites then prepend each of knapsack_pro command which executes tests with `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` variable.
+
+### Set knapsack_pro command to execute tests
 
 On your CI server run this command for the first CI node. Update `KNAPSACK_PRO_CI_NODE_INDEX` for the next one.
 
@@ -159,6 +165,8 @@ You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default di
 
     # Step for Minitest
     $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+
+## Extra configuration for CI server
 
 ### Info about ENV variables
 
