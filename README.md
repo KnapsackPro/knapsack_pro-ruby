@@ -14,6 +14,8 @@ The knapsack_pro gem supports:
 * [Minitest](http://docs.seattlerb.org/minitest/)
 * [Turnip](https://github.com/jnicklas/turnip)
 
+__Would you like to try knapsack_pro gem?__ Drop me an [email](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/knapsack_pro.gemspec#L10) so I will generate API keys for you.
+
 # Requirements
 
 * >= Ruby 2.0
