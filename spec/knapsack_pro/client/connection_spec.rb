@@ -33,14 +33,16 @@ describe KnapsackPro::Client::Connection do
         expect(http).to receive(:open_timeout=).with(15)
         expect(http).to receive(:read_timeout=).with(15)
 
-        http_response = instance_double(Net::HTTPOK, body: body)
+        header = { 'X-Request-Id' => 'fake-uuid' }
+        http_response = instance_double(Net::HTTPOK, body: body, header: header)
         expect(http).to receive(:post).with(
           endpoint_path,
           "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
           { "Content-Type" => "application/json", "Accept" => "application/json" }
         ).and_return(http_response)
 
-        expect(KnapsackPro).to receive(:logger).twice.and_return(logger)
+        expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+        expect(logger).to receive(:info).with('API request UUID: fake-uuid')
         expect(logger).to receive(:info).with('API response:')
       end
 

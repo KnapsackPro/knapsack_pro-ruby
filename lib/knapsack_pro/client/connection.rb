@@ -75,6 +75,9 @@ module KnapsackPro
         http_response = http.post(uri.path, request_body, json_headers)
         @response = parse_response(http_response.body)
 
+        request_uuid = http_response.header['X-Request-Id']
+
+        logger.info("API request UUID: #{request_uuid}")
         logger.info('API response:')
         if errors?
           logger.error(response)
