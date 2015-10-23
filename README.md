@@ -16,6 +16,24 @@ The knapsack_pro gem supports:
 
 __Would you like to try knapsack_pro gem?__ Drop me an [email](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/knapsack_pro.gemspec#L10) so I will generate API keys for you.
 
+# How knapsack_pro works?
+
+## Basics
+
+Basically it will track your branches, commits and on how many CI nodes you are running tests.
+Collected data about test time execution will be send to API where test suite split is done.
+Next time when you will run tests you will get proper test files for each CI node in order to achieve comparable time execution on each CI node.
+
+# Details
+
+For instance when you will run tests with rake knapsack_pro:rspec then:
+
+* information about all your existing test files are sent to API http://docs.knapsackpro.com/api/v1/#build_distributions_subset_post
+* API returns which files should be executed on particular CI node (example KNAPSACK_PRO_CI_NODE_INDEX=0)
+* when API server has info about previous tests runs then it will use it to return more accurate test split results, in other case API returns simple split based on directory names
+* knapsack_pro will run test files which got from API
+* after tests finished knapsack_pro will send information about time execution of each file to API http://docs.knapsackpro.com/api/v1/#build_subsets_post so data can be used for future test runs
+
 # Requirements
 
 * >= Ruby 2.0
