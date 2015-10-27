@@ -24,7 +24,7 @@ Basically it will track your branches, commits and on how many CI nodes you are 
 Collected data about test time execution will be send to API where test suite split is done.
 Next time when you will run tests you will get proper test files for each CI node in order to achieve comparable time execution on each CI node.
 
-# Details
+## Details
 
 For instance when you will run tests with rake knapsack_pro:rspec then:
 
