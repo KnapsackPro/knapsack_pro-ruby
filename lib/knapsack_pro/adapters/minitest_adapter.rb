@@ -5,7 +5,8 @@ module KnapsackPro
       @@parent_of_test_dir = nil
 
       def self.test_path(obj)
-        test_method_name = obj.name
+        # Pick the first public method in the class itself, that starts with "test_"
+        test_method_name = obj.public_methods(false).select{|m| m =~ /^test_/ }.first
         method_object = obj.method(test_method_name)
         full_test_path = method_object.source_location.first
         parent_of_test_dir_regexp = Regexp.new("^#{@@parent_of_test_dir}")
@@ -32,13 +33,13 @@ module KnapsackPro
       def bind_time_tracker
         ::Minitest::Test.send(:include, BindTimeTrackerMinitestPlugin)
 
-        ::Minitest.after_run do
+        add_post_run_callback do
           KnapsackPro.logger.info(KnapsackPro::Presenter.global_time)
         end
       end
 
       def bind_save_report
-        Minitest.after_run do
+        add_post_run_callback do
           KnapsackPro::Report.save
         end
       end
@@ -46,6 +47,16 @@ module KnapsackPro
       def set_test_helper_path(file_path)
         test_dir_path = File.dirname(file_path)
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
+      end
+
+      private
+
+      def add_post_run_callback(&block)
+        if Minitest.respond_to?(:after_run)
+          Minitest.after_run { block.call }
+        else
+          Minitest::Unit.after_tests { block.call }
+        end
       end
     end
   end
