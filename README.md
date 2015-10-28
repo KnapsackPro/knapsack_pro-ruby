@@ -202,14 +202,19 @@ In case when you use other CI provider for instance [Jenkins](https://jenkins-ci
 
 #### Repository adapter
 
-`KNAPSACK_PRO_REPOSITORY_ADAPTER` - When it has value `git` then your local version of git on CI server will be used to get info about branch name, commit hash and project directory path.
-By default this variable has no value so knapsack_pro will try to get those info from [supported CI](#supported-ci-providers) (CI providers have branch, commit, project directory stored as environment variables). In case when you use other CI provider like Jenkins then please set below variables on your own.
+##### When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (optional)
+
+`KNAPSACK_PRO_REPOSITORY_ADAPTER` - When it has value `git` then your local version of git on CI server will be used to get info about branch name and commit hash. You need to set also `KNAPSACK_PRO_PROJECT_DIR` with project directory path.
+
+`KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
+
+##### When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)
+
+By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` variable has no value so knapsack_pro will try to get info about branch name and commit hash from [supported CI](#supported-ci-providers) (CI providers have branch, commit, project directory stored as environment variables). In case when you use other CI provider like Jenkins then please set below variables on your own.
 
 `KNAPSACK_PRO_BRANCH` - It's branch name. You run tests on this branch.
 
 `KNAPSACK_PRO_COMMIT_HASH` - Commit hash. You run tests for this commit.
-
-`KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
 
 #### Environment variables for debugging gem
 
