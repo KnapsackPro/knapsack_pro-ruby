@@ -271,6 +271,12 @@ If you are using circleci.com you can omit `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNA
 Here is an example for test configuration in your `circleci.yml` file.
 
 ```yaml
+machine:
+  environment:
+    # Tokens should be set in CircleCI settings to avoid expose tokens in build logs
+    # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: rspec-token
+    # KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER: cucumber-token
+    # KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: minitest-token
 test:
   override:
     # Step for RSpec
