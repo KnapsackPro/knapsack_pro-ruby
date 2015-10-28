@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.1.2
+
+* Fix Travis CI environment variables support
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/1
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.1.1...v0.1.2
+
 ### 0.1.1
 
 * Make knapsack_pro backwards compatible with earlier version of minitest
