@@ -64,7 +64,7 @@ describe KnapsackPro::Config::CI::Travis do
 
     context 'when environment exists' do
       let(:env) { { 'TRAVIS_BUILD_DIR' => 'knapsack_pro-ruby' } }
-      it { should eql '/home/ubuntu/knapsack_pro-ruby' }
+      it { should eql 'knapsack_pro-ruby' }
     end
 
     context "when environment doesn't exist" do
