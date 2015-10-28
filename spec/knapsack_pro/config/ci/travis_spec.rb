@@ -10,27 +10,13 @@ describe KnapsackPro::Config::CI::Travis do
   describe '#node_total' do
     subject { described_class.new.node_total }
 
-    context 'when environment exists' do
-      let(:env) { { 'KNAPSACK_PRO_CI_NODE_TOTAL' => 4 } }
-      it { should eql 4 }
-    end
-
-    context "when environment doesn't exist" do
-      it { should be nil }
-    end
+    it { should be nil }
   end
 
   describe '#node_index' do
     subject { described_class.new.node_index }
 
-    context 'when environment exists' do
-      let(:env) { { 'KNAPSACK_PRO_CI_NODE_INDEX' => 3 } }
-      it { should eql 3 }
-    end
-
-    context "when environment doesn't exist" do
-      it { should be nil }
-    end
+    it { should be nil }
   end
 
   describe '#commit_hash' do
