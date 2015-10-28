@@ -1,4 +1,4 @@
-module KnapsackPro  
+module KnapsackPro
   module Config
     module CI
       class Travis < Base
@@ -25,4 +25,3 @@ module KnapsackPro
     end
   end
 end
-
