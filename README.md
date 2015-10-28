@@ -304,27 +304,12 @@ script:
   - "bundle exec rake knapsack_pro:minitest"
 
 env:
-  - KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0
-  - KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1
-```
-
-If you want to have some global ENVs and matrix of ENVs then do it like this:
-
-```yaml
-script:
-  # Step for RSpec
-  - "bundle exec rake knapsack_pro:rspec"
-
-  # Step for Cucumber
-  - "bundle exec rake knapsack_pro:cucumber"
-
-  # Step for Minitest
-  - "bundle exec rake knapsack_pro:minitest"
-
-env:
   global:
-    - RAILS_ENV=test
-    - MY_GLOBAL_VAR=123
+    # tokens should be set in travis settings in web interface to avoid expose tokens in build logs
+    - KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token
+    - KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token
+    - KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token
+
     - KNAPSACK_PRO_CI_NODE_TOTAL=2
   matrix:
     - KNAPSACK_PRO_CI_NODE_INDEX=0
@@ -333,8 +318,8 @@ env:
 
 Such configuration will generate matrix with 2 following ENV rows:
 
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 RAILS_ENV=test MY_GLOBAL_VAR=123
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 RAILS_ENV=test MY_GLOBAL_VAR=123
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token
 
 More info about global and matrix ENV configuration in [travis docs](http://docs.travis-ci.com/user/build-configuration/#Environment-variables).
 
