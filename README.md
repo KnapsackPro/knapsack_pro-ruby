@@ -266,7 +266,7 @@ This is optional way of using knapsack_pro when you don't want to add it to `Gem
 
 #### Info for CircleCI users
 
-If you are using circleci.com you can omit `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX`. Knapsack Pro will use `KNAPSACK_PRO_CIRCLE_NODE_TOTAL` and `KNAPSACK_PRO_CIRCLE_NODE_INDEX` provided by CircleCI.
+If you are using circleci.com you can omit `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX`. Knapsack Pro will use `CIRCLE_NODE_TOTAL` and `CIRCLE_NODE_INDEX` provided by CircleCI.
 
 Here is an example for test configuration in your `circleci.yml` file.
 
