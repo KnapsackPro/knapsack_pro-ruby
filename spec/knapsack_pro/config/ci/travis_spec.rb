@@ -63,8 +63,8 @@ describe KnapsackPro::Config::CI::Travis do
     subject { described_class.new.project_dir }
 
     context 'when environment exists' do
-      let(:env) { { 'TRAVIS_BUILD_DIR' => 'knapsack_pro-ruby' } }
-      it { should eql 'knapsack_pro-ruby' }
+      let(:env) { { 'TRAVIS_BUILD_DIR' => '/home/travis/build/KnapsackPro/rails-app-with-knapsack_pro' } }
+      it { should eql '/home/travis/build/KnapsackPro/rails-app-with-knapsack_pro' }
     end
 
     context "when environment doesn't exist" do
