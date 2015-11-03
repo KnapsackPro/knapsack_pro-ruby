@@ -1,7 +1,7 @@
 module KnapsackPro
   module Adapters
     class RSpecAdapter < BaseAdapter
-      TEST_DIR_PATTERN = 'spec/**/*_spec.rb'
+      TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
 
       def self.test_path(example_group)
         unless example_group[:turnip]

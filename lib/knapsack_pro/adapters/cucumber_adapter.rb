@@ -1,7 +1,7 @@
 module KnapsackPro
   module Adapters
     class CucumberAdapter < BaseAdapter
-      TEST_DIR_PATTERN = 'features/**/*.feature'
+      TEST_DIR_PATTERN = 'features/**{,/*/**}/*.feature'
 
       def self.test_path(scenario_or_outline_table)
         if scenario_or_outline_table.respond_to?(:file)

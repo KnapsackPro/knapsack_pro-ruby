@@ -1,6 +1,6 @@
 describe KnapsackPro::Adapters::BaseAdapter do
   it do
-    expect(described_class::TEST_DIR_PATTERN).to eq 'test/**/*_test.rb'
+    expect(described_class::TEST_DIR_PATTERN).to eq 'test/**{,/*/**}/*_test.rb'
   end
 
   describe '.bind' do
