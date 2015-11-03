@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.2.0
+
+* Change file path patterns to support 1-level symlinks by default
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/2
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.1.2...v0.2.0
+
 ### 0.1.2
 
 * Fix Travis CI environment variables support
