@@ -17,7 +17,7 @@ describe KnapsackPro::TestFilePattern do
     context 'when ENV not defined' do
       let(:env_test_file_pattern) { nil }
 
-      it { should eq 'test/**/*_test.rb' }
+      it { should eq 'test/**{,/*/**}/*_test.rb' }
     end
   end
 end
