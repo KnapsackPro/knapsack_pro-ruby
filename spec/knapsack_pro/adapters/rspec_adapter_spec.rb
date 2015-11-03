@@ -1,6 +1,6 @@
 describe KnapsackPro::Adapters::RSpecAdapter do
   it do
-    expect(described_class::TEST_DIR_PATTERN).to eq 'spec/**/*_spec.rb'
+    expect(described_class::TEST_DIR_PATTERN).to eq 'spec/**{,/*/**}/*_spec.rb'
   end
 
   context do

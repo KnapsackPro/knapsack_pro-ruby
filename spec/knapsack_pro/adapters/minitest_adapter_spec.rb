@@ -6,7 +6,7 @@ end
 
 describe KnapsackPro::Adapters::MinitestAdapter do
   it do
-    expect(described_class::TEST_DIR_PATTERN).to eq 'test/**/*_test.rb'
+    expect(described_class::TEST_DIR_PATTERN).to eq 'test/**{,/*/**}/*_test.rb'
   end
 
   describe '.test_path' do

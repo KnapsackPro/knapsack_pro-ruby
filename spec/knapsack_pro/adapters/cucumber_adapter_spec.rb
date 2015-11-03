@@ -1,6 +1,6 @@
 describe KnapsackPro::Adapters::CucumberAdapter do
   it do
-    expect(described_class::TEST_DIR_PATTERN).to eq 'features/**/*.feature'
+    expect(described_class::TEST_DIR_PATTERN).to eq 'features/**{,/*/**}/*.feature'
   end
 
   context do

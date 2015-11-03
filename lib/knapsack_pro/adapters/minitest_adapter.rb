@@ -1,7 +1,7 @@
 module KnapsackPro
   module Adapters
     class MinitestAdapter < BaseAdapter
-      TEST_DIR_PATTERN = 'test/**/*_test.rb'
+      TEST_DIR_PATTERN = 'test/**{,/*/**}/*_test.rb'
       @@parent_of_test_dir = nil
 
       def self.test_path(obj)
