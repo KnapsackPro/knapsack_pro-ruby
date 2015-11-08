@@ -46,14 +46,15 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
 
 - [Update gem](#update-gem)
 - [Installation](#installation)
-- [Usage](#usage)
-  - [Step for RSpec](#step-for-rspec)
-  - [Step for Cucumber](#step-for-cucumber)
-  - [Step for Minitest](#step-for-minitest)
-  - [Custom configuration](#custom-configuration)
-- [Setup your CI server](#setup-your-ci-server)
-  - [Set API key token](#set-api-key-token)
-  - [Set knapsack_pro command to execute tests](#set-knapsack_pro-command-to-execute-tests)
+- [How to set up](#how-to-set-up)
+  - [Usage](#usage)
+    - [Step for RSpec](#step-for-rspec)
+    - [Step for Cucumber](#step-for-cucumber)
+    - [Step for Minitest](#step-for-minitest)
+    - [Custom configuration](#custom-configuration)
+  - [Setup your CI server](#setup-your-ci-server)
+    - [Set API key token](#set-api-key-token)
+    - [Set knapsack_pro command to execute tests](#set-knapsack_pro-command-to-execute-tests)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [Repository adapter](#repository-adapter)
@@ -101,13 +102,15 @@ Add this line at the bottom of `Rakefile` if your project has it:
 KnapsackPro.load_tasks if defined?(KnapsackPro)
 ```
 
-## Usage
+## How to set up
+
+### Usage
 
 You can find here example of rails app with already configured knapsack_pro.
 
 https://github.com/KnapsackPro/rails-app-with-knapsack_pro
 
-### Step for RSpec
+#### Step for RSpec
 
 Add at the beginning of your `spec_helper.rb`:
 
@@ -119,7 +122,7 @@ require 'knapsack_pro'
 KnapsackPro::Adapters::RSpecAdapter.bind
 ```
 
-### Step for Cucumber
+#### Step for Cucumber
 
 Create file `features/support/knapsack_pro.rb` and add there:
 
@@ -131,7 +134,7 @@ require 'knapsack_pro'
 KnapsackPro::Adapters::CucumberAdapter.bind
 ```
 
-### Step for Minitest
+#### Step for Minitest
 
 Add at the beginning of your `test_helper.rb`:
 
@@ -144,7 +147,7 @@ knapsack_pro_adapter = KnapsackPro::Adapters::MinitestAdapter.bind
 knapsack_pro_adapter.set_test_helper_path(__FILE__)
 ```
 
-### Custom configuration
+#### Custom configuration
 
 You can change default Knapsack Pro configuration for RSpec, Cucumber or Minitest tests. Here are examples what you can do. Put below configuration instead of `CUSTOM_CONFIG_GOES_HERE`.
 
@@ -155,9 +158,9 @@ KnapsackPro.logger = Logger.new(STDOUT)
 KnapsackPro.logger.level = Logger::INFO
 ```
 
-## Setup your CI server
+### Setup your CI server
 
-### Set API key token
+#### Set API key token
 
 Set one or a few tokens depend on how many test suites you run on CI server.
 
@@ -167,7 +170,7 @@ Set one or a few tokens depend on how many test suites you run on CI server.
 
 __Tip:__ In case you have for instance multiple rspec test suites then prepend each of knapsack_pro command which executes tests with `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` variable.
 
-### Set knapsack_pro command to execute tests
+#### Set knapsack_pro command to execute tests
 
 On your CI server run this command for the first CI node. Update `KNAPSACK_PRO_CI_NODE_INDEX` for the next one.
 
