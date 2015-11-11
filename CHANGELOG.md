@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.2.1
+
+* TestFileFinder should find unique files without duplicates when using test file pattern supporting symlinks
+* Update test file pattern to support symlinks in specs and readme examples
+* Backwards compatibility with knapsack gem old rspec adapter name
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.2.0...v0.2.1
+
 ### 0.2.0
 
 * Change file path patterns to support 1-level symlinks by default
