@@ -1,4 +1,8 @@
 describe KnapsackPro::Adapters::RSpecAdapter do
+  it 'backwards compatibility with knapsack gem old rspec adapter name' do
+    expect(KnapsackPro::Adapters::RspecAdapter.new).to be_kind_of(described_class)
+  end
+
   it do
     expect(described_class::TEST_DIR_PATTERN).to eq 'spec/**{,/*/**}/*_spec.rb'
   end

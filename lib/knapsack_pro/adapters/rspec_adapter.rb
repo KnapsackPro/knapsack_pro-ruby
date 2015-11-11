@@ -44,5 +44,11 @@ module KnapsackPro
         end
       end
     end
+
+    # This is added to provide backwards compatibility
+    # In case someone is doing switch from knapsack gem to the knapsack_pro gem
+    # and didn't notice the class name changed
+    class RspecAdapter < RSpecAdapter
+    end
   end
 end
