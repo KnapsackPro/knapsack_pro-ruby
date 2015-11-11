@@ -37,7 +37,7 @@ describe KnapsackPro::AllocatorBuilder do
     subject { allocator_builder.test_dir }
 
     before do
-      expect(KnapsackPro::TestFilePattern).to receive(:call).and_return('spec/**/*_spec.rb')
+      expect(KnapsackPro::TestFilePattern).to receive(:call).and_return('spec/**{,/*/**}/*_spec.rb')
     end
 
     it { should eq 'spec' }

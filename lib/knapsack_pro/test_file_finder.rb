@@ -21,7 +21,7 @@ module KnapsackPro
     attr_reader :test_file_pattern
 
     def test_files
-      Dir.glob(test_file_pattern).sort
+      Dir.glob(test_file_pattern).uniq.sort
     end
 
     def test_file_hash_for(test_file_path)

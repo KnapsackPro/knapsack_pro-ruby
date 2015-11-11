@@ -9,7 +9,7 @@ describe KnapsackPro::TestFilePattern do
     end
 
     context 'when ENV defined' do
-      let(:env_test_file_pattern) { 'spec/**/*_spec.rb' }
+      let(:env_test_file_pattern) { 'spec/**{,/*/**}/*_spec.rb' }
 
       it { should eq env_test_file_pattern }
     end

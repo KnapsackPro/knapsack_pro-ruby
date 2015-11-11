@@ -14,7 +14,7 @@ describe KnapsackPro::TestFileFinder do
   end
 
   describe '#call' do
-    let(:test_file_pattern) { 'spec_fake/**/*_spec.rb' }
+    let(:test_file_pattern) { 'spec_fake/**{,/*/**}/*_spec.rb' }
 
     subject { described_class.new(test_file_pattern).call }
 
