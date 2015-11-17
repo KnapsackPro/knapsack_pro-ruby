@@ -4,12 +4,10 @@ module KnapsackPro
       class Action
         attr_reader :endpoint_path, :http_method, :request_hash
 
-        def initialize(endpoint_path:,
-                       http_method:,
-                       request_hash:)
-          @endpoint_path = endpoint_path
-          @http_method = http_method
-          @request_hash = request_hash
+        def initialize(args)
+          @endpoint_path = args.fetch(:endpoint_path)
+          @http_method = args.fetch(:http_method)
+          @request_hash = args.fetch(:request_hash)
         end
       end
     end
