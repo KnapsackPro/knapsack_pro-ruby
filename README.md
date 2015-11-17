@@ -36,7 +36,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
 
 # Requirements
 
-* >= Ruby 2.1 (because gem uses required keyword arguments in ruby)
+* >= Ruby 2.0.0
 
 # Table of Contents
 

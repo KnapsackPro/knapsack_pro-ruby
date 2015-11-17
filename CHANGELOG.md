@@ -2,6 +2,10 @@
 
 * TODO
 
+### 0.3.0
+
+* Remove keyword arguments in order to add support for old ruby versions.
+
 ### 0.2.1
 
 * TestFileFinder should find unique files without duplicates when using test file pattern supporting symlinks
