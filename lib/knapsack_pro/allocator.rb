@@ -1,13 +1,10 @@
 module KnapsackPro
   class Allocator
-    def initialize(test_files:,
-                   ci_node_total:,
-                   ci_node_index:,
-                   repository_adapter:)
-      @test_files = test_files
-      @ci_node_total = ci_node_total
-      @ci_node_index = ci_node_index
-      @repository_adapter = repository_adapter
+    def initialize(args)
+      @test_files = args.fetch(:test_files)
+      @ci_node_total = args.fetch(:ci_node_total)
+      @ci_node_index = args.fetch(:ci_node_index)
+      @repository_adapter = args.fetch(:repository_adapter)
     end
 
     def test_file_paths
