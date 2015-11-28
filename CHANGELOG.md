@@ -6,6 +6,8 @@
 
 * Remove keyword arguments in order to add support for old ruby versions.
 
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.2.1...v0.3.0
+
 ### 0.2.1
 
 * TestFileFinder should find unique files without duplicates when using test file pattern supporting symlinks
