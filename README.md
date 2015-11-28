@@ -71,6 +71,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Info for Travis users](#info-for-travis-users)
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
+  - [Info for snap-ci.com users](#info-for-snap-cicom-users)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -361,6 +362,21 @@ Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as gl
 #### Info for buildkite.com users
 
 Knapsack Pro supports buildkite ENVs `BUILDKITE_PARALLEL_JOB_COUNT` and `BUILDKITE_PARALLEL_JOB`. The only thing you need to do is to configure the parallelism parameter in your build step and run the appropiate command in your build
+
+    # Step for RSpec
+    bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber
+    bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest
+    bundle exec rake knapsack_pro:minitest
+
+Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
+### Info for snap-ci.com users
+
+Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDEX`. The only thing you need to do is to configure number of workers for your project in configuration settings in order to enable parallelism. Next thing is to set below commands to be executed in your stage:
 
     # Step for RSpec
     bundle exec rake knapsack_pro:rspec
