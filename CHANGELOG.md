@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.4.0
+
+* Add support for snap-ci.com
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.3.0...v0.4.0
+
 ### 0.3.0
 
 * Remove keyword arguments in order to add support for old ruby versions.
