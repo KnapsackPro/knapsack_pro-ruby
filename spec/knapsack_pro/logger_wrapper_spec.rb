@@ -7,9 +7,9 @@ describe KnapsackPro::LoggerWrapper do
 
   [:debug, :info, :warn, :error, :fatal].each do |log_level|
     describe "##{log_level}" do
-      before {logger_wrapper.public_send(log_level, 'Test message') }
+      before { logger_wrapper.public_send(log_level, 'Test message') }
 
-      it { should eq "[knapsack_pro] Test message\n" }
+      it { should include "[knapsack_pro] Test message\n" }
     end
   end
 end
