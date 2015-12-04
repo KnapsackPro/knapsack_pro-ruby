@@ -20,7 +20,7 @@ __Would you like to try knapsack_pro gem?__ Please fill the [sign up form](https
 
 ## Basics
 
-Basically it will track your branches, commits and on how many CI nodes you are running tests.
+Basically it will track your branches, commits and for how many CI nodes you are running tests.
 Collected data about test time execution will be send to API where test suite split is done.
 Next time when you will run tests you will get proper test files for each CI node in order to achieve comparable time execution on each CI node.
 
