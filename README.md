@@ -103,6 +103,14 @@ Add this line at the bottom of `Rakefile` if your project has it:
 KnapsackPro.load_tasks if defined?(KnapsackPro)
 ```
 
+If you are using [VCR gem](https://github.com/vcr/vcr) then add Knapsack Pro API host to [ignore list](https://www.relishapp.com/vcr/vcr/v/2-9-3/docs/configuration/ignore-request):
+
+```ruby
+VCR.configure do |config|
+  config.ignore_hosts 'localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com'
+end
+```
+
 ## How to set up
 
 ### Usage
