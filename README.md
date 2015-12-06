@@ -14,7 +14,7 @@ The knapsack_pro gem supports:
 * [Minitest](http://docs.seattlerb.org/minitest/)
 * [Turnip](https://github.com/jnicklas/turnip)
 
-__Would you like to try knapsack_pro gem?__ Please fill the [sign up form](https://docs.google.com/forms/d/1S8b5I-W2wr4_8C0tKu9AiW9y_5vq3SW9j2MMUql-hjE/viewform?c=0&w=1&hl=en).
+__Would you like to try knapsack_pro gem?__ You can [get API token here](http://knapsackpro.com).
 
 # How knapsack_pro works?
 
