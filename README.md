@@ -203,7 +203,9 @@ You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default di
     # Step for Minitest
     $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**{,/*/**}/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
 
-__Tip:__ If you are using one of supported CI providers then instead of above steps you should [take a look on this](#supported-ci-providers).
+__Tip:__ If you use one of supported CI providers then instead of above steps you should [take a look on this](#supported-ci-providers).
+
+__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-optional).
 
 ## Extra configuration for CI server
 
