@@ -205,7 +205,7 @@ You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default di
 
 __Tip:__ If you use one of supported CI providers then instead of above steps you should [take a look on this](#supported-ci-providers).
 
-__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-optional).
+__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported).
 
 ### Repository adapter (How to set up 3 of 3)
 
