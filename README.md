@@ -47,19 +47,19 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
 - [Update gem](#update-gem)
 - [Installation](#installation)
 - [How to set up](#how-to-set-up)
-  - [Usage](#usage)
+  - [Usage (How to set up 1 of 3)](#usage-how-to-set-up-1-of-3)
     - [Step for RSpec](#step-for-rspec)
     - [Step for Cucumber](#step-for-cucumber)
     - [Step for Minitest](#step-for-minitest)
     - [Custom configuration](#custom-configuration)
-  - [Setup your CI server](#setup-your-ci-server)
+  - [Setup your CI server (How to set up 2 of 3)](#setup-your-ci-server-how-to-set-up-2-of-3)
     - [Set API key token](#set-api-key-token)
     - [Set knapsack_pro command to execute tests](#set-knapsack_pro-command-to-execute-tests)
+  - [Repository adapter (How to set up 3 of 3)](#repository-adapter-how-to-set-up-3-of-3)
+    - [When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
+    - [When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
-    - [Repository adapter](#repository-adapter)
-      - [When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (optional)](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-optional)
-      - [When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
     - [Environment variables for debugging gem](#environment-variables-for-debugging-gem)
   - [Passing arguments to rake task](#passing-arguments-to-rake-task)
     - [Passing arguments to rspec](#passing-arguments-to-rspec)
@@ -113,9 +113,9 @@ end
 
 ## How to set up
 
-### Usage
+### Usage (How to set up 1 of 3)
 
-You can find here example of rails app with already configured knapsack_pro.
+__Tip:__ You can find here example of rails app with already configured knapsack_pro.
 
 https://github.com/KnapsackPro/rails-app-with-knapsack_pro
 
@@ -167,7 +167,7 @@ KnapsackPro.logger = Logger.new(STDOUT)
 KnapsackPro.logger.level = Logger::INFO
 ```
 
-### Setup your CI server
+### Setup your CI server (How to set up 2 of 3)
 
 #### Set API key token
 
@@ -207,32 +207,34 @@ __Tip:__ If you use one of supported CI providers then instead of above steps yo
 
 __Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-optional).
 
-## Extra configuration for CI server
+### Repository adapter (How to set up 3 of 3)
 
-### Info about ENV variables
-
-By default knapsack_pro gem [supports a few CI providers](#supported-ci-providers) so you don't need to set environment variables.
-In case when you use other CI provider for instance [Jenkins](https://jenkins-ci.org) etc then you need to provide configuration via below environment variables.
-
-`KNAPSACK_PRO_CI_NODE_TOTAL` - total number CI nodes you have.
-
-`KNAPSACK_PRO_CI_NODE_INDEX` - index of current CI node starts from 0. Second CI node should have `KNAPSACK_PRO_CI_NODE_INDEX=1`.
-
-#### Repository adapter
-
-##### When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (optional)
-
-`KNAPSACK_PRO_REPOSITORY_ADAPTER` - When it has value `git` then your local version of git on CI server will be used to get info about branch name and commit hash. You need to set also `KNAPSACK_PRO_PROJECT_DIR` with project directory path.
-
-`KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
-
-##### When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)
+#### When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)
 
 By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` variable has no value so knapsack_pro will try to get info about branch name and commit hash from [supported CI](#supported-ci-providers) (CI providers have branch, commit, project directory stored as environment variables). In case when you use other CI provider like Jenkins then please set below variables on your own.
 
 `KNAPSACK_PRO_BRANCH` - It's branch name. You run tests on this branch.
 
 `KNAPSACK_PRO_COMMIT_HASH` - Commit hash. You run tests for this commit.
+
+You can also use git as repository adapter to determine branch and commit hash, please see below section.
+
+#### When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)
+
+`KNAPSACK_PRO_REPOSITORY_ADAPTER` - When it has value `git` then your local version of git on CI server will be used to get info about branch name and commit hash. You need to set also `KNAPSACK_PRO_PROJECT_DIR` with project directory path.
+
+`KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
+
+## Extra configuration for CI server
+
+### Info about ENV variables
+
+By default knapsack_pro gem [supports a few CI providers](#supported-ci-providers) so you don't need to set some environment variables.
+In case when you use other CI provider for instance [Jenkins](https://jenkins-ci.org) etc then you need to provide configuration via below environment variables.
+
+`KNAPSACK_PRO_CI_NODE_TOTAL` - total number CI nodes you have.
+
+`KNAPSACK_PRO_CI_NODE_INDEX` - index of current CI node starts from 0. Second CI node should have `KNAPSACK_PRO_CI_NODE_INDEX=1`.
 
 #### Environment variables for debugging gem
 
