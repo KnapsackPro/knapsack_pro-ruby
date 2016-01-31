@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.6.0
+
+* Add support for Cucumber 2
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.5.0...v0.6.0
+
 ### 0.5.0
 
 * Remove active support dependency so knapsack_pro gem can be used with rails 2.
