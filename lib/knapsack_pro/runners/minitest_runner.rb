@@ -14,6 +14,7 @@ module KnapsackPro
         end
 
         Rake::TestTask.new(task_name) do |t|
+          t.warning = false
           t.libs << runner.test_dir
           t.test_files = runner.test_file_paths
           t.options = args
