@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.7.0
+
+* Add support for older cucumber versions than 1.3
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.6.1...v0.7.0
+
 ### 0.6.1
 
 * Changed rake task in minitest_runner.rb to have no warnings output
