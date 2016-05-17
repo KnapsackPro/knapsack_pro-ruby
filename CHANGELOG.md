@@ -2,6 +2,15 @@
 
 * TODO
 
+### 0.7.1
+
+* Don't fail when there are no tests to run on a node
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/issues/7
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/9
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.7.0...v0.7.1
+
 ### 0.7.0
 
 * Add support for older cucumber versions than 1.3
