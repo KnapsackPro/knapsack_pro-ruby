@@ -41,9 +41,16 @@ module KnapsackPro
         end
       end
 
-      def bind_save_report
+      def bind_save_report(latest_error = nil)
         ::Kernel.at_exit do
+          # $! is latest error message
+          latest_error = (latest_error || $!)
+          exit_status = latest_error.status if latest_error.is_a?(SystemExit)
+          #require 'pry'; binding.pry
+          # saving report makes API call which changes exit status
+          # from cucumber so we need to preserve cucumber exit status
           KnapsackPro::Report.save
+          ::Kernel.exit exit_status if exit_status
         end
       end
 
