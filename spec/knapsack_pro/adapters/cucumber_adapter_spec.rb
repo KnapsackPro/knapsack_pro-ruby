@@ -129,6 +129,21 @@ describe KnapsackPro::Adapters::CucumberAdapter do
 
         subject.bind_save_report
       end
+
+      context 'when cucumber tests failed' do
+        let(:exit_status) { double }
+        let(:latest_error) { instance_double(SystemExit, status: exit_status) }
+
+        it 'preserves cucumber latest error message exit status' do
+          expect(::Kernel).to receive(:at_exit).and_yield
+
+          expect(latest_error).to receive(:is_a?).with(SystemExit).and_return(true)
+          expect(KnapsackPro::Report).to receive(:save)
+          expect(::Kernel).to receive(:exit).with(exit_status)
+
+          subject.bind_save_report(latest_error)
+        end
+      end
     end
   end
 end
