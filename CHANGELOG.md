@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.7.2
+
+* Preserve cucumber latest error message with exit code to fix problem with false positive cucumber failed tests
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/10
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.7.1...v0.7.2
+
 ### 0.7.1
 
 * Don't fail when there are no tests to run on a node
