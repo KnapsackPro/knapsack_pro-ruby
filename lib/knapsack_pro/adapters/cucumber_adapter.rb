@@ -46,7 +46,6 @@ module KnapsackPro
           # $! is latest error message
           latest_error = (latest_error || $!)
           exit_status = latest_error.status if latest_error.is_a?(SystemExit)
-          #require 'pry'; binding.pry
           # saving report makes API call which changes exit status
           # from cucumber so we need to preserve cucumber exit status
           KnapsackPro::Report.save
