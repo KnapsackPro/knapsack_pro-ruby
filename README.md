@@ -12,6 +12,7 @@ The knapsack_pro gem supports:
 * [RSpec](http://rspec.info)
 * [Cucumber](https://cucumber.io)
 * [Minitest](http://docs.seattlerb.org/minitest/)
+* [Spinach](https://github.com/codegram/spinach)
 * [Turnip](https://github.com/jnicklas/turnip)
 
 __Would you like to try knapsack_pro gem?__ You can [get API token here](http://knapsackpro.com).
@@ -51,6 +52,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Step for RSpec](#step-for-rspec)
     - [Step for Cucumber](#step-for-cucumber)
     - [Step for Minitest](#step-for-minitest)
+    - [Step for Spinach](#step-for-spinach)
     - [Custom configuration](#custom-configuration)
   - [Setup your CI server (How to set up 2 of 3)](#setup-your-ci-server-how-to-set-up-2-of-3)
     - [Set API key token](#set-api-key-token)
@@ -65,6 +67,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Passing arguments to rspec](#passing-arguments-to-rspec)
     - [Passing arguments to cucumber](#passing-arguments-to-cucumber)
     - [Passing arguments to minitest](#passing-arguments-to-minitest)
+    - [Passing arguments to spinach](#passing-arguments-to-spinach)
   - [Knapsack Pro binary](#knapsack-pro-binary)
   - [Supported CI providers](#supported-ci-providers)
     - [Info for CircleCI users](#info-for-circleci-users)
@@ -160,9 +163,21 @@ knapsack_pro_adapter = KnapsackPro::Adapters::MinitestAdapter.bind
 knapsack_pro_adapter.set_test_helper_path(__FILE__)
 ```
 
+#### Step for Spinach
+
+Create file `features/support/knapsack_pro.rb` and add there:
+
+```ruby
+require 'knapsack_pro'
+
+# CUSTOM_CONFIG_GOES_HERE
+
+KnapsackPro::Adapters::CucumberAdapter.bind
+```
+
 #### Custom configuration
 
-You can change default Knapsack Pro configuration for RSpec, Cucumber or Minitest tests. Here are examples what you can do. Put below configuration instead of `CUSTOM_CONFIG_GOES_HERE`.
+You can change default Knapsack Pro configuration for RSpec, Cucumber, Minitest or Spinach tests. Here are examples what you can do. Put below configuration instead of `CUSTOM_CONFIG_GOES_HERE`.
 
 ```ruby
 # you can use your own logger
@@ -180,6 +195,7 @@ Set one or a few tokens depend on how many test suites you run on CI server.
 * `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` - as value set token for rspec test suite. Token can be generated when you sign in to [knapsackpro.com](http://www.knapsackpro.com).
 * `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` - token for cucumber test suite.
 * `KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST` - token for minitest test suite.
+* `KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH` - token for minitest test suite.
 
 __Tip:__ In case you have for instance multiple rspec test suites then prepend each of knapsack_pro command which executes tests with `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` variable.
 
@@ -196,6 +212,9 @@ On your CI server run this command for the first CI node. Update `KNAPSACK_PRO_C
     # Step for Minitest
     $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
 
+    # Step for Spinach
+    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+
 You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default directory. For instance:
 
     # Step for RSpec
@@ -206,6 +225,9 @@ You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default di
 
     # Step for Minitest
     $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**{,/*/**}/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+
+    # Step for Spinach
+    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**{,/*/**}/*.feature" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
 
 __Tip:__ If you use one of supported CI providers then instead of above steps you should [take a look on this](#supported-ci-providers).
 
@@ -274,6 +296,12 @@ For instance to run verbose tests:
 
     $ bundle exec rake "knapsack_pro:minitest[--verbose]"
 
+#### Passing arguments to spinach
+
+Add arguments to knapsack_pro spinach task like this:
+
+    $ bundle exec rake "knapsack_pro:spinach[--arg_name value]"
+
 ### Knapsack Pro binary
 
 You can install knapsack_pro globally and use binary. For instance:
@@ -281,6 +309,7 @@ You can install knapsack_pro globally and use binary. For instance:
     $ knapsack_pro rspec "--tag custom_tag_name --profile"
     $ knapsack_pro cucumber "--name feature"
     $ knapsack_pro minitest "--verbose --pride"
+    $ knapsack_pro spinach "--arg_name value"
 
 This is optional way of using knapsack_pro when you don't want to add it to `Gemfile`.
 
@@ -299,6 +328,7 @@ machine:
     # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: rspec-token
     # KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER: cucumber-token
     # KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: minitest-token
+    # KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH: spinach-token
 test:
   override:
     # Step for RSpec
@@ -311,6 +341,10 @@ test:
 
     # Step for Minitest
     - bundle exec rake knapsack_pro:minitest:
+        parallel: true # Caution: there are 8 spaces indentation!
+
+    # Step for Spinach
+    - bundle exec rake knapsack_pro:spinach:
         parallel: true # Caution: there are 8 spaces indentation!
 ```
 
@@ -331,12 +365,16 @@ script:
   # Step for Minitest
   - "bundle exec rake knapsack_pro:minitest"
 
+  # Step for Spinach
+  - "bundle exec rake knapsack_pro:spinach"
+
 env:
   global:
     # tokens should be set in travis settings in web interface to avoid expose tokens in build logs
     - KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token
     - KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token
     - KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token
+    - KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH=spinach-token
 
     - KNAPSACK_PRO_CI_NODE_TOTAL=2
   matrix:
@@ -346,8 +384,8 @@ env:
 
 Such configuration will generate matrix with 2 following ENV rows:
 
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH=spinach-token
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=rspec-token KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=cucumber-token KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=minitest-token KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH=spinach-token
 
 More info about global and matrix ENV configuration in [travis docs](http://docs.travis-ci.com/user/build-configuration/#Environment-variables).
 
@@ -362,6 +400,8 @@ Knapsack Pro supports semaphoreapp ENVs `SEMAPHORE_THREAD_COUNT` and `SEMAPHORE_
     bundle exec rake knapsack_pro:cucumber
     ## Step for Minitest
     bundle exec rake knapsack_pro:minitest
+    ## Step for Spinach
+    bundle exec rake knapsack_pro:spinach
 
     # Thread 2
     ## Step for RSpec
@@ -370,6 +410,8 @@ Knapsack Pro supports semaphoreapp ENVs `SEMAPHORE_THREAD_COUNT` and `SEMAPHORE_
     bundle exec rake knapsack_pro:cucumber
     ## Step for Minitest
     bundle exec rake knapsack_pro:minitest
+    ## Step for Spinach
+    bundle exec rake knapsack_pro:spinach
 
 Tests will be split across threads.
 
@@ -388,6 +430,9 @@ Knapsack Pro supports buildkite ENVs `BUILDKITE_PARALLEL_JOB_COUNT` and `BUILDKI
     # Step for Minitest
     bundle exec rake knapsack_pro:minitest
 
+    # Step for Spinach
+    bundle exec rake knapsack_pro:spinach
+
 Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 #### Info for snap-ci.com users
@@ -402,6 +447,9 @@ Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDE
 
     # Step for Minitest
     bundle exec rake knapsack_pro:minitest
+
+    # Step for Spinach
+    bundle exec rake knapsack_pro:spinach
 
 Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
@@ -419,4 +467,5 @@ To run specs for Knapsack Pro gem type:
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+5. You can create example tests in related repository with example of [rails application and knapsack_pro gem usage](https://github.com/KnapsackPro/rails-app-with-knapsack_pro).
+6. Create a new Pull Request

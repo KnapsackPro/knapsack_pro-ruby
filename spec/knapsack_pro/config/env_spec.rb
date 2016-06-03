@@ -277,6 +277,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_suite_token_spinach' do
+    subject { described_class.test_suite_token_spinach }
+
+    context 'when ENV exists' do
+      let(:test_suite_token_spinach) { 'spinach-token' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH' => test_suite_token_spinach }) }
+      it { should eq test_suite_token_spinach }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.mode' do
     subject { described_class.mode }
 

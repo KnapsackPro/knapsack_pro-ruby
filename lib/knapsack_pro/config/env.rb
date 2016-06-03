@@ -77,6 +77,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER']
         end
 
+        def test_suite_token_spinach
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH']
+        end
+
         def mode
           mode = ENV['KNAPSACK_PRO_MODE']
           return :production if mode.nil?
