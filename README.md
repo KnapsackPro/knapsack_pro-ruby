@@ -17,6 +17,12 @@ The knapsack_pro gem supports:
 
 __Would you like to try knapsack_pro gem?__ You can [get API token here](http://knapsackpro.com).
 
+## Is knapsack_pro gem free?
+
+* If your __project is open source__ then you can use Knapsack Pro for free. Just add a link back to the page http://knapsackpro.com and please let me know via email (arturtrzop@gmail.com). I will mark your account on KnapsackPro.com as open source.
+
+* If your __project is commercial__ then I'd like to get feedback from you and work closely together to validate if the solution I'm building provide a value for the users. Switching to paid plan is a good way to validate that and a way to get support from happy users. Currently, there is no hard limit when the free trial is ending. I'm more interested in getting feedback from users in order to improve the tool. As I saw in the past people want to support the project and are asking for paid plan. Maybe you will be the next one who will join and support the project. Thanks!
+
 # How knapsack_pro works?
 
 ## Basics
