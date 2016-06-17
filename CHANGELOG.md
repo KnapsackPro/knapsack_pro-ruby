@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.9.0
+
+* Add https support for Knapsack Pro API endpoint
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/14
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.8.0...v0.9.0
+
 ### 0.8.0
 
 * Add Spinach support
