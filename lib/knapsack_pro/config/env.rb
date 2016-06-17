@@ -53,9 +53,9 @@ module KnapsackPro
           when :development
             'http://api.knapsackpro.dev:3000'
           when :test
-            'http://api-staging.knapsackpro.com'
+            'https://api-staging.knapsackpro.com'
           when :production
-            'http://api.knapsackpro.com'
+            'https://api.knapsackpro.com'
           else
             required_env(env_name)
           end

@@ -189,7 +189,7 @@ describe KnapsackPro::Config::Env do
 
     context "when ENV doesn't exist" do
       context 'when default mode' do
-        it { should eq 'http://api.knapsackpro.com' }
+        it { should eq 'https://api.knapsackpro.com' }
       end
 
       context 'when development mode' do
@@ -199,12 +199,12 @@ describe KnapsackPro::Config::Env do
 
       context 'when test mode' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'test' }) }
-        it { should eq 'http://api-staging.knapsackpro.com' }
+        it { should eq 'https://api-staging.knapsackpro.com' }
       end
 
       context 'when production mode' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'production' }) }
-        it { should eq 'http://api.knapsackpro.com' }
+        it { should eq 'https://api.knapsackpro.com' }
       end
 
       context 'when unknown mode' do
