@@ -40,14 +40,16 @@ describe KnapsackPro::Client::Connection do
           "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
           { "Content-Type" => "application/json", "Accept" => "application/json" }
         ).and_return(http_response)
-
-        expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
-        expect(logger).to receive(:info).with('API request UUID: fake-uuid')
-        expect(logger).to receive(:info).with('API response:')
       end
 
       context 'when body response is json' do
         let(:body) { '{"errors": "value"}' }
+
+        before do
+          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+          expect(logger).to receive(:info).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:info).with('API response:')
+        end
 
         it do
           parsed_response = { 'errors' => 'value' }
@@ -60,8 +62,35 @@ describe KnapsackPro::Client::Connection do
         end
       end
 
+      context 'when body response is json with build_distribution_id' do
+        let(:body) { '{"build_distribution_id": "seed-uuid"}' }
+
+        before do
+          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+          expect(logger).to receive(:info).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:info).with("Test suite split seed: seed-uuid")
+          expect(logger).to receive(:info).with('API response:')
+        end
+
+        it do
+          parsed_response = { 'build_distribution_id' => 'seed-uuid' }
+
+          expect(logger).to receive(:info).with(parsed_response)
+
+          expect(subject).to eq(parsed_response)
+          expect(connection.success?).to be true
+          expect(connection.errors?).to be false
+        end
+      end
+
       context 'when body response is empty' do
         let(:body) { '' }
+
+        before do
+          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+          expect(logger).to receive(:info).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:info).with('API response:')
+        end
 
         it do
           expect(logger).to receive(:info).with('')
