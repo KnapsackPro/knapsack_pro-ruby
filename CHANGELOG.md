@@ -4,7 +4,7 @@
 
 ### 0.10.0
 
-* Add new environment variable KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT. The default value is true.
+* Add new environment variable `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT`. The default value is true.
 
     It means when you run test suite again for the same commit hash and total number of nodes and for the same branch
     then you will get exactly the same test suite split.
