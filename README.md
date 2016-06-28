@@ -268,6 +268,37 @@ In case when you use other CI provider for instance [Jenkins](https://jenkins-ci
 
 `KNAPSACK_PRO_CI_NODE_INDEX` - index of current CI node starts from 0. Second CI node should have `KNAPSACK_PRO_CI_NODE_INDEX=1`.
 
+#### KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)
+
+* `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true` (default)
+
+    It means when you run test suite again for the same commit hash and total number of nodes and for the same branch
+    then you will get exactly the same test suite split.
+
+    Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
+
+    There is one edge case. When you run tests for the first time and there is no data collected about time execution of your tests then
+    we need to collect data to prepare the first test suite split. The second run of your tests will have fixed test suite split.
+
+    To compare if all your CI nodes are running based on the same test suite split seed you can check the value for seed in knapsack logging message
+    before your test starts. The message looks like:
+
+        [knapsack_pro] Test suite split seed: 8a606431-02a1-4766-9878-0ea42a07ad21
+
+* `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=false`
+
+    When you disable fixed test suite split then your will get test suite split based on most up to date data about your test suite time execution.
+    For instance, when you run tests for the second time for the same commit hash then your will get more optimal test suite split than it was on the first run.
+
+    Don't disable fixed test suite split when:
+
+    * you expect to run the same subset of test suite when your run test multiple time for the same node (for instance your would like to retry only single CI node that failed)
+        Example of issue: https://github.com/KnapsackPro/knapsack_pro-ruby/issues/15
+
+    * you start your tests not at the same time across your CI nodes.
+
+        Example of issue: https://github.com/KnapsackPro/knapsack_pro-ruby/issues/12
+
 #### Environment variables for debugging gem
 
 `KNAPSACK_PRO_ENDPOINT` - Default value is `http://api.knapsackpro.com` which is endpoint for [Knapsack Pro API](http://docs.knapsackpro.com).
