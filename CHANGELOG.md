@@ -18,8 +18,8 @@
 
         [knapsack_pro] Test suite split seed: 8a606431-02a1-4766-9878-0ea42a07ad21
 
-  * Show test suite split seed in logger based on build_distribution_id from Knapsack Pro API.
-  * Send fixed_test_suite_split param to build distribution Knapsack Pro API endpoint.
+  * Show test suite split seed in logger based on `build_distribution_id` from Knapsack Pro API.
+  * Send `fixed_test_suite_split` param to build distribution Knapsack Pro API endpoint.
 
   Related issues:
 
