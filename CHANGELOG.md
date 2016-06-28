@@ -2,6 +2,10 @@
 
 * TODO
 
+### 0.10.0
+
+* Show test suite split seed in logger based on build_distribution_id from Knapsack Pro API.
+
 ### 0.9.0
 
 * Add https support for Knapsack Pro API endpoint
