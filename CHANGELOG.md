@@ -12,7 +12,7 @@
     you can retry the node with exactly the same subset of tests that were run on the node in the first place.
 
     There is one edge case. When you run tests for the first time and there is no data collected about time execution of your tests then
-    we need to collect data first to prepare first test suite split. The second run of your tests will have fixed test suite split.
+    we need to collect data to prepare the first test suite split. The second run of your tests will have fixed test suite split.
     To compare if all your CI nodes are running based on the same test suite split seed you can check the value for seed in knapsack logging message
     before your test starts. The message looks like:
 
