@@ -61,6 +61,10 @@ module KnapsackPro
           end
         end
 
+        def fixed_test_suite_split
+          ENV.fetch('KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT', true)
+        end
+
         def test_suite_token
           required_env('KNAPSACK_PRO_TEST_SUITE_TOKEN')
         end

@@ -65,6 +65,15 @@ module KnapsackPro
         nil
       end
 
+      def seed
+        return if @response.nil? || @response == ''
+        response['build_distribution_id']
+      end
+
+      def has_seed?
+        !seed.nil?
+      end
+
       def post
         uri = URI.parse(endpoint_url)
         http = Net::HTTP.new(uri.host, uri.port)
@@ -78,6 +87,7 @@ module KnapsackPro
         request_uuid = http_response.header['X-Request-Id']
 
         logger.info("API request UUID: #{request_uuid}")
+        logger.info("Test suite split seed: #{seed}") if has_seed?
         logger.info('API response:')
         if errors?
           logger.error(response)

@@ -9,6 +9,7 @@ module KnapsackPro
                 endpoint_path: '/v1/build_distributions/subset',
                 http_method: :post,
                 request_hash: {
+                  :fixed_test_suite_split => KnapsackPro::Config::Env.fixed_test_suite_split,
                   :commit_hash => args.fetch(:commit_hash),
                   :branch => args.fetch(:branch),
                   :node_total => args.fetch(:node_total),
