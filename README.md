@@ -68,6 +68,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
+    - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)
     - [Environment variables for debugging gem](#environment-variables-for-debugging-gem)
   - [Passing arguments to rake task](#passing-arguments-to-rake-task)
     - [Passing arguments to rspec](#passing-arguments-to-rspec)
