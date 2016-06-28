@@ -292,10 +292,11 @@ In case when you use other CI provider for instance [Jenkins](https://jenkins-ci
 
     Don't disable fixed test suite split when:
 
-    * you expect to run the same subset of test suite when your run test multiple time for the same node (for instance your would like to retry only single CI node that failed)
+    * you expect to run the same subset of test suite multiple times for the same node (for instance your would like to retry only single CI node that failed)
+
         Example of issue: https://github.com/KnapsackPro/knapsack_pro-ruby/issues/15
 
-    * you start your tests not at the same time across your CI nodes.
+    * you start your tests not at the same time across your CI nodes. For instance, one of the CI node finished faster than the other CI node started. This would change the seed for the second CI node that started later.
 
         Example of issue: https://github.com/KnapsackPro/knapsack_pro-ruby/issues/12
 
