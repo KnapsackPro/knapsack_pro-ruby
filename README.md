@@ -82,6 +82,8 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
+- [Tips](#tips)
+  - [Run tests for particular CI node in your development environment](#run-tests-for-particular-ci-node-in-your-development-environment)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -491,6 +493,22 @@ Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDE
     bundle exec rake knapsack_pro:spinach
 
 Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
+## Tips
+
+### Run tests for particular CI node in your development environment
+
+In your development environment you can debug tests that were run on the particular CI node.
+For instance to run subset of tests for the first CI node with specified seed you can do.
+
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+    KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+    KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+    KNAPSACK_PRO_CI_NODE_INDEX=0 \
+    bundle exec rake "knapsack_pro:rspec[--seed 123]"
+
+Above example is for RSpec. You can use respectively rake task name and token environment variable when you want to run tests for minitest, cucumber or spinach.
 
 ## Gem tests
 
