@@ -82,7 +82,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
-- [Tips](#tips)
+- [FAQ](#faq)
   - [Run tests for particular CI node in your development environment](#run-tests-for-particular-ci-node-in-your-development-environment)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
@@ -494,7 +494,7 @@ Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDE
 
 Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
-## Tips
+## FAQ
 
 ### Run tests for particular CI node in your development environment
 
