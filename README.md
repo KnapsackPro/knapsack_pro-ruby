@@ -83,7 +83,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
 - [FAQ](#faq)
-  - [Run tests for particular CI node in your development environment](#run-tests-for-particular-ci-node-in-your-development-environment)
+  - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -496,7 +496,7 @@ Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as gl
 
 ## FAQ
 
-### Run tests for particular CI node in your development environment
+### How to run tests for particular CI node in your development environment
 
 In your development environment you can debug tests that were run on the particular CI node.
 For instance to run subset of tests for the first CI node with specified seed you can do.
