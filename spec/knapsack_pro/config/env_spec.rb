@@ -178,6 +178,40 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_files_encrypted' do
+    subject { described_class.test_files_encrypted }
+
+    context 'when ENV exists' do
+      let(:test_files_encrypted) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILES_ENCRYPTED' => test_files_encrypted }) }
+      it { should eq test_files_encrypted }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.test_files_encrypted?' do
+    subject { described_class.test_files_encrypted? }
+
+    before do
+      expect(described_class).to receive(:test_files_encrypted).and_return(test_files_encrypted)
+    end
+
+    context 'when enabled' do
+      let(:test_files_encrypted) { 'true' }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:test_files_encrypted) { nil }
+
+      it { should be false }
+    end
+  end
+
   describe '.endpoint' do
     subject { described_class.endpoint }
 
