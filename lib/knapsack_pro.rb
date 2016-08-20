@@ -47,6 +47,7 @@ require_relative 'knapsack_pro/runners/minitest_runner'
 require_relative 'knapsack_pro/runners/spinach_runner'
 require_relative 'knapsack_pro/crypto/encryptor'
 require_relative 'knapsack_pro/crypto/decryptor'
+require_relative 'knapsack_pro/crypto/digestor'
 
 module KnapsackPro
   class << self

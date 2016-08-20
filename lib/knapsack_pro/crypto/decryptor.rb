@@ -13,7 +13,7 @@ module KnapsackPro
         decrypted_test_files = []
 
         test_files.each do |test_file|
-          encrypted_path = encrypt(test_file[:path])
+          encrypted_path = Digestor.salt_hexdigest(test_file[:path])
           encrypted_test_file = find_encrypted_test_file(encrypted_path)
 
           decrypted_test_file = encrypted_test_file.dup
@@ -29,14 +29,6 @@ module KnapsackPro
 
       attr_reader :test_files,
         :encrypted_test_files
-
-      def encrypt(path)
-        Digest::SHA2.hexdigest(salt + path)
-      end
-
-      def salt
-        KnapsackPro::Config::Env.salt
-      end
 
       def find_encrypted_test_file(encrypted_path)
         test_files = encrypted_test_files.select do |t|
