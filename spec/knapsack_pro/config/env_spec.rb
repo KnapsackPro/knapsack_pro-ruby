@@ -212,6 +212,22 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.salt' do
+    subject { described_class.salt }
+
+    context 'when ENV exists' do
+      let(:salt) { '123' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_SALT' => salt }) }
+      it { should eq salt }
+    end
+
+    context "when ENV doesn't exist" do
+      it do
+        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_SALT')
+      end
+    end
+  end
+
   describe '.endpoint' do
     subject { described_class.endpoint }
 

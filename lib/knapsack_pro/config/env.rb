@@ -53,6 +53,10 @@ module KnapsackPro
           test_files_encrypted == 'true'
         end
 
+        def salt
+          required_env('KNAPSACK_PRO_SALT')
+        end
+
         def endpoint
           env_name = 'KNAPSACK_PRO_ENDPOINT'
           return ENV[env_name] if ENV[env_name]
