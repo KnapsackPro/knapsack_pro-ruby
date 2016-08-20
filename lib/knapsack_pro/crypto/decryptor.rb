@@ -4,6 +4,15 @@ module KnapsackPro
       class MissingEncryptedTestFileError < StandardError; end
       class TooManyEncryptedTestFilesError < StandardError; end
 
+      def self.call(test_files, encrypted_test_files)
+        if KnapsackPro::Config::Env.test_files_encrypted?
+          new(test_files, encrypted_test_files).call
+        else
+          # those test files are not encrypted
+          encrypted_test_files
+        end
+      end
+
       def initialize(test_files, encrypted_test_files)
         @test_files = test_files
         @encrypted_test_files = encrypted_test_files
