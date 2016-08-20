@@ -5,6 +5,7 @@ require 'json'
 require 'uri'
 require 'rake/testtask'
 require 'timecop'
+require 'digest'
 require_relative 'knapsack_pro/version'
 require_relative 'knapsack_pro/logger_wrapper'
 require_relative 'knapsack_pro/config/ci/base'
@@ -44,6 +45,7 @@ require_relative 'knapsack_pro/runners/rspec_runner'
 require_relative 'knapsack_pro/runners/cucumber_runner'
 require_relative 'knapsack_pro/runners/minitest_runner'
 require_relative 'knapsack_pro/runners/spinach_runner'
+require_relative 'knapsack_pro/crypto/encryptor'
 
 module KnapsackPro
   class << self
