@@ -8,6 +8,33 @@ describe KnapsackPro::Crypto::Encryptor do
 
   let(:encryptor) { described_class.new(test_files) }
 
+  describe '.call' do
+    subject { described_class.call(test_files) }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(test_files_encrypted?)
+    end
+
+    context 'when test files encrypted flag enabled' do
+      let(:test_files_encrypted?) { true }
+      let(:encryptor) { instance_double(described_class) }
+
+      it do
+        expect(described_class).to receive(:new).with(test_files).and_return(encryptor)
+        result = double
+        expect(encryptor).to receive(:call).and_return(result)
+
+        expect(subject).to eq result
+      end
+    end
+
+    context 'when test files encrypted flag disabled' do
+      let(:test_files_encrypted?) { false }
+
+      it { should eq test_files }
+    end
+  end
+
   describe '#call' do
     subject { encryptor.call }
 

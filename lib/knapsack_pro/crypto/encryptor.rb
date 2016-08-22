@@ -1,6 +1,14 @@
 module KnapsackPro
   module Crypto
     class Encryptor
+      def self.call(test_files)
+        if KnapsackPro::Config::Env.test_files_encrypted?
+          new(test_files).call
+        else
+          test_files
+        end
+      end
+
       def initialize(test_files)
         @test_files = test_files
       end
