@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.11.0
+
+* Add test file names encryption
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.10.0...v0.11.0
+
 ### 0.10.0
 
 * Add new environment variable `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT`. The default value is true.
