@@ -18,7 +18,7 @@ module KnapsackPro
 
         test_files.each do |test_file|
           test_file_dup = test_file.dup
-          test_file_dup[:path] = Digestor.salt_hexdigest(test_file[:path])
+          test_file_dup['path'] = Digestor.salt_hexdigest(test_file['path'])
           encrypted_test_files << test_file_dup
         end
 

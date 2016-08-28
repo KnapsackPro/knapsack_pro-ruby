@@ -22,11 +22,11 @@ module KnapsackPro
         decrypted_test_files = []
 
         test_files.each do |test_file|
-          encrypted_path = Digestor.salt_hexdigest(test_file[:path])
+          encrypted_path = Digestor.salt_hexdigest(test_file['path'])
           encrypted_test_file = find_encrypted_test_file(encrypted_path)
 
           decrypted_test_file = encrypted_test_file.dup
-          decrypted_test_file[:path] = test_file[:path]
+          decrypted_test_file['path'] = test_file['path']
 
           decrypted_test_files << decrypted_test_file
         end
@@ -41,7 +41,7 @@ module KnapsackPro
 
       def find_encrypted_test_file(encrypted_path)
         test_files = encrypted_test_files.select do |t|
-          t[:path] == encrypted_path
+          t['path'] == encrypted_path
         end
 
         if test_files.size == 0
