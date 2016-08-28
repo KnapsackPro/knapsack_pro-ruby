@@ -19,13 +19,16 @@ describe KnapsackPro::Allocator do
     subject { allocator.test_file_paths }
 
     before do
+      encrypted_test_files = double
+      expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(test_files).and_return(encrypted_test_files)
+
       action = double
       expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
-        test_files: test_files,
+        test_files: encrypted_test_files,
       }).and_return(action)
 
       connection = instance_double(KnapsackPro::Client::Connection,
@@ -55,6 +58,10 @@ describe KnapsackPro::Allocator do
               { 'path' => 'b_spec.rb' },
             ]
           }
+        end
+
+        before do
+          expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(test_files, response['test_files']).and_call_original
         end
 
         it { should eq ['a_spec.rb', 'b_spec.rb'] }
