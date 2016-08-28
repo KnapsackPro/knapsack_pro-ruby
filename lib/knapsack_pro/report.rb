@@ -9,12 +9,13 @@ module KnapsackPro
       end
 
       repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
+      encrypted_test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
       action = KnapsackPro::Client::API::V1::BuildSubsets.create(
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
         node_total: KnapsackPro::Config::Env.ci_node_total,
         node_index: KnapsackPro::Config::Env.ci_node_index,
-        test_files: test_files,
+        test_files: encrypted_test_files,
       )
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
