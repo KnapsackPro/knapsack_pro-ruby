@@ -24,6 +24,7 @@ module KnapsackPro
         test_files.each do |test_file|
           encrypted_path = Digestor.salt_hexdigest(test_file['path'])
           encrypted_test_file = find_encrypted_test_file(encrypted_path)
+          next if encrypted_test_file.nil?
 
           decrypted_test_file = encrypted_test_file.dup
           decrypted_test_file['path'] = test_file['path']
@@ -44,11 +45,9 @@ module KnapsackPro
           t['path'] == encrypted_path
         end
 
-        if test_files.size == 0
-          raise MissingEncryptedTestFileError.new("Couldn't find encrypted test file for encrypted path #{encrypted_path}")
-        elsif test_files.size == 1
+        if test_files.size == 1
           test_files.first
-        else
+        elsif test_files.size > 1
           raise TooManyEncryptedTestFilesError.new("Found more than one encrypted test file for encrypted path #{encrypted_path}")
         end
       end

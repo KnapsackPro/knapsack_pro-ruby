@@ -60,7 +60,7 @@ describe KnapsackPro::Crypto::Decryptor do
       let(:encrypted_test_files) { [] }
 
       it do
-        expect { subject }.to raise_error(KnapsackPro::Crypto::Decryptor::MissingEncryptedTestFileError)
+        expect(subject).to eq []
       end
     end
 
