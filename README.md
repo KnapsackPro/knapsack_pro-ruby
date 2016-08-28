@@ -367,6 +367,9 @@ When you will enable test file names encryption then your first test suite split
 
 Each test file name is generated with `Digest::SHA2.hexdigest` method and 64 chars salt.
 
+Before you enable test file encryption please ensure you are using fresh API key. You should not use the same API key for encrypted and non encrypted test suite.
+You can generate API key for your test suite in [your dashboard](https://knapsackpro.com).
+
 #### How to enable test file names encryption?
 
 First you need to add environment variable `KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true` to your CI server.
