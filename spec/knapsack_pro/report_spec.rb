@@ -27,6 +27,12 @@ describe KnapsackPro::Report do
         repository_adapter = instance_double(KnapsackPro::RepositoryAdapters::EnvAdapter, commit_hash: commit_hash, branch: branch)
         expect(KnapsackPro::RepositoryAdapterInitiator).to receive(:call).and_return(repository_adapter)
 
+        unsymbolize_test_files = double
+        expect(KnapsackPro::Utils).to receive(:unsymbolize).with(test_files).and_return(unsymbolize_test_files)
+
+        encrypted_test_files = double
+        expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(unsymbolize_test_files).and_return(encrypted_test_files)
+
         node_total = double
         node_index = double
         expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
@@ -38,7 +44,7 @@ describe KnapsackPro::Report do
           branch: branch,
           node_total: node_total,
           node_index: node_index,
-          test_files: test_files,
+          test_files: encrypted_test_files,
         }).and_return(action)
 
         connection = instance_double(KnapsackPro::Client::Connection, success?: success?, errors?: errors?)
