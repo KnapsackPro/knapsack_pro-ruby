@@ -362,7 +362,7 @@ This is optional way of using knapsack_pro when you don't want to add it to `Gem
 knapsack_pro gem collects information about you test file names and time execution. Those data are stored on KnapsackPro.com server.
 If your test file names are sensitive data then you can encrypt the names before sending them to KnapsackPro.com API.
 
-By default, encryption is disabled because knapsack_pro can use you test files names to prepare better test suite split when the time execution data are not yet collected on KnapsackPro.com server.
+By default, encryption is disabled because knapsack_pro can use your test files names to prepare better test suite split when the time execution data are not yet collected on KnapsackPro.com server.
 When you will enable test file names encryption then your first test suite split may be less optimal than it could be.
 
 Each test file name is generated with `Digest::SHA2.hexdigest` method and 64 chars salt.
