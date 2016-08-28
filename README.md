@@ -354,6 +354,34 @@ You can install knapsack_pro globally and use binary. For instance:
 
 This is optional way of using knapsack_pro when you don't want to add it to `Gemfile`.
 
+### Test file names encryption
+
+knapsack_pro gem collects information about you test file names and time execution. Those data are stored on KnapsackPro.com server.
+If your test file names are sensitive data then you can encrypt the names before sending them to KnapsackPro.com API.
+
+By default, encryption is disabled because knapsack_pro can use you test files names to prepare better test suite split when the time execution data are not yet collected on KnapsackPro.com server.
+When you will enable test file names encryption then your first test suite split may be less optimal than it could be.
+
+Each test file name is generated with `Digest::SHA2.hexdigest` method and 64 chars salt.
+
+#### How to enable test file names encryption?
+
+First you need to add environment variable `KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true` to your CI server.
+
+Next step is to generate salt which will be used to encrypt test file names.
+
+    $ bundle exec rake knapsack_pro:salt
+
+Add to your CI server generated environment variable `KNAPSACK_PRO_SALT`.
+
+#### How to debug test file names?
+
+If you need to check what is the encryption hash for particular test file your can check that with the rake task:
+
+    $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
+
+You can pass the name of test runner like rspec, minitest, cucumber, spinach as argument to rake task.
+
 ### Supported CI providers
 
 #### Info for CircleCI users
