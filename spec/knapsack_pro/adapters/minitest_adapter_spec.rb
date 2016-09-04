@@ -10,18 +10,6 @@ describe KnapsackPro::Adapters::MinitestAdapter do
   end
 
   describe '.test_path' do
-    class FakeUserTest
-      def test_user_age; end
-
-      # method provided by Minitest
-      # it returns test method name
-      def name
-        :test_user_age
-      end
-    end
-
-    let(:obj) { FakeUserTest.new }
-
     subject { described_class.test_path(obj) }
 
     before do
@@ -30,7 +18,39 @@ describe KnapsackPro::Adapters::MinitestAdapter do
       described_class.class_variable_set(:@@parent_of_test_dir, parent_of_test_dir_regexp)
     end
 
-    it { should eq './spec/knapsack_pro/adapters/minitest_adapter_spec.rb' }
+    context 'when regular test' do
+      class FakeUserTest
+        def test_user_age; end
+
+        # method provided by Minitest
+        # it returns test method name
+        def name
+          :test_user_age
+        end
+      end
+
+      let(:obj) { FakeUserTest.new }
+
+      it { should eq './spec/knapsack_pro/adapters/minitest_adapter_spec.rb' }
+    end
+
+    context 'when shared examples test' do
+      module FakeSharedExamples
+        def test_from_shared_example; end
+      end
+
+      class FakeSharedExamplesUserTest
+        include FakeSharedExamples
+
+        def location
+          "test that use FakeSharedExamples#test_from_shared_example"
+        end
+      end
+
+      let(:obj) { FakeSharedExamplesUserTest.new }
+
+      it { should eq './spec/knapsack_pro/adapters/minitest_adapter_spec.rb' }
+    end
   end
 
   describe 'BindTimeTrackerMinitestPlugin' do
