@@ -2,6 +2,15 @@
 
 * TODO
 
+### 0.12.0
+
+* Add support for Minitest::SharedExamples
+
+    Related PR:
+    https://github.com/ArturT/knapsack/pull/46
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.11.0...v0.12.0
+
 ### 0.11.0
 
 * Add test file names encryption
