@@ -15,7 +15,7 @@ The knapsack_pro gem supports:
 * [Spinach](https://github.com/codegram/spinach)
 * [Turnip](https://github.com/jnicklas/turnip)
 
-__Would you like to try knapsack_pro gem?__ You can [get API token here](http://knapsackpro.com).
+__Would you like to try knapsack_pro gem?__ You can [get API token here](http://knapsackpro.com?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=get_api_token).
 
 ## Is knapsack_pro gem free?
 
