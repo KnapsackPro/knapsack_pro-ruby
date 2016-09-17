@@ -109,7 +109,7 @@ end
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 
 Add this lines at the bottom of `Rakefile` if your project has it:
@@ -117,6 +117,8 @@ Add this lines at the bottom of `Rakefile` if your project has it:
 ```ruby
 KnapsackPro.load_tasks if defined?(KnapsackPro)
 ```
+
+
 
 ## How to set up
 
