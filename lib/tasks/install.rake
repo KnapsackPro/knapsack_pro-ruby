@@ -252,7 +252,7 @@ KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}
     }, color: :cyan
   end
   puts
-  prompt.say "You can generate more API tokens after sign in https://knapsackpro.com"
+  prompt.say "You can generate more API tokens after sign in on https://knapsackpro.com"
   puts
 end
 
@@ -262,10 +262,10 @@ namespace :knapsack_pro do
     answers = {}
 
     puts
-    prompt.say "Welcome in knapsack_pro gem installer.", color: :green
+    prompt.say "Welcome to knapsack_pro gem installer.", color: :green
     puts
-    prompt.say "If you will need to set more custom configuration"
-    prompt.say "or would like to better understand how gem works please take a look:"
+    prompt.say "If you need to set custom configuration"
+    prompt.say "or would like to understand better how this gem works please take a look at:"
     prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby"
     puts
 
