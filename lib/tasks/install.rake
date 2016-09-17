@@ -54,6 +54,21 @@ KnapsackPro::Adapters::SpinachAdapter.bind
   }, color: :bright_red
 end
 
+def step_for_vcr(prompt)
+  prompt.say "Step for VCR gem", color: :red
+  prompt.say "Add Knapsack Pro API subdomain to ignore hosts:"
+
+  prompt.say %{
+# spec/spec_helper.rb or wherever is your VCR configuration
+
+VCR.configure do |config|
+  config.ignore_hosts 'localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com'
+end
+
+WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMock)
+  }, color: :bright_red
+end
+
 namespace :knapsack_pro do
   task :install do
     prompt = TTY::Prompt.new
@@ -95,5 +110,8 @@ namespace :knapsack_pro do
       send("step_for_#{tool}", prompt)
       puts
     end
+
+    step_for_vcr(prompt) if answers[:has_vcr]
+    puts
   end
 end
