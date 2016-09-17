@@ -141,9 +141,9 @@ def step_for_ci_semaphore(prompt, answers)
   prompt.say "Set knapsack pro command for each parallel thread. Here is example:"
 
   answers[:testing_tools].each do |tool|
+    puts
+    prompt.say "Step for #{tool}"
     prompt.say %{
-# Step for #{tool}
-
 # Thread 1
 bundle exec rake knapsack_pro:#{tool}
 
