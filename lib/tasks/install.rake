@@ -88,6 +88,9 @@ test:
         parallel: true # Caution: there are 8 spaces indentation!
     }, color: :bright_red
   end
+
+  puts
+  set_api_tokens_on_ci(prompt, answers)
 end
 
 def step_for_ci_travis(prompt, answers)
@@ -131,6 +134,9 @@ env:
   puts
   prompt.say "If you want more parallel jobs then update accordingly:"
   tip_ci_node_total_and_index(prompt)
+
+  puts
+  set_api_tokens_on_ci(prompt, answers)
 end
 
 def step_for_ci_buildkite(prompt, answers)
