@@ -149,6 +149,23 @@ bundle exec rake knapsack_pro:#{tool}
 end
 
 def step_for_ci_semaphore(prompt, answers)
+  prompt.say "Step for https://semaphoreci.com", color: :red
+  prompt.say "Set knapsack pro command for each parallel thread. Here is example:"
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+# Step for #{tool}
+
+# Thread 1
+bundle exec rake knapsack_pro:#{tool}
+
+# Thread 2
+bundle exec rake knapsack_pro:#{tool}
+    }, color: :bright_red
+  end
+
+  puts
+  set_api_tokens_on_ci(prompt, answers)
 end
 
 def step_for_ci_snap_ci(prompt, answers)
