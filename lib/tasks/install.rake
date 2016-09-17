@@ -285,6 +285,11 @@ namespace :knapsack_pro do
 
     send("step_for_ci_#{answers[:ci]}", prompt, answers)
 
+    prompt.say "Now you are ready to use the gem!"
+    prompt.say "Please push a new commit to repository so knapsack_pro gem will record time execution of your test suite."
+    prompt.say "Your second tests run on CI will be parallelized with optimal test suite split."
+
+    puts
     prompt.say "###### Please follow above instructions to finish configuration ######", color: :green
     puts
     puts
