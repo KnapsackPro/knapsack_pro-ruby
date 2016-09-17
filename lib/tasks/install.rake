@@ -68,6 +68,83 @@ WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMoc
   }, color: :bright_red
 end
 
+def step_for_ci_circle(prompt, answers)
+end
+
+def step_for_ci_travis(prompt, answers)
+end
+
+def step_for_ci_buildkite(prompt, answers)
+end
+
+def step_for_ci_semaphore(prompt, answers)
+end
+
+def step_for_ci_snap_ci(prompt, answers)
+end
+
+def step_for_ci_other(prompt, answers)
+  prompt.say "Step for other CI provider", color: :red
+  prompt.say "Set below global variables on your CI server."
+  puts
+
+  prompt.say "Git installed on the CI server will be used to determine branch name and current commit hash."
+
+  prompt.say %{
+KNAPSACK_PRO_REPOSITORY_ADAPTER=git
+  }, color: :bright_red
+  puts
+
+prompt.say "Path to the project repository on CI server, for instance:"
+  prompt.say %{
+KNAPSACK_PRO_PROJECT_DIR=/home/ubuntu/my-app-repository
+  }, color: :bright_red
+  puts
+
+  prompt.say "You can learn more about those variables here:"
+  prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported"
+  puts
+
+  set_api_tokens_on_ci(prompt, answers)
+
+  # set test run command on CI server
+  prompt.say "Set test run command on CI server", color: :red
+  prompt.say "You must set command responsible for running tests for each CI node."
+  prompt.say "Let's assume you have 2 CI nodes. Here are commands you need to run for each CI node."
+
+  answers[:testing_tools].each do |tool|
+    puts
+    prompt.say "Step for #{tool}"
+    prompt.say %{
+# Command for first CI node
+$ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+
+# Command for second CI node
+$ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:#{tool}
+    }, color: :bright_red
+  end
+  puts
+  prompt.say "If you have more CI nodes then update accordingly:"
+  prompt.say %{
+KNAPSACK_PRO_CI_NODE_TOTAL - total number of your CI nodes
+KNAPSACK_PRO_CI_NODE_INDEX - starts from 0, it's index of each CI node
+  }, color: :bright_red
+end
+
+def set_api_tokens_on_ci(prompt, answers)
+  prompt.say "Set API token", color: :red
+  prompt.say "You must set different API token on your CI server for each test suite you have:"
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}
+    }, color: :bright_red
+  end
+  puts
+  prompt.say "You can generate more API tokens after sign in https://knapsackpro.com"
+  puts
+end
+
 namespace :knapsack_pro do
   task :install do
     prompt = TTY::Prompt.new
@@ -114,6 +191,9 @@ namespace :knapsack_pro do
     end
 
     step_for_vcr(prompt) if answers[:has_vcr]
+    puts
+
+    send("step_for_ci_#{answers[:ci]}", prompt, answers)
     puts
   end
 end
