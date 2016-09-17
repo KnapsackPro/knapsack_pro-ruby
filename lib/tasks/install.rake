@@ -262,7 +262,7 @@ namespace :knapsack_pro do
     answers = {}
 
     puts
-    prompt.say "Welcome in knapsack_pro gem installer.", color: :cyan
+    prompt.say "Welcome in knapsack_pro gem installer.", color: :green
     puts
     prompt.say "If you will need to set more custom configuration"
     prompt.say "or would like to better understand how gem works please take a look:"
