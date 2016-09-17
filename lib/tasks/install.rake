@@ -79,7 +79,7 @@ end
 
 def step_for_ci_travis(prompt, answers)
   prompt.say "Step for https://travis-ci.org", color: :yellow
-  prompt.say "You can parallel your builds across virtual machines with travis matrix feature."
+  prompt.say "You can parallelize your builds across virtual machines with travis matrix feature."
   prompt.say "https://docs.travis-ci.com/user/speeding-up-the-build/#Parallelizing-your-builds-across-virtual-machines"
   puts
   prompt.say "Update .travis.yml"
