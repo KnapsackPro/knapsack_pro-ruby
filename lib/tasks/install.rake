@@ -275,7 +275,8 @@ namespace :knapsack_pro do
 
     # Instructions how to set up the gem
     puts
-    prompt.say "###### Please follow below instructions ######", color: :green
+    puts
+    prompt.say "###### Please follow below instructions to finish configuration ######", color: :green
     puts
 
     answers[:testing_tools].each do |tool|
@@ -287,9 +288,11 @@ namespace :knapsack_pro do
     puts
 
     send("step_for_ci_#{answers[:ci]}", prompt, answers)
-    puts
 
-    prompt.say "Please follow above steps to set up knapsack_pro gem with your CI server.", color: :green
+    prompt.say "###### Please follow above instructions to finish configuration ######", color: :green
+    puts
+    puts
+    puts
     prompt.say "You can learn more about custom configuration and other features:"
     prompt.say "https://knapsackpro.com/features"
     prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#table-of-contents"
