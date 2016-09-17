@@ -134,6 +134,18 @@ env:
 end
 
 def step_for_ci_buildkite(prompt, answers)
+  prompt.say "Step for https://buildkite.com", color: :red
+  prompt.say "Please configure the parallelism parameter in your build step and run the appropiate command in your build:"
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+# Step for #{tool}
+bundle exec rake knapsack_pro:#{tool}
+    }, color: :bright_red
+  end
+
+  puts
+  set_api_tokens_on_ci(prompt, answers)
 end
 
 def step_for_ci_semaphore(prompt, answers)
