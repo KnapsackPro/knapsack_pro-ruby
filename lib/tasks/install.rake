@@ -195,5 +195,10 @@ namespace :knapsack_pro do
 
     send("step_for_ci_#{answers[:ci]}", prompt, answers)
     puts
+
+    prompt.say "That's all steps to start using knapsack_pro gem.", color: :green
+    prompt.say "You can learn more about custom configuration and other features:"
+    prompt.say "https://knapsackpro.com/features"
+    prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#table-of-contents"
   end
 end
