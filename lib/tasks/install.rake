@@ -9,7 +9,7 @@ def step_for_rspec(prompt)
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-  }, color: :bright_red
+  }, color: :cyan
 end
 
 def step_for_minitest(prompt)
@@ -21,7 +21,7 @@ require 'knapsack_pro'
 
 knapsack_pro_adapter = KnapsackPro::Adapters::MinitestAdapter.bind
 knapsack_pro_adapter.set_test_helper_path(__FILE__)
-  }, color: :bright_red
+  }, color: :cyan
 end
 
 def step_for_cucumber(prompt)
@@ -32,7 +32,7 @@ def step_for_cucumber(prompt)
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::CucumberAdapter.bind
-  }, color: :bright_red
+  }, color: :cyan
 end
 
 def step_for_spinach(prompt)
@@ -43,7 +43,7 @@ def step_for_spinach(prompt)
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::SpinachAdapter.bind
-  }, color: :bright_red
+  }, color: :cyan
 end
 
 def step_for_vcr(prompt)
@@ -57,7 +57,7 @@ VCR.configure do |config|
 end
 
 WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMock)
-  }, color: :bright_red
+  }, color: :cyan
 end
 
 def step_for_ci_circle(prompt, answers)
@@ -68,25 +68,25 @@ def step_for_ci_circle(prompt, answers)
 machine:
   environment:
     # Tokens should be set in CircleCI settings to avoid expose tokens in build logs
-  }, color: :bright_red
+  }, color: :cyan
 
   answers[:testing_tools].each do |tool|
     prompt.say %{
     # KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}: #{tool}-token
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   prompt.say %{
 test:
   override:
-  }, color: :bright_red
+  }, color: :cyan
 
   answers[:testing_tools].each do |tool|
     prompt.say %{
     # Step for #{tool}
     - bundle exec rake knapsack_pro:#{tool}:
         parallel: true # Caution: there are 8 spaces indentation!
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   puts
@@ -102,13 +102,13 @@ def step_for_ci_travis(prompt, answers)
 
   prompt.say %{
 script:
-  }, color: :bright_red
+  }, color: :cyan
 
   answers[:testing_tools].each do |tool|
     prompt.say %{
   # Step for #{tool}
   - "bundle exec rake knapsack_pro:#{tool}"
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   prompt.say %{
@@ -117,19 +117,19 @@ env:
     - KNAPSACK_PRO_CI_NODE_TOTAL=2
 
     # tokens should be set in travis settings in web interface to avoid expose tokens in build logs
-  }, color: :bright_red
+  }, color: :cyan
 
   answers[:testing_tools].each do |tool|
     prompt.say %{
     - KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}=#{tool}-token
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   prompt.say %{
   matrix:
     - KNAPSACK_PRO_CI_NODE_INDEX=0
     - KNAPSACK_PRO_CI_NODE_INDEX=1
-  }, color: :bright_red
+  }, color: :cyan
 
   puts
   prompt.say "If you want more parallel jobs then update accordingly:"
@@ -147,7 +147,7 @@ def step_for_ci_buildkite(prompt, answers)
     prompt.say %{
 # Step for #{tool}
 bundle exec rake knapsack_pro:#{tool}
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   puts
@@ -167,7 +167,7 @@ bundle exec rake knapsack_pro:#{tool}
 
 # Thread 2
 bundle exec rake knapsack_pro:#{tool}
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   puts
@@ -183,7 +183,7 @@ def step_for_ci_snap_ci(prompt, answers)
     prompt.say %{
 # Step for #{tool}
 bundle exec rake knapsack_pro:#{tool}
-    }, color: :bright_red
+    }, color: :cyan
   end
 
   puts
@@ -199,13 +199,13 @@ def step_for_ci_other(prompt, answers)
 
   prompt.say %{
 KNAPSACK_PRO_REPOSITORY_ADAPTER=git
-  }, color: :bright_red
+  }, color: :cyan
   puts
 
 prompt.say "Path to the project repository on CI server, for instance:"
   prompt.say %{
 KNAPSACK_PRO_PROJECT_DIR=/home/ubuntu/my-app-repository
-  }, color: :bright_red
+  }, color: :cyan
   puts
 
   prompt.say "You can learn more about those variables here:"
@@ -228,7 +228,7 @@ $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake kna
 
 # Command for second CI node
 $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:#{tool}
-    }, color: :bright_red
+    }, color: :cyan
   end
   puts
   prompt.say "If you have more CI nodes then update accordingly:"
@@ -239,7 +239,7 @@ def tip_ci_node_total_and_index(prompt)
   prompt.say %{
 KNAPSACK_PRO_CI_NODE_TOTAL - total number of your CI nodes
 KNAPSACK_PRO_CI_NODE_INDEX - starts from 0, it's index of each CI node
-  }, color: :bright_red
+  }, color: :cyan
 end
 
 def set_api_tokens_on_ci(prompt, answers)
@@ -249,7 +249,7 @@ def set_api_tokens_on_ci(prompt, answers)
   answers[:testing_tools].each do |tool|
     prompt.say %{
 KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}
-    }, color: :bright_red
+    }, color: :cyan
   end
   puts
   prompt.say "You can generate more API tokens after sign in https://knapsackpro.com"
