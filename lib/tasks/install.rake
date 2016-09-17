@@ -264,10 +264,6 @@ namespace :knapsack_pro do
     puts
     prompt.say "Welcome to knapsack_pro gem installer.", color: :green
     puts
-    prompt.say "If you need to set custom configuration"
-    prompt.say "or would like to understand better how this gem works please take a look at:"
-    prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby"
-    puts
 
     TESTING_TOOLS_CHOICES = {
       'RSpec' => :rspec,
