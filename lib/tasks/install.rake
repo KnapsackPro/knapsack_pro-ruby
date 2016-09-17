@@ -87,7 +87,10 @@ namespace :knapsack_pro do
       'Cucumber' => :cucumber,
       'Spinach' => :spinach,
     }
-    answers[:testing_tools] = prompt.multi_select("Choose your testing tools:", TESTING_TOOLS_CHOICES)
+    answers[:testing_tools] = []
+    while answers[:testing_tools].empty?
+      answers[:testing_tools] = prompt.multi_select("Choose your testing tools:", TESTING_TOOLS_CHOICES)
+    end
 
     answers[:has_vcr] = prompt.yes?('Do you use VCR gem?')
 
