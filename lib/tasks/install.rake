@@ -7,7 +7,6 @@ def step_for_rspec(prompt)
 
   prompt.say %{
 require 'knapsack_pro'
-
 KnapsackPro::Adapters::RSpecAdapter.bind
   }, color: :cyan
 end
@@ -18,7 +17,6 @@ def step_for_minitest(prompt)
 
   prompt.say %{
 require 'knapsack_pro'
-
 knapsack_pro_adapter = KnapsackPro::Adapters::MinitestAdapter.bind
 knapsack_pro_adapter.set_test_helper_path(__FILE__)
   }, color: :cyan
@@ -30,7 +28,6 @@ def step_for_cucumber(prompt)
 
   prompt.say %{
 require 'knapsack_pro'
-
 KnapsackPro::Adapters::CucumberAdapter.bind
   }, color: :cyan
 end
@@ -41,7 +38,6 @@ def step_for_spinach(prompt)
 
   prompt.say %{
 require 'knapsack_pro'
-
 KnapsackPro::Adapters::SpinachAdapter.bind
   }, color: :cyan
 end
