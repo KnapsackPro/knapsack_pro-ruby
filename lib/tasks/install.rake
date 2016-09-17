@@ -103,15 +103,7 @@ script:
 env:
   global:
     - KNAPSACK_PRO_CI_NODE_TOTAL=2
-
-    # tokens should be set in travis settings in web interface to avoid expose tokens in build logs
   }, color: :cyan
-
-  answers[:testing_tools].each do |tool|
-    prompt.say %{
-    - KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}=#{tool}-token
-    }, color: :cyan
-  end
 
   prompt.say %{
   matrix:
