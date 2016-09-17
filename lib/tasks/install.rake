@@ -169,6 +169,19 @@ bundle exec rake knapsack_pro:#{tool}
 end
 
 def step_for_ci_snap_ci(prompt, answers)
+  prompt.say "Step for https://snap-ci.com", color: :red
+  prompt.say "Please configure number of workers for your project in configuration settings in order to enable parallelism."
+  prompt.say "Next thing is to set below commands to be executed in your stage:"
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+# Step for #{tool}
+bundle exec rake knapsack_pro:#{tool}
+    }, color: :bright_red
+  end
+
+  puts
+  set_api_tokens_on_ci(prompt, answers)
 end
 
 def step_for_ci_other(prompt, answers)
