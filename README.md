@@ -118,7 +118,11 @@ Add this lines at the bottom of `Rakefile` if your project has it:
 KnapsackPro.load_tasks if defined?(KnapsackPro)
 ```
 
+Run installer to get started. It will ask you a few questions and generate instruction steps for your project.
 
+    $ bundle exec rake knapsack_pro:install
+
+You can read next section only if you want to better understand optional gem configuration and features.
 
 ## How to set up
 
