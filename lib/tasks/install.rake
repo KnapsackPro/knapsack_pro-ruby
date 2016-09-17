@@ -56,11 +56,10 @@ end
 
 def step_for_vcr(prompt)
   prompt.say "Step for VCR gem", color: :red
-  prompt.say "Add Knapsack Pro API subdomain to ignore hosts:"
+  prompt.say "Add Knapsack Pro API subdomain to ignore hosts"
+  prompt.say "in spec/spec_helper.rb or wherever is your VCR configuration"
 
   prompt.say %{
-# spec/spec_helper.rb or wherever is your VCR configuration
-
 VCR.configure do |config|
   config.ignore_hosts 'localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com'
 end
