@@ -64,18 +64,18 @@ def step_for_ci_circle(prompt, answers)
   prompt.say "# Step for https://circleci.com", color: :yellow
   prompt.say "Update circle.yml in your project:"
 
-  prompt.say %{
-test:
-  override:
-  }, color: :cyan
-
+  str = ''
   answers[:testing_tools].each do |tool|
-    prompt.say %{
+    str << %{
     # Step for #{tool}
     - bundle exec rake knapsack_pro:#{tool}:
         parallel: true # Caution: there are 8 spaces indentation!
-    }, color: :cyan
+    }
   end
+
+  prompt.say((%{
+test:
+  override:} + str), color: :cyan)
 
   puts
   set_api_tokens_on_ci(prompt, answers)
