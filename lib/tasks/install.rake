@@ -224,7 +224,7 @@ KNAPSACK_PRO_PROJECT_DIR=/home/ubuntu/my-app-repository
     prompt.say "Step for #{tool}"
     prompt.say %{
 # Command for first CI node
-$ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+$ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:#{tool}
 
 # Command for second CI node
 $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:#{tool}
