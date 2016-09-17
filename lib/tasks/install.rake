@@ -281,8 +281,10 @@ namespace :knapsack_pro do
       puts
     end
 
-    step_for_vcr(prompt) if answers[:has_vcr]
-    puts
+    if answers[:has_vcr]
+      step_for_vcr(prompt)
+      puts
+    end
 
     send("step_for_ci_#{answers[:ci]}", prompt, answers)
 
