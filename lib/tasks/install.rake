@@ -288,14 +288,12 @@ namespace :knapsack_pro do
     prompt.say "Now you are ready to use the gem!"
     prompt.say "Please push a new commit to repository so knapsack_pro gem will record time execution of your test suite."
     prompt.say "Your second tests run on CI will be parallelized with optimal test suite split."
-
-    puts
-    prompt.say "###### Please follow above instructions to finish configuration ######", color: :green
-    puts
     puts
     puts
     prompt.say "You can learn more about custom configuration and other features:"
     prompt.say "https://knapsackpro.com/features"
     prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#table-of-contents"
+    puts
+    prompt.say "###### Please follow above instructions to finish configuration ######", color: :green
   end
 end
