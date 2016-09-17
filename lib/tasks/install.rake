@@ -274,6 +274,9 @@ namespace :knapsack_pro do
     puts
 
     # Instructions how to set up the gem
+    puts
+    prompt.say "###### Please follow below instructions ######", color: :green
+    puts
 
     answers[:testing_tools].each do |tool|
       send("step_for_#{tool}", prompt)
