@@ -61,6 +61,33 @@ WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMoc
 end
 
 def step_for_ci_circle(prompt, answers)
+  prompt.say "Step for https://circleci.com", color: :red
+  prompt.say "Update circle.yml in your project:"
+
+  prompt.say %{
+machine:
+  environment:
+    # Tokens should be set in CircleCI settings to avoid expose tokens in build logs
+  }, color: :bright_red
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+    # KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}: #{tool}-token
+    }, color: :bright_red
+  end
+
+  prompt.say %{
+test:
+  override:
+  }, color: :bright_red
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+    # Step for #{tool}
+    - bundle exec rake knapsack_pro:#{tool}:
+        parallel: true # Caution: there are 8 spaces indentation!
+    }, color: :bright_red
+  end
 end
 
 def step_for_ci_travis(prompt, answers)
