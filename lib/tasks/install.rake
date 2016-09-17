@@ -65,18 +65,6 @@ def step_for_ci_circle(prompt, answers)
   prompt.say "Update circle.yml in your project:"
 
   prompt.say %{
-machine:
-  environment:
-    # Tokens should be set in CircleCI settings to avoid expose tokens in build logs
-  }, color: :cyan
-
-  answers[:testing_tools].each do |tool|
-    prompt.say %{
-    # KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}: #{tool}-token
-    }, color: :cyan
-  end
-
-  prompt.say %{
 test:
   override:
   }, color: :cyan
