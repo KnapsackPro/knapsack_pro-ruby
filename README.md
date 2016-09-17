@@ -118,6 +118,8 @@ Add this lines at the bottom of `Rakefile` if your project has it:
 KnapsackPro.load_tasks if defined?(KnapsackPro)
 ```
 
+## How to set up
+
 If you are using [VCR gem](https://github.com/vcr/vcr) then add Knapsack Pro API subdomain to [ignore hosts](https://www.relishapp.com/vcr/vcr/v/2-9-3/docs/configuration/ignore-request):
 
 ```ruby
@@ -129,8 +131,6 @@ end
 
 WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMock)
 ```
-
-## How to set up
 
 ### Usage (How to set up 1 of 3)
 
