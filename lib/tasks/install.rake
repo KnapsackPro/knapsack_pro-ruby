@@ -91,6 +91,46 @@ test:
 end
 
 def step_for_ci_travis(prompt, answers)
+  prompt.say "Step for https://travis-ci.org", color: :red
+  prompt.say "You can parallel your builds across virtual machines with travis matrix feature."
+  prompt.say "https://docs.travis-ci.com/user/speeding-up-the-build/#Parallelizing-your-builds-across-virtual-machines"
+  puts
+  prompt.say "Update .travis.yml"
+
+  prompt.say %{
+script:
+  }, color: :bright_red
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+  # Step for #{tool}
+  - "bundle exec rake knapsack_pro:#{tool}"
+    }, color: :bright_red
+  end
+
+  prompt.say %{
+env:
+  global:
+    - KNAPSACK_PRO_CI_NODE_TOTAL=2
+
+    # tokens should be set in travis settings in web interface to avoid expose tokens in build logs
+  }, color: :bright_red
+
+  answers[:testing_tools].each do |tool|
+    prompt.say %{
+    - KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}=#{tool}-token
+    }, color: :bright_red
+  end
+
+  prompt.say %{
+  matrix:
+    - KNAPSACK_PRO_CI_NODE_INDEX=0
+    - KNAPSACK_PRO_CI_NODE_INDEX=1
+  }, color: :bright_red
+
+  puts
+  prompt.say "If you want more parallel jobs then update accordingly:"
+  tip_ci_node_total_and_index(prompt)
 end
 
 def step_for_ci_buildkite(prompt, answers)
@@ -144,6 +184,10 @@ $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake kna
   end
   puts
   prompt.say "If you have more CI nodes then update accordingly:"
+  tip_ci_node_total_and_index(prompt)
+end
+
+def tip_ci_node_total_and_index(prompt)
   prompt.say %{
 KNAPSACK_PRO_CI_NODE_TOTAL - total number of your CI nodes
 KNAPSACK_PRO_CI_NODE_INDEX - starts from 0, it's index of each CI node
