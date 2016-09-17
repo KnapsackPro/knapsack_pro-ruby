@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.13.0
+
+* Add installer to get started with the knapsack_pro gem.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.12.0...v0.13.0
+
 ### 0.12.0
 
 * Add support for Minitest::SharedExamples
