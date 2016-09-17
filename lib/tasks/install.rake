@@ -116,6 +116,8 @@ env:
   tip_ci_node_total_and_index(prompt)
 
   puts
+  prompt.say "Open travis settings in web interface to add there Knapsack Pro API token."
+  puts
   set_api_tokens_on_ci(prompt, answers)
 end
 
