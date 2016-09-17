@@ -233,13 +233,14 @@ end
 def set_api_tokens_on_ci(prompt, answers)
   prompt.say "# Set API token", color: :yellow
   prompt.say "You must set different API token on your CI server for each test suite you have:"
-
-  answers[:testing_tools].each do |tool|
-    prompt.say %{
-KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}
-    }, color: :cyan
-  end
   puts
+
+  str = ''
+  answers[:testing_tools].each do |tool|
+    str << "KNAPSACK_PRO_TEST_SUITE_TOKEN_#{tool.upcase}\n"
+  end
+  prompt.say str, color: :cyan
+
   prompt.say "You can generate more API tokens after sign in on https://knapsackpro.com"
   puts
 end
