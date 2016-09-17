@@ -2,7 +2,7 @@ require 'knapsack_pro'
 require 'tty-prompt'
 
 def step_for_rspec(prompt)
-  prompt.say "# Step for RSpec", color: :yellow
+  prompt.say "Step for RSpec", color: :yellow
   prompt.say "Add at the beginning of your spec/spec_helper.rb:"
 
   prompt.say %{
@@ -13,7 +13,7 @@ KnapsackPro::Adapters::RSpecAdapter.bind
 end
 
 def step_for_minitest(prompt)
-  prompt.say "# Step for Minitest", color: :yellow
+  prompt.say "Step for Minitest", color: :yellow
   prompt.say "Add at the beginning of your test/test_helper.rb:"
 
   prompt.say %{
@@ -25,7 +25,7 @@ knapsack_pro_adapter.set_test_helper_path(__FILE__)
 end
 
 def step_for_cucumber(prompt)
-  prompt.say "# Step for Cucumber", color: :yellow
+  prompt.say "Step for Cucumber", color: :yellow
   prompt.say "Create file features/support/knapsack_pro.rb and add there:"
 
   prompt.say %{
@@ -36,7 +36,7 @@ KnapsackPro::Adapters::CucumberAdapter.bind
 end
 
 def step_for_spinach(prompt)
-  prompt.say "# Step for Spinach", color: :yellow
+  prompt.say "Step for Spinach", color: :yellow
   prompt.say "Create file features/support/knapsack_pro.rb and add there:"
 
   prompt.say %{
@@ -47,7 +47,7 @@ KnapsackPro::Adapters::SpinachAdapter.bind
 end
 
 def step_for_vcr(prompt)
-  prompt.say "# Step for VCR gem", color: :yellow
+  prompt.say "Step for VCR gem", color: :yellow
   prompt.say "Add Knapsack Pro API subdomain to ignore hosts"
   prompt.say "in spec/spec_helper.rb or wherever is your VCR configuration"
 
@@ -61,7 +61,7 @@ WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMoc
 end
 
 def step_for_ci_circle(prompt, answers)
-  prompt.say "# Step for https://circleci.com", color: :yellow
+  prompt.say "Step for https://circleci.com", color: :yellow
   prompt.say "Update circle.yml in your project:"
 
   str = ''
@@ -82,7 +82,7 @@ test:
 end
 
 def step_for_ci_travis(prompt, answers)
-  prompt.say "# Step for https://travis-ci.org", color: :yellow
+  prompt.say "Step for https://travis-ci.org", color: :yellow
   prompt.say "You can parallel your builds across virtual machines with travis matrix feature."
   prompt.say "https://docs.travis-ci.com/user/speeding-up-the-build/#Parallelizing-your-builds-across-virtual-machines"
   puts
@@ -122,7 +122,7 @@ env:
 end
 
 def step_for_ci_buildkite(prompt, answers)
-  prompt.say "# Step for https://buildkite.com", color: :yellow
+  prompt.say "Step for https://buildkite.com", color: :yellow
   prompt.say "Please configure the parallelism parameter in your build step and run the appropiate command in your build:"
 
   answers[:testing_tools].each do |tool|
@@ -137,7 +137,7 @@ bundle exec rake knapsack_pro:#{tool}
 end
 
 def step_for_ci_semaphore(prompt, answers)
-  prompt.say "# Step for https://semaphoreci.com", color: :yellow
+  prompt.say "Step for https://semaphoreci.com", color: :yellow
   prompt.say "Set knapsack pro command for each parallel thread. Here is example:"
 
   answers[:testing_tools].each do |tool|
@@ -157,7 +157,7 @@ bundle exec rake knapsack_pro:#{tool}
 end
 
 def step_for_ci_snap_ci(prompt, answers)
-  prompt.say "# Step for https://snap-ci.com", color: :yellow
+  prompt.say "Step for https://snap-ci.com", color: :yellow
   prompt.say "Please configure number of workers for your project in configuration settings in order to enable parallelism."
   prompt.say "Next thing is to set below commands to be executed in your stage:"
 
@@ -173,7 +173,7 @@ bundle exec rake knapsack_pro:#{tool}
 end
 
 def step_for_ci_other(prompt, answers)
-  prompt.say "# Step for other CI provider", color: :yellow
+  prompt.say "Step for other CI provider", color: :yellow
   prompt.say "Set below global variables on your CI server."
   puts
 
@@ -197,7 +197,7 @@ KNAPSACK_PRO_PROJECT_DIR=/home/ubuntu/my-app-repository
   set_api_tokens_on_ci(prompt, answers)
 
   # set test run command on CI server
-  prompt.say "# Set test run command on CI server", color: :yellow
+  prompt.say "Set test run command on CI server", color: :yellow
   prompt.say "You must set command responsible for running tests for each CI node."
   prompt.say "Let's assume you have 2 CI nodes. Here are commands you need to run for each CI node."
 
@@ -225,7 +225,7 @@ KNAPSACK_PRO_CI_NODE_INDEX - starts from 0, it's index of each CI node
 end
 
 def set_api_tokens_on_ci(prompt, answers)
-  prompt.say "# Set API token", color: :yellow
+  prompt.say "Set API token", color: :yellow
   prompt.say "You must set different API token on your CI server for each test suite you have:"
   puts
 
