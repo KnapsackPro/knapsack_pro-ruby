@@ -211,6 +211,7 @@ $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake kna
   puts
   prompt.say "If you have more CI nodes then update accordingly:"
   tip_ci_node_total_and_index(prompt)
+  puts
 end
 
 def tip_ci_node_total_and_index(prompt)
