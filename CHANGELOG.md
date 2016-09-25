@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.14.0
+
+* Use rake invoke for rspec and cucumber tasks.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.13.0...v0.14.0
+
 ### 0.13.0
 
 * Add installer to get started with the knapsack_pro gem.
