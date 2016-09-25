@@ -9,7 +9,7 @@ module KnapsackPro
 
         require 'rspec/core/rake_task'
 
-        task_name = :spec
+        task_name = 'knapsack_pro:rspec_run'
         if Rake::Task.task_defined?(task_name)
           Rake::Task[task_name].clear
         end
