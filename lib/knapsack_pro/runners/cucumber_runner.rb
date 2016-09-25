@@ -9,13 +9,13 @@ module KnapsackPro
 
         require 'cucumber/rake/task'
 
-        task_name = :features
+        task_name = 'knapsack_pro:cucumber_run'
         if Rake::Task.task_defined?(task_name)
           Rake::Task[task_name].clear
         end
 
-        Cucumber::Rake::Task.new(:features) do |t|
-          t.cucumber_opts = "#{args} -- #{runner.stringify_test_file_paths}"
+        Cucumber::Rake::Task.new(task_name) do |t|
+          t.cucumber_opts = "#{args} --require #{runner.test_dir} -- #{runner.stringify_test_file_paths}"
         end
         Rake::Task[task_name].invoke
       end
