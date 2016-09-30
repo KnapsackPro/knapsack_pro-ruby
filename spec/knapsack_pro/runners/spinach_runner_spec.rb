@@ -12,12 +12,14 @@ describe KnapsackPro::Runners::SpinachRunner do
       stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH' => 'spinach-token' })
 
       stringify_test_file_paths = 'features/a.feature features/b.feature'
+      test_dir = 'fake-test-dir'
       runner = instance_double(described_class,
+                               test_dir: test_dir,
                                stringify_test_file_paths: stringify_test_file_paths)
       expect(described_class).to receive(:new)
       .with(KnapsackPro::Adapters::SpinachAdapter).and_return(runner)
 
-      expect(Kernel).to receive(:system).with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg -- features/a.feature features/b.feature')
+      expect(Kernel).to receive(:system).with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature')
     end
 
     context 'when command exit with success code' do
