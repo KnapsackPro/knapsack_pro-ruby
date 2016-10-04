@@ -57,5 +57,31 @@ describe KnapsackPro::Runners::BaseRunner do
 
       it { should eq test_dir }
     end
+
+    describe '#test_files_to_execute_exist?' do
+      subject { runner.test_files_to_execute_exist? }
+
+      before do
+        expect(runner).to receive(:test_file_paths).and_return(test_file_paths)
+      end
+
+      context 'when test files exists' do
+        let(:test_file_paths) { ['a_spec.rb'] }
+
+        it { should be true }
+      end
+
+      context "when test files doesn't exist" do
+        let(:test_file_paths) { [] }
+
+        before do
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:info).with("Knapsack Pro API returned no test files to execute for the node this time. The reason might be that you changed recently a number of total nodes or you removed some test files. Please create a new commit to get a better test suite split next time.")
+        end
+
+        it { should be false }
+      end
+    end
   end
 end
