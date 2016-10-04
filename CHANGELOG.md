@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.15.0
+
+* Handle case when API returns no test files to execute on the node.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/19
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.14.0...v0.15.0
+
 ### 0.14.0
 
 * Use rake invoke for rspec and cucumber tasks.
