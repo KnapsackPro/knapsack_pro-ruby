@@ -6,10 +6,12 @@ module KnapsackPro
 
         runner = new(KnapsackPro::Adapters::SpinachAdapter)
 
-        cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=#{ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']} bundle exec spinach #{args} --features_path #{runner.test_dir} -- #{runner.stringify_test_file_paths}]
+        if runner.test_files_to_execute_exist?
+          cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=#{ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']} bundle exec spinach #{args} --features_path #{runner.test_dir} -- #{runner.stringify_test_file_paths}]
 
-        Kernel.system(cmd)
-        Kernel.exit($?.exitstatus) unless $?.exitstatus.zero?
+          Kernel.system(cmd)
+          Kernel.exit($?.exitstatus) unless $?.exitstatus.zero?
+        end
       end
     end
   end

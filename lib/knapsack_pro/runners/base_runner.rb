@@ -22,6 +22,15 @@ module KnapsackPro
         allocator_builder.test_dir
       end
 
+      def test_files_to_execute_exist?
+        if test_file_paths.empty?
+          KnapsackPro.logger.info("Knapsack Pro API returned no test files to execute for the node this time. The reason might be that you changed recently a number of total nodes or you removed some test files. Please create a new commit to get a better test suite split next time.")
+          false
+        else
+          true
+        end
+      end
+
       private
 
       attr_reader :allocator_builder,

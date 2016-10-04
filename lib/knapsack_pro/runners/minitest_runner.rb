@@ -7,20 +7,22 @@ module KnapsackPro
 
         runner = new(KnapsackPro::Adapters::MinitestAdapter)
 
-        task_name = 'knapsack_pro:minitest_run'
+        if runner.test_files_to_execute_exist?
+          task_name = 'knapsack_pro:minitest_run'
 
-        if Rake::Task.task_defined?(task_name)
-          Rake::Task[task_name].clear
+          if Rake::Task.task_defined?(task_name)
+            Rake::Task[task_name].clear
+          end
+
+          Rake::TestTask.new(task_name) do |t|
+            t.warning = false
+            t.libs << runner.test_dir
+            t.test_files = runner.test_file_paths
+            t.options = args
+          end
+
+          Rake::Task[task_name].invoke
         end
-
-        Rake::TestTask.new(task_name) do |t|
-          t.warning = false
-          t.libs << runner.test_dir
-          t.test_files = runner.test_file_paths
-          t.options = args
-        end
-
-        Rake::Task[task_name].invoke
       end
     end
   end
