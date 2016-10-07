@@ -11,7 +11,7 @@ module KnapsackPro
       end
 
       def test_file_paths
-        allocator.test_file_paths
+        @test_file_paths ||= allocator.test_file_paths
       end
 
       def stringify_test_file_paths
