@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.15.2
+
+* Cache API response test file paths to fix problem with double request to get test suite distribution for the node.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.15.1...v0.15.2
+
 ### 0.15.1
 
 * Fix support for turnip >= 2.x
