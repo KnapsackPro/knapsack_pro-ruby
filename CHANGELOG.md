@@ -2,6 +2,15 @@
 
 * TODO
 
+### 0.15.1
+
+* Fix support for turnip >= 2.x
+
+    Related PR:
+    https://github.com/ArturT/knapsack/pull/47
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.15.0...v0.15.1
+
 ### 0.15.0
 
 * Handle case when API returns no test files to execute on the node.
