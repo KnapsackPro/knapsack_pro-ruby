@@ -87,6 +87,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
 - [FAQ](#faq)
   - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
+  - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -549,6 +550,10 @@ For instance to run subset of tests for the first CI node with specified seed yo
     bundle exec rake "knapsack_pro:rspec[--seed 123]"
 
 Above example is for RSpec. You can use respectively rake task name and token environment variable when you want to run tests for minitest, cucumber or spinach.
+
+### What happens when Knapsack Pro API is not available/not reachable temporarily?
+
+knapsack_pro gem has fallback behaviour and it will split test files across CI nodes based on popular test directory names.
 
 ## Gem tests
 
