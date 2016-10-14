@@ -2,6 +2,10 @@
 
 * TODO
 
+### 0.17.0
+
+* Enable fallback mode for SocketError when failed to open TCP connection to http or https API endpoint.
+
 ### 0.16.0
 
 * Add KNAPSACK_PRO_LOG_LEVEL option
