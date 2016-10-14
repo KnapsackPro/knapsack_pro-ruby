@@ -120,6 +120,14 @@ module KnapsackPro
           value
         end
 
+        def log_level
+          {
+            'debug' => ::Logger::DEBUG,
+            'info'  => ::Logger::INFO,
+            'warn'  => ::Logger::WARN,
+          }[ENV['KNAPSACK_PRO_LOG_LEVEL']] || ::Logger::INFO
+        end
+
         private
 
         def required_env(env_name)

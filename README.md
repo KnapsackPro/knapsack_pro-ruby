@@ -88,6 +88,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
 - [FAQ](#faq)
   - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
   - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
+  - [How can I change log level?](#how-can-i-change-log-level)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -554,6 +555,14 @@ Above example is for RSpec. You can use respectively rake task name and token en
 ### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
 knapsack_pro gem has fallback behaviour and it will split test files across CI nodes based on popular test directory names.
+
+### How can I change log level?
+
+You can change log level by specifying the `KNAPSACK_PRO_LOG_LEVEL` environment variable.
+
+    KNAPSACK_PRO_LOG_LEVEL=warn bundle exec rake knapsack_pro:rspec
+
+Available values are `debug`, `info`, and `warn`. The default log level is `info`.
 
 ## Gem tests
 

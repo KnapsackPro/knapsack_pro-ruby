@@ -59,7 +59,7 @@ module KnapsackPro
     def logger
       unless @logger
         default_logger = ::Logger.new(STDOUT)
-        default_logger.level = ::Logger::INFO
+        default_logger.level = KnapsackPro::Config::Env.log_level
         self.logger = default_logger
       end
       @logger
