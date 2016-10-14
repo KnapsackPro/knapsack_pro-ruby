@@ -2,6 +2,15 @@
 
 * TODO
 
+### 0.16.0
+
+* Add KNAPSACK_PRO_LOG_LEVEL option
+
+    Related PR:
+    https://github.com/ArturT/knapsack/pull/49
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.15.2...v0.16.0
+
 ### 0.15.2
 
 * Cache API response test file paths to fix problem with double request to get test suite distribution for the node.
