@@ -96,7 +96,7 @@ module KnapsackPro
         end
 
         response
-      rescue Errno::ECONNREFUSED, EOFError, Net::OpenTimeout, Net::ReadTimeout => e
+      rescue Errno::ECONNREFUSED, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
       end
     end
