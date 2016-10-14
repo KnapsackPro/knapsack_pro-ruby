@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Knapsack Pro splits tests across CI nodes and makes sure that tests will run comparable time on each node.}
   spec.description   = %q{Parallel tests across CI server nodes based on each test file's time execution. It uses KnapsackPro.com API.}
   spec.homepage      = "https://github.com/KnapsackPro/knapsack_pro-ruby"
-  spec.license       = "LGPLv3"
+  spec.license       = "LGPL-3.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
