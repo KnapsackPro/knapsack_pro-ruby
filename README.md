@@ -89,6 +89,9 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
   - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
   - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
   - [How can I change log level?](#how-can-i-change-log-level)
+  - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
+    - [A. Create multiple small test files](#a-create-multiple-small-test-files)
+    - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -563,6 +566,52 @@ You can change log level by specifying the `KNAPSACK_PRO_LOG_LEVEL` environment 
     KNAPSACK_PRO_LOG_LEVEL=warn bundle exec rake knapsack_pro:rspec
 
 Available values are `debug`, `info`, and `warn`. The default log level is `info`.
+
+### How to split tests based on test level instead of test file level?
+
+If you want to split one big test file (test file with long time execution) across multiple CI nodes then you can:
+
+#### A. Create multiple small test files
+
+Create multiple small test files instead of one long running test file with many test cases.
+A lot of small test files will give you better test suite split results.
+
+#### B. Use tags to mark set of tests in particular test file
+
+Another way is to use tags to mark subset of tests in particular test file and then split tests based on tags.
+
+Here is example of test file with specified tags for describe groups:
+
+```ruby
+# spec/features/something_spec.rb
+describe 'Feature' do
+  describe 'something A', :tagA do
+    it {}
+    it 'another test' {}
+  end
+
+  describe 'something B', :tagB do
+    it {}
+  end
+
+  describe 'something else' do
+    it {}
+  end
+end
+```
+
+You need to create multiple API tokens for different tags. In this example we need 3 different API tokens.
+
+You need to run below commands for each CI node.
+
+    # run only tests with tagA
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tagA bundle exec rake "knapsack_pro:rspec[--tag tagA]"
+
+    # run only tests with tagB
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tagB bundle exec rake "knapsack_pro:rspec[--tag tagB]"
+
+    # run other tests without tag A & B
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tests_without_tags_A_and_B bundle exec rake "knapsack_pro:rspec[--tag ~tagA --tag ~tagB]"
 
 ## Gem tests
 
