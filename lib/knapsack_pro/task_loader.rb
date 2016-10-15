@@ -5,7 +5,7 @@ module KnapsackPro
     include ::Rake::DSL
 
     def load_tasks
-      Dir.glob("#{KnapsackPro.root}/lib/tasks/*.rake").each { |r| import r }
+      Dir.glob("#{KnapsackPro.root}/lib/tasks/**/*.rake").each { |r| import r }
     end
   end
 end
