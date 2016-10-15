@@ -11,7 +11,7 @@ module KnapsackPro
           if runner.test_files_to_execute_exist?
             require 'rspec/core/rake_task'
 
-            task_name = 'knapsack_pro:rspec_run'
+            task_name = 'knapsack_pro:queue:rspec_run'
             if Rake::Task.task_defined?(task_name)
               Rake::Task[task_name].clear
             end
