@@ -16,7 +16,7 @@ module KnapsackPro
           test_file_paths = queue.test_file_paths
 
           if test_file_paths.nil?
-            exit(exitstatus) unless exitstatus.zero?
+            exit(exitstatus)
           else
             task_name = "knapsack_pro:queue:rspec_run_#{SecureRandom.uuid}"
 
