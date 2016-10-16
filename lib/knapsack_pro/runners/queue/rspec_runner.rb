@@ -16,6 +16,7 @@ module KnapsackPro
           test_file_paths = queue.test_file_paths
 
           if test_file_paths.nil?
+            KnapsackPro::Report.save_node_queue_to_api
             exit(exitstatus)
           else
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id

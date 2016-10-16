@@ -7,9 +7,7 @@ module KnapsackPro
 
     def self.save_subset_queue_to_file
       test_files = KnapsackPro.tracker.to_a
-      queue_id = KnapsackPro::Config::Env.queue_id
       subset_queue_id = KnapsackPro::Config::Env.subset_queue_id
-      queue_path = "tmp/knapsack_pro/#{queue_id}"
 
       FileUtils.mkdir_p(queue_path)
 
@@ -23,7 +21,12 @@ module KnapsackPro
     end
 
     def self.save_node_queue_to_api
-      test_files = [] # TODO
+      test_files = []
+      Dir.glob("#{queue_path}/*.json").each do |file|
+        report = JSON.parse(File.read(file))
+        test_files += report
+      end
+
       create_build_subset(test_files)
     end
 
@@ -49,6 +52,13 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         KnapsackPro.logger.info('Saved time execution report on API server.')
       end
+    end
+
+    private
+
+    def self.queue_path
+      queue_id = KnapsackPro::Config::Env.queue_id
+      "tmp/knapsack_pro/#{queue_id}"
     end
   end
 end
