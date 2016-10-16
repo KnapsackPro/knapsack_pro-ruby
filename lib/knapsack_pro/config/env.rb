@@ -45,6 +45,22 @@ module KnapsackPro
           recording_enabled == 'true'
         end
 
+        def queue_recording_enabled
+          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED']
+        end
+
+        def queue_recording_enabled?
+          queue_recording_enabled == 'true'
+        end
+
+        def queue_id
+          ENV['KNAPSACK_PRO_QUEUE_ID'] || raise('Missing Queue ID')
+        end
+
+        def subset_queue_id
+          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] || raise('Missing Subset Queue ID')
+        end
+
         def test_files_encrypted
           ENV['KNAPSACK_PRO_TEST_FILES_ENCRYPTED']
         end

@@ -49,6 +49,14 @@ module KnapsackPro
           end
         end
       end
+
+      def bind_save_queue_report
+        ::RSpec.configure do |config|
+          config.after(:suite) do
+            KnapsackPro::Report.save_subset_queue_to_file
+          end
+        end
+      end
     end
 
     # This is added to provide backwards compatibility

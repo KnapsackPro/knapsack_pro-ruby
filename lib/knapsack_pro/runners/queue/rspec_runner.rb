@@ -18,7 +18,9 @@ module KnapsackPro
           if test_file_paths.nil?
             exit(exitstatus)
           else
-            task_name = "knapsack_pro:queue:rspec_run_#{SecureRandom.uuid}"
+            subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
+            ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
+            task_name = "knapsack_pro:queue:rspec_run_#{subset_queue_id}"
 
             RSpec::Core::RakeTask.new(task_name) do |t|
               t.rspec_opts = "#{args} --default-path #{runner.test_dir}"
@@ -42,7 +44,8 @@ module KnapsackPro
 
         def self.run(args)
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-          ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
+          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
+          ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
