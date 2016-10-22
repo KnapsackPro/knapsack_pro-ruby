@@ -11,6 +11,10 @@ module KnapsackPro
           index.to_i - 1 if index
         end
 
+        def node_build_id
+          ENV['SNAP_PIPELINE_COUNTER']
+        end
+
         def commit_hash
           ENV['SNAP_COMMIT']
         end

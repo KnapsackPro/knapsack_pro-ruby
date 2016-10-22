@@ -8,6 +8,9 @@ module KnapsackPro
         def node_index
         end
 
+        def node_build_id
+        end
+
         def commit_hash
         end
 

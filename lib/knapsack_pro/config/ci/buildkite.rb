@@ -10,6 +10,10 @@ module KnapsackPro
           ENV['BUILDKITE_PARALLEL_JOB']
         end
 
+        def node_build_id
+          ENV['BUILDKITE_BUILD_NUMBER']
+        end
+
         def commit_hash
           ENV['BUILDKITE_COMMIT']
         end

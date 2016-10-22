@@ -14,6 +14,11 @@ module KnapsackPro
             0).to_i
         end
 
+        def ci_node_build_id
+          ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] ||
+            ci_env_for(:node_build_id)
+        end
+
         def commit_hash
           ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
             ci_env_for(:commit_hash)

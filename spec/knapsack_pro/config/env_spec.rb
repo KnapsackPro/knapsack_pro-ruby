@@ -47,6 +47,29 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.ci_node_build_id' do
+    subject { described_class.ci_node_build_id }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_CI_NODE_BUILD_ID has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_BUILD_ID' => '7' }) }
+        it { should eq '7' }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:node_build_id).and_return('8')
+        end
+
+        it { should eq '8' }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.commit_hash' do
     subject { described_class.commit_hash }
 
