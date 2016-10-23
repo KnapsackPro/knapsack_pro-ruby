@@ -16,7 +16,7 @@ module KnapsackPro
         def self.run_tests(runner, can_initialize_queue, args, exitstatus)
           test_file_paths = runner.test_file_paths(can_initialize_queue: can_initialize_queue)
 
-          if test_file_paths.nil?
+          if test_file_paths.empty?
             KnapsackPro::Report.save_node_queue_to_api
             exit(exitstatus)
           else
