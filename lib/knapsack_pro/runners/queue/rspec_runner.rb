@@ -32,7 +32,7 @@ module KnapsackPro
             begin
               Rake::Task[task_name].invoke
             rescue Exception => e
-              puts "Task #{task_name} failed"
+              puts "Task failed: #{task_name}"
               puts "#{e.class}: #{e.message}"
               puts "Exit status: #{$?.exitstatus}"
               exitstatus = $?.exitstatus if $?.exitstatus != 0
