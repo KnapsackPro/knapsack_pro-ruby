@@ -1,7 +1,7 @@
 module KnapsackPro
   module Runners
     module Queue
-      class RSpecRunner < BaseRunner
+      class RSpecRunner < BaseQueueRunner
         class Queue
           def initialize(test_file_paths)
             @test_file_paths = test_file_paths
