@@ -16,7 +16,8 @@ module KnapsackPro
 
         def ci_node_build_id
           ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] ||
-            ci_env_for(:node_build_id)
+            ci_env_for(:node_build_id) ||
+            'missing-build-id'
         end
 
         def commit_hash

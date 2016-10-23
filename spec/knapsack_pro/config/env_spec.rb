@@ -66,7 +66,7 @@ describe KnapsackPro::Config::Env do
     end
 
     context "when ENV doesn't exist" do
-      it { should be_nil }
+      it { should eq 'missing-build-id' }
     end
   end
 
