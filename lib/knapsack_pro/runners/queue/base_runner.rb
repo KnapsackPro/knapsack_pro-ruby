@@ -1,7 +1,7 @@
 module KnapsackPro
   module Runners
     module Queue
-      class BaseQueueRunner
+      class BaseRunner
         def self.run(args)
           raise NotImplementedError
         end

@@ -1,7 +1,7 @@
 module KnapsackPro
   module Runners
     module Queue
-      class RSpecRunner < BaseQueueRunner
+      class RSpecRunner < BaseRunner
         def self.run(args)
           require 'rspec/core/rake_task'
 
