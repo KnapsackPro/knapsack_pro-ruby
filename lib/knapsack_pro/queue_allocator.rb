@@ -8,7 +8,7 @@ module KnapsackPro
       @repository_adapter = args.fetch(:repository_adapter)
     end
 
-    def test_file_paths(can_initialize_queue:)
+    def test_file_paths(can_initialize_queue)
       encrypted_test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
       action = KnapsackPro::Client::API::V1::Queues.queue(
         can_initialize_queue: can_initialize_queue,
