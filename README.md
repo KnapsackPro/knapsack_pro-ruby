@@ -92,6 +92,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
   - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
     - [A. Create multiple small test files](#a-create-multiple-small-test-files)
     - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
+  - [How to make knapsack_pro works for forked repositories of my project?](#how-to-make-knapsack_pro-works-for-forked-repositories-of-my-project)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -612,6 +613,34 @@ You need to run below commands for each CI node.
 
     # run other tests without tag A & B
     KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tests_without_tags_A_and_B bundle exec rake "knapsack_pro:rspec[--tag ~tagA --tag ~tagB]"
+
+### How to make knapsack_pro works for forked repositories of my project?
+
+Imagine one of the scenarios, for this example I use the Travis-CI.
+
+* We don’t want to have secrets like the `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` in `.travis.yml` in the codebase, because that code is also distributed to clients.
+* Adding it as env variables to Travis itself is tricky: It has to work for pull requests from developer’s forks into our main fork; this conflicts with the way Travis handles secrets. We also need a fallback if the token is not provided (when developers do builds within their own fork).
+
+The solution for this problem is to set `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as env variables in Travis for our main project.
+This won't be accessible on forked repositories so we will run knapsack_pro in fallback mode there.
+This way forked repositories have working test suite but without optimal test suite split across CI nodes.
+
+Create the file `bin/knapsack_pro_rspec` with executable chmod in your main project repository.
+Below example is for rspec. You can change `$KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to `$KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` if you use cucumber etc.
+
+```
+#!/bin/bash
+if [ "$KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC" = "" ]; then
+  KNAPSACK_PRO_ENDPOINT=https://api-disabled-for-fork.knapsackpro.com \
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=disabled-for-fork \
+    bundle exec rake knapsack_pro:rspec
+else
+    bundle exec rake knapsack_pro:rspec
+fi
+```
+
+Now you can use `bin/knapsack_pro_rspec` command instead of `bundle exec rake knapsack_pro:rspec`.
+Remember to follow other steps required for your CI provider.
 
 ## Gem tests
 
