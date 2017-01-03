@@ -35,6 +35,7 @@ module KnapsackPro
               puts "Task failed: #{task_name}"
               puts "#{e.class}: #{e.message}"
               puts "Exit status: #{$?.exitstatus}"
+              puts e.backtrace
               exitstatus = $?.exitstatus if $?.exitstatus != 0
             end
 
