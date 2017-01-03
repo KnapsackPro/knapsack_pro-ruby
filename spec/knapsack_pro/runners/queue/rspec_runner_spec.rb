@@ -1,3 +1,3 @@
-describe KnapsackPro::Runners::Queue::RspecRunner do
+describe KnapsackPro::Runners::Queue::RSpecRunner do
 
 end
