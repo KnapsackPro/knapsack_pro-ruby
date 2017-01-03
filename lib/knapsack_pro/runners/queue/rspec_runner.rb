@@ -3,14 +3,16 @@ module KnapsackPro
     module Queue
       class RSpecRunner < BaseRunner
         def self.run(args)
-          require 'rspec/core/rake_task'
+          require 'rspec/core'
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
-          run_tests(runner, true, args, 0)
+
+          cli_args = (args || '').split
+          run_tests(runner, true, cli_args, 0)
         end
 
         def self.run_tests(runner, can_initialize_queue, args, exitstatus)
@@ -22,15 +24,14 @@ module KnapsackPro
           else
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
-            task_name = "knapsack_pro:queue:rspec_run_#{subset_queue_id}"
-
-            RSpec::Core::RakeTask.new(task_name) do |t|
-              t.rspec_opts = "#{args} --default-path #{runner.test_dir}"
-              t.pattern = test_file_paths
-            end
 
             begin
-              Rake::Task[task_name].invoke
+              cli_args = args + [
+                '--default-path', runner.test_dir,
+              ] + test_file_paths
+              options = RSpec::Core::ConfigurationOptions.new(cli_args)
+              RSpec::Core::Runner.new(options).run($stderr, $stdout)
+              RSpec.world.example_groups.clear
             rescue Exception => e
               puts "Task failed: #{task_name}"
               puts "#{e.class}: #{e.message}"
