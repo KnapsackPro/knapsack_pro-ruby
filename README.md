@@ -93,6 +93,10 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
     - [A. Create multiple small test files](#a-create-multiple-small-test-files)
     - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
   - [How to make knapsack_pro works for forked repositories of my project?](#how-to-make-knapsack_pro-works-for-forked-repositories-of-my-project)
+  - [Questions around data usage and security](#questions-around-data-usage-and-security)
+    - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
+    - [How is that data secured?](#how-is-that-data-secured)
+    - [Who has access to the data?](#who-has-access-to-the-data)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -641,6 +645,30 @@ fi
 
 Now you can use `bin/knapsack_pro_rspec` command instead of `bundle exec rake knapsack_pro:rspec`.
 Remember to follow other steps required for your CI provider.
+
+### Questions around data usage and security
+
+#### What data is sent to your servers?
+
+The knapsack_pro gem sends branch name, commit hash, CI total node number, CI index node number, the test file paths like `spec/models/user_spec.rb` and the time execution of each test file path as a float.
+
+Here is the [full specification of the API](http://docs.knapsackpro.com/api/v1/) used by knapsack_pro gem.
+
+#### How is that data secured?
+
+The test file paths can be [encrypted](#test-file-names-encryption) on your CI node with your salt and later send to knapsackpro.com API.
+You generate salt locally and only you can decrypt the test file paths.
+
+Connection with knapsackpro.com server is via https.
+
+Regarding payments we use the BraintreePayments.com and they store credit cards and your private information.
+
+#### Who has access to the data?
+
+I’m the only admin so I can preview data in case you need help with debugging some problem etc. I’m not able to decrypt them without knowing the salt.
+
+When you sign in to your user dashboard then you can preview data for recent 100 builds on CI. If the test file paths are encrypted then you only see hashes for test file paths.
+You need to [decrypt](#how-to-debug-test-file-names) them locally on your machine to find out what each test file hash is.
 
 ## Gem tests
 
