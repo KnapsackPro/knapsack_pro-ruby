@@ -25,25 +25,15 @@ module KnapsackPro
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
-            begin
-              cli_args = args + [
-                '--default-path', runner.test_dir,
-              ] + test_file_paths
-              options = RSpec::Core::ConfigurationOptions.new(cli_args)
-              exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
-              exitstatus = exit_code if exit_code != 0
-              RSpec.world.example_groups.clear
-            rescue Exception => e
-              puts "Test suite subset queue failed: #{subset_queue_id}"
-              puts "#{e.class}: #{e.message}"
-              puts "Exit status: #{exit_code}"
-              puts e.backtrace
-              exitstatus = exit_code if exit_code != 0
-            end
+            cli_args = args + [
+              '--default-path', runner.test_dir,
+            ] + test_file_paths
+            options = RSpec::Core::ConfigurationOptions.new(cli_args)
+            exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
+            exitstatus = exit_code if exit_code != 0
+            RSpec.world.example_groups.clear
 
-            at_exit do
-              run_tests(runner, false, args, exitstatus)
-            end
+            run_tests(runner, false, args, exitstatus)
           end
         end
       end
