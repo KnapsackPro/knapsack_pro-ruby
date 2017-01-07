@@ -30,14 +30,15 @@ module KnapsackPro
                 '--default-path', runner.test_dir,
               ] + test_file_paths
               options = RSpec::Core::ConfigurationOptions.new(cli_args)
-              RSpec::Core::Runner.new(options).run($stderr, $stdout)
+              exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
+              exitstatus = exit_code if exit_code != 0
               RSpec.world.example_groups.clear
             rescue Exception => e
-              puts "Task failed: #{task_name}"
+              puts "Test suite subset queue failed: #{subset_queue_id}"
               puts "#{e.class}: #{e.message}"
-              puts "Exit status: #{$?.exitstatus}"
+              puts "Exit status: #{exit_code}"
               puts e.backtrace
-              exitstatus = $?.exitstatus if $?.exitstatus != 0
+              exitstatus = exit_code if exit_code != 0
             end
 
             at_exit do
