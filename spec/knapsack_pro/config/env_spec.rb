@@ -245,6 +245,7 @@ describe KnapsackPro::Config::Env do
     end
 
     context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
       it do
         expect { subject }.to raise_error('Missing Queue ID')
       end
