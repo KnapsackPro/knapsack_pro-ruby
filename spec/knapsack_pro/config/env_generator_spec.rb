@@ -34,4 +34,19 @@ describe KnapsackPro::Config::EnvGenerator do
       end
     end
   end
+
+  describe '.set_subset_queue_id' do
+    subject { described_class.set_subset_queue_id }
+
+    before { stub_const("ENV", {}) }
+
+    it do
+      uuid = 'fake-uuid'
+      expect(SecureRandom).to receive(:uuid).and_return(uuid)
+
+      subject
+
+      expect(ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID']).to eq uuid
+    end
+  end
 end
