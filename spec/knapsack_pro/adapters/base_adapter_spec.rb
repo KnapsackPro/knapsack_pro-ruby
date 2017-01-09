@@ -60,4 +60,12 @@ describe KnapsackPro::Adapters::BaseAdapter do
       }.to raise_error(NotImplementedError)
     end
   end
+
+  describe '#bind_save_queue_report' do
+    it do
+      expect {
+        subject.bind_save_queue_report
+      }.to raise_error(NotImplementedError)
+    end
+  end
 end
