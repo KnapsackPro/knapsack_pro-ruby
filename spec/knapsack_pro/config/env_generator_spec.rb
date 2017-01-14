@@ -21,7 +21,7 @@ describe KnapsackPro::Config::EnvGenerator do
       end
 
       it do
-        now = Date.new(2016, 1, 9)
+        now = DateTime.new(2016, 1, 9, 0, 0, 0)
 
         Timecop.freeze(now) do
           uuid = 'fake-uuid'
@@ -29,7 +29,7 @@ describe KnapsackPro::Config::EnvGenerator do
 
           subject
 
-          expect(ENV['KNAPSACK_PRO_QUEUE_ID']).to eq '1452294000_fake-uuid'
+          expect(ENV['KNAPSACK_PRO_QUEUE_ID']).to eq '1452297600_fake-uuid'
         end
       end
     end
