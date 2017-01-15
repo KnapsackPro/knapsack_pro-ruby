@@ -33,13 +33,15 @@ Next time when you will run tests you will get proper test files for each CI nod
 
 ## Details
 
-For instance when you will run tests with rake knapsack_pro:rspec then:
+For instance when you will run tests with `rake knapsack_pro:rspec` then:
 
 * information about all your existing test files are sent to API http://docs.knapsackpro.com/api/v1/#build_distributions_subset_post
 * API returns which files should be executed on particular CI node (example KNAPSACK_PRO_CI_NODE_INDEX=0)
 * when API server has info about previous tests runs then it will use it to return more accurate test split results, in other case API returns simple split based on directory names
 * knapsack_pro will run test files which got from API
 * after tests finished knapsack_pro will send information about time execution of each file to API http://docs.knapsackpro.com/api/v1/#build_subsets_post so data can be used for future test runs
+
+The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test suite split.
 
 # Requirements
 
@@ -66,6 +68,11 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
   - [Repository adapter (How to set up 3 of 3)](#repository-adapter-how-to-set-up-3-of-3)
     - [When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
     - [When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
+- [Queue Mode](#queue-mode)
+  - [How queue mode works?](#how-queue-mode-works)
+  - [How to use queue mode?](#how-to-use-queue-mode)
+  - [Additional info about queue mode](#additional-info-about-queue-mode)
+  - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)
@@ -279,6 +286,41 @@ You can also use git as repository adapter to determine branch and commit hash, 
 
 `KNAPSACK_PRO_PROJECT_DIR` - Path to the project on CI node for instance `/home/ubuntu/my-app-repository`. It should be main directory of your repository.
 
+## Queue Mode
+
+knapsack_pro has built in queue mode designed to solve problem with optimal test suite split in case of random time execution of test files caused by
+CI node overload and a random decrease of performance that may affect how long the test files are executed.
+The problem with random time execution of test files may be caused by many things like external requests done in tests.
+
+### How queue mode works?
+
+On the Knapsack Pro API side, there is test files queue generated for your CI build. Each of CI node dynamically asks the Knapsack Pro API for test files
+that should be executed. Thanks to that each CI node will finish tests at the same time.
+
+### How to use queue mode?
+
+Please use this command to run queue mode:
+
+    bundle exec rake knapsack_pro:queue:rspec
+
+If above command fails then you may need to explicitly pass an argument to require `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
+
+    bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
+
+Note if you will run queue mode command for the first time it might be slower.
+The second build should have better optimal test suite split.
+
+### Additional info about queue mode
+
+If you are not using one of supported CI providers then please note that knapsack_pro gem doesn't know what is CI build ID in order to generated queue for particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
+To avoid this you can specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
+
+### Supported test runners in queue mode
+
+At this moment the queue mode works for:
+
+* RSpec
+
 ## Extra configuration for CI server
 
 ### Info about ENV variables
@@ -367,6 +409,7 @@ Add arguments to knapsack_pro spinach task like this:
 You can install knapsack_pro globally and use binary. For instance:
 
     $ knapsack_pro rspec "--tag custom_tag_name --profile"
+    $ knapsack_pro queue:rspec "--tag custom_tag_name --profile"
     $ knapsack_pro cucumber "--name feature"
     $ knapsack_pro minitest "--verbose --pride"
     $ knapsack_pro spinach "--arg_name value"

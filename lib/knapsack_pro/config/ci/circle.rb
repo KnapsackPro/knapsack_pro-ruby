@@ -10,6 +10,10 @@ module KnapsackPro
           ENV['CIRCLE_NODE_INDEX']
         end
 
+        def node_build_id
+          ENV['CIRCLE_BUILD_NUM']
+        end
+
         def commit_hash
           ENV['CIRCLE_SHA1']
         end
@@ -26,4 +30,3 @@ module KnapsackPro
     end
   end
 end
-

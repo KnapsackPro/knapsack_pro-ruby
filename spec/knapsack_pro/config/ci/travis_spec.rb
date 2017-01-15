@@ -19,6 +19,19 @@ describe KnapsackPro::Config::CI::Travis do
     it { should be nil }
   end
 
+  describe '#node_build_id' do
+    subject { described_class.new.node_build_id }
+
+    context 'when environment exists' do
+      let(:env) { { 'TRAVIS_BUILD_NUMBER' => 4 } }
+      it { should eql 4 }
+    end
+
+    context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 

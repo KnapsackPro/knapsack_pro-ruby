@@ -2,10 +2,79 @@ describe KnapsackPro::Report do
   describe '.save' do
     subject { described_class.save }
 
-    before do
+    it do
+      test_files = double
       tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
       expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+      expect(described_class).to receive(:create_build_subset).with(test_files)
+
+      subject
     end
+  end
+
+  describe '.save_subset_queue_to_file' do
+    let(:fake_path) { SecureRandom.uuid }
+
+    subject { described_class.save_subset_queue_to_file }
+
+    before do
+      test_files = [{path: fake_path}]
+      tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
+      expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+
+      subset_queue_id = 'fake-subset-queue-id'
+      expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
+
+      queue_id = 'fake-queue-id'
+      expect(KnapsackPro::Config::Env).to receive(:queue_id).twice.and_return(queue_id)
+    end
+
+    it do
+      subject
+
+      expect(
+        JSON.parse(
+          File.read('tmp/knapsack_pro/queue/fake-queue-id/fake-subset-queue-id.json')
+        )
+      ).to eq([
+        { 'path' => fake_path }
+      ])
+    end
+  end
+
+  describe '.save_node_queue_to_api' do
+    let(:json_test_file_a_path) { double }
+    let(:json_test_file_a) { [{ 'path' => 'a_spec.rb' }] }
+
+    let(:json_test_file_b_path) { double }
+    let(:json_test_file_b) { [{ 'path' => 'b_spec.rb' }] }
+
+    subject { described_class.save_node_queue_to_api }
+
+    before do
+      queue_id = 'fake-queue-id'
+      expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
+
+      expect(Dir).to receive(:glob).with('tmp/knapsack_pro/queue/fake-queue-id/*.json').and_return([
+        json_test_file_a_path,
+        json_test_file_b_path
+      ])
+
+      expect(File).to receive(:read).with(json_test_file_a_path).and_return(json_test_file_a.to_json)
+      expect(File).to receive(:read).with(json_test_file_b_path).and_return(json_test_file_b.to_json)
+    end
+
+    it do
+      expect(described_class).to receive(:create_build_subset).with(
+        json_test_file_a + json_test_file_b
+      )
+
+      subject
+    end
+  end
+
+  describe '.create_build_subset' do
+    subject { described_class.create_build_subset(test_files) }
 
     context "when test files doesn't exist" do
       let(:test_files) { [] }

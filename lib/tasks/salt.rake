@@ -1,5 +1,3 @@
-require 'securerandom'
-
 namespace :knapsack_pro do
   task :salt, [:size] do |_, args|
     default_size = 32

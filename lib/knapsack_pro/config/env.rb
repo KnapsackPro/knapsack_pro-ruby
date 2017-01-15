@@ -14,6 +14,12 @@ module KnapsackPro
             0).to_i
         end
 
+        def ci_node_build_id
+          ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] ||
+            ci_env_for(:node_build_id) ||
+            'missing-build-id'
+        end
+
         def commit_hash
           ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
             ci_env_for(:commit_hash)
@@ -43,6 +49,22 @@ module KnapsackPro
 
         def recording_enabled?
           recording_enabled == 'true'
+        end
+
+        def queue_recording_enabled
+          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED']
+        end
+
+        def queue_recording_enabled?
+          queue_recording_enabled == 'true'
+        end
+
+        def queue_id
+          ENV['KNAPSACK_PRO_QUEUE_ID'] || raise('Missing Queue ID')
+        end
+
+        def subset_queue_id
+          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] || raise('Missing Subset Queue ID')
         end
 
         def test_files_encrypted

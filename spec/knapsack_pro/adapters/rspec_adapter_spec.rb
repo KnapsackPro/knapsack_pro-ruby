@@ -112,5 +112,16 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         subject.bind_save_report
       end
     end
+
+    describe '#bind_save_queue_report' do
+      it do
+        expect(config).to receive(:after).with(:suite).and_yield
+        expect(::RSpec).to receive(:configure).and_yield(config)
+
+        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+
+        subject.bind_save_queue_report
+      end
+    end
   end
 end

@@ -2,6 +2,10 @@ module KnapsackPro
   module Config
     module CI
       class Travis < Base
+        def node_build_id
+          ENV['TRAVIS_BUILD_NUMBER']
+        end
+
         def commit_hash
           ENV['TRAVIS_COMMIT']
         end

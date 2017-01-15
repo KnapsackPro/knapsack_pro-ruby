@@ -1,4 +1,4 @@
-describe KnapsackPro::AllocatorBuilder do
+describe KnapsackPro::QueueAllocatorBuilder do
   let(:adapter_class) { KnapsackPro::Adapters::BaseAdapter }
   let(:allocator_builder) { described_class.new(adapter_class) }
 
@@ -21,11 +21,14 @@ describe KnapsackPro::AllocatorBuilder do
       expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(ci_node_total)
       ci_node_index = double
       expect(KnapsackPro::Config::Env).to receive(:ci_node_index).and_return(ci_node_index)
+      ci_node_build_id = double
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(ci_node_build_id)
 
-      expect(KnapsackPro::Allocator).to receive(:new).with(
+      expect(KnapsackPro::QueueAllocator).to receive(:new).with(
         test_files: test_files,
         ci_node_total: ci_node_total,
         ci_node_index: ci_node_index,
+        ci_node_build_id: ci_node_build_id,
         repository_adapter: repository_adapter,
       ).and_return(allocator)
     end

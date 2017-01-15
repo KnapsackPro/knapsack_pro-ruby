@@ -11,6 +11,10 @@ module KnapsackPro
           index.to_i - 1 if index
         end
 
+        def node_build_id
+          ENV['SEMAPHORE_BUILD_NUMBER']
+        end
+
         def commit_hash
           ENV['REVISION']
         end

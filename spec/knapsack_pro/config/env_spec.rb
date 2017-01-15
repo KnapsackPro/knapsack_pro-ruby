@@ -47,6 +47,29 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.ci_node_build_id' do
+    subject { described_class.ci_node_build_id }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_CI_NODE_BUILD_ID has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_BUILD_ID' => '7' }) }
+        it { should eq '7' }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:node_build_id).and_return('8')
+        end
+
+        it { should eq '8' }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should eq 'missing-build-id' }
+    end
+  end
+
   describe '.commit_hash' do
     subject { described_class.commit_hash }
 
@@ -175,6 +198,73 @@ describe KnapsackPro::Config::Env do
       let(:recording_enabled) { nil }
 
       it { should be false }
+    end
+  end
+
+  describe '.queue_recording_enabled' do
+    subject { described_class.queue_recording_enabled }
+
+    context 'when ENV exists' do
+      let(:queue_recording_enabled) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_RECORDING_ENABLED' => queue_recording_enabled }) }
+      it { should eq queue_recording_enabled }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.queue_recording_enabled?' do
+    subject { described_class.queue_recording_enabled? }
+
+    before do
+      expect(described_class).to receive(:queue_recording_enabled).and_return(queue_recording_enabled)
+    end
+
+    context 'when enabled' do
+      let(:queue_recording_enabled) { 'true' }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:queue_recording_enabled) { nil }
+
+      it { should be false }
+    end
+  end
+
+  describe '.queue_id' do
+    subject { described_class.queue_id }
+
+    context 'when ENV exists' do
+      let(:queue_id) { 'fake-queue-id' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_ID' => queue_id }) }
+      it { should eq queue_id }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it do
+        expect { subject }.to raise_error('Missing Queue ID')
+      end
+    end
+  end
+
+  describe '.subset_queue_id' do
+    subject { described_class.subset_queue_id }
+
+    context 'when ENV exists' do
+      let(:subset_queue_id) { 'fake-subset-queue-id' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_SUBSET_QUEUE_ID' => subset_queue_id }) }
+      it { should eq subset_queue_id }
+    end
+
+    context "when ENV doesn't exist" do
+      it do
+        expect { subject }.to raise_error('Missing Subset Queue ID')
+      end
     end
   end
 
