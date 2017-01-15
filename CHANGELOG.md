@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.18.0
+
+* Add support for knapsack_pro queue mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/20
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.17.0...v0.18.0
+
 ### 0.17.0
 
 * Enable fallback mode for SocketError when failed to open TCP connection to http or https API endpoint.
