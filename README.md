@@ -404,6 +404,7 @@ Add arguments to knapsack_pro spinach task like this:
 You can install knapsack_pro globally and use binary. For instance:
 
     $ knapsack_pro rspec "--tag custom_tag_name --profile"
+    $ knapsack_pro queue:rspec "--tag custom_tag_name --profile"
     $ knapsack_pro cucumber "--name feature"
     $ knapsack_pro minitest "--verbose --pride"
     $ knapsack_pro spinach "--arg_name value"
