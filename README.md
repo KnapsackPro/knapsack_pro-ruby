@@ -33,13 +33,15 @@ Next time when you will run tests you will get proper test files for each CI nod
 
 ## Details
 
-For instance when you will run tests with rake knapsack_pro:rspec then:
+For instance when you will run tests with `rake knapsack_pro:rspec` then:
 
 * information about all your existing test files are sent to API http://docs.knapsackpro.com/api/v1/#build_distributions_subset_post
 * API returns which files should be executed on particular CI node (example KNAPSACK_PRO_CI_NODE_INDEX=0)
 * when API server has info about previous tests runs then it will use it to return more accurate test split results, in other case API returns simple split based on directory names
 * knapsack_pro will run test files which got from API
 * after tests finished knapsack_pro will send information about time execution of each file to API http://docs.knapsackpro.com/api/v1/#build_subsets_post so data can be used for future test runs
+
+The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test suite split.
 
 # Requirements
 
