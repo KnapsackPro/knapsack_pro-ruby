@@ -70,6 +70,7 @@ For instance when you will run tests with rake knapsack_pro:rspec then:
   - [How queue mode works?](#how-queue-mode-works)
   - [How to use queue mode?](#how-to-use-queue-mode)
   - [Additional info about queue mode](#additional-info-about-queue-mode)
+  - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)
@@ -306,6 +307,12 @@ The second build should have better optimal test suite split.
 
 If you are not using one of supported CI providers then please note that knapsack_pro gem doesn't know what is CI build ID in order to generated queue for particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 To avoid this you can specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
+
+### Supported test runners in queue mode
+
+At this moment the queue mode works for:
+
+* RSpec
 
 ## Extra configuration for CI server
 
