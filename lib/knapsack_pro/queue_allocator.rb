@@ -9,22 +9,12 @@ module KnapsackPro
     end
 
     def test_file_paths(can_initialize_queue)
-      encrypted_test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
-      action = KnapsackPro::Client::API::V1::Queues.queue(
-        can_initialize_queue: can_initialize_queue,
-        commit_hash: repository_adapter.commit_hash,
-        branch: repository_adapter.branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        node_build_id: ci_node_build_id,
-        test_files: encrypted_test_files,
-      )
+      action = build_action(can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
-        decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_files, response['test_files'])
-        KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+        prepare_test_files(response)
       else
         raise ArgumentError.new("Couldn't connect with Knapsack Pro API. Response: #{response}")
       end
@@ -37,5 +27,26 @@ module KnapsackPro
       :ci_node_index,
       :ci_node_build_id,
       :repository_adapter
+
+    def encrypted_test_files
+      KnapsackPro::Crypto::Encryptor.call(test_files)
+    end
+
+    def build_action(can_initialize_queue)
+      KnapsackPro::Client::API::V1::Queues.queue(
+        can_initialize_queue: can_initialize_queue,
+        commit_hash: repository_adapter.commit_hash,
+        branch: repository_adapter.branch,
+        node_total: ci_node_total,
+        node_index: ci_node_index,
+        node_build_id: ci_node_build_id,
+        test_files: encrypted_test_files,
+      )
+    end
+
+    def prepare_test_files(response)
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_files, response['test_files'])
+      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+    end
   end
 end
