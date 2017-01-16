@@ -2,6 +2,11 @@
 
 * TODO
 
+### 0.19.0
+
+* Change timeout to 30s for requests to API.
+* Retry failed request to API at most 3 times.
+
 ### 0.18.0
 
 * Add support for knapsack_pro queue mode
