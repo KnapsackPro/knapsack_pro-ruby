@@ -1,7 +1,7 @@
 module KnapsackPro
   module Client
     class Connection
-      TIMEOUT = 15
+      TIMEOUT = 30
 
       def initialize(action)
         @action = action
@@ -75,6 +75,7 @@ module KnapsackPro
       end
 
       def post
+        retries ||= 0
         uri = URI.parse(endpoint_url)
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = (uri.scheme == 'https')
@@ -98,6 +99,7 @@ module KnapsackPro
         response
       rescue Errno::ECONNREFUSED, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
+        retry if (retries += 1) < 3
       end
     end
   end
