@@ -2,6 +2,10 @@
 
 * TODO
 
+### 0.20.0
+
+* Wait a few seconds before retrying failed request to API. With each retry wait a bit longer. Retry at most 5 times.
+
 ### 0.19.0
 
 * Change timeout to 30s for requests to API.
