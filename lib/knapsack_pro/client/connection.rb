@@ -99,7 +99,13 @@ module KnapsackPro
         response
       rescue Errno::ECONNREFUSED, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
-        retry if (retries += 1) < 3
+        retries += 1
+        if retries < 5
+          wait = retries * 2
+          logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
+          sleep wait
+          retry
+        end
       end
     end
   end
