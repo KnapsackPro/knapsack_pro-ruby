@@ -316,6 +316,12 @@ The second build should have better optimal test suite split.
 
   To avoid this you can specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
 
+* Note that in the queue mode you cannot retry the failed CI node with exactly the same subset of tests that were run on the CI node in the first place. It's possible only in regular mode ([read more](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)).
+
+  Let's say one of the CI nodes failed and you retry just this single CI node while other CI nodes are still running. The retried CI node will be connected to the queue consumed by running CI nodes.
+
+  In the case when there are no running CI nodes then your retried CI node will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run.
+
 ### Supported test runners in queue mode
 
 At this moment the queue mode works for:
