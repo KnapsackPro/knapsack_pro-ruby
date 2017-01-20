@@ -312,7 +312,7 @@ The second build should have better optimal test suite split.
 
 ### Additional info about queue mode
 
-If you are not using one of supported CI providers then please note that knapsack_pro gem doesn't know what is CI build ID in order to generated queue for particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
+If you are not using one of [supported CI providers](#supported-ci-providers) then please note that knapsack_pro gem doesn't know what is CI build ID in order to generated queue for particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 To avoid this you can specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
 
 ### Supported test runners in queue mode
