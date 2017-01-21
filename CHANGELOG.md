@@ -2,14 +2,24 @@
 
 * TODO
 
+### 0.21.0
+
+* Improve VCR config documentation so it's more clear that ignore_hosts takes arguments instead of array
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.20.0...v0.21.0
+
 ### 0.20.0
 
 * Wait a few seconds before retrying failed request to API. With each retry wait a bit longer. Retry at most 5 times.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.19.0...v0.20.0
 
 ### 0.19.0
 
 * Change timeout to 30s for requests to API.
 * Retry failed request to API at most 3 times.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.18.0...v0.19.0
 
 ### 0.18.0
 
