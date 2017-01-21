@@ -149,10 +149,10 @@ If you are using [VCR gem](https://github.com/vcr/vcr) then add Knapsack Pro API
 # spec/spec_helper.rb or wherever is your VCR configuration
 
 VCR.configure do |config|
-  config.ignore_hosts 'localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com'
+  config.ignore_hosts('localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com')
 end
 
-WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMock)
+WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com']) if defined?(WebMock)
 ```
 
 ### Usage (How to set up 1 of 3)

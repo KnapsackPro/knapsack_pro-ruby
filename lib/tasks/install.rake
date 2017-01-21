@@ -49,10 +49,10 @@ def step_for_vcr(prompt)
 
   prompt.say %{
 VCR.configure do |config|
-  config.ignore_hosts 'localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com'
+  config.ignore_hosts('localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com')
 end
 
-WebMock.disable_net_connect!(:allow => 'api.knapsackpro.com') if defined?(WebMock)
+WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com']) if defined?(WebMock)
   }, color: :cyan
 end
 
