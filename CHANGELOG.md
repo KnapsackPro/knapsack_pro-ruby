@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.22.0
+
+*  Add more info how to set up VCR and webmock to `knapsack_pro:install` rake task.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.21.0...v0.22.0
+
 ### 0.21.0
 
 * Improve VCR config documentation so it's more clear that ignore_hosts takes arguments instead of array
