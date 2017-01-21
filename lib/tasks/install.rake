@@ -45,14 +45,29 @@ end
 def step_for_vcr(prompt)
   prompt.say "Step for VCR gem", color: :yellow
   prompt.say "Add Knapsack Pro API subdomain to ignore hosts"
-  prompt.say "in spec/spec_helper.rb or wherever is your VCR configuration"
+  prompt.say "in spec/spec_helper.rb or wherever is your VCR configuration:"
 
   prompt.say %{
+require 'vcr'
 VCR.configure do |config|
+  config.hook_into :webmock # or :fakeweb
   config.ignore_hosts('localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com')
 end
 
-WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com']) if defined?(WebMock)
+# add below when you hook into webmock
+require 'webmock/rspec'
+WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com'])
+  }, color: :cyan
+
+  puts
+
+  prompt.say "Ensure you have require false in Gemfile for webmock gem when VCR is hook into it. Thanks to that webmock configuration in spec_helper.rb is loaded properly."
+
+  prompt.say %{
+group :test do
+  gem 'vcr'
+  gem 'webmock', require: false
+end
   }, color: :cyan
 end
 

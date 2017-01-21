@@ -148,11 +148,26 @@ If you are using [VCR gem](https://github.com/vcr/vcr) then add Knapsack Pro API
 ```ruby
 # spec/spec_helper.rb or wherever is your VCR configuration
 
+require 'vcr'
 VCR.configure do |config|
+  config.hook_into :webmock # or :fakeweb
   config.ignore_hosts('localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com')
 end
 
-WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com']) if defined?(WebMock)
+# add below when you hook into webmock
+require 'webmock/rspec'
+WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com'])
+```
+
+Ensure you have require false for webmock gem when VCR is hook into it. Thanks to that webmock configuration in `spec_helper.rb` is loaded properly.
+
+```ruby
+# Gemfile
+
+group :test do
+  gem 'vcr'
+  gem 'webmock', require: false
+end
 ```
 
 ### Usage (How to set up 1 of 3)
