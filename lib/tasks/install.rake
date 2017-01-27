@@ -305,7 +305,11 @@ namespace :knapsack_pro do
 
     prompt.say "Now you are ready to use the gem!"
     prompt.say "Please push a new commit to repository so knapsack_pro gem will record time execution of your test suite."
-    prompt.say "Your second tests run on CI will be parallelized with optimal test suite split."
+    prompt.say "Your second test suite run on CI will be parallelized with optimal test suite split."
+    puts
+    puts
+    prompt.say "Later you may want to learn about Queue Mode and how to enable it:"
+    prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#queue-mode"
     puts
     puts
     prompt.say "You can learn more about custom configuration and other features:"
