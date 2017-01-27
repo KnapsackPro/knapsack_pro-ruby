@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.23.0
+
+* Add info about Queue Mode to install rake task.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.22.0...v0.23.0
+
 ### 0.22.0
 
 *  Add more info how to set up VCR and webmock to `knapsack_pro:install` rake task.
