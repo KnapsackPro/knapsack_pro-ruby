@@ -99,6 +99,10 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT', true)
         end
 
+        def fixed_queue_split
+          ENV.fetch('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', false)
+        end
+
         def test_suite_token
           required_env('KNAPSACK_PRO_TEST_SUITE_TOKEN')
         end
