@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.24.0
+
+* Send client name and version in headers for each request to Knapsack Pro API.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.23.0...v0.24.0
+
 ### 0.23.0
 
 * Add info about Queue Mode to install rake task.
