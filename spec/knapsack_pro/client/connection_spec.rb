@@ -38,7 +38,12 @@ describe KnapsackPro::Client::Connection do
         expect(http).to receive(:post).with(
           endpoint_path,
           "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
-          { "Content-Type" => "application/json", "Accept" => "application/json" }
+          {
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+            'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+          }
         ).and_return(http_response)
       end
 

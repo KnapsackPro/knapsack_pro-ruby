@@ -54,7 +54,9 @@ module KnapsackPro
       def json_headers
         {
           'Content-Type' => 'application/json',
-          'Accept' => 'application/json'
+          'Accept' => 'application/json',
+          'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+          'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
         }
       end
 
