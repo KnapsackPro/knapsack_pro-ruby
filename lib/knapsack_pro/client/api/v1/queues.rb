@@ -9,6 +9,7 @@ module KnapsackPro
                 endpoint_path: '/v1/queues/queue',
                 http_method: :post,
                 request_hash: {
+                  :fixed_queue_split => KnapsackPro::Config::Env.fixed_queue_split,
                   :can_initialize_queue => args.fetch(:can_initialize_queue),
                   :commit_hash => args.fetch(:commit_hash),
                   :branch => args.fetch(:branch),
