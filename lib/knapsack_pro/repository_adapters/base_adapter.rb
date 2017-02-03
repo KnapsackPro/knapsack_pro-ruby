@@ -11,4 +11,3 @@ module KnapsackPro
     end
   end
 end
-

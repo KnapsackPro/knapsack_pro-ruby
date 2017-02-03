@@ -1,5 +1,6 @@
 describe KnapsackPro::Client::API::V1::Queues do
   describe '.queue' do
+    let(:fixed_queue_split) { double }
     let(:can_initialize_queue) { double }
     let(:commit_hash) { double }
     let(:branch) { double }
@@ -18,6 +19,10 @@ describe KnapsackPro::Client::API::V1::Queues do
       )
     end
 
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(fixed_queue_split)
+    end
+
     it do
       node_build_id = double
       expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(node_build_id)
@@ -27,6 +32,7 @@ describe KnapsackPro::Client::API::V1::Queues do
         endpoint_path: '/v1/queues/queue',
         http_method: :post,
         request_hash: {
+          fixed_queue_split: fixed_queue_split,
           can_initialize_queue: can_initialize_queue,
           commit_hash: commit_hash,
           branch: branch,

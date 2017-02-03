@@ -373,6 +373,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.fixed_queue_split' do
+    subject { described_class.fixed_queue_split }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => true }) }
+      it { should eq true }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
   describe '.test_suite_token' do
     subject { described_class.test_suite_token }
 

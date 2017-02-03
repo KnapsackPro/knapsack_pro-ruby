@@ -72,6 +72,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [How queue mode works?](#how-queue-mode-works)
   - [How to use queue mode?](#how-to-use-queue-mode)
   - [Additional info about queue mode](#additional-info-about-queue-mode)
+  - [Extra configuration for Queue Mode](#extra-configuration-for-queue-mode)
+    - [KNAPSACK_PRO_FIXED_QUEUE_SPLIT (remember queue split on retry CI node)](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node)
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
@@ -331,11 +333,38 @@ The second build should have better optimal test suite split.
 
   To avoid this you can specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
 
-* Note that in the queue mode you cannot retry the failed CI node with exactly the same subset of tests that were run on the CI node in the first place. It's possible only in regular mode ([read more](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)).
+* Note that in the Queue Mode by default you cannot retry the failed CI node with exactly the same subset of tests that were run on the CI node in the first place. It's possible in regular mode ([read more](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)). If you want to have similar behavior in Queue Mode you need to explicitly [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
-  Let's say one of the CI nodes failed and you retry just this single CI node while other CI nodes are still running. The retried CI node will be connected to the queue consumed by running CI nodes.
+  By default the Queue Mode works this way:
 
-  In the case when there are no running CI nodes then your retried CI node will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run.
+  * If you retry the failed build and your all CI nodes will start a new build then there will be a new dynamic test suite split across CI nodes.
+
+  * Let's say one of the CI nodes failed and you retry just this single CI node while other CI nodes are still running. The retried CI node will be connected to the queue consumed by still running CI nodes.
+
+  * In the case when there are no running CI nodes then your retried CI node will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run.
+
+### Extra configuration for Queue Mode
+
+#### KNAPSACK_PRO_FIXED_QUEUE_SPLIT (remember queue split on retry CI node)
+
+* `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false` (default)
+
+  By default, the fixed queue split is off. It means when you will run tests for the same commit hash and a total number of nodes and for the same branch then each time the queue will be generated dynamically and CI nodes will fetch from Knapsack Pro API the test files in a dynamic way. This is default because it gives the most optimal test suite split for the whole test build across all CI nodes even when you retry the same build on CI many times.
+
+* `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`
+
+  You can enable fixed queue split in order to remember the test suite split across CI nodes when you used Queue Mode.
+
+  It means when you run test suite or just retry single CI node again for the same commit hash and a total number of nodes and for the same branch
+  then you will get exactly the same test suite split as it was when you run the build for the first time.
+
+  Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
+
+  Note when fixed queue split is enabled then you can run tests in a dynamic way only once for particular commit hash and a total number of nodes and for the same branch.
+
+  When Knapsack Pro API server has already information about previous queue split then the information will be used. You will see at the beginning of the knapsack command the log with info that queue name is nil because it was not generated this time. You will get the list of all test files that were executed on the particular CI node in the past.
+
+       [knapsack_pro] {"queue_name"=>nil, "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
 
 ### Supported test runners in queue mode
 
