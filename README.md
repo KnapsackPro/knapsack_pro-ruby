@@ -670,6 +670,8 @@ Command similar to above can be executed in your development this way:
 
     bundle exec rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
 
+If you were running your tests with `--order random` on your CI then you can additionaly pass seed param with proper value in above command (`--seed 123`).
+
 #### for knapsack_pro queue mode
 
 To retry the particular CI node do this on your machine:
@@ -681,6 +683,25 @@ To retry the particular CI node do this on your machine:
     KNAPSACK_PRO_CI_NODE_INDEX=0 \
     KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
     bundle exec rake "knapsack_pro:queue:rspec"
+
+If you were running your tests with `--order random` on your CI like this:
+
+    bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+
+Then you can find the seed number visible in rspec output:
+
+    (...)
+    Randomized with seed 123
+
+You can pass the seed in your local environment to reproduce the tests in the same order as they were executed on CI node:
+
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+    KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+    KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+    KNAPSACK_PRO_CI_NODE_INDEX=0 \
+    KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+    bundle exec rake "knapsack_pro:queue:rspec[--seed 123]"
 
 ### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
