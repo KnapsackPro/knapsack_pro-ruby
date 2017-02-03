@@ -349,18 +349,18 @@ The second build should have better optimal test suite split.
 
 * `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false` (default)
 
-  By default, the fixed queue split is off. It means when you will run tests for the same commit hash and a total number of nodes and for the same branch then each time the queue will be generated dynamically and CI nodes will fetch from Knapsack Pro API the test files in a dynamic way. This is default because it gives the most optimal test suite split for the whole test build across all CI nodes.
+  By default, the fixed queue split is off. It means when you will run tests for the same commit hash and a total number of nodes and for the same branch then each time the queue will be generated dynamically and CI nodes will fetch from Knapsack Pro API the test files in a dynamic way. This is default because it gives the most optimal test suite split for the whole test build across all CI nodes even when you retry the same build on CI many times.
 
 * `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`
 
   You can enable fixed queue split in order to remember the test suite split across CI nodes when you used Queue Mode.
 
   It means when you run test suite or just retry single CI node again for the same commit hash and a total number of nodes and for the same branch
-  then you will get exactly the same test suite split.
+  then you will get exactly the same test suite split as it was when you run the build for the first time.
 
   Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
 
-  When fixed queue split is enabled then you can only once run tests in a dynamic way for particular commit hash and a total number of nodes and for the same branch.
+  Note when fixed queue split is enabled then you can run tests in a dynamic way only once for particular commit hash and a total number of nodes and for the same branch.
 
   When Knapsack Pro API server has already information about previous queue split then the information will be used. You will see at the beginning of the knapsack command the log with info that queue name is nil because it was not generated this time. You will get the list of all test files that were executed on the particular CI node in the past.
 
