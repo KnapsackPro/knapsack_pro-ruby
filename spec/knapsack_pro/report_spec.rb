@@ -20,7 +20,8 @@ describe KnapsackPro::Report do
     before do
       test_files = [{path: fake_path}]
       tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
-      expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+      expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
+      expect(tracker).to receive(:reset!)
 
       subset_queue_id = 'fake-subset-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)

@@ -7,6 +7,8 @@ module KnapsackPro
 
     def self.save_subset_queue_to_file
       test_files = KnapsackPro.tracker.to_a
+      KnapsackPro.tracker.reset!
+
       subset_queue_id = KnapsackPro::Config::Env.subset_queue_id
 
       FileUtils.mkdir_p(queue_path)
