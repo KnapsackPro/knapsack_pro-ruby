@@ -2,6 +2,7 @@ module KnapsackPro
   module Client
     class Connection
       TIMEOUT = 30
+      REQUEST_RETRY_TIMEBOX = 2
 
       def initialize(action)
         @action = action
@@ -103,7 +104,7 @@ module KnapsackPro
         logger.warn(e.inspect)
         retries += 1
         if retries < 5
-          wait = retries * 2
+          wait = retries * REQUEST_RETRY_TIMEBOX
           logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
           sleep wait
           retry
