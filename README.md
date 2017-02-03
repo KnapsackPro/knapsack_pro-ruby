@@ -96,6 +96,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
 - [FAQ](#faq)
   - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
+    - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
+    - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode)
   - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
   - [How can I change log level?](#how-can-i-change-log-level)
   - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
@@ -642,6 +644,8 @@ Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as gl
 
 ### How to run tests for particular CI node in your development environment
 
+#### for knapack_pro regular mode
+
 In your development environment you can debug tests that were run on the particular CI node.
 For instance to run subset of tests for the first CI node with specified seed you can do.
 
@@ -653,6 +657,30 @@ For instance to run subset of tests for the first CI node with specified seed yo
     bundle exec rake "knapsack_pro:rspec[--seed 123]"
 
 Above example is for RSpec. You can use respectively rake task name and token environment variable when you want to run tests for minitest, cucumber or spinach.
+It should work when all CI nodes finished work and sent time execution data to Knapsack Pro API.
+You can visit [user dashboard](https://knapsackpro.com/dashboard) to preview particular CI build and ensure time execution data were collected from all CI nodes.
+If at least one CI node has not sent time execution data to the Knapsack Pro API then you should check below solution.
+
+Check test runner output on particular CI node you would like to retry in development. You should see at the beginning of rspec command an output that can
+be copied and executed in development.
+
+    /Users/ubuntu/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.4.4/exe/rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
+
+Command similar to above can be executed in your development this way:
+
+    bundle exec rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
+
+#### for knapsack_pro queue mode
+
+To retry the particular CI node do this on your machine:
+
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+    KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+    KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+    KNAPSACK_PRO_CI_NODE_INDEX=0 \
+    KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+    bundle exec rake "knapsack_pro:queue:rspec"
 
 ### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
