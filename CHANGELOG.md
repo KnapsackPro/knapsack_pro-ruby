@@ -8,6 +8,10 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/22
 
+* Fix bug in queue mode with recording test files time execution data. Previously the same test files time execution data where multiple times send to Knapsack Pro API.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/23
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.24.0...v0.25.0
 
 ### 0.24.0
