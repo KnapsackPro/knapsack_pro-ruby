@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.25.0
+
+* Queue mode retry (remember queue split on retry CI node).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/22
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.24.0...v0.25.0
+
 ### 0.24.0
 
 * Send client name and version in headers for each request to Knapsack Pro API.
