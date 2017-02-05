@@ -177,6 +177,7 @@ Ensure you have require false for webmock gem when VCR is hook into it. Thanks t
 group :test do
   gem 'vcr'
   gem 'webmock', require: false
+  gem 'fakeweb', require: false # example when you use fakeweb
 end
 ```
 

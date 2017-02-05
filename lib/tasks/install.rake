@@ -71,6 +71,7 @@ FakeWeb.allow_net_connect = %r[^https?://api\.knapsackpro\.com]
 group :test do
   gem 'vcr'
   gem 'webmock', require: false
+  gem 'fakeweb', require: false # example when you use fakeweb
 end
   }, color: :cyan
 end
