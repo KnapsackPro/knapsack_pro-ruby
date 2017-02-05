@@ -147,7 +147,9 @@ You can read next section only if you want to better understand optional gem con
 
 ## How to set up
 
-If you are using [VCR gem](https://github.com/vcr/vcr) then add Knapsack Pro API subdomain to [ignore hosts](https://www.relishapp.com/vcr/vcr/v/2-9-3/docs/configuration/ignore-request):
+If you use [VCR](https://github.com/vcr/vcr), [WebMock](https://github.com/bblimke/webmock) or [FakeWeb](https://github.com/chrisk/fakeweb) gems then you need to allow them to make requests to Knapsack Pro API.
+
+For VCR add Knapsack Pro API subdomain to [ignore hosts](https://www.relishapp.com/vcr/vcr/v/2-9-3/docs/configuration/ignore-request):
 
 ```ruby
 # spec/spec_helper.rb or wherever is your VCR configuration
@@ -163,6 +165,7 @@ require 'webmock/rspec'
 WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com'])
 
 # add below when you use FakeWeb
+require 'fakeweb'
 FakeWeb.allow_net_connect = %r[^https?://api\.knapsackpro\.com]
 ```
 

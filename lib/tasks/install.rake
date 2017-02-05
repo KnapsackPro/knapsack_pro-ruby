@@ -43,7 +43,7 @@ KnapsackPro::Adapters::SpinachAdapter.bind
 end
 
 def step_for_vcr(prompt)
-  prompt.say "Step for VCR gem", color: :yellow
+  prompt.say "Step for VCR/WebMock/FakeWeb gems", color: :yellow
   prompt.say "Add Knapsack Pro API subdomain to ignore hosts"
   prompt.say "in spec/spec_helper.rb or wherever is your VCR configuration:"
 
@@ -59,6 +59,7 @@ require 'webmock/rspec'
 WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com'])
 
 # add below when you use FakeWeb
+require 'fakeweb'
 FakeWeb.allow_net_connect = %r[^https?://api\.knapsackpro\.com]
   }, color: :cyan
 
@@ -274,7 +275,7 @@ namespace :knapsack_pro do
       answers[:testing_tools] = prompt.multi_select("Choose your testing tools:", TESTING_TOOLS_CHOICES)
     end
 
-    answers[:has_vcr] = prompt.yes?('Do you use VCR gem?')
+    answers[:has_vcr] = prompt.yes?('Do you use VCR, WebMock or FakeWeb gem?')
 
     CI_PROVIDER_CHOICES = {
       'https://circleci.com' => :circle,
