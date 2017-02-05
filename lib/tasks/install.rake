@@ -57,6 +57,9 @@ end
 # add below when you hook into webmock
 require 'webmock/rspec'
 WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com'])
+
+# add below when you use FakeWeb
+FakeWeb.allow_net_connect = %r[^https?://api\.knapsackpro\.com]
   }, color: :cyan
 
   puts

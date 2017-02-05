@@ -161,6 +161,9 @@ end
 # add below when you hook into webmock
 require 'webmock/rspec'
 WebMock.disable_net_connect!(:allow => ['api.knapsackpro.com'])
+
+# add below when you use FakeWeb
+FakeWeb.allow_net_connect = %r[^https?://api\.knapsackpro\.com]
 ```
 
 Ensure you have require false for webmock gem when VCR is hook into it. Thanks to that webmock configuration in `spec_helper.rb` is loaded properly.
