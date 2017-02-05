@@ -108,6 +108,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
     - [Who has access to the data?](#who-has-access-to-the-data)
+  - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -819,6 +820,13 @@ I’m the only admin so I can preview data in case you need help with debugging 
 
 When you sign in to your user dashboard then you can preview data for recent 100 builds on CI. If the test file paths are encrypted then you only see hashes for test file paths.
 You need to [decrypt](#how-to-debug-test-file-names) them locally on your machine to find out what each test file hash is.
+
+### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
+
+RSpec collects information about failed tests and presents it at the end of RSpec result.
+When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
+This means RSpec will remember failed tests so far and it will present them at the end of each executed test subset.
+You can see the list of all failed test files at the end of knapack_pro queue mode command.
 
 ## Gem tests
 
