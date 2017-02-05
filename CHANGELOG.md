@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.26.0
+
+* Add info how to allow FakeWeb to connect with Knapsack Pro API in install rake task.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.25.0...v0.26.0
+
 ### 0.25.0
 
 * Queue mode retry (remember queue split on retry CI node).
