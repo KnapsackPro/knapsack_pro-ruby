@@ -2,6 +2,11 @@ module KnapsackPro
   class Report
     def self.save
       test_files = KnapsackPro.tracker.to_a
+
+      if test_files.empty?
+        KnapsackPro.logger.info("No test files were executed on this CI node. When you use knapsack_pro regular mode then probably reason might be very narrowed tests list - you run only tests with specified tag and there are fewer test files with the tag than node total number.")
+      end
+
       create_build_subset(test_files)
     end
 
@@ -29,15 +34,14 @@ module KnapsackPro
         test_files += report
       end
 
+      if test_files.empty?
+        KnapsackPro.logger.info("No test files were executed on this CI node. When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.")
+      end
+
       create_build_subset(test_files)
     end
 
     def self.create_build_subset(test_files)
-      if test_files.empty?
-        KnapsackPro.logger.info("Didn't save time execution report on API server because there are no test files matching criteria on this node. Probably reason might be very narrowed tests list - you run only tests with specified tag and there are fewer test files with the tag than node total number.")
-        return
-      end
-
       repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
       test_files = KnapsackPro::Utils.unsymbolize(test_files)
       encrypted_test_files = KnapsackPro::Crypto::Encryptor.call(test_files)

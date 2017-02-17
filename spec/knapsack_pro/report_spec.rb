@@ -3,7 +3,7 @@ describe KnapsackPro::Report do
     subject { described_class.save }
 
     it do
-      test_files = double
+      test_files = [double]
       tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
       expect(KnapsackPro).to receive(:tracker).and_return(tracker)
       expect(described_class).to receive(:create_build_subset).with(test_files)
@@ -77,53 +77,40 @@ describe KnapsackPro::Report do
   describe '.create_build_subset' do
     subject { described_class.create_build_subset(test_files) }
 
-    context "when test files doesn't exist" do
-      let(:test_files) { [] }
+    before do
+      commit_hash = double
+      branch = double
+      repository_adapter = instance_double(KnapsackPro::RepositoryAdapters::EnvAdapter, commit_hash: commit_hash, branch: branch)
+      expect(KnapsackPro::RepositoryAdapterInitiator).to receive(:call).and_return(repository_adapter)
 
-      it do
-        logger = instance_double(Logger)
-        expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:info).with("Didn't save time execution report on API server because there are no test files matching criteria on this node. Probably reason might be very narrowed tests list - you run only tests with specified tag and there are fewer test files with the tag than node total number.")
-        subject
-      end
+      unsymbolize_test_files = double
+      expect(KnapsackPro::Utils).to receive(:unsymbolize).with(test_files).and_return(unsymbolize_test_files)
+
+      encrypted_test_files = double
+      expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(unsymbolize_test_files).and_return(encrypted_test_files)
+
+      node_total = double
+      node_index = double
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_index).and_return(node_index)
+
+      action = double
+      expect(KnapsackPro::Client::API::V1::BuildSubsets).to receive(:create).with({
+        commit_hash: commit_hash,
+        branch: branch,
+        node_total: node_total,
+        node_index: node_index,
+        test_files: encrypted_test_files,
+      }).and_return(action)
+
+      connection = instance_double(KnapsackPro::Client::Connection, success?: success?, errors?: errors?)
+      expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection).and_return(connection)
+
+      response = double
+      expect(connection).to receive(:call).and_return(response)
     end
 
-    context 'when test files exists' do
-      let(:test_files) { [double] }
-
-      before do
-        commit_hash = double
-        branch = double
-        repository_adapter = instance_double(KnapsackPro::RepositoryAdapters::EnvAdapter, commit_hash: commit_hash, branch: branch)
-        expect(KnapsackPro::RepositoryAdapterInitiator).to receive(:call).and_return(repository_adapter)
-
-        unsymbolize_test_files = double
-        expect(KnapsackPro::Utils).to receive(:unsymbolize).with(test_files).and_return(unsymbolize_test_files)
-
-        encrypted_test_files = double
-        expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(unsymbolize_test_files).and_return(encrypted_test_files)
-
-        node_total = double
-        node_index = double
-        expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
-        expect(KnapsackPro::Config::Env).to receive(:ci_node_index).and_return(node_index)
-
-        action = double
-        expect(KnapsackPro::Client::API::V1::BuildSubsets).to receive(:create).with({
-          commit_hash: commit_hash,
-          branch: branch,
-          node_total: node_total,
-          node_index: node_index,
-          test_files: encrypted_test_files,
-        }).and_return(action)
-
-        connection = instance_double(KnapsackPro::Client::Connection, success?: success?, errors?: errors?)
-        expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection).and_return(connection)
-
-        response = double
-        expect(connection).to receive(:call).and_return(response)
-      end
-
+    shared_examples_for 'create_build_subset method' do
       context 'when success' do
         let(:success?) { true }
 
@@ -155,6 +142,18 @@ describe KnapsackPro::Report do
 
         it { subject }
       end
+    end
+
+    context "when test files doesn't exist" do
+      let(:test_files) { [] }
+
+      it_behaves_like 'create_build_subset method'
+    end
+
+    context 'when test files exists' do
+      let(:test_files) { [double] }
+
+      it_behaves_like 'create_build_subset method'
     end
   end
 end
