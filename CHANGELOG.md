@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.27.0
+
+* Save build subset to API even when no test files were executed on CI node. Add warnings to notify why the test files were not executed on CI node in particular mode: regular or queue mode.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.26.0...v0.27.0
+
 ### 0.26.0
 
 * Add info how to allow FakeWeb to connect with Knapsack Pro API in install rake task.
