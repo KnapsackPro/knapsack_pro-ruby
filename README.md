@@ -327,7 +327,9 @@ that should be executed. Thanks to that each CI node will finish tests at the sa
 
 ### How to use queue mode?
 
-Please use this command to run queue mode:
+Please use different API token for queue mode than for regular mode.
+
+Use this command to run queue mode:
 
     bundle exec rake knapsack_pro:queue:rspec
 
@@ -339,6 +341,9 @@ Note if you will run queue mode command for the first time it might be slower.
 The second build should have better optimal test suite split.
 
 ### Additional info about queue mode
+
+* You should use different API token for queue mode than for regular mode to avoid problem with test suite split in case you would like to go back to regular mode.
+There might be some cached test suite splits for git commits you run in past for API token you used in queue mode because of the [flag `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true` for regular mode which is default](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed).
 
 * If you are not using one of [supported CI providers](#supported-ci-providers) then please note that knapsack_pro gem doesn't know what is CI build ID in order to generated queue for particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 
