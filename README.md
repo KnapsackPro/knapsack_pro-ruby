@@ -348,17 +348,25 @@ There might be some cached test suite splits for git commits you run in past for
 
 * If you are not using one of [supported CI providers](#supported-ci-providers) then please note that knapsack_pro gem doesn't know what is CI build ID in order to generated queue for particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 
-  To avoid this you can specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
+  To avoid this you should specify unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
 
 * Note that in the Queue Mode by default you cannot retry the failed CI node with exactly the same subset of tests that were run on the CI node in the first place. It's possible in regular mode ([read more](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)). If you want to have similar behavior in Queue Mode you need to explicitly [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
   By default the Queue Mode works this way:
 
-  * If you retry the failed build and your all CI nodes will start a new build then there will be a new dynamic test suite split across CI nodes.
+  * If you retry the failed build and your all CI nodes will start a new build then there will be a new dynamic test suite split across CI nodes. The reason is that the most of the CI providers schedule a new CI build with different ID when you retry CI build. They retry all CI nodes again. In that case you don't have to worry with below edge cases because the CI build ID will be different so a new queue will be initialized on Knapsack Pro API side and all retried CI node will connect to that queue.
 
-  * Let's say one of the CI nodes failed and you retry just this single CI node while other CI nodes are still running. The retried CI node will be connected to the queue consumed by still running CI nodes.
+  Edge cases:
 
-  * In the case when there are no running CI nodes then your retried CI node will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run.
+  * Let's say one of the CI nodes failed and you retry just this single CI node while other CI nodes are still running. Let's assume this retried CI node is part of the same CI build ID when you use supported CI provider or `KNAPSACK_PRO_CI_NODE_BUILD_ID` is defined and stays the same. The retried CI node will be connected to the queue consumed by still running CI nodes. You probably would expect the retried CI node to run the tests that were executed there on the first place. To achieve that you need to [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
+
+  * Let's say one of the CI nodes failed and you retry just this single CI node while other CI nodes already finished work. Let's assume this retried CI node is part of the same CI build ID when you use supported CI provider or `KNAPSACK_PRO_CI_NODE_BUILD_ID` is defined and stays the same. The fact is all CI nodes finished work so the queue was consumed.
+    * If you retry CI node in first hour since the CI build started for the first time then the retried CI node won't execute tests because the queue was consumed.
+    * If you retry CI node after 1 hour since the CI build started for the first time then the retried CI node will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run. You probably would expect the retried CI node to run the tests that were executed there on the first place. To achieve that you need to [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
+
+  * When you use unsupported CI provider by knapack_pro gem or you forget to set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` per CI build then:
+    * when you retry single CI node then it will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run.
+    * when you retry all CI nodes then a new queue will be initialized and all CI nodes will connect to it.
 
 ### Extra configuration for Queue Mode
 
