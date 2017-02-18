@@ -109,6 +109,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [How is that data secured?](#how-is-that-data-secured)
     - [Who has access to the data?](#who-has-access-to-the-data)
   - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
+  - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
   - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
@@ -833,6 +834,13 @@ RSpec collects information about failed tests and presents it at the end of RSpe
 When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
 This means RSpec will remember failed tests so far and it will present them at the end of each executed test subset.
 You can see the list of all failed test files at the end of knapack_pro queue mode command.
+
+### Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?
+
+RSpec collects information about pending tests and presents it at the end of RSpec result.
+When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
+This means RSpec will remember pending tests so far and it will present them at the end of each executed test subset.
+You can see the list of all pending test files at the end of knapack_pro queue mode command.
 
 ### Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?
 
