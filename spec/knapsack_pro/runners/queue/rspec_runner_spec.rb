@@ -2,7 +2,10 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
   describe '.run' do
     let(:test_suite_token_rspec) { 'fake-token' }
     let(:queue_id) { 'fake-queue-id' }
-    let(:runner) { double }
+    let(:test_dir) { 'fake-test-dir' }
+    let(:runner) do
+      instance_double(described_class, test_dir: test_dir)
+    end
 
     subject { described_class.run(args) }
 
@@ -22,7 +25,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
       it do
         result = double
-        expect(described_class).to receive(:run_tests).with(runner, true, ['--example-arg', 'example-value'], 0).and_return(result)
+        expect(described_class).to receive(:run_tests).with(runner, true, ['--example-arg', 'example-value', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
 
         expect(subject).to eq result
       end
@@ -33,7 +36,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
       it do
         result = double
-        expect(described_class).to receive(:run_tests).with(runner, true, [], 0).and_return(result)
+        expect(described_class).to receive(:run_tests).with(runner, true, ['--default-path', 'fake-test-dir'], 0, []).and_return(result)
 
         expect(subject).to eq result
       end
@@ -41,15 +44,12 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
   end
 
   describe '.run_tests' do
-    let(:test_dir) { 'fake-test-dir' }
-    let(:runner) do
-      instance_double(described_class, test_dir: test_dir)
-    end
+    let(:runner) { instance_double(described_class) }
     let(:can_initialize_queue) { double(:can_initialize_queue) }
-    let(:args) { ['--example-arg', 'example-value'] }
+    let(:args) { ['--example-arg', 'example-value', '--default-path', 'fake-test-dir'] }
     let(:exitstatus) { double }
 
-    subject { described_class.run_tests(runner, can_initialize_queue, args, exitstatus) }
+    subject { described_class.run_tests(runner, can_initialize_queue, args, exitstatus, []) }
 
     before do
       expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue).and_return(test_file_paths)
@@ -67,7 +67,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         options = double
         expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
           '--example-arg', 'example-value',
-          '--default-path', test_dir,
+          '--default-path', 'fake-test-dir',
           'a_spec.rb', 'b_spec.rb',
         ]).and_return(options)
 
