@@ -11,7 +11,9 @@ module KnapsackPro
 
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
-          cli_args = (args || '').split
+          cli_args = (args || '').split + [
+            '--default-path', runner.test_dir,
+          ]
           run_tests(runner, true, cli_args, 0)
         end
 
@@ -25,9 +27,8 @@ module KnapsackPro
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
-            cli_args = args + [
-              '--default-path', runner.test_dir,
-            ] + test_file_paths
+            cli_args = args + test_file_paths
+
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
