@@ -391,6 +391,8 @@ There might be some cached test suite splits for git commits you run in past for
 
        [knapsack_pro] {"queue_name"=>nil, "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
 
+  To [reproduce tests executed on CI node](#for-knapsack_pro-queue-mode) in development environment please see FAQ.
+
 ### Supported test runners in queue mode
 
 At this moment the queue mode works for:
