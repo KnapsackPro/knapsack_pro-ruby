@@ -699,34 +699,42 @@ If you were running your tests with `--order random` on your CI then you can add
 
 #### for knapsack_pro queue mode
 
-To retry the particular CI node do this on your machine:
+There are a few ways to reproduce tests executed on CI node in your development environment.
 
-    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
-    KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
-    KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 \
-    KNAPSACK_PRO_CI_NODE_INDEX=0 \
-    KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
-    bundle exec rake "knapsack_pro:queue:rspec"
+* At the end of `knapsack_pro:queue:rspec` results you will find example of command that you can copy and paste to your development machine. It will run all tests executed on the CI node in a single run.
 
-If you were running your tests with `--order random` on your CI like this:
+* For each intermediate request to Knapsack Pro API queue you will also find example of command to run a subset of tests fetched from API. This might be helpful when you use `--order random` for rspec and you would like to reproduce the tests with the same seed.
 
-    bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+* You can also retry tests and record the time execution data for them again for the particular CI node. Note you must be checkout on the same branch and git commit as your CI node was.
 
-Then you can find the seed number visible in rspec output:
+  To retry the particular CI node do this on your machine:
 
-    (...)
-    Randomized with seed 123
+      KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+      KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+      KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+      KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+      KNAPSACK_PRO_CI_NODE_INDEX=0 \
+      KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+      bundle exec rake "knapsack_pro:queue:rspec"
 
-You can pass the seed in your local environment to reproduce the tests in the same order as they were executed on CI node:
+  If you were running your tests with `--order random` on your CI like this:
 
-    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
-    KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
-    KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 \
-    KNAPSACK_PRO_CI_NODE_INDEX=0 \
-    KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
-    bundle exec rake "knapsack_pro:queue:rspec[--seed 123]"
+      bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+
+  Then you can find the seed number visible in rspec output:
+
+      (...)
+      Randomized with seed 123
+
+  You can pass the seed in your local environment to reproduce the tests in the same order as they were executed on CI node:
+
+      KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+      KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+      KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+      KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+      KNAPSACK_PRO_CI_NODE_INDEX=0 \
+      KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+      bundle exec rake "knapsack_pro:queue:rspec[--seed 123]"
 
 ### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
