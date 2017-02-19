@@ -2,6 +2,13 @@
 
 * TODO
 
+### 0.28.0
+
+* Show at the end of `knapsack_pro:queue:rspec` command the example how to run all tests executed for the CI node in the development environment.
+* Show for each intermediate request to Knapsack Pro API queue how to run a subset of tests fetched from API.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.27.0...v0.28.0
+
 ### 0.27.0
 
 * Save build subset to API even when no test files were executed on CI node. Add warnings to notify why the test files were not executed on CI node in particular mode: regular or queue mode.
