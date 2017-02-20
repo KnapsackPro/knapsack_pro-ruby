@@ -701,7 +701,7 @@ If you were running your tests with `--order random` on your CI then you can add
 
 There are a few ways to reproduce tests executed on CI node in your development environment.
 
-* At the end of `knapsack_pro:queue:rspec` results you will find example of command that you can copy and paste to your development machine. It will run all tests executed on the CI node in a single run.
+* At the end of `knapsack_pro:queue:rspec` results you will find example of command that you can copy and paste to your development machine. It will run all tests executed on the CI node in a single run. I recommend this approach.
 
 * For each intermediate request to Knapsack Pro API queue you will also find example of command to run a subset of tests fetched from API. This might be helpful when you use `--order random` for rspec and you would like to reproduce the tests with the same seed.
 
