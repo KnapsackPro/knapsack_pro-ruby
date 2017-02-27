@@ -341,6 +341,13 @@ If above command fails then you may need to explicitly pass an argument to requi
 Note if you will run queue mode command for the first time it might be slower.
 The second build should have better optimal test suite split.
 
+If you will encounter problem with stack level too deep then you may want to ensure you load your dependencies only once in `spec/rails_helper.rb` or `spec/spec_helper.rb`. The Queue Mode may load multiple times the `rails_helper.rb` hence the problem. For instance the problem occurs for capybara-screenshot gem. Here is the example how you should load the gem.
+
+    unless ENV['KNAPSACK_PRO_RSPEC_DEPENDENCIES_LOADED']
+      ENV['KNAPSACK_PRO_RSPEC_DEPENDENCIES_LOADED'] = 'true'
+      require 'capybara-screenshot/rspec'
+    end
+
 ### Additional info about queue mode
 
 * You should use different API token for queue mode than for regular mode to avoid problem with test suite split in case you would like to go back to regular mode.
