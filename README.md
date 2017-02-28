@@ -111,6 +111,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
   - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
   - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
+  - [How to use junit formatter?](#how-to-use-junit-formatter)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -870,6 +871,18 @@ You can see the list of all pending test files at the end of knapack_pro queue m
 ### Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?
 
 No. In Queue Mode the RSpec configuration is updated every time when knapsack_pro gem gets a new set of test files from the Knapsack Pro API and it looks in knapsack_pro output like RSpec was loaded many times but in fact, it loads your project environment only once.
+
+### How to use junit formatter?
+
+You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
+Here you can find example how to generate `rspec.xml` file with junit format and at the same time show normal documentation format output for RSpec.
+
+    # Regular Mode
+    bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+
+    # Queue Mode
+    # The xml report will contain all tests executed across intermediate test subset runs based on queue
+    bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
 
 ## Gem tests
 
