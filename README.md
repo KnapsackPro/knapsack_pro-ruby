@@ -717,6 +717,8 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
   To retry the particular CI node do this on your machine:
 
+      RACK_ENV=test \
+      RAILS_ENV=test \
       KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
       KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
       KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
@@ -736,6 +738,8 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
   You can pass the seed in your local environment to reproduce the tests in the same order as they were executed on CI node:
 
+      RACK_ENV=test \
+      RAILS_ENV=test \
       KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
       KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
       KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
