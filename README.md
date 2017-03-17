@@ -114,6 +114,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
   - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
   - [How to use junit formatter?](#how-to-use-junit-formatter)
+  - [Why I see API error for commit_hash parameter is required?](#why-i-see-api-error-for-commit_hash-parameter-is-required)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -895,6 +896,16 @@ Here you can find example how to generate `rspec.xml` file with junit format and
     # Queue Mode
     # The xml report will contain all tests executed across intermediate test subset runs based on queue
     bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+
+### Why I see API error for commit_hash parameter is required?
+
+    ERROR -- : [knapsack_pro] {"errors"=>[{"commit_hash"=>["parameter is required"]}]}
+
+When Knapsack Pro API returns error like above the problem is because you use CI provider not supported by knapack_pro which means
+knapack_pro gem cannot determine the git commit hash and branch name. To fix this problem you can do:
+
+* if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
+* if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
 
 ## Gem tests
 
