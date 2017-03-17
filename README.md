@@ -99,6 +99,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
     - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode)
   - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
+    - [for knapack_pro regular mode](#for-knapack_pro-regular-mode-1)
+    - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode-1)
   - [How can I change log level?](#how-can-i-change-log-level)
   - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
     - [A. Create multiple small test files](#a-create-multiple-small-test-files)
@@ -750,7 +752,13 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
 ### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
-knapsack_pro gem has fallback behaviour and it will split test files across CI nodes based on popular test directory names.
+#### for knapack_pro regular mode
+
+knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it switch to fallback behaviour and it will split test files across CI nodes based on popular test directory names.
+
+#### for knapsack_pro queue mode
+
+knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it fails.
 
 ### How can I change log level?
 
