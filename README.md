@@ -115,6 +115,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
   - [How to use junit formatter?](#how-to-use-junit-formatter)
   - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
+  - [How many API keys I need?](#how-many-api-keys-i-need)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -906,6 +907,25 @@ knapack_pro gem cannot determine the git commit hash and branch name. To fix thi
 
 * if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 * if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
+
+### How many API keys I need?
+
+Basically you need as many API keys as you have steps in your build.
+
+Here is example:
+
+Step 1. API_KEY_A for `bundle exec rake knapsack_pro:cucumber`
+Step 2. API_KEY_B for `bundle exec rake knapsack_pro:rspec`
+Step 3. API_KEY_C for `KNAPSACK_PRO_TEST_FILE_PATTERN="specs/features/*_spec.rb" bundle exec rake knapsack_pro:rspec`
+Step 4. API_KEY_D for `bundle exec rake knapsack_pro:rspec[--tag tagA]`
+Step 5. API_KEY_E for `bundle exec rake knapsack_pro:rspec[--tag ~tagA]`
+Step 6. API_KEY_F for `bundle exec rake knapsack_pro:queue:rspec`
+
+Note:
+
+* If you specified `KNAPSACK_PRO_TEST_FILE_PATTERN` then you run subset of your whole test suite hence you need separate API key because we want to track only tests for this subset.
+* If you pass `--tag tagA` or `--tag ~tagA` then you run subset of your whole test suite hence you need separate API key.
+* If you use regular or queue mode then you need separate API key for each mode.
 
 ## Gem tests
 
