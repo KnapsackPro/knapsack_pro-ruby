@@ -116,6 +116,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [How to use junit formatter?](#how-to-use-junit-formatter)
   - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
   - [How many API keys I need?](#how-many-api-keys-i-need)
+  - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -926,6 +927,15 @@ Note:
 * If you specified `KNAPSACK_PRO_TEST_FILE_PATTERN` then you run subset of your whole test suite hence you need separate API key because we want to track only tests for this subset.
 * If you pass `--tag tagA` or `--tag ~tagA` then you run subset of your whole test suite hence you need separate API key.
 * If you use regular or queue mode then you need separate API key for each mode.
+
+### What is optimal order of test commands?
+
+I recommend to run first the test commands in the regular mode and later the commands in the queue mode.
+
+  * Step 1. `bundle exec rake knapsack_pro:cucumber` (regular mode)
+  * Step 2. `bundle exec rake knapsack_pro:queue:rspec` (queue mode)
+
+Thanks to that when for some reason the tests executed for cucumber in regular mode will not be well balanced across CI nodes (for instance when one of CI node has bad performance) then the rspec tests executed later in the queue mode will autobalance your build.
 
 ## Gem tests
 
