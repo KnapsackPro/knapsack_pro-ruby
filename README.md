@@ -117,6 +117,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
   - [How many API keys I need?](#how-many-api-keys-i-need)
   - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
+  - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -936,6 +937,12 @@ I recommend to run first the test commands in the regular mode and later the com
   * Step 2. `bundle exec rake knapsack_pro:queue:rspec` (queue mode)
 
 Thanks to that when for some reason the tests executed for cucumber in regular mode will not be well balanced across CI nodes (for instance when one of CI node has bad performance) then the rspec tests executed later in the queue mode will autobalance your build.
+
+### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
+
+This may happen when one of your CI node started work when all other CI nodes already executed whole test suite.
+This slow CI node will initialize a new queue hence the tests executed twice. To solve this problem you should set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
+Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
 ## Gem tests
 
