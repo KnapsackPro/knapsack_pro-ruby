@@ -4,7 +4,7 @@ describe KnapsackPro::TestFilePresenter do
 
     subject { described_class.stringify_paths(test_file_paths) }
 
-    it { should eq 'a_spec.rb b_spec.rb' }
+    it { should eq '"a_spec.rb" "b_spec.rb"' }
   end
 
   describe '.paths' do

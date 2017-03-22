@@ -1,7 +1,10 @@
 module KnapsackPro
   class TestFilePresenter
     def self.stringify_paths(test_file_paths)
-      test_file_paths.join(' ')
+      test_file_paths
+      .map do |test_file|
+        %{"#{test_file}"}
+      end.join(' ')
     end
 
     def self.paths(test_files)
