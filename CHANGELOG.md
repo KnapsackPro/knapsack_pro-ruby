@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.28.1
+
+* Add support for test files in directory with spaces.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/issues/27
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.28.0...v0.28.1
+
 ### 0.28.0
 
 * Show at the end of `knapsack_pro:queue:rspec` command the example how to run all tests executed for the CI node in the development environment.
