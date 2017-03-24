@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.30.0
+
+* Update license to MIT.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.29.0...v0.30.0
+
 ### 0.29.0
 
 * Add info about Jenkins to installer.
