@@ -316,9 +316,14 @@ namespace :knapsack_pro do
 
     send("step_for_ci_#{answers[:ci]}", prompt, answers)
 
+    prompt.say "Final step", color: :yellow
     prompt.say "Now you are ready to use the gem!"
+    puts
     prompt.say "Please push a new commit to repository so knapsack_pro gem will record time execution of your test suite."
-    prompt.say "Your second test suite run on CI will be parallelized with optimal test suite split."
+    puts
+    prompt.say "Go to user dashboard https://knapsackpro.com/dashboard and click build metrics link next to your API token. Click show link on recent build and ensure the time execution data were recorded for all your CI nodes. You should see info that build subsets were collected."
+    puts
+    prompt.say "Your second test suite run on CI will be parallelized with optimal test suite split if first run was recorded correctly."
     puts
     puts
     prompt.say "Later you may want to learn about Queue Mode and how to enable it:"
