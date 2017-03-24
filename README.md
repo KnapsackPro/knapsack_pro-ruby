@@ -737,6 +737,9 @@ timeout(time: 60, unit: 'MINUTES') {
 }
 ```
 
+Remember to set environment variables in Jenkins configuration with your API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER`.
+Here is [list of environment variables per test runner](#set-api-key-token).
+
 Above example shows how to run cucumber tests in regular mode and later the rspec tests in queue mode to autobalance build.
 If you are going to relay on rspec to autobalance build when cucumber tests were not perfectly distributed you should be aware about [possible edge case if your rspec test suite is very short](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again).
 
