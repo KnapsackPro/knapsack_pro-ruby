@@ -94,6 +94,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
+    - [Info for Jenkins users](#info-for-jenkins-users)
 - [FAQ](#faq)
   - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
     - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
@@ -678,6 +679,66 @@ Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDE
     bundle exec rake knapsack_pro:spinach
 
 Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
+#### Info for Jenkins users
+
+In order to run parallel jobs with Jenkins you should use Jenkins Pipeline.
+You can learn basics about it in the article [Parallelism and Distributed Builds with Jenkins](https://www.cloudbees.com/blog/parallelism-and-distributed-builds-jenkins).
+
+Here is example `Jenkinsfile` working with Jenkins Pipeline.
+
+```
+timeout(time: 60, unit: 'MINUTES') {
+  node() {
+    stage('Checkout') {
+      checkout([/* checkout code from git */])
+
+      // determine git commit hash because we need to pass it to knapsack_pro
+      COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+
+      stash 'source'
+    }
+  }
+
+  def num_nodes = 4; // define your total number of CI nodes (how many parallel jobs will be executed)
+  def nodes = [:]
+
+  for (int i = 0; i < num_nodes; i++) {
+    def index = i;
+    nodes["ci_node_${i}"] = {
+      node() {
+        stage('Setup') {
+          unstash 'source'
+          // other setup steps
+        }
+
+        def knapsack_options = """\
+            KNAPSACK_PRO_CI_NODE_TOTAL=${num_nodes}\
+            KNAPSACK_PRO_CI_NODE_INDEX=${index}\
+            KNAPSACK_PRO_COMMIT_HASH=${COMMIT_HASH}\
+            KNAPSACK_PRO_BRANCH=${env.BRANCH_NAME}\
+        """
+
+        // example how to run cucumber tests in Knapsack Pro Regular Mode
+        stage('Run cucumber') {
+          sh """${knapsack_options} bundle exec rake knapsack_pro:cucumber"""
+        }
+
+        // example how to run rspec tests in Knapsack Pro Queue Mode
+        // Queue Mode should be as a last stage so it can autobalance build if tests in regular mode were not perfectly distributed
+        stage('Run rspec') {
+          sh """KNAPSACK_PRO_CI_NODE_BUILD_ID=${env.BUILD_TAG} ${knapsack_options} bundle exec rake knapsack_pro:queue:rspec"""
+        }
+      }
+    }
+  }
+
+  parallel nodes // run CI nodes in parallel
+}
+```
+
+Above example shows how to run cucumber tests in regular mode and later the rspec tests in queue mode to autobalance build.
+If you are going to relay on rspec to autobalance build when cucumber tests were not perfectly distributed you should be aware about [possible edge case if your rspec test suite is very short](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again).
 
 ## FAQ
 
