@@ -1001,8 +1001,8 @@ Thanks to that when for some reason the tests executed for cucumber in regular m
 
 ### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
 
-This may happen when one of your CI node started work when all other CI nodes already executed whole test suite.
-This slow CI node will initialize a new queue hence the tests executed twice. To solve this problem you should set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
+This may happen when one of your CI node started work later when all other CI nodes already executed whole test suite.
+The slow CI node will initialize a new queue hence the tests executed twice. To solve this problem you should set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
 Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
 ## Gem tests
