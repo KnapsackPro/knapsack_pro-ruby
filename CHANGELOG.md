@@ -7,6 +7,8 @@
 * Add info about Jenkins to installer.
 * Extend info about final step in installer about verification if first test suite run was recorded correctly.
 
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.28.1...v0.29.0
+
 ### 0.28.1
 
 * Add support for test files in directory with spaces.
