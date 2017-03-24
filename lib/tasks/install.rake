@@ -188,6 +188,13 @@ bundle exec rake knapsack_pro:#{tool}
   set_api_tokens_on_ci(prompt, answers)
 end
 
+def step_for_ci_jenkins(prompt, answers)
+  prompt.say "Step for Jenkins", color: :yellow
+  prompt.say "Please visit page to see example Jenkinsfile:"
+  prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#info-for-jenkins-users"
+  puts
+end
+
 def step_for_ci_other(prompt, answers)
   prompt.say "Step for other CI provider", color: :yellow
   prompt.say "Set below global variables on your CI server."
@@ -284,6 +291,7 @@ namespace :knapsack_pro do
       'https://buildkite.com' => :buildkite,
       'https://semaphoreci.com' => :semaphore,
       'https://snap-ci.com' => :snap_ci,
+      'Jenkins' => :jenkins,
       'other' => :other,
     }
     answers[:ci] = prompt.select("What is your CI provider?", CI_PROVIDER_CHOICES)
