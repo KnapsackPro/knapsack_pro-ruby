@@ -119,6 +119,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [How many API keys I need?](#how-many-api-keys-i-need)
   - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
   - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
+  - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -1012,6 +1013,24 @@ Thanks to that when for some reason the tests executed for cucumber in regular m
 This may happen when one of your CI node started work later when all other CI nodes already executed whole test suite.
 The slow CI node will initialize a new queue hence the tests executed twice. To solve this problem you should set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
 Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
+
+### How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?
+
+Some tools like [Percy.io](https://percy.io/docs/clients/ruby/capybara-rails) requires to set hooks for RSpec `before(:suite)` and `after(:suite)`.
+Knapsack Pro Queue Mode runs subset of test files from the work queue many times. This means the RSpec hooks `before(:suite)` and `after(:suite)` will execute multiple times. If you want to run some code only once before Queue Mode starts work and after it finishes then you should do it this way:
+
+```ruby
+# spec_helper.rb or rails_helper.rb
+unless ENV['KNAPSACK_PRO_RSPEC_PERCY_HOOKS_LOADED']
+  ENV['KNAPSACK_PRO_RSPEC_PERCY_HOOKS_LOADED'] = 'true'
+
+  # executes before Queue Mode starts work
+  Percy::Capybara.initialize_build
+
+  # executes after Queue Mode finishes work
+  at_exit { Percy::Capybara.finalize_build }
+end
+```
 
 ## Gem tests
 
