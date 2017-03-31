@@ -120,6 +120,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
   - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
   - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
+  - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -350,12 +351,7 @@ If above command fails then you may need to explicitly pass an argument to requi
 Note if you will run queue mode command for the first time it might be slower.
 The second build should have better optimal test suite split.
 
-If you will encounter problem with stack level too deep then you may want to ensure you load your dependencies only once in `spec/rails_helper.rb` or `spec/spec_helper.rb`. The Queue Mode may load multiple times the `rails_helper.rb` hence the problem. For instance the problem occurs for capybara-screenshot gem. Here is the example how you should load the gem.
-
-    unless ENV['KNAPSACK_PRO_RSPEC_DEPENDENCIES_LOADED']
-      ENV['KNAPSACK_PRO_RSPEC_DEPENDENCIES_LOADED'] = 'true'
-      require 'capybara-screenshot/rspec'
-    end
+If you use capybara-screenshot gem then please [follow this step](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec).
 
 ### Additional info about queue mode
 
@@ -1031,6 +1027,19 @@ unless ENV['KNAPSACK_PRO_RSPEC_PERCY_HOOKS_LOADED']
   at_exit { Percy::Capybara.finalize_build }
 end
 ```
+
+### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
+
+Please use fixed version of capybara-screenshot.
+
+```
+# Gemfile
+group :test do
+  gem 'capybara-screenshot', github: 'ArturT/capybara-screenshot', branch: 'fix-reporter_module-loaded-twice'
+end
+```
+
+Here is [fix PR](https://github.com/mattheworiordan/capybara-screenshot/pull/205) to official capybara-screenshot repository and the explanation of the problem.
 
 ## Gem tests
 
