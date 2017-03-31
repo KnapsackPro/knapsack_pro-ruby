@@ -14,10 +14,29 @@ module KnapsackPro
           cli_args = (args || '').split + [
             '--default-path', runner.test_dir,
           ]
-          run_tests(runner, true, cli_args, 0, [])
+
+          result = {
+            status: :next,
+            runner: runner,
+            can_initialize_queue: true,
+            args: cli_args,
+            exitstatus: 0,
+            all_test_file_paths: [],
+          }
+          while result[:status] == :next
+            result = run_tests(result)
+          end
+
+          exit(result[:exitstatus])
         end
 
-        def self.run_tests(runner, can_initialize_queue, args, exitstatus, all_test_file_paths)
+        def self.run_tests(opts)
+          runner = opts.fetch(:runner)
+          can_initialize_queue = opts.fetch(:can_initialize_queue)
+          args = opts.fetch(:args)
+          exitstatus = opts.fetch(:exitstatus)
+          all_test_file_paths = opts.fetch(:all_test_file_paths)
+
           test_file_paths = runner.test_file_paths(can_initialize_queue: can_initialize_queue)
 
           if test_file_paths.empty?
@@ -28,7 +47,10 @@ module KnapsackPro
             end
 
             KnapsackPro::Report.save_node_queue_to_api
-            exit(exitstatus)
+            return {
+              status: :completed,
+              exitstatus: exitstatus,
+            }
           else
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
@@ -43,7 +65,14 @@ module KnapsackPro
             exitstatus = exit_code if exit_code != 0
             RSpec.world.example_groups.clear
 
-            run_tests(runner, false, args, exitstatus, all_test_file_paths)
+            return {
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: exitstatus,
+              all_test_file_paths: all_test_file_paths,
+            }
           end
         end
 
