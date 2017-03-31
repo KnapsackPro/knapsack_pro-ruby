@@ -1017,15 +1017,12 @@ Knapsack Pro Queue Mode runs subset of test files from the work queue many times
 
 ```ruby
 # spec_helper.rb or rails_helper.rb
-unless ENV['KNAPSACK_PRO_RSPEC_PERCY_HOOKS_LOADED']
-  ENV['KNAPSACK_PRO_RSPEC_PERCY_HOOKS_LOADED'] = 'true'
 
-  # executes before Queue Mode starts work
-  Percy::Capybara.initialize_build
+# executes before Queue Mode starts work
+Percy::Capybara.initialize_build
 
-  # executes after Queue Mode finishes work
-  at_exit { Percy::Capybara.finalize_build }
-end
+# executes after Queue Mode finishes work
+at_exit { Percy::Capybara.finalize_build }
 ```
 
 ### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
