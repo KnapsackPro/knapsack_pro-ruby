@@ -997,12 +997,27 @@ Note:
 
 ### What is optimal order of test commands?
 
+__Tip 1:__
+
 I recommend to run first the test commands in the regular mode and later the commands in the queue mode.
 
   * Step 1. `bundle exec rake knapsack_pro:cucumber` (regular mode)
   * Step 2. `bundle exec rake knapsack_pro:queue:rspec` (queue mode)
 
 Thanks to that when for some reason the tests executed for cucumber in regular mode will not be well balanced across CI nodes (for instance when one of CI node has bad performance) then the rspec tests executed later in the queue mode will autobalance your build.
+
+__Tip 2:__
+
+When you have short test suite, for instance in javascript then you could distribute tests this way:
+
+* CI 0
+  * Step 1: `npm test`
+  * Step 2: `bundle exec rake knapsack_pro:queue:rspec`
+
+* CI 1
+  * Step 1: `bundle exec rake knapsack_pro:queue:rspec`
+
+You will run your javascript tests on single CI node and the knapack_pro will auto-balance CI build with Queue Mode. Thanks to that CI build time execution will be flat and optimal (as fast as possible).
 
 ### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
 
