@@ -45,7 +45,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
 
 # Requirements
 
-* >= Ruby 2.0.0
+>= Ruby 2.0.0
 
 # Table of Contents
 
