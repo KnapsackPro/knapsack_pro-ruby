@@ -546,6 +546,8 @@ If you are using circleci.com you can omit `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNA
 Here is an example for test configuration in your `circleci.yml` file.
 
 ```yaml
+# CircleCI 1.0
+
 machine:
   environment:
     # Tokens should be set in CircleCI settings to avoid expose tokens in build logs
@@ -570,6 +572,20 @@ test:
     # Step for Spinach
     - bundle exec rake knapsack_pro:spinach:
         parallel: true # Caution: there are 8 spaces indentation!
+```
+
+Here is another example for CircleCI 2.0 platform.
+
+```YAML
+# CircleCI 2.0
+
+# some tests that are not balanced and executed only on first CI node
+- run: case $CIRCLE_NODE_INDEX in 0) npm test ;; esac
+
+# auto-balancing CI build time execution to be flat and optimal (as fast as possible).
+# Queue Mode does dynamic tests allocation so the previous not balanced run command won't
+# create a bottleneck on the CI node
+- run: bundle exec rake knapsack_pro:queue:rspec
 ```
 
 Please remember to add additional containers for your project in CircleCI settings.
