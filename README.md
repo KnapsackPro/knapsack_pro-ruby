@@ -120,6 +120,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
   - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
   - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
+  - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
   - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
@@ -1054,6 +1055,24 @@ Percy::Capybara.initialize_build
 
 # executes after Queue Mode finishes work
 at_exit { Percy::Capybara.finalize_build }
+```
+
+### How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?
+
+Knapsack Pro Queue Mode runs subset of test files from the work queue many times. This means the RSpec hooks `before(:suite)` and `after(:suite)` will be executed multiple times. If you want to run some code only once before Queue Mode starts work and after it finishes then you should do it this way:
+
+```ruby
+# spec_helper.rb or rails_helper.rb
+
+unless ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED']
+  ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED'] = 'true'
+
+  # this will be called only once before the tests started on the CI node
+end
+
+at_exit do
+  # this will be called only once at the end when the CI node finished tests
+end
 ```
 
 ### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
