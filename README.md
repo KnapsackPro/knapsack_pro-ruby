@@ -1064,14 +1064,18 @@ Knapsack Pro Queue Mode runs subset of test files from the work queue many times
 ```ruby
 # spec_helper.rb or rails_helper.rb
 
-unless ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED']
-  ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED'] = 'true'
+RSpec.configure do |config|
+  config.before(:suite) do
+    unless ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED']
+      ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED'] = 'true'
 
-  # this will be called only once before the tests started on the CI node
-end
+      # this will be called only once before the tests started on the CI node
+    end
+  end
 
-at_exit do
-  # this will be called only once at the end when the CI node finished tests
+  at_exit do
+    # this will be called only once at the end when the CI node finished tests
+  end
 end
 ```
 
