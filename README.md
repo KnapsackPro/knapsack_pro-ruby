@@ -122,6 +122,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
   - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
   - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
+  - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
@@ -1091,6 +1092,89 @@ end
 ```
 
 Here is [fix PR](https://github.com/mattheworiordan/capybara-screenshot/pull/205) to official capybara-screenshot repository and the explanation of the problem.
+
+### How to run knapsack_pro with parallel_tests gem?
+
+You can run knapsack_pro with [parallel_tests](https://github.com/grosser/parallel_tests) gem to run multiple concurrent knapsack_pro commands per CI node.
+
+Let's consider this example. We have 2 CI node. On each CI node we want to run 2 concurrent knapsack_pro commands by parallel_tests gem (`PARALLEL_TESTS_CONCURRENCY=2`).
+This means we would have 4 parallel knapack_pro commands in total across all CI nodes. So from knapsack_pro perspective you will have 4 nodes in total.
+
+Create in your project directory an executable file `bin/parallel_tests`:
+
+```
+#!/bin/bash
+# This file should be in bin/parallel_tests
+
+# updates CI node total based on parallel_tests concurrency
+KNAPSACK_PRO_CI_NODE_TOTAL=$(( $PARALLEL_TESTS_CONCURRENCY * $KNAPSACK_PRO_CI_NODE_TOTAL ))
+
+if [ "$TEST_ENV_NUMBER" == "" ]; then
+  PARALLEL_TESTS_CONCURRENCY_INDEX=0
+else
+  PARALLEL_TESTS_CONCURRENCY_INDEX=$(( $TEST_ENV_NUMBER - 1 ))
+fi
+
+KNAPSACK_PRO_CI_NODE_INDEX=$(( $PARALLEL_TESTS_CONCURRENCY_INDEX + ($PARALLEL_TESTS_CONCURRENCY * $KNAPSACK_PRO_CI_NODE_INDEX) ))
+
+# logs info about ENVs to ensure everything works
+echo KNAPSACK_PRO_CI_NODE_TOTAL=$KNAPSACK_PRO_CI_NODE_TOTAL KNAPSACK_PRO_CI_NODE_INDEX=$KNAPSACK_PRO_CI_NODE_INDEX PARALLEL_TESTS_CONCURRENCY=$PARALLEL_TESTS_CONCURRENCY
+
+# you can customize your knapsack_pro command here to use regular or queue mode
+bundle exec rake knapsack_pro:queue:rspec
+```
+
+Now you need to set parallel_tests command per CI node:
+
+* CI node 0 (first CI node):
+
+    ```
+    export PARALLEL_TESTS_CONCURRENCY=2; # this must be export
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
+    KNAPSACK_PRO_CI_NODE_TOTAL=$YOUR_CI_NODE_TOTAL \
+    KNAPSACK_PRO_CI_NODE_INDEX=$YOUR_CI_NODE_INDEX \
+    bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests'
+    ```
+
+* CI node 1 (second CI node):
+
+    ```
+    export PARALLEL_TESTS_CONCURRENCY=2; # this must be export
+    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
+    KNAPSACK_PRO_CI_NODE_TOTAL=$YOUR_CI_NODE_TOTAL \
+    KNAPSACK_PRO_CI_NODE_INDEX=$YOUR_CI_NODE_INDEX \
+    bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests'
+    ```
+
+Please note you need to update `$YOUR_CI_NODE_TOTAL` and `$YOUR_CI_NODE_INDEX` to the ENVs provided by your CI provider. For instance in case of CircleCI it would be `$CIRCLE_NODE_TOTAL` and `$CIRCLE_NODE_INDEX`. Below is an example for CircleCI configuration:
+
+```
+# circle.yml for CircleCI 1.0
+# KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx can be set in CircleCI ENV settings
+test:
+  override:
+    - export PARALLEL_TESTS_CONCURRENCY=2; KNAPSACK_PRO_CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL KNAPSACK_PRO_CI_NODE_INDEX=$CIRCLE_NODE_INDEX bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests':
+        parallel: true # Caution: there are 8 spaces indentation!
+```
+
+In summary, the `bin/parallel_tests` script will calculate a new values for `KNAPSAKC_PRO_*` environment variables and then run knapsack_pro command with them.
+To ensure everything works you can check output for each CI node.
+
+* Expected output for CI node 0 (first CI node):
+
+    ```
+    KNAPSACK_PRO_CI_NODE_TOTAL=4 KNAPSACK_PRO_CI_NODE_INDEX=1 PARALLEL_TESTS_CONCURRENCY=2
+    KNAPSACK_PRO_CI_NODE_TOTAL=4 KNAPSACK_PRO_CI_NODE_INDEX=0 PARALLEL_TESTS_CONCURRENCY=2
+    (tests output here)
+    ```
+
+* Expected output for CI node 1 (second CI node):
+
+    ```
+    KNAPSACK_PRO_CI_NODE_TOTAL=4 KNAPSACK_PRO_CI_NODE_INDEX=2 PARALLEL_TESTS_CONCURRENCY=2
+    KNAPSACK_PRO_CI_NODE_TOTAL=4 KNAPSACK_PRO_CI_NODE_INDEX=3 PARALLEL_TESTS_CONCURRENCY=2
+    (tests output here)
+    ```
 
 ## Gem tests
 
