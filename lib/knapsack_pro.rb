@@ -89,11 +89,5 @@ module KnapsackPro
       task_loader = KnapsackPro::TaskLoader.new
       task_loader.load_tasks
     end
-
-    private
-
-    def set_progname(logger)
-      logger.progname = '[knapsack_pro]' if logger
-    end
   end
 end
