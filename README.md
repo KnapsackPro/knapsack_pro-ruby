@@ -259,8 +259,10 @@ You can change default Knapsack Pro configuration for RSpec, Cucumber, Minitest 
 # you can use your own logger
 require 'logger'
 KnapsackPro.logger = Logger.new(STDOUT)
-KnapsackPro.logger.level = Logger::INFO
+KnapsackPro.logger.level = Logger::DEBUG
 ```
+
+Debug is default log level and it is recommend to log details about requests to Knapsack Pro API. Thanks to that you can debug things or ensure everything works.
 
 ### Setup your CI server (How to set up 2 of 3)
 

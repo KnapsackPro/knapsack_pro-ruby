@@ -551,14 +551,32 @@ describe KnapsackPro::Config::Env do
   describe '.log_level' do
     subject { described_class.log_level }
 
-    context 'when ENV exists' do
-      let(:log_level) { 'debug' }
+    context 'when ENV set to fatal' do
+      let(:log_level) { 'fatal' }
       before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
-      it { should eql ::Logger::DEBUG }
+      it { should eql ::Logger::FATAL }
+    end
+
+    context 'when ENV set to error' do
+      let(:log_level) { 'error' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::ERROR }
+    end
+
+    context 'when ENV set to warn' do
+      let(:log_level) { 'warn' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::WARN }
+    end
+
+    context 'when ENV set to info' do
+      let(:log_level) { 'info' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::INFO }
     end
 
     context "when ENV doesn't exist" do
-      it { should eql ::Logger::INFO }
+      it { should eql ::Logger::DEBUG }
     end
   end
 end
