@@ -39,7 +39,7 @@ module KnapsackPro
         ::Minitest::Test.send(:include, BindTimeTrackerMinitestPlugin)
 
         add_post_run_callback do
-          KnapsackPro.logger.info(KnapsackPro::Presenter.global_time)
+          KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
 

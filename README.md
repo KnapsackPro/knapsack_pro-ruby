@@ -259,8 +259,10 @@ You can change default Knapsack Pro configuration for RSpec, Cucumber, Minitest 
 # you can use your own logger
 require 'logger'
 KnapsackPro.logger = Logger.new(STDOUT)
-KnapsackPro.logger.level = Logger::INFO
+KnapsackPro.logger.level = Logger::DEBUG
 ```
+
+Debug is default log level and it is recommended as default. [Read more](#how-can-i-change-log-level).
 
 ### Setup your CI server (How to set up 2 of 3)
 
@@ -852,9 +854,14 @@ knapack_pro gem will retry requests to Knapsack Pro API multiple times every few
 
 You can change log level by specifying the `KNAPSACK_PRO_LOG_LEVEL` environment variable.
 
-    KNAPSACK_PRO_LOG_LEVEL=warn bundle exec rake knapsack_pro:rspec
+    KNAPSACK_PRO_LOG_LEVEL=info bundle exec rake knapsack_pro:rspec
 
-Available values are `debug`, `info`, and `warn`. The default log level is `info`.
+Available values are `debug` (default), `info`, `warn`, `error` and `fatal`.
+
+Recommended log levels you can use:
+
+* `debug` is default log level and it is recommended to log details about requests to Knapsack Pro API. Thanks to that you can debug things or ensure everything works. For instance in [user dashboard](https://knapsackpro.com/dashboard) you can find tips referring to debug logs.
+* `info` level shows message like how to retry tests in development or info why something works this way or the other (for instance why tests were not executed on the CI node). You can use `info` level when you really don't want to see all debug messages from default log level.
 
 ### How to split tests based on test level instead of test file level?
 
