@@ -130,7 +130,7 @@ describe KnapsackPro::Report do
           it do
             logger = instance_double(Logger)
             expect(KnapsackPro).to receive(:logger).and_return(logger)
-            expect(logger).to receive(:info).with('Saved time execution report on API server.')
+            expect(logger).to receive(:debug).with('Saved time execution report on API server.')
             subject
           end
         end

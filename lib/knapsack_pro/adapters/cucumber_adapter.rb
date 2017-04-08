@@ -37,7 +37,7 @@ module KnapsackPro
         end
 
         ::Kernel.at_exit do
-          KnapsackPro.logger.info(KnapsackPro::Presenter.global_time)
+          KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
 

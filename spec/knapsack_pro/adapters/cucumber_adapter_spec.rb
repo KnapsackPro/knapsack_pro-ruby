@@ -91,7 +91,7 @@ describe KnapsackPro::Adapters::CucumberAdapter do
           expect(::Kernel).to receive(:at_exit).and_yield
           expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:info).with(global_time)
+          expect(logger).to receive(:debug).with(global_time)
 
           subject.bind_time_tracker
         end
@@ -114,7 +114,7 @@ describe KnapsackPro::Adapters::CucumberAdapter do
           expect(::Kernel).to receive(:at_exit).and_yield
           expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:info).with(global_time)
+          expect(logger).to receive(:debug).with(global_time)
 
           subject.bind_time_tracker
         end

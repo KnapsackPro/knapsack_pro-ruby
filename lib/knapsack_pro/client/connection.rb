@@ -90,13 +90,13 @@ module KnapsackPro
 
         request_uuid = http_response.header['X-Request-Id']
 
-        logger.info("API request UUID: #{request_uuid}")
-        logger.info("Test suite split seed: #{seed}") if has_seed?
-        logger.info('API response:')
+        logger.debug("API request UUID: #{request_uuid}")
+        logger.debug("Test suite split seed: #{seed}") if has_seed?
+        logger.debug('API response:')
         if errors?
           logger.error(response)
         else
-          logger.info(response)
+          logger.debug(response)
         end
 
         response
