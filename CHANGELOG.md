@@ -8,6 +8,10 @@
 * Allow `KNAPSACK_PRO_LOG_LEVEL` case insensitive.
 * Move all messages related to requests to Knapsack Pro API in log `debug` level and keep `info` level only for important messages like how to retry tests in development or info why something works this way or the other (for instance why tests were not executed on the CI node).
 
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/29
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.30.0...v0.31.0
+
 ### 0.30.0
 
 * Update license to MIT.
