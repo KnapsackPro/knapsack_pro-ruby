@@ -575,6 +575,12 @@ describe KnapsackPro::Config::Env do
       it { should eql ::Logger::INFO }
     end
 
+    context 'when ENV set with capital letters' do
+      let(:log_level) { 'WARN' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::WARN }
+    end
+
     context "when ENV doesn't exist" do
       it { should eql ::Logger::DEBUG }
     end

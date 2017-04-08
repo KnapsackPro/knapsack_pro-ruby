@@ -153,7 +153,7 @@ module KnapsackPro
             'warn'  => ::Logger::WARN,
             'info'  => ::Logger::INFO,
             'debug' => ::Logger::DEBUG,
-          }[ENV['KNAPSACK_PRO_LOG_LEVEL']] || ::Logger::DEBUG
+          }[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::DEBUG
         end
 
         private
