@@ -1,8 +1,8 @@
 describe KnapsackPro::Crypto::Digestor do
   describe '.salt_hexdigest' do
-    let(:path) { 'a_spec.rb' }
+    let(:str_to_encrypt) { 'a_spec.rb' }
 
-    subject { described_class.salt_hexdigest(path) }
+    subject { described_class.salt_hexdigest(str_to_encrypt) }
 
     before do
       expect(KnapsackPro::Config::Env).to receive(:salt).at_least(1).and_return('123')
