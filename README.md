@@ -971,8 +971,8 @@ Here is the [full specification of the API](http://docs.knapsackpro.com/api/v1/)
 
 #### How is that data secured?
 
-The test file paths can be [encrypted](#test-file-names-encryption) on your CI node with your salt and later send to knapsackpro.com API.
-You generate salt locally and only you can decrypt the test file paths.
+The test file paths and/or branch names can be [encrypted](#test-file-names-encryption) on your CI node with a salt and later send to knapsackpro.com API.
+You generate the salt locally and only you can decrypt the test file paths or branch names.
 
 Connection with knapsackpro.com server is via https.
 
