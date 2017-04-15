@@ -28,7 +28,7 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
   describe '#branches' do
     subject { described_class.new.branches }
 
-    it { should_not be_nil }
-    it { should eq [circle_branch] } if ENV['CIRCLE_BRANCH']
+    it { expect(subject.include?('master')).to be true }
+    it { expect(subject.include?(circle_branch)).to be true } if ENV['CIRCLE_BRANCH']
   end
 end
