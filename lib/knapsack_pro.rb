@@ -55,6 +55,7 @@ require_relative 'knapsack_pro/runners/spinach_runner'
 require_relative 'knapsack_pro/runners/queue/base_runner'
 require_relative 'knapsack_pro/runners/queue/rspec_runner'
 require_relative 'knapsack_pro/crypto/encryptor'
+require_relative 'knapsack_pro/crypto/branch_encryptor'
 require_relative 'knapsack_pro/crypto/decryptor'
 require_relative 'knapsack_pro/crypto/digestor'
 
