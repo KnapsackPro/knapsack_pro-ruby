@@ -24,4 +24,11 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
     it { should_not be_nil }
     it { should eq circle_branch } if ENV['CIRCLE_BRANCH']
   end
+
+  describe '#branches' do
+    subject { described_class.new.branches }
+
+    it { should_not be_nil }
+    it { should eq [circle_branch] } if ENV['CIRCLE_BRANCH']
+  end
 end
