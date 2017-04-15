@@ -45,9 +45,10 @@ module KnapsackPro
       repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
       test_files = KnapsackPro::Utils.unsymbolize(test_files)
       encrypted_test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
+      encrypted_branch = KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
       action = KnapsackPro::Client::API::V1::BuildSubsets.create(
         commit_hash: repository_adapter.commit_hash,
-        branch: repository_adapter.branch,
+        branch: encrypted_branch,
         node_total: KnapsackPro::Config::Env.ci_node_total,
         node_index: KnapsackPro::Config::Env.ci_node_index,
         test_files: encrypted_test_files,

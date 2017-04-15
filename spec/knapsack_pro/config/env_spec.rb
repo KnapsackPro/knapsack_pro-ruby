@@ -302,6 +302,40 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.branch_encrypted' do
+    subject { described_class.branch_encrypted }
+
+    context 'when ENV exists' do
+      let(:branch_encrypted) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_BRANCH_ENCRYPTED' => branch_encrypted }) }
+      it { should eq branch_encrypted }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.branch_encrypted?' do
+    subject { described_class.branch_encrypted? }
+
+    before do
+      expect(described_class).to receive(:branch_encrypted).and_return(branch_encrypted)
+    end
+
+    context 'when enabled' do
+      let(:branch_encrypted) { 'true' }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:branch_encrypted) { nil }
+
+      it { should be false }
+    end
+  end
+
   describe '.salt' do
     subject { described_class.salt }
 

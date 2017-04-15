@@ -75,6 +75,14 @@ module KnapsackPro
           test_files_encrypted == 'true'
         end
 
+        def branch_encrypted
+          ENV['KNAPSACK_PRO_BRANCH_ENCRYPTED']
+        end
+
+        def branch_encrypted?
+          branch_encrypted == 'true'
+        end
+
         def salt
           required_env('KNAPSACK_PRO_SALT')
         end

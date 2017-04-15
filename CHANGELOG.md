@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.32.0
+
+* Add encryption for branch names
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/30
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.31.0...v0.32.0
+
 ### 0.31.0
 
 * Add supported for log levels `fatal` and `error` by `KNAPSACK_PRO_LOG_LEVEL` environment variable.

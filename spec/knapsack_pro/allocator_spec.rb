@@ -22,10 +22,13 @@ describe KnapsackPro::Allocator do
       encrypted_test_files = double
       expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(test_files).and_return(encrypted_test_files)
 
+      encrypted_branch = double
+      expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
       action = double
       expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
         commit_hash: repository_adapter.commit_hash,
-        branch: repository_adapter.branch,
+        branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
         test_files: encrypted_test_files,

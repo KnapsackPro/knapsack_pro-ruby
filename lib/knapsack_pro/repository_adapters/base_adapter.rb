@@ -8,6 +8,10 @@ module KnapsackPro
       def branch
         raise NotImplementedError
       end
+
+      def branches
+        raise NotImplementedError
+      end
     end
   end
 end
