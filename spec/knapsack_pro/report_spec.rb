@@ -89,6 +89,9 @@ describe KnapsackPro::Report do
       encrypted_test_files = double
       expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(unsymbolize_test_files).and_return(encrypted_test_files)
 
+      encrypted_branch = double
+      expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
       node_total = double
       node_index = double
       expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
@@ -97,7 +100,7 @@ describe KnapsackPro::Report do
       action = double
       expect(KnapsackPro::Client::API::V1::BuildSubsets).to receive(:create).with({
         commit_hash: commit_hash,
-        branch: branch,
+        branch: encrypted_branch,
         node_total: node_total,
         node_index: node_index,
         test_files: encrypted_test_files,

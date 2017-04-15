@@ -29,10 +29,14 @@ module KnapsackPro
       KnapsackPro::Crypto::Encryptor.call(test_files)
     end
 
+    def encrypted_branch
+      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
+    end
+
     def build_action
       KnapsackPro::Client::API::V1::BuildDistributions.subset(
         commit_hash: repository_adapter.commit_hash,
-        branch: repository_adapter.branch,
+        branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
         test_files: encrypted_test_files,
