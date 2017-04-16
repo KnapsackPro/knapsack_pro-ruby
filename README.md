@@ -99,12 +99,13 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [Info for Jenkins users](#info-for-jenkins-users)
 - [FAQ](#faq)
   - [Common problems](#common-problems)
-    - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
-    - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
-    - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
-    - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
-    - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
+    - [Queue Mode problems](#queue-mode-problems)
+      - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
+      - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
+      - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
+      - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
+      - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
       - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
@@ -795,24 +796,6 @@ If you are going to relay on rspec to autobalance build when cucumber tests were
 
 ### Common problems
 
-#### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
-
-RSpec collects information about failed tests and presents it at the end of RSpec result.
-When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
-This means RSpec will remember failed tests so far and it will present them at the end of each executed test subset.
-You can see the list of all failed test files at the end of knapack_pro queue mode command.
-
-#### Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?
-
-RSpec collects information about pending tests and presents it at the end of RSpec result.
-When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
-This means RSpec will remember pending tests so far and it will present them at the end of each executed test subset.
-You can see the list of all pending test files at the end of knapack_pro queue mode command.
-
-#### Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?
-
-No. In Queue Mode the RSpec configuration is updated every time when knapsack_pro gem gets a new set of test files from the Knapsack Pro API and it looks in knapsack_pro output like RSpec was loaded many times but in fact, it loads your project environment only once.
-
 #### Why I see API error commit_hash parameter is required?
 
     ERROR -- : [knapsack_pro] {"errors"=>[{"commit_hash"=>["parameter is required"]}]}
@@ -823,13 +806,33 @@ knapack_pro gem cannot determine the git commit hash and branch name. To fix thi
 * if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 * if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
 
-#### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
+#### Queue Mode problems
+
+##### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
+
+RSpec collects information about failed tests and presents it at the end of RSpec result.
+When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
+This means RSpec will remember failed tests so far and it will present them at the end of each executed test subset.
+You can see the list of all failed test files at the end of knapack_pro queue mode command.
+
+##### Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?
+
+RSpec collects information about pending tests and presents it at the end of RSpec result.
+When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
+This means RSpec will remember pending tests so far and it will present them at the end of each executed test subset.
+You can see the list of all pending test files at the end of knapack_pro queue mode command.
+
+##### Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?
+
+No. In Queue Mode the RSpec configuration is updated every time when knapsack_pro gem gets a new set of test files from the Knapsack Pro API and it looks in knapsack_pro output like RSpec was loaded many times but in fact, it loads your project environment only once.
+
+##### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
 
 This may happen when one of your CI node started work later when all other CI nodes already executed whole test suite.
 The slow CI node will initialize a new queue hence the tests executed twice. To solve this problem you should set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
 Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
-#### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
+##### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
 
 Please use fixed version of capybara-screenshot.
 
