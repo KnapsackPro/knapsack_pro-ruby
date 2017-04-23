@@ -1,4 +1,4 @@
-require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_formatter'
+require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_summary_formatter'
 
 describe KnapsackPro::Runners::Queue::RSpecRunner do
   describe '.run' do
@@ -32,7 +32,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it 'uses default formatter progress' do
           result = double
-          expect(described_class).to receive(:run_tests).with(runner, true, ['--example-arg', 'example-value', '--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
+          expect(described_class).to receive(:run_tests).with(runner, true, ['--example-arg', 'example-value', '--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
 
           expect(subject).to eq result
         end
@@ -43,7 +43,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it 'uses provided format param instead of default formatter progress' do
           result = double
-          expect(described_class).to receive(:run_tests).with(runner, true, ['--format', 'documentation', '--format', 'KnapsackPro::Formatters::RSpecQueueFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
+          expect(described_class).to receive(:run_tests).with(runner, true, ['--format', 'documentation', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
 
           expect(subject).to eq result
         end
@@ -55,7 +55,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
       it do
         result = double
-        expect(described_class).to receive(:run_tests).with(runner, true, ['--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
+        expect(described_class).to receive(:run_tests).with(runner, true, ['--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
 
         expect(subject).to eq result
       end
@@ -104,7 +104,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:exit_code) { 0 }
 
         it do
-          expect(KnapsackPro::Formatters::RSpecQueueFormatter).to receive(:print_summary)
+          expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
           expect(described_class).to receive(:exit).with(exitstatus)
 
@@ -116,7 +116,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:exit_code) { double }
 
         it do
-          expect(KnapsackPro::Formatters::RSpecQueueFormatter).to receive(:print_summary)
+          expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
           expect(described_class).to receive(:exit).with(exit_code)
 
@@ -129,7 +129,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       let(:test_file_paths) { [] }
 
       it do
-        expect(KnapsackPro::Formatters::RSpecQueueFormatter).to receive(:print_summary)
+        expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
         expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
         expect(described_class).to receive(:exit).with(exitstatus)
 

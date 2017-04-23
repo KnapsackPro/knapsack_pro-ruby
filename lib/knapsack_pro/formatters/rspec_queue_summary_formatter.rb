@@ -9,7 +9,7 @@ module KnapsackPro
       def dump_summary(summary); end
     end
 
-    class RSpecQueueFormatter < RSpec::Core::Formatters::BaseFormatter
+    class RSpecQueueSummaryFormatter < RSpec::Core::Formatters::BaseFormatter
       RSpec::Core::Formatters.register self, :dump_failures, :dump_pending
 
       def self.registered_output=(output)
