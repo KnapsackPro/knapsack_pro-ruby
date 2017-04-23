@@ -828,8 +828,10 @@ No. In Queue Mode the RSpec configuration is updated every time when knapsack_pr
 
 ##### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
 
-This may happen when one of your CI node started work later when all other CI nodes already executed whole test suite.
-The slow CI node will initialize a new queue hence the tests executed twice. To solve this problem you should set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
+This may happen when you use not supported CI provider by knapack_pro. It's because of missing value of CI build ID. You can set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` for each CI build. The problem with test suite run again happens when one of your CI node started work later when all other CI nodes already executed whole test suite.
+The slow CI node that started work late will initialize a new queue hence the tests executed twice.
+
+To solve this problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID` as mentioned above or you can set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
 Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
 ##### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
