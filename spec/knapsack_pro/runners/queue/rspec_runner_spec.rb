@@ -1,6 +1,13 @@
-require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_summary_formatter'
 
 describe KnapsackPro::Runners::Queue::RSpecRunner do
+  before do
+    # we don't want to modify rspec formatters because we want to see tests summary at the end
+    # when you run this test file or whole test suite for the knapsack_pro gem
+    stub_const('ENV', { 'KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS' => false })
+
+    require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_summary_formatter'
+  end
+
   describe '.run' do
     let(:test_suite_token_rspec) { 'fake-token' }
     let(:queue_id) { 'fake-queue-id' }
@@ -12,10 +19,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     subject { described_class.run(args) }
 
     before do
-      # we don't want to modify rspec formatters because we want to see tests summary at the end
-      # when you run this test file or whole test suite for the knapsack_pro gem
-      stub_const('ENV', { 'KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS' => false })
-
       expect(KnapsackPro::Config::Env).to receive(:test_suite_token_rspec).and_return(test_suite_token_rspec)
       expect(KnapsackPro::Config::EnvGenerator).to receive(:set_queue_id).and_return(queue_id)
 
@@ -129,7 +132,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       let(:test_file_paths) { [] }
 
       it do
-        expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
         expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
         expect(described_class).to receive(:exit).with(exitstatus)
 
