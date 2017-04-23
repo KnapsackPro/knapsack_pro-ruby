@@ -2,6 +2,16 @@
 
 * TODO
 
+### 0.33.0
+
+* Add RSpec Queue Formatter to hide duplicated pending and failed tests in Queue Mode
+
+  You can keep duplicated pending/failed summary with flag `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS`. More can be found in read me.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/31
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.32.0...v0.33.0
+
 ### 0.32.0
 
 * Add encryption for branch names
