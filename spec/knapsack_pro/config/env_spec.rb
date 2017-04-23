@@ -302,6 +302,40 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.modify_default_rspec_formatters' do
+    subject { described_class.modify_default_rspec_formatters }
+
+    context 'when ENV exists' do
+      let(:modify_default_rspec_formatters) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS' => modify_default_rspec_formatters }) }
+      it { should eq modify_default_rspec_formatters }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be true }
+    end
+  end
+
+  describe '.modify_default_rspec_formatters?' do
+    subject { described_class.modify_default_rspec_formatters? }
+
+    before do
+      expect(described_class).to receive(:modify_default_rspec_formatters).and_return(modify_default_rspec_formatters)
+    end
+
+    context 'when enabled' do
+      let(:modify_default_rspec_formatters) { true }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:modify_default_rspec_formatters) { false }
+
+      it { should be false }
+    end
+  end
+
   describe '.branch_encrypted' do
     subject { described_class.branch_encrypted }
 
