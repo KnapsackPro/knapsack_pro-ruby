@@ -74,6 +74,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
   - [Additional info about queue mode](#additional-info-about-queue-mode)
   - [Extra configuration for Queue Mode](#extra-configuration-for-queue-mode)
     - [KNAPSACK_PRO_FIXED_QUEUE_SPLIT (remember queue split on retry CI node)](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node)
+    - [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests)
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
@@ -413,6 +414,18 @@ There might be some cached test suite splits for git commits you run in past for
        [knapsack_pro] {"queue_name"=>nil, "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
 
   To [reproduce tests executed on CI node](#for-knapsack_pro-queue-mode) in development environment please see FAQ.
+
+#### KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)
+
+* `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=true` (default)
+
+  By default, the knapack_pro will monkey patch [RSpec Formatters](https://www.relishapp.com/rspec/rspec-core/v/2-6/docs/command-line/format-option) in order to
+  hide the summary of pending and failed tests after each intermediate run of tests fetched from the work queue on Knapsack Pro API.
+  knapack_pro shows summary of all pending and failed tests at the very end when work queue ended. If you use your custom formatter and you have problem with it then you can disable `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false` monkey patching.
+
+* `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false`
+
+  It causes to show summary of pending and failed tests after each intermediate tests run from the work queue. The summary will grown cumulatively after each intermediate tests run so it means you will see multiple times summary of the same pending/failed tests. It doesn't mean the test files are executed twice. Test files are executed only once. Only summary report grows cumulatively.
 
 ### Supported test runners in queue mode
 
