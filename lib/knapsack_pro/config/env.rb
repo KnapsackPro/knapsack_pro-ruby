@@ -76,7 +76,7 @@ module KnapsackPro
         end
 
         def modify_default_rspec_formatters
-          ENV['KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS'] || true
+          ENV.fetch('KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS', true)
         end
 
         def modify_default_rspec_formatters?
