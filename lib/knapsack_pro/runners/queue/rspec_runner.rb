@@ -27,11 +27,10 @@ module KnapsackPro
           test_file_paths = runner.test_file_paths(can_initialize_queue: can_initialize_queue)
 
           if test_file_paths.empty?
-            KnapsackPro::Formatters::RSpecQueueFormatter.print_summary
-
             unless all_test_file_paths.empty?
-              cli_args = args + all_test_file_paths
+              KnapsackPro::Formatters::RSpecQueueFormatter.print_summary
 
+              cli_args = args + all_test_file_paths
               log_rspec_command(cli_args, :end_of_queue)
             end
 
