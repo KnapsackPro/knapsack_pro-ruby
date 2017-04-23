@@ -4,6 +4,7 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         def self.run(args)
           require 'rspec/core'
+          require_relative '../../formatters/rspec_queue_formatter'
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
@@ -11,7 +12,12 @@ module KnapsackPro
 
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
-          cli_args = (args || '').split + [
+          cli_args = (args || '').split
+          # if user didn't provide the format then use explicitly default progress formatter
+          # in order to avoid KnapsackPro::Formatters::RSpecQueueFormatter being the only default formatter
+          cli_args += ['--format', 'progress'] unless cli_args.include?('--format')
+          cli_args += [
+            '--format', KnapsackPro::Formatters::RSpecQueueFormatter.to_s,
             '--default-path', runner.test_dir,
           ]
           run_tests(runner, true, cli_args, 0, [])
@@ -21,6 +27,8 @@ module KnapsackPro
           test_file_paths = runner.test_file_paths(can_initialize_queue: can_initialize_queue)
 
           if test_file_paths.empty?
+            KnapsackPro::Formatters::RSpecQueueFormatter.print_summary
+
             unless all_test_file_paths.empty?
               cli_args = args + all_test_file_paths
 
