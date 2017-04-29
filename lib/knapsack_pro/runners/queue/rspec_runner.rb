@@ -62,9 +62,12 @@ module KnapsackPro
           when :end_of_queue
             KnapsackPro.logger.info("To retry in development the tests for this CI node please run below command on your machine. It will run all tests in a single run. If you need to reproduce a particular subset of tests fetched from API queue then above after each request to Knapsack Pro API you will find example rspec command.")
           end
+
+          stringify_cli_args = cli_args.join(' ')
+          stringify_cli_args.slice!("--format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}")
+
           KnapsackPro.logger.info(
-            'bundle exec rspec ' +
-            cli_args.join(' ') + ' ' +
+            "bundle exec rspec #{stringify_cli_args} " +
             KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
           )
         end

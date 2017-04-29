@@ -5,6 +5,7 @@
 ### 0.34.0
 
 * Fix command visible at the end of RSpec Queue Mode output to be able retry test files with spaces in name.
+* Fix command visible at the end of RSpec Queue Mode output to be able retry test files without RSpecQueueSummaryFormatter which is dedicated only for Queue Mode.
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.33.0...v0.34.0
 
