@@ -30,8 +30,7 @@ module KnapsackPro
             unless all_test_file_paths.empty?
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
 
-              cli_args = args + all_test_file_paths
-              log_rspec_command(cli_args, :end_of_queue)
+              log_rspec_command(args, all_test_file_paths, :end_of_queue)
             end
 
             KnapsackPro::Report.save_node_queue_to_api
@@ -43,7 +42,7 @@ module KnapsackPro
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
 
-            log_rspec_command(cli_args, :subset_queue)
+            log_rspec_command(args, test_file_paths, :subset_queue)
 
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
@@ -56,14 +55,18 @@ module KnapsackPro
 
         private
 
-        def self.log_rspec_command(cli_args, type)
+        def self.log_rspec_command(cli_args, test_file_paths, type)
           case type
           when :subset_queue
             KnapsackPro.logger.info("To retry in development the subset of tests fetched from API queue please run below command on your machine. If you use --order random then remember to add proper --seed 123 that you will find at the end of rspec command.")
           when :end_of_queue
             KnapsackPro.logger.info("To retry in development the tests for this CI node please run below command on your machine. It will run all tests in a single run. If you need to reproduce a particular subset of tests fetched from API queue then above after each request to Knapsack Pro API you will find example rspec command.")
           end
-          KnapsackPro.logger.info("bundle exec rspec " + cli_args.join(' '))
+          KnapsackPro.logger.info(
+            'bundle exec rspec ' +
+            cli_args.join(' ') + ' ' +
+            KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+          )
         end
       end
     end

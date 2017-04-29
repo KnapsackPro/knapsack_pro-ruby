@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.34.0
+
+* Fix command visible at the end of RSpec Queue Mode output to be able retry test files with spaces in name.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.33.0...v0.34.0
+
 ### 0.33.0
 
 * Add RSpec Queue Formatter to hide duplicated pending and failed tests in Queue Mode
