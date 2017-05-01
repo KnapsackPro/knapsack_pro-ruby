@@ -18,7 +18,7 @@ module KnapsackPro
     end
 
     def stop_timer
-      @execution_time = now_without_mock_time.to_f - @start_time
+      @execution_time = @start_time ? now_without_mock_time.to_f - @start_time : 0.0
       update_global_time
       update_test_file_time
       @execution_time
