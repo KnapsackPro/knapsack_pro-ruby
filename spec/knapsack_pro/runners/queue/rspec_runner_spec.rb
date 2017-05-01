@@ -6,6 +6,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     stub_const('ENV', { 'KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS' => false })
 
     require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_summary_formatter'
+    require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_profile_formatter_extension'
   end
 
   describe '.run' do
@@ -108,6 +109,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it do
           expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
+          expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
           expect(described_class).to receive(:exit).with(exitstatus)
 
@@ -120,6 +122,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it do
           expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
+          expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
           expect(described_class).to receive(:exit).with(exit_code)
 

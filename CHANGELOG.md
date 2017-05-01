@@ -2,6 +2,12 @@
 
 * TODO
 
+### 0.35.0
+
+* Add `RSpecQueueProfileFormatterExtension` to show profile summary only once at the very end of RSpec Queue Mode output.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.34.0...v0.35.0
+
 ### 0.34.0
 
 * Fix command visible at the end of RSpec Queue Mode output to be able retry test files with spaces in name.

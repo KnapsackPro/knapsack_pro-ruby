@@ -5,6 +5,7 @@ module KnapsackPro
         def self.run(args)
           require 'rspec/core'
           require_relative '../../formatters/rspec_queue_summary_formatter'
+          require_relative '../../formatters/rspec_queue_profile_formatter_extension'
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
@@ -29,6 +30,7 @@ module KnapsackPro
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
+              KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
               log_rspec_command(args, all_test_file_paths, :end_of_queue)
             end
