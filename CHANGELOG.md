@@ -6,6 +6,8 @@
 
 * Show messages about not executed test files as warnings in logs.
 
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.35.0...v0.36.0
+
 ### 0.35.0
 
 * Add `RSpecQueueProfileFormatterExtension` to show profile summary only once at the very end of RSpec Queue Mode output.
