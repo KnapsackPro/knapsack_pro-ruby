@@ -5,6 +5,9 @@
 ### 0.36.0
 
 * Show messages about not executed test files as warnings in logs.
+* Handle case when start timer was not called (rspec-retry issue).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/33
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.35.0...v0.36.0
 
