@@ -2,6 +2,10 @@
 
 * TODO
 
+### 0.36.0
+
+* Show messages about not executed test files as warnings in logs.
+
 ### 0.35.0
 
 * Add `RSpecQueueProfileFormatterExtension` to show profile summary only once at the very end of RSpec Queue Mode output.
