@@ -8,6 +8,10 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/34
 
+* Show better explanation what to do when there is missing test suite token environment variable.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/35
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.36.0...v0.37.0
 
 ### 0.36.0
