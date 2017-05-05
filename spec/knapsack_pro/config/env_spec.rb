@@ -466,7 +466,7 @@ describe KnapsackPro::Config::Env do
 
     context "when ENV doesn't exist" do
       it do
-        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_TEST_SUITE_TOKEN')
+        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_TEST_SUITE_TOKEN. You should set environment variable like KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC (note there is suffix _RSPEC at the end). knapsack_pro gem will set KNAPSACK_PRO_TEST_SUITE_TOKEN based on KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC value. If you use other test runner than RSpec then use proper suffix.')
       end
     end
   end
