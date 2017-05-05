@@ -36,6 +36,7 @@ module KnapsackPro
 
       if test_files.empty?
         KnapsackPro.logger.warn("No test files were executed on this CI node. When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.")
+        KnapsackPro.logger.warn("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what testes should be executed here.")
       end
 
       create_build_subset(test_files)
