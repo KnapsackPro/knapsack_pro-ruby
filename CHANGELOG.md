@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.37.0
+
+* Add another explanation why test files could not be executed on CI node in Queue Mode.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/34
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.36.0...v0.37.0
+
 ### 0.36.0
 
 * Show messages about not executed test files as warnings in logs.
