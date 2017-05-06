@@ -1167,6 +1167,7 @@ Now you need to set parallel_tests command per CI node:
 
     ```
     export PARALLEL_TESTS_CONCURRENCY=2; # this must be export
+    RAILS_ENV=test \
     KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
     KNAPSACK_PRO_CI_NODE_TOTAL=$YOUR_CI_NODE_TOTAL \
     KNAPSACK_PRO_CI_NODE_INDEX=$YOUR_CI_NODE_INDEX \
@@ -1177,6 +1178,7 @@ Now you need to set parallel_tests command per CI node:
 
     ```
     export PARALLEL_TESTS_CONCURRENCY=2; # this must be export
+    RAILS_ENV=test \
     KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
     KNAPSACK_PRO_CI_NODE_TOTAL=$YOUR_CI_NODE_TOTAL \
     KNAPSACK_PRO_CI_NODE_INDEX=$YOUR_CI_NODE_INDEX \
@@ -1190,7 +1192,7 @@ Please note you need to update `$YOUR_CI_NODE_TOTAL` and `$YOUR_CI_NODE_INDEX` t
 # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx can be set in CircleCI ENV settings
 test:
   override:
-    - export PARALLEL_TESTS_CONCURRENCY=2; KNAPSACK_PRO_CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL KNAPSACK_PRO_CI_NODE_INDEX=$CIRCLE_NODE_INDEX bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests':
+    - export PARALLEL_TESTS_CONCURRENCY=2; RAILS_ENV=test KNAPSACK_PRO_CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL KNAPSACK_PRO_CI_NODE_INDEX=$CIRCLE_NODE_INDEX bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests':
         parallel: true # Caution: there are 8 spaces indentation!
 ```
 
