@@ -94,6 +94,10 @@ test:
   override:} + str), color: :cyan)
 
   puts
+  prompt.say "Please read this section about example for CircleCI 1.0 and CircleCI 2.0 platform:"
+  prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#info-for-circleci-users"
+
+  puts
   set_api_tokens_on_ci(prompt, answers)
 end
 
