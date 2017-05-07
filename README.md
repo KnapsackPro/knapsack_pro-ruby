@@ -96,6 +96,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test sui
     - [Info for Travis users](#info-for-travis-users)
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
+    - [Info for Gitlab CI users](#info-for-gitlab-ci-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
 - [FAQ](#faq)
@@ -723,6 +724,38 @@ Here you can find article [how to set up a new pipeline for your project in Buil
 
 * [Buildkite Rails Parallel Example with Knapsack Pro](https://github.com/KnapsackPro/buildkite-rails-parallel-example-with-knapsack_pro)
 * [Buildkite Rails Docker Parallel Example with Knapsack Pro](https://github.com/KnapsackPro/buildkite-rails-docker-parallel-example-with-knapsack_pro)
+
+#### Info for Gitlab CI users
+
+Gitlab CI does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same `test` stage. Below is relevant part of `.gitlab-ci.yml` configuration for 2 parallel jobs.
+
+```
+# .gitlab-ci.yml
+stages:
+  - test
+
+variables:
+  KNAPSACK_PRO_CI_NODE_TOTAL: 2
+
+# first CI node running in parallel
+test_ci_node_0:
+  stage: test
+  script:
+    - export KNAPSACK_PRO_CI_NODE_INDEX=0
+    # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
+    - bundle exec rake knapsack_pro:cucumber
+    # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
+    # It will autobalance bulid because it is executed after Cucumber tests.
+    - bundle exec rake knapsack_pro:queue:rspec
+
+# second CI node running in parallel
+test_ci_node_1:
+  stage: test
+  script:
+    - export KNAPSACK_PRO_CI_NODE_INDEX=1
+    - bundle exec rake knapsack_pro:cucumber
+    - bundle exec rake knapsack_pro:queue:rspec
+```
 
 #### Info for snap-ci.com users
 
