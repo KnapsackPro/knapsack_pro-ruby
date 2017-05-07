@@ -158,6 +158,10 @@ bundle exec rake knapsack_pro:#{tool}
   end
 
   puts
+  prompt.say "Please read this section about example usage for Rails project with Docker and without it:"
+  prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#info-for-buildkitecom-users"
+
+  puts
   set_api_tokens_on_ci(prompt, answers)
 end
 
