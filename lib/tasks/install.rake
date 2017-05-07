@@ -97,6 +97,15 @@ test:
   set_api_tokens_on_ci(prompt, answers)
 end
 
+def step_for_ci_gitlab(prompt, answers)
+  prompt.say "Step for Gitlab CI https://about.gitlab.com/features/gitlab-ci-cd/", color: :yellow
+  prompt.say "Update .gitlab-ci.yml in your project as in this example:"
+  prompt.say "https://github.com/KnapsackPro/knapsack_pro-ruby#info-for-gitlab-ci-users"
+
+  puts
+  set_api_tokens_on_ci(prompt, answers)
+end
+
 def step_for_ci_travis(prompt, answers)
   prompt.say "Step for https://travis-ci.org", color: :yellow
   prompt.say "You can parallelize your builds across virtual machines with travis matrix feature."
@@ -291,6 +300,7 @@ namespace :knapsack_pro do
       'https://buildkite.com' => :buildkite,
       'https://semaphoreci.com' => :semaphore,
       'https://snap-ci.com' => :snap_ci,
+      'Gitlab CI' => :gitlab,
       'Jenkins' => :jenkins,
       'other' => :other,
     }

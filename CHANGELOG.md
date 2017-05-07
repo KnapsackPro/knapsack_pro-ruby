@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.38.0
+
+* Add support for Gitlab CI.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/36
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.37.0...v0.38.0
+
 ### 0.37.0
 
 * Add another explanation why test files could not be executed on CI node in Queue Mode.
