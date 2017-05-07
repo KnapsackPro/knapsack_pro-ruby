@@ -8,6 +8,9 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/36
 
+* More info about Buildkite in installer.
+* More info about CircleCI in installer.
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.37.0...v0.38.0
 
 ### 0.37.0
