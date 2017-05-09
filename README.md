@@ -1008,6 +1008,8 @@ A lot of small test files will give you better test suite split results.
 
 Another way is to use tags to mark subset of tests in particular test file and then split tests based on tags.
 
+This example is for knapack_pro Regular Mode. I don't recommend to user this approach with Queue Mode.
+
 Here is example of test file with specified tags for describe groups:
 
 ```ruby
