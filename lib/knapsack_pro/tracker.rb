@@ -58,7 +58,7 @@ module KnapsackPro
     end
 
     def now_without_mock_time
-      Time.now_without_mock_time
+      Time.now_without_mock
     end
   end
 end
