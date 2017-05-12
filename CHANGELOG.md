@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.39.0
+
+* Remove timecop gem from required dependencies list.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/38
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.38.0...v0.39.0
+
 ### 0.38.0
 
 * Add support for Gitlab CI.
