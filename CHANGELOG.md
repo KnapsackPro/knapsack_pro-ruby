@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.40.0
+
+* Replace rake task installer `knapsack_pro:install` with online installation guide. Remove `tty-prompt` gem dependency.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/39
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.39.0...v0.40.0
+
 ### 0.39.0
 
 * Remove timecop gem from required dependencies list.
