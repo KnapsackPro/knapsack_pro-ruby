@@ -19,7 +19,7 @@ __Would you like to try knapsack_pro gem?__ You can [get API token here](http://
 
 ## Is knapsack_pro gem free?
 
-* If your __project is open source__ then you can use Knapsack Pro for free. Just add a link back to the page http://knapsackpro.com and please let me know via email (arturtrzop@gmail.com). I will mark your account on KnapsackPro.com as open source.
+* If your __project is open source__ then you can use Knapsack Pro for free. Please let me know via email (arturtrzop@gmail.com) and I will mark your account on KnapsackPro.com as open source.
 
 * If your __project is commercial__ then I'd like to get feedback from you and work closely together to validate if the solution I'm building provide a value for the users. Switching to paid plan is a good way to validate that and a way to get support from happy users. Maybe you will be the next one who will join and support the project. Thanks!
 
