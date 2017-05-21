@@ -9,7 +9,7 @@ module KnapsackPro
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
-          ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
+          KnapsackPro::Config::EnvGenerator.set_queue_id
 
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
@@ -39,7 +39,6 @@ module KnapsackPro
             exit(exitstatus)
           else
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
-            ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
