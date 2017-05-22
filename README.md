@@ -889,7 +889,7 @@ Please use fixed version of capybara-screenshot.
 ```
 # Gemfile
 group :test do
-  gem "capybara-screenshot", github: 'mattheworiordan/capybara-screenshot', branch: 'master'
+  gem 'capybara-screenshot', github: 'mattheworiordan/capybara-screenshot', branch: 'master'
 end
 ```
 
