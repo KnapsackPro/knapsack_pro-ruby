@@ -38,7 +38,7 @@ module KnapsackPro
             KnapsackPro::Report.save_node_queue_to_api
             exit(exitstatus)
           else
-            subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
+            KnapsackPro::Config::EnvGenerator.set_subset_queue_id
 
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
@@ -49,6 +49,8 @@ module KnapsackPro
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
             RSpec.world.example_groups.clear
+
+            KnapsackPro::Hooks::Queue.call_after_subset_queue
 
             run_tests(runner, false, args, exitstatus, all_test_file_paths)
           end
