@@ -1,4 +1,3 @@
-
 describe KnapsackPro::Runners::Queue::RSpecRunner do
   before do
     # we don't want to modify rspec formatters because we want to see tests summary at the end
