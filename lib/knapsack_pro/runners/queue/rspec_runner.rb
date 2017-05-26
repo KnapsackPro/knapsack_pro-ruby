@@ -51,6 +51,8 @@ module KnapsackPro
             exitstatus = exit_code if exit_code != 0
             RSpec.world.example_groups.clear
 
+            KnapsackPro::Hooks::Queue.call_after_subset_queue
+
             run_tests(runner, false, args, exitstatus, all_test_file_paths)
           end
         end

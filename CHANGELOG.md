@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.41.0
+
+* Add after subset queue hook and example how to use JUnit formatter in Queue Mode.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/41
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.40.0...v0.41.0
+
 ### 0.40.0
 
 * Replace rake task installer `knapsack_pro:install` with online installation guide. Remove `tty-prompt` gem dependency.

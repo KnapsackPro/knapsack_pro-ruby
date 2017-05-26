@@ -99,6 +99,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         expect(RSpec).to receive_message_chain(:world, :example_groups, :clear)
 
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
+
         # second call of run_tests because of recursion
         expect(runner).to receive(:test_file_paths).with(can_initialize_queue: false).and_return([])
       end
