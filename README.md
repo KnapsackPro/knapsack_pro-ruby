@@ -1100,7 +1100,7 @@ The xml report will contain all tests executed across intermediate test subset r
       old_xml_file = 'tmp/rspec.xml'
       # move results to new_xml_file so the results won't accumulate with duplicated xml tags in old_xml_file
       new_xml_file = 'tmp/rspec_final_results.xml'
-      FileUtils.mv(old_xml_file, new_xml_file)
+      FileUtils.mv(old_xml_file, new_xml_file) if File.exists?(old_xml_file)
     end
 
 #### How many API keys I need?
