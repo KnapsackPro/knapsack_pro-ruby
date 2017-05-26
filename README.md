@@ -121,6 +121,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get optimal test suite sp
       - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
     - [How to make knapsack_pro works for forked repositories of my project?](#how-to-make-knapsack_pro-works-for-forked-repositories-of-my-project)
     - [How to use junit formatter?](#how-to-use-junit-formatter)
+      - [How to use junit formatter with knapsack_pro regular mode?](#how-to-use-junit-formatter-with-knapsack_pro-regular-mode)
+      - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
     - [How many API keys I need?](#how-many-api-keys-i-need)
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
@@ -1075,15 +1077,31 @@ Remember to follow other steps required for your CI provider.
 
 #### How to use junit formatter?
 
+##### How to use junit formatter with knapsack_pro regular mode?
+
 You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
 Here you can find example how to generate `rspec.xml` file with junit format and at the same time show normal documentation format output for RSpec.
 
     # Regular Mode
     bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
 
+##### How to use junit formatter with knapsack_pro queue mode?
+
+You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
+
     # Queue Mode
-    # The xml report will contain all tests executed across intermediate test subset runs based on queue
     bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+
+The xml report will contain all tests executed across intermediate test subset runs based on work queue. You need to add after subset queue hook to rename `rspec.xml` to `rspec_final_results.xml` thanks to that the final results file will contain only single xml tag with all tests executed on the CI node. This is related to the way how queue mode works. Detailed explanation is in the [issue](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/40).
+
+    # spec_helper.rb or rails_helper.rb
+    KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+      # TODO This must be the same path as value for rspec --out argument
+      old_file_xml_file = 'tmp/rspec.xml'
+      # move results to new_xml_file so the results won't accumulate with duplicated xml tags in old_file_xml_file
+      new_xml_file = 'tmp/rspec_final_results.xml'
+      FileUtils.mv(old_file_xml_file, new_xml_file)
+    end
 
 #### How many API keys I need?
 
