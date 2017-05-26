@@ -1097,10 +1097,10 @@ The xml report will contain all tests executed across intermediate test subset r
     # spec_helper.rb or rails_helper.rb
     KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
       # TODO This must be the same path as value for rspec --out argument
-      old_file_xml_file = 'tmp/rspec.xml'
-      # move results to new_xml_file so the results won't accumulate with duplicated xml tags in old_file_xml_file
+      old_xml_file = 'tmp/rspec.xml'
+      # move results to new_xml_file so the results won't accumulate with duplicated xml tags in old_xml_file
       new_xml_file = 'tmp/rspec_final_results.xml'
-      FileUtils.mv(old_file_xml_file, new_xml_file)
+      FileUtils.mv(old_xml_file, new_xml_file)
     end
 
 #### How many API keys I need?
