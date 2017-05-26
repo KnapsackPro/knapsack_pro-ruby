@@ -364,6 +364,8 @@ The second build should have better optimal test suite split.
 
 If you use capybara-screenshot gem then please [follow this step](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec).
 
+If you use rspec_junit_formatter gem then please [follow this step](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode).
+
 ### Additional info about queue mode
 
 * You should use different API token for queue mode than for regular mode to avoid problem with test suite split in case you would like to go back to regular mode.
