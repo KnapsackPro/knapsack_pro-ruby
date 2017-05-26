@@ -4,6 +4,10 @@ module KnapsackPro
       class << self
         attr_reader :after_subset_queue
 
+        def reset_after_subset_queue
+          @after_subset_queue = nil
+        end
+
         def after_subset_queue(&block)
           @after_subset_queue ||= block
         end
