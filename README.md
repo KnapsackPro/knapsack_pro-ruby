@@ -41,7 +41,7 @@ For instance when you will run tests with `rake knapsack_pro:rspec` then:
 * knapsack_pro will run test files which got from API
 * after tests finished knapsack_pro will send information about time execution of each file to API http://docs.knapsackpro.com/api/v1/#build_subsets_post so data can be used for future test runs
 
-The knapsack_pro has also [queue mode](#queue-mode) to get most optimal test suite split.
+The knapsack_pro has also [queue mode](#queue-mode) to get optimal test suite split.
 
 # Requirements
 
@@ -395,7 +395,7 @@ There might be some cached test suite splits for git commits you run in past for
 
 * `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false` (default)
 
-  By default, the fixed queue split is off. It means when you will run tests for the same commit hash and a total number of nodes and for the same branch, and the CI build ID is different with second tests run then the queue will be generated dynamically and CI nodes will fetch from Knapsack Pro API the test files in a dynamic way. This is default because it gives the most optimal test suite split for the whole test build across all CI nodes.
+  By default, the fixed queue split is off. It means when you will run tests for the same commit hash and a total number of nodes and for the same branch, and the CI build ID is different with second tests run then the queue will be generated dynamically and CI nodes will fetch from Knapsack Pro API the test files in a dynamic way. This is default because it gives the optimal test suite split for the whole test build across all CI nodes.
 
 * `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`
 
