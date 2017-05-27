@@ -49,7 +49,27 @@ module KnapsackPro
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
-            RSpec.world.example_groups.clear
+
+            if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new('3.6.0')
+              RSpec.clear_examples
+            else
+              # RSpec.world.reset does below in < rspec 3.6.0
+              if RSpec::ExampleGroups.respond_to?(:remove_all_constants)
+                RSpec::ExampleGroups.remove_all_constants
+              else
+                RSpec::ExampleGroups.constants.each do |constant|
+                  RSpec::ExampleGroups.__send__(:remove_const, constant)
+                end
+              end
+              RSpec.world.example_groups.clear
+
+              # it simulates behavior of RSpec.configuration.reset_reporter from rspec >= 3.6.0
+              RSpec.configuration.instance_variable_set(:@reporter, nil)
+              RSpec.configuration.instance_variable_set(:@formatter_loader, nil)
+
+              RSpec.configuration.start_time = ::RSpec::Core::Time.now
+              RSpec.configuration.reset_filters
+            end
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
