@@ -103,6 +103,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get optimal test suite sp
   - [Common problems](#common-problems)
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
     - [Queue Mode problems](#queue-mode-problems)
+      - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
       - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
       - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
@@ -857,6 +858,14 @@ knapack_pro gem cannot determine the git commit hash and branch name. To fix thi
 * if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
 
 #### Queue Mode problems
+
+##### Why I don't see collected time execution data for my build in user dashboard?
+
+If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build metrics` for your API token and you open build for your last git commit you should see there info about collected time execution data from all CI nodes. If you don't see collected time execution data for CI nodes then please ensure:
+
+* you have `Knapsack::Adapters::RspecAdapter.bind` in your `rails_helper.rb` or `spec_helper.rb`
+* you explicitly set `RAILS_ENV=test` on your CI nodes (for instance you use Docker then please set `RAILS_ENV`)
+* knapsack_pro Queue Mode saves temporary files with collected time execution data in `your_rails_project/tmp/knapsack_pro/queue/`. Please ensure you don't clean `tmp` directory in your tests so knapsack_pro can publish time execution data to Knapsack Pro API server.
 
 ##### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
 
