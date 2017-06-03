@@ -129,6 +129,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get optimal test suite sp
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
+    - [How to retry failed tests (flaky tests)?](#how-to-retry-failed-tests-flaky-tests)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1280,6 +1281,30 @@ To ensure everything works you can check output for each CI node.
     KNAPSACK_PRO_CI_NODE_TOTAL=4 KNAPSACK_PRO_CI_NODE_INDEX=3 PARALLEL_TESTS_CONCURRENCY=2
     (tests output here)
     ```
+
+#### How to retry failed tests (flaky tests)?
+
+Flaky (nondeterministic) tests, are tests that exhibit both a passing and a failing result with the same code.
+
+You can use [only failures option in RSpec](https://relishapp.com/rspec/rspec-core/docs/command-line/only-failures) to rerun failed tests.
+
+Please add to your RSpec configuration:
+
+```
+RSpec.configure do |c|
+  c.example_status_persistence_file_path = "tmp/rspec_examples.txt"
+end
+```
+
+Then you can execute rspec with only failed tests after main knapsack_pro command finish.
+
+```
+# Run knapack_pro in Queue Mode and it will save failed tests in tmp/rspec_examples.txt
+bundle exec rake knapsack_pro:queue:rspec
+
+# run only failed tests from tmp/rspec_examples.txt
+bundle exec rspec --only-failures
+```
 
 ### Questions around data usage and security
 
