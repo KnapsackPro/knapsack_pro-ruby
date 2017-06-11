@@ -49,7 +49,8 @@ module KnapsackPro
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
-            RSpec.world.example_groups.clear
+
+            rspec_clear_examples
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
@@ -74,6 +75,23 @@ module KnapsackPro
             "bundle exec rspec #{stringify_cli_args} " +
             KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
           )
+        end
+
+        # Clear rspec examples without the shared examples:
+        # https://github.com/rspec/rspec-core/pull/2379
+        #
+        # Keep formatters and report to accumulate info about failed/pending tests
+        def self.rspec_clear_examples
+          if RSpec::ExampleGroups.respond_to?(:remove_all_constants)
+            RSpec::ExampleGroups.remove_all_constants
+          else
+            RSpec::ExampleGroups.constants.each do |constant|
+              RSpec::ExampleGroups.__send__(:remove_const, constant)
+            end
+          end
+          RSpec.world.example_groups.clear
+          RSpec.configuration.start_time = ::RSpec::Core::Time.now
+          RSpec.configuration.reset_filters
         end
       end
     end

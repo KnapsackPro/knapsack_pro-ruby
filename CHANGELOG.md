@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.42.0
+
+* Clear RSpec examples without shared examples in similar way as in RSpec 3.6.0
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/42
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.41.0...v0.42.0
+
 ### 0.41.0
 
 * Add after subset queue hook and example how to use JUnit formatter in Queue Mode.

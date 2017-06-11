@@ -97,7 +97,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         expect(RSpec::Core::Runner).to receive(:new).with(options).and_return(rspec_core_runner)
         expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_return(exit_code)
 
-        expect(RSpec).to receive_message_chain(:world, :example_groups, :clear)
+        expect(described_class).to receive(:rspec_clear_examples)
 
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 
