@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.43.0
+
+* Extract correct test directory from test file pattern that has multiple patterns.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/43
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.42.0...v0.43.0
+
 ### 0.42.0
 
 * Clear RSpec examples without shared examples in similar way as in RSpec 3.6.0

@@ -9,7 +9,7 @@ module KnapsackPro
     end
 
     def test_dir
-      test_file_pattern.split('/').first
+      test_file_pattern.split('/').first.gsub(/({)/, '')
     end
 
     private
