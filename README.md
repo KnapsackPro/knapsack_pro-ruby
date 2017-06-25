@@ -636,7 +636,12 @@ Here is another example for CircleCI 2.0 platform.
 # auto-balancing CI build time execution to be flat and optimal (as fast as possible).
 # Queue Mode does dynamic tests allocation so the previous not balanced run command won't
 # create a bottleneck on the CI node
-- run: bundle exec rake knapsack_pro:queue:rspec
+- run:
+  name: RSpec via knapsack_pro Queue Mode
+  command: |
+    # export word is important here!
+    export RAILS_ENV=test
+    bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
 ```
 
 Please remember to add additional containers for your project in CircleCI settings.
