@@ -736,6 +736,8 @@ Here you can find article [how to set up a new pipeline for your project in Buil
 * [Buildkite Rails Parallel Example with Knapsack Pro](https://github.com/KnapsackPro/buildkite-rails-parallel-example-with-knapsack_pro)
 * [Buildkite Rails Docker Parallel Example with Knapsack Pro](https://github.com/KnapsackPro/buildkite-rails-docker-parallel-example-with-knapsack_pro)
 
+If you want to use Buildkite retry single agent feature to retry just failed tests on particular agent (CI node) then you should set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
+
 #### Info for Gitlab CI users
 
 Gitlab CI does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same `test` stage. Below is relevant part of `.gitlab-ci.yml` configuration for 2 parallel jobs.
