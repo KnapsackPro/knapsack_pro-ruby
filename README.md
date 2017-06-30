@@ -137,6 +137,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get optimal test suite sp
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
+- [Mentions](#mentions)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1353,3 +1354,10 @@ To run specs for Knapsack Pro gem type:
 4. Push to the branch (`git push origin my-new-feature`)
 5. You can create example tests in related repository with example of [rails application and knapsack_pro gem usage](https://github.com/KnapsackPro/rails-app-with-knapsack_pro).
 6. Create a new Pull Request
+
+## Mentions
+
+List of articles where people mentioned Knapsack Pro:
+
+* [Treat your Build Pipeline as a Product](https://medium.com/mydr-engineering/treat-your-build-pipeline-as-a-product-61a1b24ae538).
+  * Video - [Your Build Pipeline is a Product](https://www.youtube.com/watch?v=7e8Qk3H6xhg&t=21m14s)
