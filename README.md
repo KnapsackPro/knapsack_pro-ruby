@@ -1325,7 +1325,7 @@ Here is the [full specification of the API](http://docs.knapsackpro.com/api/v1/)
 #### How is that data secured?
 
 The test file paths and/or branch names can be [encrypted](#test-file-names-encryption) on your CI node with a salt and later send to knapsackpro.com API.
-You generate the salt locally and only you can decrypt the test file paths or branch names.
+You generate the salt locally and __only you__ can decrypt the test file paths or branch names with the salt. Here you can [see how the data are encrypted](blob/master/lib/knapsack_pro/crypto/digestor.rb).
 
 Connection with knapsackpro.com server is via https.
 
