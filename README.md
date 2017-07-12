@@ -67,9 +67,9 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Set knapsack_pro command to execute tests](#set-knapsack_pro-command-to-execute-tests)
   - [Repository adapter (How to set up 3 of 3)](#repository-adapter-how-to-set-up-3-of-3)
     - [When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
-    - [When you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
+    - [When should you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 - [Queue Mode](#queue-mode)
-  - [How queue mode works?](#how-queue-mode-works)
+  - [How does queue mode work?](#how-does-queue-mode-work)
   - [How to use queue mode?](#how-to-use-queue-mode)
   - [Additional info about queue mode](#additional-info-about-queue-mode)
   - [Extra configuration for Queue Mode](#extra-configuration-for-queue-mode)
@@ -319,7 +319,7 @@ You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default di
 
 __Tip:__ If you use one of the supported CI providers then instead of the above steps you should [take a look at this](#supported-ci-providers).
 
-__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported).
+__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported).
 
 ### Repository adapter (How to set up 3 of 3)
 
@@ -865,7 +865,7 @@ If you are going to relay on rspec to autobalance build when cucumber tests were
 When Knapsack Pro API returns error like above the problem is because you use CI provider not supported by knapack_pro which means
 knapack_pro gem cannot determine the git commit hash and branch name. To fix this problem you can do:
 
-* if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
+* if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 * if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
 
 #### Queue Mode problems
