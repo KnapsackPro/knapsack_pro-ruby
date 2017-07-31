@@ -14,19 +14,33 @@ describe KnapsackPro::BaseAllocatorBuilder do
     subject { allocator_builder.test_dir }
 
     before do
-      expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+      expect(KnapsackPro::Config::Env).to receive(:test_dir).and_return(test_dir)
     end
 
-    context 'when single pattern' do
-      let(:test_file_pattern) { 'spec/**{,/*/**}/*_spec.rb' }
+    context 'when test_dir is defined in ENV' do
+      let(:test_dir) { double }
 
-      it { should eq 'spec' }
+      it { should eq test_dir }
     end
 
-    context 'when multiple patterns' do
-      let(:test_file_pattern) { '{spec/controllers/**/*.rb,spec/decorators/**/*.rb}' }
+    context 'when test_dir is not defined in ENV' do
+      let(:test_dir) { nil }
 
-      it { should eq 'spec' }
+      before do
+        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+      end
+
+      context 'when single pattern' do
+        let(:test_file_pattern) { 'spec/**{,/*/**}/*_spec.rb' }
+
+        it { should eq 'spec' }
+      end
+
+      context 'when multiple patterns' do
+        let(:test_file_pattern) { '{spec/controllers/**/*.rb,spec/decorators/**/*.rb}' }
+
+        it { should eq 'spec' }
+      end
     end
   end
 end
