@@ -1319,13 +1319,24 @@ bundle exec rspec --only-failures
 
 #### How can I run tests from multiple directories?
 
-The test file pattern config option supports any glob pattern handled by [`Dir.glob`](http://ruby-doc.org/core-2.4.1/Dir.html#method-c-glob) and can be configured to pull test files from multiple directories. An example of this when using RSpec would be `"{spec,engines/**/spec}/**{,/*/**}/*_spec.rb"`. For complex cases like this, the test directory can't be extracted and must be specified manually using the `KNAPSACK_PRO_TEST_DIR` environment variable:
+The test file pattern config option supports any glob pattern handled by [`Dir.glob`](http://ruby-doc.org/core-2.4.1/Dir.html#method-c-glob) and can be configured to pull test files from multiple directories. An example of this when using RSpec would be `""{spec,engines/*/spec}/**/*_spec.rb" "`. For complex cases like this, the test directory can't be extracted and must be specified manually using the `KNAPSACK_PRO_TEST_DIR` environment variable:
 
 ```
-$ KNAPSACK_PRO_TEST_DIR=spec KNAPSACK_PRO_TEST_FILE_PATTERN="{spec,engines/**/spec}/**{,/*/**}/*_spec.rb" bundle exec rake knapsack_pro:queue:rspec
+# This is example where you have in engines directory multiple projects
+# and each project directory has a spec folder and you would like to run tests for it.
+# You want to use the spec_helper from the main spec directory.
+#
+# Tree:
+# * spec
+# * engines
+#   * project_a
+#     * spec
+#   * project_b
+#     * spec
+$ KNAPSACK_PRO_TEST_DIR=spec KNAPSACK_PRO_TEST_FILE_PATTERN="{spec,engines/*/spec}/**/*_spec.rb" bundle exec rake knapsack_pro:queue:rspec
 ```
 
-`KNAPSACK_PRO_TEST_DIR` will be your default path for rspec so you should put there your `spec_helper.rb`. Please ensure you will require it in your test files this way:
+`KNAPSACK_PRO_TEST_DIR` will be your default path for rspec so you should put there your `spec_helper.rb`. Please ensure you will require it in your test files this way if something doesn't work:
 
 ```ruby
 # good
