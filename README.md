@@ -102,6 +102,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
 - [FAQ](#faq)
   - [Common problems](#common-problems)
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
+    - [Why I see `LoadError: cannot load such file -- spec_helper`?](#why-i-see-loaderror-cannot-load-such-file----spec_helper)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
@@ -870,6 +871,14 @@ knapack_pro gem cannot determine the git commit hash and branch name. To fix thi
 
 * if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 * if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
+
+#### Why I see `LoadError: cannot load such file -- spec_helper`?
+
+When your tests fails with:
+
+    LoadError: cannot load such file -- spec_helper
+
+then problem might be related to the fact you specified complex `KNAPSACK_PRO_TEST_FILE_PATTERN` and knapsack_pro gem cannot detect correct main test directory with spec_helper. You should set `KNAPSACK_PRO_TEST_DIR=spec`. Please [read also example](#how-can-i-run-tests-from-multiple-directories).
 
 #### Queue Mode problems
 
