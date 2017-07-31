@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.44.0
+
+* Add ability to set test_dir using an environment variable.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/45
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.43.0...v0.44.0
+
 ### 0.43.0
 
 * Extract correct test directory from test file pattern that has multiple patterns.
