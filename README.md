@@ -130,6 +130,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
     - [How to retry failed tests (flaky tests)?](#how-to-retry-failed-tests-flaky-tests)
+    - [How can I run tests from multiple directories?](#how-can-i-run-tests-from-multiple-directories)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1314,6 +1315,24 @@ bundle exec rake knapsack_pro:queue:rspec
 
 # run only failed tests from tmp/rspec_examples.txt
 bundle exec rspec --only-failures
+```
+
+#### How can I run tests from multiple directories?
+
+The test file pattern config option supports any glob pattern handled by [`Dir.glob`](http://ruby-doc.org/core-2.4.1/Dir.html#method-c-glob) and can be configured to pull test files from multiple directories. An example of this when using RSpec would be `"{spec,engines/**/spec}/**{,/*/**}/*_spec.rb"`. For complex cases like this, the test directory can't be extracted and must be specified manually using the `KNAPSACK_PRO_TEST_DIR` environment variable:
+
+```
+$ KNAPSACK_PRO_TEST_DIR=spec KNAPSACK_PRO_TEST_FILE_PATTERN="{spec,engines/**/spec}/**{,/*/**}/*_spec.rb" bundle exec rake knapsack_pro:queue:rspec
+```
+
+`KNAPSACK_PRO_TEST_DIR` will be your default path for rspec so you should put there your `spec_helper.rb`. Please ensure you will require it in your test files this way:
+
+```ruby
+# good
+require_relative 'spec_helper'
+
+# bad - won't work
+require 'spec_helper'
 ```
 
 ### Questions around data usage and security
