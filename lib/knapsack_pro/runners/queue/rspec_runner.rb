@@ -27,6 +27,8 @@ module KnapsackPro
         def self.run_tests(runner, can_initialize_queue, args, exitstatus, all_test_file_paths)
           test_file_paths = runner.test_file_paths(can_initialize_queue: can_initialize_queue)
 
+          KnapsackPro::Hooks::Queue.call_before_queue if can_initialize_queue
+
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
@@ -34,6 +36,8 @@ module KnapsackPro
 
               log_rspec_command(args, all_test_file_paths, :end_of_queue)
             end
+
+            KnapsackPro::Hooks::Queue.call_after_queue
 
             KnapsackPro::Report.save_node_queue_to_api
             exit(exitstatus)
