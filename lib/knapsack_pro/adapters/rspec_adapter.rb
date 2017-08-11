@@ -57,6 +57,17 @@ module KnapsackPro
           end
         end
       end
+
+      def bind_before_queue_hook
+        ::RSpec.configure do |config|
+          config.before(:suite) do
+            unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+              KnapsackPro::Hooks::Queue.call_before_queue
+              ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+            end
+          end
+        end
+      end
     end
 
     # This is added to provide backwards compatibility
