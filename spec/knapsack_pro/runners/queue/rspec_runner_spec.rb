@@ -75,8 +75,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
     before do
       expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue).and_return(test_file_paths)
-
-      expect(KnapsackPro::Hooks::Queue).to receive(:call_before_queue)
     end
 
     context 'when test files exist' do
