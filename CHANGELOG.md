@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.45.0
+
+* Add before and after queue hooks
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/46
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.44.0...v0.45.0
+
 ### 0.44.0
 
 * Add ability to set test_dir using an environment variable.
