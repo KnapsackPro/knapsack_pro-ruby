@@ -35,6 +35,8 @@ module KnapsackPro
               log_rspec_command(args, all_test_file_paths, :end_of_queue)
             end
 
+            KnapsackPro::Hooks::Queue.call_after_queue
+
             KnapsackPro::Report.save_node_queue_to_api
             exit(exitstatus)
           else

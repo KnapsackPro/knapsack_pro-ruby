@@ -136,6 +136,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       let(:test_file_paths) { [] }
 
       it do
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
+
         expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
         expect(described_class).to receive(:exit).with(exitstatus)
 

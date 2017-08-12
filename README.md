@@ -1188,11 +1188,15 @@ Knapsack Pro Queue Mode runs subset of test files from the work queue many times
 ```ruby
 # spec_helper.rb or rails_helper.rb
 
-# executes before Queue Mode starts work
-Percy::Capybara.initialize_build
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  # executes before Queue Mode starts work
+  Percy::Capybara.initialize_build
+end
 
-# executes after Queue Mode finishes work
-at_exit { Percy::Capybara.finalize_build }
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  # executes after Queue Mode finishes work
+  Percy::Capybara.finalize_build
+end
 ```
 
 #### How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?
@@ -1202,18 +1206,17 @@ Knapsack Pro Queue Mode runs subset of test files from the work queue many times
 ```ruby
 # spec_helper.rb or rails_helper.rb
 
-RSpec.configure do |config|
-  config.before(:suite) do
-    unless ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED']
-      ENV['KNAPSACK_PRO_RSPEC_BEFORE_SUITE_LOADED'] = 'true'
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  # This will be called only once before the tests started on the CI node.
+  # It will be run inside of the RSpec before(:suite) block only once.
+  # It means you will have access to whatever RSpec provides in the context of the before(:suite) block.
+end
 
-      # this will be called only once before the tests started on the CI node
-    end
-  end
-
-  at_exit do
-    # this will be called only once at the end when the CI node finished tests
-  end
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  # This will be called only once after test suite is completed.
+  # Note this hook won't be called inside of RSpec after(:suite) block because
+  # we are not able to determine which after(:suite) block will be called as the last one
+  # due to the fact the Knapsack Pro Queue Mode allocates tests in dynamic way.
 end
 ```
 
