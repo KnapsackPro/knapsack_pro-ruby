@@ -10,7 +10,7 @@ module KnapsackPro
     end
 
     class RSpecQueueSummaryFormatter < RSpec::Core::Formatters::BaseFormatter
-      RSpec::Core::Formatters.register self, :dump_failures, :dump_pending
+      RSpec::Core::Formatters.register self, :dump_summary, :dump_failures, :dump_pending
 
       def self.registered_output=(output)
         @registered_output = {
@@ -85,6 +85,10 @@ module KnapsackPro
       def dump_pending(notification)
         return if notification.pending_examples.empty?
         self.class.most_recent_pending = notification.fully_formatted_pending_examples
+      end
+
+      def dump_summary(summary)
+        self.class.most_recent_summary = summary.fully_formatted
       end
     end
   end
