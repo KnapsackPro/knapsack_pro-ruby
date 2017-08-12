@@ -61,6 +61,8 @@ require_relative 'knapsack_pro/crypto/branch_encryptor'
 require_relative 'knapsack_pro/crypto/decryptor'
 require_relative 'knapsack_pro/crypto/digestor'
 
+require 'knapsack_pro/railtie' if defined?(Rails::Railtie)
+
 module KnapsackPro
   class << self
     def root
