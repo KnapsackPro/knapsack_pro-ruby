@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.46.0
+
+* Autoload knapsack_pro rake tasks with Rails Railties
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/47
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.45.0...v0.46.0
+
 ### 0.45.0
 
 * Add before and after queue hooks
