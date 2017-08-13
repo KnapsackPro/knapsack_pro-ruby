@@ -10,7 +10,7 @@ module KnapsackPro
     end
 
     class RSpecQueueSummaryFormatter < RSpec::Core::Formatters::BaseFormatter
-      RSpec::Core::Formatters.register self, :dump_failures, :dump_pending
+      RSpec::Core::Formatters.register self, :dump_summary, :dump_failures, :dump_pending
 
       def self.registered_output=(output)
         @registered_output = {
@@ -85,6 +85,21 @@ module KnapsackPro
       def dump_pending(notification)
         return if notification.pending_examples.empty?
         self.class.most_recent_pending = notification.fully_formatted_pending_examples
+      end
+
+      def dump_summary(summary)
+        colorizer = ::RSpec::Core::Formatters::ConsoleCodes
+        duration = KnapsackPro.tracker.global_time_since_beginning
+        formatted_duration = ::RSpec::Core::Formatters::Helpers.format_duration(duration)
+
+        formatted = "\nFinished in #{formatted_duration}\n" \
+          "#{summary.colorized_totals_line(colorizer)}\n"
+
+        unless summary.failed_examples.empty?
+          formatted += (summary.colorized_rerun_commands(colorizer) + "\n")
+        end
+
+        self.class.most_recent_summary = formatted
       end
     end
   end
