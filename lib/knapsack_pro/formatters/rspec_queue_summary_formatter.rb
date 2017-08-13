@@ -89,7 +89,7 @@ module KnapsackPro
 
       def dump_summary(summary)
         colorizer = ::RSpec::Core::Formatters::ConsoleCodes
-        duration = KnapsackPro.tracker.global_time
+        duration = KnapsackPro.tracker.global_time_since_beginning
         formatted_duration = ::RSpec::Core::Formatters::Helpers.format_duration(duration)
 
         formatted = "\nFinished in #{formatted_duration}\n" \

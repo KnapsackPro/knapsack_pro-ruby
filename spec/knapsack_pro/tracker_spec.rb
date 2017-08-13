@@ -114,5 +114,9 @@ describe KnapsackPro::Tracker do
     end
 
     it_behaves_like 'default trakcer attributes'
+
+    it "global time since beginning won't be reset" do
+      expect(tracker.global_time_since_beginning).to be >= 0.1
+    end
   end
 end
