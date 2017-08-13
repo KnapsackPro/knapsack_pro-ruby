@@ -88,7 +88,18 @@ module KnapsackPro
       end
 
       def dump_summary(summary)
-        self.class.most_recent_summary = summary.fully_formatted
+        colorizer = ::RSpec::Core::Formatters::ConsoleCodes
+        duration = KnapsackPro.tracker.global_time
+        formatted_duration = ::RSpec::Core::Formatters::Helpers.format_duration(duration)
+
+        formatted = "\nFinished in #{formatted_duration}\n" \
+          "#{summary.colorized_totals_line(colorizer)}\n"
+
+        unless summary.failed_examples.empty?
+          formatted += (summary.colorized_rerun_commands(colorizer) + "\n")
+        end
+
+        self.class.most_recent_summary = formatted
       end
     end
   end
