@@ -95,6 +95,14 @@ describe KnapsackPro::Adapters::BaseAdapter do
     end
   end
 
+  describe '#bind_tracker_reset' do
+    it do
+      expect {
+        subject.bind_tracker_reset
+      }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe '#bind_before_queue_hook' do
     it do
       expect {

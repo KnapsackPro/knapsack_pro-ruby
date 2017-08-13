@@ -5,6 +5,7 @@
 ### 0.47.0
 
 * Add in Queue Mode the RSpec summary with info about examples, failures and pending tests.
+* Fix not working message `Global time execution for tests` at end of each subset of tests from work queue.
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/48
 
