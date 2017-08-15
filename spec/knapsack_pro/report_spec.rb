@@ -142,7 +142,12 @@ describe KnapsackPro::Report do
         let(:success?) { false }
         let(:errors?) { nil }
 
-        it { subject }
+        it do
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:warn).with('Time execution report was not saved on API server due to network problem.')
+          subject
+        end
       end
     end
 
