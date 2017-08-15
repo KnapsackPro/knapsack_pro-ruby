@@ -462,6 +462,8 @@ In case when you use other CI provider for instance [Jenkins](https://jenkins-ci
 
 #### KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)
 
+Note this is for knapack_pro regular mode only.
+
 * `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true` (default)
 
     It means when you run test suite again for the same commit hash and total number of nodes and for the same branch
