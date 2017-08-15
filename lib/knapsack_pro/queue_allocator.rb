@@ -59,8 +59,7 @@ module KnapsackPro
     def fallback_test_files(executed_test_files)
       test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_files, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
-      not_executed_test_files_for_node_index = test_files_for_node_index - executed_test_files
-      KnapsackPro::TestFilePresenter.paths(not_executed_test_files_for_node_index)
+      KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end
   end
 end
