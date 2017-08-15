@@ -1,7 +1,7 @@
 module KnapsackPro
   module Client
     class Connection
-      TIMEOUT = 30
+      TIMEOUT = 15
       REQUEST_RETRY_TIMEBOX = 2
 
       def initialize(action)
