@@ -74,7 +74,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     subject { described_class.run_tests(runner, can_initialize_queue, args, exitstatus, []) }
 
     before do
-      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue).and_return(test_file_paths)
+      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: []).and_return(test_file_paths)
     end
 
     context 'when test files exist' do
@@ -102,7 +102,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 
         # second call of run_tests because of recursion
-        expect(runner).to receive(:test_file_paths).with(can_initialize_queue: false).and_return([])
+        expect(runner).to receive(:test_file_paths).with(can_initialize_queue: false, executed_test_files: ['a_spec.rb', 'b_spec.rb']).and_return([])
       end
 
       context 'when exit code is zero' do
