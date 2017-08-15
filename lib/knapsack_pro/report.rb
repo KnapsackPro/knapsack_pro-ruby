@@ -57,7 +57,9 @@ module KnapsackPro
       response = connection.call
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
-        KnapsackPro.logger.debug('Saved time execution report on API server.')
+        KnapsackPro.logger.debug('Saved time execution report on Knapsack Pro API server.')
+      else
+        KnapsackPro.logger.warn('Time execution report was not saved on Knapsack Pro API server due to connection problem.')
       end
     end
 

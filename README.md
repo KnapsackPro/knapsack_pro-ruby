@@ -1014,11 +1014,11 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
 ##### for knapack_pro regular mode
 
-knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it switch to fallback behaviour and it will split test files across CI nodes based on popular test directory names.
+knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it switch to fallback behavior and it will split test files across CI nodes based on popular test directory names. When knapack_pro starts fallback mode then you will see a warning in the output.
 
 ##### for knapsack_pro queue mode
 
-knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it fails.
+knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds till it switches to fallback behavior and it will split test files across CI nodes based on popular test directory names. Note that if one of CI nodes will lose connection to Knapsack Pro API but other not then you may see that some of the test files will be executed on multiple CI nodes. Fallback mode guarantees each of test files is run at least once across CI nodes. Thanks to that we know if the whole test suite is green or not. When knapack_pro starts fallback mode then you will see a warning in the output.
 
 #### How can I change log level?
 

@@ -25,7 +25,10 @@ module KnapsackPro
         end
 
         def self.run_tests(runner, can_initialize_queue, args, exitstatus, all_test_file_paths)
-          test_file_paths = runner.test_file_paths(can_initialize_queue: can_initialize_queue)
+          test_file_paths = runner.test_file_paths(
+            can_initialize_queue: can_initialize_queue,
+            executed_test_files: all_test_file_paths
+          )
 
           if test_file_paths.empty?
             unless all_test_file_paths.empty?

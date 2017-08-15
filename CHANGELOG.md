@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.48.0
+
+* Fallback mode for Queue Mode when Knapsack Pro API doesn't work.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/49
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.47.0...v0.48.0
+
 ### 0.47.0
 
 * Add in Queue Mode the RSpec summary with info about examples, failures and pending tests.
