@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.49.0
+
+* Show short warning for not executed test files on CI node. Show explanation in debug logs.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/50
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.48.0...v0.49.0
+
 ### 0.48.0
 
 * Fallback mode for Queue Mode when Knapsack Pro API doesn't work.
