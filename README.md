@@ -97,6 +97,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for Gitlab CI users](#info-for-gitlab-ci-users)
+    - [Info for codeship.com users](#info-for-codeshipcom-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
 - [FAQ](#faq)
@@ -782,6 +783,38 @@ test_ci_node_1:
 ```
 
 Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to [Secret Variables](https://gitlab.com/help/ci/variables/README.md#secret-variables) in `Gitlab CI Settings -> CI/CD Pipelines -> Secret Variables`.
+
+#### Info for codeship.com users
+
+Codeship does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each [parallel test pipeline](https://documentation.codeship.com/basic/builds-and-configuration/parallel-tests/#using-parallel-test-pipelines). Below is an example for 2 parallel test pipelines.
+
+Configure test pipelines (1/2 used)
+
+```
+# first CI node running in parallel
+
+# Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+
+# RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
+# It will autobalance bulid because it is executed after Cucumber tests.
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:rspec
+```
+
+Configure test pipelines (2/2 used)
+
+```
+# second CI node running in parallel
+
+# Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+
+# RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
+# It will autobalance bulid because it is executed after Cucumber tests.
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:queue:rspec
+```
+
+Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to `Environment` page of your project settings in Codeship.
 
 #### Info for snap-ci.com users
 

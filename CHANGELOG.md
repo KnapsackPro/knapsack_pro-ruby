@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.50.0
+
+* Add support for Codeship environment variables.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/51
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.49.0...v0.50.0
+
 ### 0.49.0
 
 * Show short warning for not executed test files on CI node. Show explanation in debug logs.
