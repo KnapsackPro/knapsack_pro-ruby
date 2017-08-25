@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.50.1
+
+* Update RSpec timing adapter to be more resilient.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/52
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.50.0...v0.50.1
+
 ### 0.50.0
 
 * Add support for Codeship environment variables.
