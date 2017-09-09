@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.51.0
+
+* Add support for test-unit test runner.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/53
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.50.1...v0.51.0
+
 ### 0.50.1
 
 * Update RSpec timing adapter to be more resilient.
