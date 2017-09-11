@@ -136,6 +136,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST']
         end
 
+        def test_suite_token_test_unit
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_TEST_UNIT']
+        end
+
         def test_suite_token_cucumber
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER']
         end

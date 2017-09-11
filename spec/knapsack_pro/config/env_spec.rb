@@ -513,6 +513,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_suite_token_test_unit' do
+    subject { described_class.test_suite_token_test_unit }
+
+    context 'when ENV exists' do
+      let(:test_suite_token_test_unit) { 'test-unit-token' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_TEST_UNIT' => test_suite_token_test_unit }) }
+      it { should eq test_suite_token_test_unit }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.test_suite_token_cucumber' do
     subject { described_class.test_suite_token_cucumber }
 
