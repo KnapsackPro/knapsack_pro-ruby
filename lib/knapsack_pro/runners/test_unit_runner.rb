@@ -8,18 +8,20 @@ module KnapsackPro
         runner = new(KnapsackPro::Adapters::TestUnitAdapter)
 
         if runner.test_files_to_execute_exist?
-          #require 'rspec/core/rake_task'
+          task_name = 'knapsack_pro:test_unit_run'
 
-          #task_name = 'knapsack_pro:test_unit_run'
-          #if Rake::Task.task_defined?(task_name)
-            #Rake::Task[task_name].clear
-          #end
+          if Rake::Task.task_defined?(task_name)
+            Rake::Task[task_name].clear
+          end
 
-          #RSpec::Core::RakeTask.new(task_name) do |t|
-            #t.rspec_opts = "#{args} --default-path #{runner.test_dir}"
-            #t.pattern = runner.test_file_paths
-          #end
-          #Rake::Task[task_name].invoke
+          Rake::TestTask.new(task_name) do |t|
+            t.warning = false
+            t.libs << runner.test_dir
+            t.test_files = runner.test_file_paths
+            t.options = args
+          end
+
+          Rake::Task[task_name].invoke
         end
       end
     end
