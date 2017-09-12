@@ -93,6 +93,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How to debug branch names?](#how-to-debug-branch-names)
   - [Supported CI providers](#supported-ci-providers)
     - [Info for CircleCI users](#info-for-circleci-users)
+      - [CircleCI and knapsack_pro Queue Mode](#circleci-and-knapsack_pro-queue-mode)
     - [Info for Travis users](#info-for-travis-users)
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
@@ -658,6 +659,36 @@ Here is another example for CircleCI 2.0 platform.
 
 Please remember to add additional containers for your project in CircleCI settings.
 
+##### CircleCI and knapsack_pro Queue Mode
+
+If you use knapack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
+
+Here you can read how to configure [junit formatter](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode). Step for CircleCI is to copy the xml report to `$CIRCLE_TEST_REPORTS` directory. Below is full config for your `spec_helper.rb`:
+
+```ruby
+# spec_helper.rb or rails_helper.rb
+
+# TODO This must be the same path as value for rspec --out argument
+TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
+# move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
+FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  if File.exist?(TMP_RSPEC_XML_REPORT)
+    FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
+  end
+end
+
+# Here is additional configuration to ensure the xml report will be visible by CircleCI
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  # Metadata collection
+  # https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps
+  if File.exist?(FINAL_RSPEC_XML_REPORT) && ENV['CIRCLE_TEST_REPORTS']
+    FileUtils.cp(FINAL_RSPEC_XML_REPORT, "#{ENV['CIRCLE_TEST_REPORTS']}/rspec.xml")
+  end
+end
+```
+
 #### Info for Travis users
 
 You can parallelize your builds across virtual machines with [travis matrix feature](http://docs.travis-ci.com/user/speeding-up-the-build/#Parallelizing-your-builds-across-virtual-machines). Edit `.travis.yml`
@@ -1168,12 +1199,16 @@ You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](http
 The xml report will contain all tests executed across intermediate test subset runs based on work queue. You need to add after subset queue hook to rename `rspec.xml` to `rspec_final_results.xml` thanks to that the final results file will contain only single xml tag with all tests executed on the CI node. This is related to the way how queue mode works. Detailed explanation is in the [issue](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/40).
 
     # spec_helper.rb or rails_helper.rb
+
+    # TODO This must be the same path as value for rspec --out argument
+    TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
+    # move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
+    FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
+
     KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
-      # TODO This must be the same path as value for rspec --out argument
-      old_xml_file = 'tmp/rspec.xml'
-      # move results to new_xml_file so the results won't accumulate with duplicated xml tags in old_xml_file
-      new_xml_file = 'tmp/rspec_final_results.xml'
-      FileUtils.mv(old_xml_file, new_xml_file) if File.exist?(old_xml_file)
+      if File.exist?(TMP_RSPEC_XML_REPORT)
+        FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
+      end
     end
 
 #### How many API keys I need?
