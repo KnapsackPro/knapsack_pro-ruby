@@ -19,28 +19,26 @@ module KnapsackPro
         #example_group[:file_path]
       end
 
-      def bind_time_tracker
-        #Test::Unit.at_start do |a, b|
-          #require 'pry'; binding.pry
-          ##KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
-          ##KnapsackPro.tracker.start_timer
-        #end
-        #::RSpec.configure do |config|
-          #config.prepend_before(:each) do
-            #current_example_group =
-              #if ::RSpec.respond_to?(:current_example)
-                #::RSpec.current_example.metadata[:example_group]
-              #else
-                #example.metadata
-              #end
-            #KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
-            #KnapsackPro.tracker.start_timer
-          #end
+      # FIXME
+      module BindTimeTrackerTestUnitPlugin
+        def setup
+          super
+          puts '/'*10
+          puts 'SETUP plugin'
+          #KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::TestUnitAdapter.test_path(self)
+          #KnapsackPro.tracker.start_timer
+        end
 
-          #config.append_after(:each) do
-            #KnapsackPro.tracker.stop_timer
-          #end
-        #end
+        def teardown
+          #KnapsackPro.tracker.stop_timer
+          puts '/'*10
+          puts 'SETUP teardown'
+          super
+        end
+      end
+
+      def bind_time_tracker
+        Test::Unit::TestCase.send(:include, BindTimeTrackerTestUnitPlugin)
 
         Test::Unit.at_exit do
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
