@@ -49,33 +49,6 @@ module KnapsackPro
           end
         end
       end
-
-      def bind_save_queue_report
-        ::RSpec.configure do |config|
-          config.after(:suite) do
-            KnapsackPro::Report.save_subset_queue_to_file
-          end
-        end
-      end
-
-      def bind_tracker_reset
-        ::RSpec.configure do |config|
-          config.before(:suite) do
-            KnapsackPro.tracker.reset!
-          end
-        end
-      end
-
-      def bind_before_queue_hook
-        ::RSpec.configure do |config|
-          config.before(:suite) do
-            unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
-              KnapsackPro::Hooks::Queue.call_before_queue
-              ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
-            end
-          end
-        end
-      end
     end
   end
 end
