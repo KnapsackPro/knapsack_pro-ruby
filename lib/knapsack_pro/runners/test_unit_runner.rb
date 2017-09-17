@@ -8,20 +8,19 @@ module KnapsackPro
         runner = new(KnapsackPro::Adapters::TestUnitAdapter)
 
         if runner.test_files_to_execute_exist?
-          task_name = 'knapsack_pro:test_unit_run'
+          require 'test/unit'
 
-          if Rake::Task.task_defined?(task_name)
-            Rake::Task[task_name].clear
-          end
+          cli_args =
+            (args || '').split +
+            runner.test_file_paths.map do |f|
+              File.expand_path(f)
+            end
 
-          Rake::TestTask.new(task_name) do |t|
-            t.warning = false
-            t.libs << runner.test_dir
-            t.test_files = runner.test_file_paths
-            t.options = args
-          end
-
-          Rake::Task[task_name].invoke
+          exit Test::Unit::AutoRunner.run(
+            true,
+            runner.test_dir,
+            cli_args
+          )
         end
       end
     end
