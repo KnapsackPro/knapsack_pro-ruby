@@ -106,6 +106,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
     - [Why I see `LoadError: cannot load such file -- spec_helper`?](#why-i-see-loaderror-cannot-load-such-file----spec_helper)
     - [Queue Mode problems](#queue-mode-problems)
+      - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
       - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
@@ -951,6 +952,16 @@ When your tests fails with:
 then problem might be related to the fact you specified complex `KNAPSACK_PRO_TEST_FILE_PATTERN` and knapsack_pro gem cannot detect correct main test directory with spec_helper. You should set `KNAPSACK_PRO_TEST_DIR=spec`. Please [read also example](#how-can-i-run-tests-from-multiple-directories).
 
 #### Queue Mode problems
+
+##### Why when I use Queue Mode for RSpec then my tests fail?
+
+knapsack_pro Queue Mode uses `RSpec::Core::Runner` feature that allows [running specs multiple times with different runner options in the same process](https://relishapp.com/rspec/rspec-core/docs/running-specs-multiple-times-with-different-runner-options-in-the-same-process).
+Thanks to that we can run subset of test suite pulled from Knapsack Pro API work queue. This allows dynamic allocation of your tests across CI nodes without reloading whole Ruby/Rails application for each run of test suite subset .
+
+If you have custom things that are not common in how typical RSpec spec looks like then the RSpec feature won't be able to handle it between test suite subset runs.
+In that case you need to resolve failed tests in a way that allows RSpec to run the tests. Feel free to [ask me for help](https://knapsackpro.com/contact).
+
+You can learn more about [recent RSpec team changes](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/42) that was backported into knapsack_pro.
 
 ##### Why I don't see collected time execution data for my build in user dashboard?
 
