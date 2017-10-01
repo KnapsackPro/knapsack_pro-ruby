@@ -44,13 +44,13 @@ module KnapsackPro
       def bind_time_tracker
         Test::Unit::TestSuite.send(:prepend, BindTimeTrackerTestUnitPlugin)
 
-        Test::Unit.at_exit do
+        add_post_run_callback do
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
 
       def bind_save_report
-        Test::Unit.at_exit do
+        add_post_run_callback do
           KnapsackPro::Report.save
         end
       end
@@ -58,6 +58,14 @@ module KnapsackPro
       def set_test_helper_path(file_path)
         test_dir_path = File.dirname(file_path)
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
+      end
+
+      private
+
+      def add_post_run_callback(&block)
+        Test::Unit.at_exit do
+          block.call
+        end
       end
     end
   end
