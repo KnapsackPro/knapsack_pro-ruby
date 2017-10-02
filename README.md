@@ -294,7 +294,7 @@ Set one or more tokens depending on how many test suites you run on CI server.
 * `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` - as value set token for rspec test suite. Token can be generated when you sign in to [knapsackpro.com](http://www.knapsackpro.com).
 * `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` - token for cucumber test suite.
 * `KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST` - token for minitest test suite.
-* `KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH` - token for minitest test suite.
+* `KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH` - token for spinach test suite.
 
 __Tip:__ In case you have for instance multiple rspec test suites then prepend each of knapsack_pro command which executes tests with `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` variable.
 
