@@ -1125,7 +1125,7 @@ A lot of small test files will give you better test suite split results.
 
 Another way is to use tags to mark subset of tests in particular test file and then split tests based on tags.
 
-This example is for knapack_pro Regular Mode. I don't recommend to user this approach with Queue Mode.
+This example is for knapack_pro Regular Mode. You can also use knapack_pro Queue Mode with tags.
 
 Here is example of test file with specified tags for describe groups:
 
@@ -1147,7 +1147,7 @@ describe 'Feature' do
 end
 ```
 
-You need to create multiple API tokens for different tags. In this example we need 3 different API tokens.
+You need to create API token per each tag. In this example we need 3 different API tokens.
 
 You need to run below commands for each CI node.
 
