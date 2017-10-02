@@ -9,12 +9,14 @@ namespace :knapsack_pro do
                       KnapsackPro::Adapters::RSpecAdapter
                     when 'minitest'
                       KnapsackPro::Adapters::MinitestAdapter
+                    when 'test_unit'
+                      KnapsackPro::Adapters::TestUnitAdapter
                     when 'cucumber'
                       KnapsackPro::Adapters::CucumberAdapter
                     when 'spinach'
                       KnapsackPro::Adapters::SpinachAdapter
                     else
-                      raise('Provide adapter name like rspec, minitest, cucumber, spinach')
+                      raise('Provide adapter name like rspec, minitest, test_unit, cucumber, spinach')
                     end
 
     test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)

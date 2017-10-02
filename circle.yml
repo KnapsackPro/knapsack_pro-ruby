@@ -3,3 +3,10 @@ machine:
     version: 2.4.0
   environment:
     CODECLIMATE_REPO_TOKEN: b6626e682a8e97e0c5978febc92c3526792a2d018b41b8e1b52689da37fb7d92
+test:
+  override:
+    # Specify command explicitly because CircleCI 1.0 adds arguments to RSpec
+    #   $ bundle exec rspec "--color --require spec_helper --format documentation" "" "spec"
+    # and this cause error because in tests we load test-unit gem that tries to parse
+    # the unknown arguments.
+    - bundle exec rspec spec
