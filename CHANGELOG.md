@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.52.0
+
+* Add support for Cucumber 3.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/54
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.51.0...v0.52.0
+
 ### 0.51.0
 
 * Add support for test-unit test runner.
