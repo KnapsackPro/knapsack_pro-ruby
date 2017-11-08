@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.53.0
+
+* Add support for Heroku CI environment variables.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/55
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.52.0...v0.53.0
+
 ### 0.52.0
 
 * Add support for Cucumber 3.
