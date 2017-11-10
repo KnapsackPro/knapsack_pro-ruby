@@ -3,11 +3,11 @@ module KnapsackPro
     module CI
       class Heroku < Base
         def node_total
-          # not provided
+          ENV['CI_NODE_TOTAL']
         end
 
         def node_index
-          # not provided
+          ENV['CI_NODE_INDEX']
         end
 
         def node_build_id
