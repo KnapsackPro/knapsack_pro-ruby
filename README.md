@@ -104,6 +104,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for Gitlab CI users](#info-for-gitlab-ci-users)
     - [Info for codeship.com users](#info-for-codeshipcom-users)
+    - [Info for Heroku CI users](#info-for-heroku-ci-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
 - [FAQ](#faq)
@@ -899,6 +900,42 @@ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knaps
 ```
 
 Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to `Environment` page of your project settings in Codeship.
+
+#### Info for Heroku CI users
+
+You can parallelize your tests on Heroku CI by configuring `app.json`.
+
+You can set how many parallel dynos with tests you want to run with `quantity` value.
+Use `test` key to run knapsack_pro gem.
+
+You need to specify also the environment variable with API token for Knapsack Pro.
+For any sensitive environment variables (like Knapsack Pro API token) that you do not want in your `app.json` manifest, you can add them to your pipeline’s Heroku CI settings.
+
+```
+# app.json
+{
+  "environments": {
+    "test": {
+      "formation": {
+        "test": {
+          "quantity": 2
+        }
+      },
+      "addons": [
+        "heroku-postgresql"
+      ],
+      "scripts": {
+        "test": "bundle exec rake knapsack_pro:rspec"
+      },
+      "env": {
+        "KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC": "rspec-token"
+      }
+    }
+  }
+}
+```
+
+You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/heroku-ci) and about the [Heroku CI parallelization](https://devcenter.heroku.com/articles/heroku-ci-parallel-test-runs).
 
 #### Info for snap-ci.com users
 
