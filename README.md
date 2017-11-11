@@ -911,6 +911,8 @@ Use `test` key to run knapsack_pro gem.
 You need to specify also the environment variable with API token for Knapsack Pro.
 For any sensitive environment variables (like Knapsack Pro API token) that you do not want in your `app.json` manifest, you can add them to your pipeline’s Heroku CI settings.
 
+Note the [Heroku CI Parallel Test Runs](https://devcenter.heroku.com/articles/heroku-ci-parallel-test-runs) are in Beta and you may need to ask Heroku support to enabled it for your project.
+
 ```
 # app.json
 {
@@ -935,7 +937,7 @@ For any sensitive environment variables (like Knapsack Pro API token) that you d
 }
 ```
 
-You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/heroku-ci) and about the [Heroku CI parallelization](https://devcenter.heroku.com/articles/heroku-ci-parallel-test-runs).
+You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/heroku-ci).
 
 #### Info for snap-ci.com users
 
