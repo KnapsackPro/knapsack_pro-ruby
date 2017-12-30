@@ -113,6 +113,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why I see `LoadError: cannot load such file -- spec_helper`?](#why-i-see-loaderror-cannot-load-such-file----spec_helper)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
+      - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
       - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
@@ -1057,6 +1058,39 @@ If you have custom things that are not common in how typical RSpec spec looks li
 In that case you need to resolve failed tests in a way that allows RSpec to run the tests. Feel free to [ask me for help](https://knapsackpro.com/contact).
 
 You can learn more about [recent RSpec team changes](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/42) that was backported into knapsack_pro.
+
+##### Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?
+
+You can use [knapsack_pro binary](#knapsack-pro-binary) instead of rake task version to solve problem:
+
+```
+# knapsack_pro binary for Queue Mode
+$ bundle exec knapsack_pro queue:rspec
+```
+
+Other solution is to check if your factories for FactoryBot/FactoryGirl use the same methods as Rake DSL and remove problematic part of the code.
+
+The use of implicit association `task` can cause a problem.
+
+```ruby
+# won't work in knapsack_pro Queue Mode
+FactoryBot.define do
+  factory :assignment do
+    task
+  end
+end
+```
+
+Workaround is to replace `task` with explicit association:
+
+```ruby
+# this will work in knapack_pro Queue Mode
+FactoryBot.define do
+  factory :assignment do
+    association :task
+  end
+end
+```
 
 ##### Why I don't see collected time execution data for my build in user dashboard?
 
