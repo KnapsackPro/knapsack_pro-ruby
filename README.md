@@ -143,6 +143,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
     - [How to retry failed tests (flaky tests)?](#how-to-retry-failed-tests-flaky-tests)
     - [How can I run tests from multiple directories?](#how-can-i-run-tests-from-multiple-directories)
+    - [Why I don't see all test files being recorded in user dashboard](#why-i-dont-see-all-test-files-being-recorded-in-user-dashboard)
+    - [Why when I use 2 different CI providers then not all test files are executed?](#why-when-i-use-2-different-ci-providers-then-not-all-test-files-are-executed)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1588,6 +1590,16 @@ require_relative 'spec_helper'
 # bad - won't work
 require 'spec_helper'
 ```
+
+#### Why I don't see all test files being recorded in user dashboard
+
+If you open `Build metrics` for particular API token at [user dashboard](https://knapsackpro.com/dashboard) and you don't see all time execution data recorded for all test files then you should know that knapsack_pro does not track test files with empty content or when the test file contains only pending tests.
+
+The test files with pending tests are executed so you will see it in RSpec output but just not recorded in Knapsack Pro API because there is nothing to record time for.
+
+#### Why when I use 2 different CI providers then not all test files are executed?
+
+Please ensure you use 2 different API token per test suite. If you use 2 CI providers for instance CircleCI and TravisCI at the same time and you run the RSpec test suite then you need to have separate API token for RSpec executed on CircleCI and a separate API token for RSpec test suite executed on the TravisCI.
 
 ### Questions around data usage and security
 
