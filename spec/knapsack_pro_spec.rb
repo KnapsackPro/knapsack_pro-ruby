@@ -2,7 +2,7 @@ describe KnapsackPro do
   describe '.root' do
     subject { described_class.root }
 
-    it { expect(subject).to match 'knapsack' }
+    it { expect(subject).to match 'knapsack_pro-ruby' }
   end
 
   describe '.logger' do

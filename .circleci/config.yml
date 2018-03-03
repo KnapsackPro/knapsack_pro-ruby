@@ -12,7 +12,7 @@ jobs:
         environment:
           CODECLIMATE_REPO_TOKEN: b6626e682a8e97e0c5978febc92c3526792a2d018b41b8e1b52689da37fb7d92
 
-    working_directory: ~/repo
+    working_directory: ~/knapsack_pro-ruby
 
     steps:
       - checkout
