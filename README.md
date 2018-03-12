@@ -145,6 +145,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How can I run tests from multiple directories?](#how-can-i-run-tests-from-multiple-directories)
     - [Why I don't see all test files being recorded in user dashboard](#why-i-dont-see-all-test-files-being-recorded-in-user-dashboard)
     - [Why when I use 2 different CI providers then not all test files are executed?](#why-when-i-use-2-different-ci-providers-then-not-all-test-files-are-executed)
+    - [How to run only RSpec feature tests or non feature tests?](#how-to-run-only-rspec-feature-tests-or-non-feature-tests)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1602,6 +1603,48 @@ The test files with pending tests are executed so you will see it in RSpec outpu
 #### Why when I use 2 different CI providers then not all test files are executed?
 
 Please ensure you use 2 different API token per test suite. If you use 2 CI providers for instance CircleCI and TravisCI at the same time and you run the RSpec test suite then you need to have separate API token for RSpec executed on CircleCI and a separate API token for RSpec test suite executed on the TravisCI.
+
+#### How to run only RSpec feature tests or non feature tests?
+
+**Option 1: RSpec tags**
+
+You can run just feature tests this way. You need to generate a separate API token for it.
+
+```
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_FEATURE_TESTS bundle exec rake "knapsack_pro:queue:rspec[--tag type:feature]"
+```
+
+If you would like to run only non feature tests then use negation `~type:feature`:
+
+```
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_NON_FEATURE_TESTS bundle exec rake "knapsack_pro:queue:rspec[--tag ~type:feature]"
+```
+
+Note above examples are for knapack_pro Queue Mode and when you will run tests you may notice that all test files are run by RSpec but only tests specified by tag like `tag type:feature` will be executed. Basically RSpec will just load all files but run just specified tags.
+
+**Option 2: specify directory pattern**
+
+Another approach is to explicitly specify which files should be executed.
+
+Run all specs from multiple directories except `spec/features` directory which is not listed below.
+If you would like to run additional directory please add it after comma in `KNAPSACK_PRO_TEST_FILE_PATTERN`.
+Ensure the list of directories match your spec directory structure.
+
+```
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_NON_FEATURE_TESTS \
+KNAPSACK_PRO_TEST_DIR=spec \
+KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/*_spec.rb,spec/controllers/**/*_spec.rb,spec/mailers/**/*_spec.rb,spec/models/**/*_spec.rb,spec/presenters/**/*_spec.rb,spec/requests/**/*_spec.rb,spec/routing/**/*_spec.rb,spec/services/**/*_spec.rb,spec/workers/**/*_spec.rb,spec/jobs/**/*_spec.rb}" \
+bundle exec rake knapsack_pro:queue:rspec
+```
+
+When you would like to run tests only from `spec/features` directory then run:
+
+```
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_FEATURE_TESTS \
+KNAPSACK_PRO_TEST_DIR=spec \
+KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/features}/**/*_spec.rb" \
+bundle exec rake knapsack_pro:queue:rspec
+```
 
 ### Questions around data usage and security
 
