@@ -1642,7 +1642,7 @@ When you would like to run tests only from `spec/features` directory then run:
 ```
 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_FEATURE_TESTS \
 KNAPSACK_PRO_TEST_DIR=spec \
-KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/features}/**/*_spec.rb" \
+KNAPSACK_PRO_TEST_FILE_PATTERN="spec/features/**{,/*/**}/*_spec.rb" \
 bundle exec rake knapsack_pro:queue:rspec
 ```
 
