@@ -146,6 +146,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why I don't see all test files being recorded in user dashboard](#why-i-dont-see-all-test-files-being-recorded-in-user-dashboard)
     - [Why when I use 2 different CI providers then not all test files are executed?](#why-when-i-use-2-different-ci-providers-then-not-all-test-files-are-executed)
     - [How to run only RSpec feature tests or non feature tests?](#how-to-run-only-rspec-feature-tests-or-non-feature-tests)
+    - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1645,6 +1646,10 @@ KNAPSACK_PRO_TEST_DIR=spec \
 KNAPSACK_PRO_TEST_FILE_PATTERN="spec/features/**{,/*/**}/*_spec.rb" \
 bundle exec rake knapsack_pro:queue:rspec
 ```
+
+#### How to use CodeClimate with knapsack_pro?
+
+You can check CodeClimate docs about [parallel and multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-and-multiple-test-suites).
 
 ### Questions around data usage and security
 
