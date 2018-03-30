@@ -111,6 +111,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
   - [Common problems](#common-problems)
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
     - [Why I see `LoadError: cannot load such file -- spec_helper`?](#why-i-see-loaderror-cannot-load-such-file----spec_helper)
+    - [Why my CI build fails when I use Test::Unit even when all tests passed?](#why-my-ci-build-fails-when-i-use-testunit-even-when-all-tests-passed)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
@@ -1052,6 +1053,10 @@ When your tests fails with:
     LoadError: cannot load such file -- spec_helper
 
 then problem might be related to the fact you specified complex `KNAPSACK_PRO_TEST_FILE_PATTERN` and knapsack_pro gem cannot detect correct main test directory with spec_helper. You should set `KNAPSACK_PRO_TEST_DIR=spec`. Please [read also example](#how-can-i-run-tests-from-multiple-directories).
+
+#### Why my CI build fails when I use Test::Unit even when all tests passed?
+
+Please ensure you are actually using only Test::Unit runner. You may use some hybrid of Test::Unit and Minitest. Ensure you are not loading Minitest.
 
 #### Queue Mode problems
 
