@@ -20,7 +20,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v2-dependencies-bundler-{{ checksum "Gemfile.lock" }}
+          - v2-dependencies-bundler-{{ checksum "knapsack_pro.gemspec" }}
           # fallback to using the latest cache if no exact match is found
           - v2-dependencies-bundler-
 
@@ -32,7 +32,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v2-dependencies-bundler-{{ checksum "Gemfile.lock" }}
+          key: v2-dependencies-bundler-{{ checksum "knapsack_pro.gemspec" }}
 
       # run tests!
       - run: bundle exec rspec spec
