@@ -459,13 +459,17 @@ There might be some cached test suite splits for git commits you have run in pas
 
   Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
 
-  Note when fixed queue split is enabled then you can run tests in a dynamic way only once for particular commit hash and a total number of nodes and for the same branch.
+  * Note when fixed queue split is enabled then you can run tests in a dynamic way only once for particular commit hash and a total number of nodes and for the same branch.
 
-  When Knapsack Pro API server has already information about previous queue split then the information will be used. You will see at the beginning of the knapsack command the log with info that queue name is nil because it was not generated this time. You will get the list of all test files that were executed on the particular CI node in the past.
+  * When Knapsack Pro API server has already information about previous queue split then the information will be used. You will see at the beginning of the knapsack command the log with info that queue name is nil because it was not generated this time. You will get the list of all test files that were executed on the particular CI node in the past.
 
        [knapsack_pro] {"queue_name"=>nil, "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
 
-  To [reproduce tests executed on CI node](#for-knapsack_pro-queue-mode) in development environment please see FAQ.
+  * Knapsack Pro is fault-tolerant and can withstand possible CI instance preemptions (shut down) when you use highly affordable CI nodes like [Google Cloud Preemptible VMs](https://cloud.google.com/preemptible-vms/) or [Amazon EC2 Spot Instances](https://aws.amazon.com/ec2/spot/). When you retry failed CI node or when your CI provider will do auto retry then the knapsack_pro will run tests previosly served to CI node that failed. After that it will try to consume the test files from the Queue if there are remaining test files that were not yet executed. You will see in the logs info that you retry the tests if the `queue_name` has prefix `retry-dead-ci-node`:
+
+    [knapsack_pro] {"queue_name"=>"retry-dead-ci-node:queue-id", "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
+
+  * To [reproduce tests executed on CI node](#for-knapsack_pro-queue-mode) in development environment please see FAQ.
 
 #### KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)
 
