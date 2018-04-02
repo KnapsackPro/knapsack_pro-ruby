@@ -627,10 +627,16 @@ describe KnapsackPro::Config::Env do
         allow(KnapsackPro::Config::CI::Buildkite).to receive_message_chain(:new, env_name).and_return(buildkite_env)
       end
 
-      it { should eq circle_env }
+      context do
+        let(:buildkite_env) { nil }
+        let(:semaphore_env) { nil }
+
+        it { should eq circle_env }
+      end
 
       context do
         let(:circle_env) { nil }
+        let(:buildkite_env) { nil }
 
         it { should eq semaphore_env }
       end
