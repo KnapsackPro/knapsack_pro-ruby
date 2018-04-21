@@ -148,6 +148,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why when I use 2 different CI providers then not all test files are executed?](#why-when-i-use-2-different-ci-providers-then-not-all-test-files-are-executed)
     - [How to run only RSpec feature tests or non feature tests?](#how-to-run-only-rspec-feature-tests-or-non-feature-tests)
     - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
+    - [How to run knapsack_pro only on a few parallel CI nodes instead of all?](#how-to-run-knapsack_pro-only-on-a-few-parallel-ci-nodes-instead-of-all)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1663,6 +1664,26 @@ bundle exec rake knapsack_pro:queue:rspec
 #### How to use CodeClimate with knapsack_pro?
 
 You can check CodeClimate docs about [parallel and multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-and-multiple-test-suites).
+
+#### How to run knapsack_pro only on a few parallel CI nodes instead of all?
+
+You may want to run knapack_pro only on a few CI nodes when you would like to run a different job on other CI nodes.
+
+For instance, you have 3 parallel CI nodes. You would like to run knapack_pro only on two CI nodes. The last CI node you want to use for the different job like running linters etc.
+
+In such case, you can override the number of total CI nodes available by your CI provider. For instance, Heroku CI provider exposes in ENV variables `CI_NODE_TOTAL=3`.
+
+You can then run knapsack_pro command this way on the first and the second CI node:
+
+```
+KNAPSACK_PRO_CI_NODE_TOTAL=$((CI_NODE_TOTAL-1)) bundle exec rake knapsack_pro:rspec
+```
+
+We decrease the number of CI node total by 1 that knapack_pro can see. This way you can run tests with knapsack_pro only on two CI nodes.
+On the 3rd CI node, you can run other things like linters etc.
+
+If you would like to check what is the CI node total ENV variable name exposed by your CI provider you can check that in your CI provider environment variables docs
+or preview the [ENV variables that knapack_pro can read](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci) for supported CI providers.
 
 ### Questions around data usage and security
 
