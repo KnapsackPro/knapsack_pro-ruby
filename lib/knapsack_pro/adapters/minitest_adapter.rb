@@ -54,6 +54,42 @@ module KnapsackPro
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
       end
 
+      module BindSaveQueueReportMinitestPlugin
+        def after_teardown
+          KnapsackPro::Report.save_subset_queue_to_file
+          super
+        end
+      end
+
+      def bind_save_queue_report
+        ::Minitest::Test.send(:include, BindSaveQueueReportMinitestPlugin)
+      end
+
+      module BindTrackerResetMinitestPlugin
+        def before_setup
+          super
+          KnapsackPro.tracker.reset!
+        end
+      end
+
+      def bind_tracker_reset
+        ::Minitest::Test.send(:include, BindTrackerResetMinitestPlugin)
+      end
+
+      module BindBeforeQueueHookMinitestPlugin
+        def before_setup
+          super
+          unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+            KnapsackPro::Hooks::Queue.call_before_queue
+            ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+          end
+        end
+      end
+
+      def bind_before_queue_hook
+        ::Minitest::Test.send(:include, BindBeforeQueueHookMinitestPlugin)
+      end
+
       private
 
       def add_post_run_callback(&block)
