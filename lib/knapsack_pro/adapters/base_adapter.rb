@@ -19,10 +19,7 @@ module KnapsackPro
 
         if KnapsackPro::Config::Env.queue_recording_enabled?
           KnapsackPro.logger.debug('Test suite time execution queue recording enabled.')
-          bind_tracker_reset
-          bind_before_queue_hook
-          bind_time_tracker
-          bind_save_queue_report
+          bind_queue_mode
         end
       end
 
@@ -44,6 +41,15 @@ module KnapsackPro
 
       def bind_before_queue_hook
         raise NotImplementedError
+      end
+
+      private
+
+      def bind_queue_mode
+        bind_tracker_reset
+        bind_before_queue_hook
+        bind_time_tracker
+        bind_save_queue_report
       end
     end
   end

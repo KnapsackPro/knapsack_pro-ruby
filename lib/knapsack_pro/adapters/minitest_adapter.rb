@@ -54,42 +54,6 @@ module KnapsackPro
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
       end
 
-      module BindSaveQueueReportMinitestPlugin
-        def after_teardown
-          KnapsackPro::Report.save_subset_queue_to_file
-          super
-        end
-      end
-
-      def bind_save_queue_report
-        ::Minitest::Test.send(:include, BindSaveQueueReportMinitestPlugin)
-      end
-
-      module BindTrackerResetMinitestPlugin
-        def before_setup
-          super
-          KnapsackPro.tracker.reset!
-        end
-      end
-
-      def bind_tracker_reset
-        ::Minitest::Test.send(:include, BindTrackerResetMinitestPlugin)
-      end
-
-      module BindBeforeQueueHookMinitestPlugin
-        def before_setup
-          super
-          unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
-            KnapsackPro::Hooks::Queue.call_before_queue
-            ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
-          end
-        end
-      end
-
-      def bind_before_queue_hook
-        ::Minitest::Test.send(:include, BindBeforeQueueHookMinitestPlugin)
-      end
-
       private
 
       def add_post_run_callback(&block)
@@ -97,6 +61,38 @@ module KnapsackPro
           Minitest.after_run { block.call }
         else
           Minitest::Unit.after_tests { block.call }
+        end
+      end
+
+      module BindQueueModeMinitestPlugin
+        def before_setup
+          super
+
+          KnapsackPro.tracker.reset!
+
+          unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+            KnapsackPro::Hooks::Queue.call_before_queue
+            ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+          end
+
+          KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::MinitestAdapter.test_path(self)
+          KnapsackPro.tracker.start_timer
+        end
+
+        def after_teardown
+          KnapsackPro.tracker.stop_timer
+
+          KnapsackPro::Report.save_subset_queue_to_file
+
+          super
+        end
+      end
+
+      def bind_queue_mode
+        ::Minitest::Test.send(:include, BindQueueModeMinitestPlugin)
+
+        add_post_run_callback do
+          KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
     end
