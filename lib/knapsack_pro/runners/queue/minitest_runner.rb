@@ -3,11 +3,18 @@ module KnapsackPro
     module Queue
       class MinitestRunner < BaseRunner
         def self.run(args)
+          require 'minitest'
+
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_minitest
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
           runner = new(KnapsackPro::Adapters::MinitestAdapter)
+
+          # Add test_dir to load path to make work:
+          #   require 'test_helper'
+          # in test files.
+          $LOAD_PATH.unshift(runner.test_dir)
 
           run_tests(runner, true, args, 0, [])
         end
@@ -29,10 +36,8 @@ module KnapsackPro
 
             all_test_file_paths += test_file_paths
 
-            minitest_run(runner, test_file_paths, args, all_test_file_paths.size)
-            exit_code = $?
-
-            exitstatus = exit_code if exit_code != 0
+            result = minitest_run(runner, test_file_paths, args)
+            exitstatus = 1 unless result
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
@@ -42,21 +47,17 @@ module KnapsackPro
 
         private
 
-        def self.minitest_run(runner, test_file_paths, args, unique_index)
-          task_name = "knapsack_pro:queue:minitest_run_#{unique_index}"
-
-          if Rake::Task.task_defined?(task_name)
-            Rake::Task[task_name].clear
+        def self.minitest_run(runner, test_file_paths, args)
+          test_file_paths.each do |test_file_path|
+            require "./#{test_file_path}"
           end
 
-          Rake::TestTask.new(task_name) do |t|
-            t.warning = false
-            t.libs << runner.test_dir
-            t.test_files = test_file_paths
-            t.options = args
-          end
+          cli_args = (args || '').split
+          result = Minitest.run(cli_args)
 
-          Rake::Task[task_name].invoke
+          Minitest::Runnable.reset
+
+          result
         end
       end
     end
