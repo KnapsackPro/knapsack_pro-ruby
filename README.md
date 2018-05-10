@@ -601,6 +601,7 @@ You can install knapsack_pro globally and use binary. For instance:
     $ knapsack_pro queue:rspec "--tag custom_tag_name --profile"
     $ knapsack_pro cucumber "--name feature"
     $ knapsack_pro minitest "--verbose --pride"
+    $ knapsack_pro queue:minitest "--verbose"
     $ knapsack_pro test_unit "--verbose"
     $ knapsack_pro spinach "--arg_name value"
 
