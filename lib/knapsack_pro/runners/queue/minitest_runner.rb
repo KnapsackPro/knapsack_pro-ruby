@@ -16,7 +16,8 @@ module KnapsackPro
           # in test files.
           $LOAD_PATH.unshift(runner.test_dir)
 
-          run_tests(runner, true, args, 0, [])
+          cli_args = (args || '').split
+          run_tests(runner, true, cli_args, 0, [])
         end
 
         def self.run_tests(runner, can_initialize_queue, args, exitstatus, all_test_file_paths)
@@ -52,8 +53,8 @@ module KnapsackPro
             require "./#{test_file_path}"
           end
 
-          cli_args = (args || '').split
-          result = Minitest.run(cli_args)
+          # duplicate args because Minitest modifies args
+          result = Minitest.run(args.dup)
 
           Minitest::Runnable.reset
 
