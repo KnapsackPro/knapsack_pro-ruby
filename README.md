@@ -719,6 +719,13 @@ Here is another example for CircleCI 2.0 platform.
     # export word is important here!
     export RAILS_ENV=test
     bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+- run:
+  name: Minitest via knapsack_pro Queue Mode
+  command: |
+    # export word is important here!
+    export RAILS_ENV=test
+    bundle exec rake "knapsack_pro:queue:minitest[--verbose]"
 ```
 
 Please remember to add additional containers for your project in CircleCI settings.
