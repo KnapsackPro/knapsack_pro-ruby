@@ -44,6 +44,8 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
+            KnapsackPro::Report.save_subset_queue_to_file
+
             run_tests(runner, false, args, exitstatus, all_test_file_paths)
           end
         end

@@ -80,8 +80,6 @@ module KnapsackPro
         def after_teardown
           KnapsackPro.tracker.stop_timer
 
-          KnapsackPro::Report.save_subset_queue_to_file
-
           super
         end
       end
