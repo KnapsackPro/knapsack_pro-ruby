@@ -399,7 +399,11 @@ Please use a separate API token for queue mode from one used already for regular
 
 Use this command to run queue mode:
 
+    # RSpec
     bundle exec rake knapsack_pro:queue:rspec
+
+    # Minitest
+    bundle exec rake knapsack_pro:queue:minitest
 
 If the above command fails then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
 
