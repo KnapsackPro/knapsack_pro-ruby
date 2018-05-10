@@ -35,6 +35,8 @@ module KnapsackPro
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
+            KnapsackPro.tracker.reset!
+
             all_test_file_paths += test_file_paths
 
             result = minitest_run(runner, test_file_paths, args)
