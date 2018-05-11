@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.54.0
+
+* Add Queue Mode for Minitest
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/60
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.53.0...v0.54.0
+
 ### 0.53.0
 
 * Add support for Heroku CI environment variables.
