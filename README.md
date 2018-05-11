@@ -399,7 +399,11 @@ Please use a separate API token for queue mode from one used already for regular
 
 Use this command to run queue mode:
 
+    # RSpec
     bundle exec rake knapsack_pro:queue:rspec
+
+    # Minitest
+    bundle exec rake knapsack_pro:queue:minitest
 
 If the above command fails then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
 
@@ -597,6 +601,7 @@ You can install knapsack_pro globally and use binary. For instance:
     $ knapsack_pro queue:rspec "--tag custom_tag_name --profile"
     $ knapsack_pro cucumber "--name feature"
     $ knapsack_pro minitest "--verbose --pride"
+    $ knapsack_pro queue:minitest "--verbose"
     $ knapsack_pro test_unit "--verbose"
     $ knapsack_pro spinach "--arg_name value"
 
@@ -714,6 +719,13 @@ Here is another example for CircleCI 2.0 platform.
     # export word is important here!
     export RAILS_ENV=test
     bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+- run:
+  name: Minitest via knapsack_pro Queue Mode
+  command: |
+    # export word is important here!
+    export RAILS_ENV=test
+    bundle exec rake "knapsack_pro:queue:minitest[--verbose]"
 ```
 
 Please remember to add additional containers for your project in CircleCI settings.

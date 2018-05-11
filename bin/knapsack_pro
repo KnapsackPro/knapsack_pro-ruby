@@ -10,6 +10,7 @@ MAP = {
   'queue:rspec' => KnapsackPro::Runners::Queue::RSpecRunner,
   'cucumber' => KnapsackPro::Runners::CucumberRunner,
   'minitest' => KnapsackPro::Runners::MinitestRunner,
+  'queue:minitest' => KnapsackPro::Runners::Queue::MinitestRunner,
   'test_unit' => KnapsackPro::Runners::TestUnitRunner,
   'spinach' => KnapsackPro::Runners::SpinachRunner,
 }
