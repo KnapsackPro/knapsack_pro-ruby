@@ -54,16 +54,6 @@ module KnapsackPro
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
       end
 
-      private
-
-      def add_post_run_callback(&block)
-        if Minitest.respond_to?(:after_run)
-          Minitest.after_run { block.call }
-        else
-          Minitest::Unit.after_tests { block.call }
-        end
-      end
-
       module BindQueueModeMinitestPlugin
         def before_setup
           super
@@ -89,6 +79,16 @@ module KnapsackPro
 
         add_post_run_callback do
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
+        end
+      end
+
+      private
+
+      def add_post_run_callback(&block)
+        if Minitest.respond_to?(:after_run)
+          Minitest.after_run { block.call }
+        else
+          Minitest::Unit.after_tests { block.call }
         end
       end
     end

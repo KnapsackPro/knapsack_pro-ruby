@@ -43,8 +43,6 @@ module KnapsackPro
         raise NotImplementedError
       end
 
-      private
-
       def bind_queue_mode
         bind_tracker_reset
         bind_before_queue_hook
