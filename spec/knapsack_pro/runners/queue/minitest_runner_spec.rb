@@ -20,6 +20,8 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
 
       expect(described_class).to receive(:new).with(KnapsackPro::Adapters::MinitestAdapter).and_return(runner)
+
+      expect($LOAD_PATH).to receive(:unshift).with(test_dir)
     end
 
     context 'when args provided' do
