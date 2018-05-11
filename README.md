@@ -412,7 +412,7 @@ If the above command fails then you may need to explicitly pass an argument to r
 Note: when you run queue mode command for the first time it might be slower.
 The second build should have a more optimal test suite split.
 
-Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.
+__Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.__
 
 If you use the capybara-screenshot gem then please [follow this step](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec).
 
