@@ -122,6 +122,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
       - [Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again)
       - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
       - [Parallel tests Cucumber and RSpec with Cucumber failures exit CI node early leaving fewer CI nodes to finish RSpec Queue.](#parallel-tests-cucumber-and-rspec-with-cucumber-failures-exit-ci-node-early-leaving-fewer-ci-nodes-to-finish-rspec-queue)
+      - [Why when I reran the same build (same commit hash, etc) on Codeship then no tests would get executed in Queue Mode?](#why-when-i-reran-the-same-build-same-commit-hash-etc-on-codeship-then-no-tests-would-get-executed-in-queue-mode)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
       - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
@@ -1189,6 +1190,13 @@ You should configure your CI provider to not fail fast the Cucumber step.
 CI providers tips:
 
 * If you use CircleCI 2.0 you can use `when=always` flag. Read more [here](https://discuss.circleci.com/t/parallel-tests-cuc-rspec-w-failures-exit-early-leaving-less-workers-to-finish/18081).
+
+##### Why when I reran the same build (same commit hash, etc) on Codeship then no tests would get executed in Queue Mode?
+
+Codeship uses the same build ID ([`CI_BUILD_NUMBER`](https://documentation.codeship.com/basic/builds-and-configuration/set-environment-variables/#default-environment-variables)) if you re-run a build, so Codeship is not giving enough information to knapsack_pro gem that this is an independent build. Knapsack Pro API assumes you already ran tests for that build ID hence no tests were executed for reran CI build.
+
+To fix problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID=""` as empty string.
+This way knapsack_pro won’t use build ID provided by Codeship and each build will be treated as a unique.
 
 ### General questions
 
