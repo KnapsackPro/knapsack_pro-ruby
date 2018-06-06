@@ -1195,7 +1195,7 @@ CI providers tips:
 
 Codeship uses the same build ID ([`CI_BUILD_NUMBER`](https://documentation.codeship.com/basic/builds-and-configuration/set-environment-variables/#default-environment-variables)) if you re-run a build, so Codeship is not giving enough information to knapsack_pro gem that this is an independent build. Knapsack Pro API assumes you already ran tests for that build ID hence no tests were executed for reran CI build.
 
-To fix problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID=""` as empty string.
+To fix problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID=missing-build-id` as empty string.
 This way knapsack_pro won’t use build ID provided by Codeship and each build will be treated as a unique.
 
 ### General questions
