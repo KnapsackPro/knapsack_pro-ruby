@@ -112,6 +112,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
     - [Why I see `LoadError: cannot load such file -- spec_helper`?](#why-i-see-loaderror-cannot-load-such-file----spec_helper)
     - [Why my CI build fails when I use Test::Unit even when all tests passed?](#why-my-ci-build-fails-when-i-use-testunit-even-when-all-tests-passed)
+    - [Why I see HEAD as branch name in user dashboard for Build metrics for my API token?](#why-i-see-head-as-branch-name-in-user-dashboard-for-build-metrics-for-my-api-token)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
@@ -1079,6 +1080,16 @@ then problem might be related to the fact you specified complex `KNAPSACK_PRO_TE
 #### Why my CI build fails when I use Test::Unit even when all tests passed?
 
 Please ensure you are actually using only Test::Unit runner. You may use some hybrid of Test::Unit and Minitest. Ensure you are not loading Minitest.
+
+#### Why I see HEAD as branch name in user dashboard for Build metrics for my API token?
+
+knapack_pro detects your branch name from environment variables of [supported CI providers](#supported-ci-providers). Sometimes the CI provider may expose the `HEAD` instead of branch name (for instance for pull request merge commits).
+
+The same can happen for CI provider not supported by default by knapsack_pro when you use [KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported) to use local git installed on CI node to detect the branch name and git commit.
+
+knapack_pro uses git command `git -C /home/user/project_dir rev-parse --abbrev-ref HEAD` to detect branch name. See [source of knapack_pro](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/repository_adapters/git_adapter.rb). In most of cases it's good way to detect branch name. But if your CI provider during CI build checkouts to specific git commit then git cannot provide the name of the branch. In such scenario you would see `HEAD` as your branch name. It is good enough situation and knapack_pro will work correctly. The benefit of knowing exactly the branch name allows KnapsackPro API to better track history of test files timing changes across branches in order to better do split of test suite. The difference should be rather very small so it's not a problem that you have `HEAD` as branch name.
+
+If you would like to see exact branch name instead of `HEAD` in your `build metrics` history in [user dashboard](https://knapsackpro.com/dashboard) then you can explicitly provide the branch name with `KNAPSACK_PRO_BRANCH` for each CI build.
 
 #### Queue Mode problems
 
