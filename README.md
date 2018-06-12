@@ -1423,6 +1423,35 @@ The xml report will contain all tests executed across intermediate test subset r
       end
     end
 
+Note if you use a CI provider or your own CI solution that uses common local drive for all parallel CI nodes then above solution needs to be adjusted to produce report file with CI node index number in the file name to avoid file conflicts. Example file name with CI node index number: `tmp/rspec_final_results_N.xml`.
+
+```
+# Queue Mode
+
+# must be exported to read correctly the value in below knapsack_pro command
+export KNAPSACK_PRO_CI_NODE_INDEX=0
+# if your CI provider exposes CI node index under other environment variable name then you could use it instead
+
+bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec_$KNAPSACK_PRO_CI_NODE_INDEX.xml]"
+```
+
+In below code we use CI node index number in `TMP_RSPEC_XML_REPORT` and `FINAL_RSPEC_XML_REPORT`:
+
+```
+# spec_helper.rb or rails_helper.rb
+
+# TODO This must be the same path as value for rspec --out argument
+TMP_RSPEC_XML_REPORT = "tmp/rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
+# move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
+FINAL_RSPEC_XML_REPORT = "tmp/rspec_final_results_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  if File.exist?(TMP_RSPEC_XML_REPORT)
+    FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
+  end
+end
+```
+
 #### How many API keys I need?
 
 Basically you need as many API keys as you have steps in your build.
