@@ -151,6 +151,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How to run only RSpec feature tests or non feature tests?](#how-to-run-only-rspec-feature-tests-or-non-feature-tests)
     - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
     - [How to run knapsack_pro only on a few parallel CI nodes instead of all?](#how-to-run-knapsack_pro-only-on-a-few-parallel-ci-nodes-instead-of-all)
+    - [How to use simplecov in Queue Mode?](#how-to-use-simplecov-in-queue-mode)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1748,6 +1749,24 @@ On the 3rd CI node, you can run other things like linters etc.
 
 If you would like to check what is the CI node total ENV variable name exposed by your CI provider you can check that in your CI provider environment variables docs
 or preview the [ENV variables that knapack_pro can read](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci) for supported CI providers.
+
+#### How to use simplecov in Queue Mode?
+
+If you would like to make [simplecov](https://github.com/colszowka/simplecov) gem work with knapack_pro Queue Mode to correctly track code coverage for parallel CI nodes please do:
+
+```
+# spec_helper.rb or rails_helper.rb
+require 'knapsack_pro'
+
+require 'simplecov'
+SimpleCov.start
+
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  SimpleCov.command_name("rspec_ci_node_#{KnapsackPro::Config::Env.ci_node_index}")
+end
+```
+
+This way there should be no conflict between code coverage reports generated per CI node index even when you use the same local drive (for instance you use Jenkins as your CI provider). The simplecov will generate single report at `coverage/index.html` with merged data from parallel CI nodes.
 
 ### Questions around data usage and security
 
