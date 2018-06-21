@@ -885,7 +885,7 @@ test_ci_node_0:
     # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
     - bundle exec rake knapsack_pro:cucumber
     # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
-    # It will autobalance bulid because it is executed after Cucumber tests.
+    # It will autobalance build because it is executed after Cucumber tests.
     - bundle exec rake knapsack_pro:queue:rspec
 
 # second CI node running in parallel
@@ -912,7 +912,7 @@ Configure test pipelines (1/2 used)
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
 
 # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
-# It will autobalance bulid because it is executed after Cucumber tests.
+# It will autobalance build because it is executed after Cucumber tests.
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:rspec
 ```
 
@@ -925,7 +925,7 @@ Configure test pipelines (2/2 used)
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
 
 # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
-# It will autobalance bulid because it is executed after Cucumber tests.
+# It will autobalance build because it is executed after Cucumber tests.
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:queue:rspec
 ```
 
