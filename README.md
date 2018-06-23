@@ -153,6 +153,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
     - [How to run knapsack_pro only on a few parallel CI nodes instead of all?](#how-to-run-knapsack_pro-only-on-a-few-parallel-ci-nodes-instead-of-all)
     - [How to use simplecov in Queue Mode?](#how-to-use-simplecov-in-queue-mode)
+    - [Do I need to use separate API token for Queue Mode and Regular Mode?](#do-i-need-to-use-separate-api-token-for-queue-mode-and-regular-mode)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -1796,6 +1797,12 @@ end
 ```
 
 This way there should be no conflict between code coverage reports generated per CI node index even when you use the same local drive (for instance you use Jenkins as your CI provider). The simplecov will generate single report at `coverage/index.html` with merged data from parallel CI nodes.
+
+#### Do I need to use separate API token for Queue Mode and Regular Mode?
+
+I recommend to record timing of a new test suite with `API token A` and knapsack_pro Regular Mode. After you recorded test suite timing then you should use the `API token A` to run your tests in knapack_pro Queue Mode. This way Queue Mode will leverage test suite timing recorded in a fast way with Regular Mode so the first run in Queue Mode won't be slow due to recording test files timing for the first time.
+
+When you want to go back from Queue Mode to Regular Mode then the fact of using the same API token could cause edge cases that some builds might not be well balanced in Regular Mode. That is why I recommend using separate API token for Regular Mode and Queue Mode. If you plan to use only Queue Mode then no worry.
 
 ### Questions around data usage and security
 
