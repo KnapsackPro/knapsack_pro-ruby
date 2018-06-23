@@ -124,6 +124,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
       - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
       - [Parallel tests Cucumber and RSpec with Cucumber failures exit CI node early leaving fewer CI nodes to finish RSpec Queue.](#parallel-tests-cucumber-and-rspec-with-cucumber-failures-exit-ci-node-early-leaving-fewer-ci-nodes-to-finish-rspec-queue)
       - [Why when I reran the same build (same commit hash, etc) on Codeship then no tests would get executed in Queue Mode?](#why-when-i-reran-the-same-build-same-commit-hash-etc-on-codeship-then-no-tests-would-get-executed-in-queue-mode)
+      - [How to find seed in RSpec output when I use Queue Mode for RSpec?](#how-to-find-seed-in-rspec-output-when-i-use-queue-mode-for-rspec)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
       - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
@@ -1213,6 +1214,33 @@ This way knapsack_pro won’t use build ID provided by Codeship and each build w
 There is one edge case with that solution. Please note that the knapsack_pro gem doesn't have a CI build ID in order to generate a queue for each particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 
 To avoid this you should specify a unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
+
+##### How to find seed in RSpec output when I use Queue Mode for RSpec?
+
+In output for RSpec in knapack_pro Queue Mode you may see message:
+
+> INFO -- : [knapsack_pro] To retry in development the subset of tests fetched from API queue please run below command on your machine. If you use --order random then remember to add proper --seed 123 that you will find at the end of rspec command.
+> INFO -- : [knapsack_pro] bundle exec rspec --default-path spec "spec/a_spec.rb" "spec/b_spec.rb"
+
+The seed number is used by RSpec only when you tell it, you need to provide argument `--order random`:
+
+```
+bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+```
+
+then in RSpec output you will see something like:
+
+```
+Randomized with seed 11055
+```
+
+You can use the seed number to run tests in development:
+
+```
+bundle exec rspec --seed 11055 --default-path spec "spec/a_spec.rb" "spec/b_spec.rb"
+```
+
+If you don't use RSpec argument `--order random` then you don't need to provide `--seed` number when you want to reproduce tests in development.
 
 ### General questions
 
