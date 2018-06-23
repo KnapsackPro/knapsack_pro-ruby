@@ -1220,6 +1220,7 @@ To avoid this you should specify a unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` enviro
 In output for RSpec in knapack_pro Queue Mode you may see message:
 
 > INFO -- : [knapsack_pro] To retry in development the subset of tests fetched from API queue please run below command on your machine. If you use --order random then remember to add proper --seed 123 that you will find at the end of rspec command.
+>
 > INFO -- : [knapsack_pro] bundle exec rspec --default-path spec "spec/a_spec.rb" "spec/b_spec.rb"
 
 The seed number is used by RSpec only when you tell it, you need to provide argument `--order random`:
