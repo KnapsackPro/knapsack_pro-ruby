@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.55.0
+
+* Fix to record proper time for around(:each) in RSpec
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/62
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.54.0...v0.55.0
+
 ### 0.54.0
 
 * Add Queue Mode for Minitest

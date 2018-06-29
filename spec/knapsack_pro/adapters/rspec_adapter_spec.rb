@@ -78,10 +78,10 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           example_group: example_group
         })
       end
+      let(:example) { double }
 
       it do
-        expect(config).to receive(:prepend_before).with(:each).and_yield
-        expect(config).to receive(:append_after).with(:each).and_yield
+        expect(config).to receive(:around).with(:each).and_yield(example)
         expect(config).to receive(:after).with(:suite).and_yield
         expect(::RSpec).to receive(:configure).and_yield(config)
 
@@ -91,6 +91,8 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         allow(KnapsackPro).to receive(:tracker).and_return(tracker)
         expect(tracker).to receive(:current_test_path=).with(test_path)
         expect(tracker).to receive(:start_timer)
+
+        expect(example).to receive(:run)
 
         expect(tracker).to receive(:stop_timer)
 
