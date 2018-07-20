@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.55.1
+
+* Switch to fallback mode when failed to open TCP connection to API
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/63
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.55.0...v0.55.1
+
 ### 0.55.0
 
 * Fix to record proper time for around(:each) in RSpec
