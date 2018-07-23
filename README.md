@@ -745,6 +745,7 @@ Here you can read how to configure [junit formatter](#how-to-use-junit-formatter
 # spec_helper.rb or rails_helper.rb
 
 # TODO This must be the same path as value for rspec --out argument
+# Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
 TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
 # move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
 FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
@@ -1444,6 +1445,7 @@ The xml report will contain all tests executed across intermediate test subset r
     # spec_helper.rb or rails_helper.rb
 
     # TODO This must be the same path as value for rspec --out argument
+    # Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
     TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
     # move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
     FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
@@ -1472,6 +1474,7 @@ In below code we use CI node index number in `TMP_RSPEC_XML_REPORT` and `FINAL_R
 # spec_helper.rb or rails_helper.rb
 
 # TODO This must be the same path as value for rspec --out argument
+# Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
 TMP_RSPEC_XML_REPORT = "tmp/rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
 # move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
 FINAL_RSPEC_XML_REPORT = "tmp/rspec_final_results_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
