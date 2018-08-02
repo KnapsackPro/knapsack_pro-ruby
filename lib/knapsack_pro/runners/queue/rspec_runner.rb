@@ -22,7 +22,7 @@ module KnapsackPro
             '--default-path', runner.test_dir,
           ]
 
-          result = {
+          accumulator = {
             status: :next,
             runner: runner,
             can_initialize_queue: true,
@@ -30,11 +30,11 @@ module KnapsackPro
             exitstatus: 0,
             all_test_file_paths: [],
           }
-          while result[:status] == :next
-            result = run_tests(result)
+          while accumulator[:status] == :next
+            accumulator = run_tests(accumulator)
           end
 
-          exit(result[:exitstatus])
+          exit(accumulator[:exitstatus])
         end
 
         def self.run_tests(opts)
