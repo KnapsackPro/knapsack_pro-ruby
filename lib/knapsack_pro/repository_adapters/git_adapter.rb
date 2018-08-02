@@ -9,6 +9,11 @@ module KnapsackPro
         `git -C "#{working_dir}" rev-parse --abbrev-ref HEAD`.strip
       end
 
+      def branches
+        str_branches = `git rev-parse --abbrev-ref --branches`
+        str_branches.split("\n")
+      end
+
       private
 
       def working_dir

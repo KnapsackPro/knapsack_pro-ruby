@@ -1,7 +1,6 @@
 module KnapsackPro
   module Crypto
     class Decryptor
-      class MissingEncryptedTestFileError < StandardError; end
       class TooManyEncryptedTestFilesError < StandardError; end
 
       def self.call(test_files, encrypted_test_files)

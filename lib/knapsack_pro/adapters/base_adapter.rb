@@ -12,15 +12,14 @@ module KnapsackPro
 
       def bind
         if KnapsackPro::Config::Env.recording_enabled?
-          KnapsackPro.logger.info('Test suite time execution recording enabled.')
+          KnapsackPro.logger.debug('Test suite time execution recording enabled.')
           bind_time_tracker
           bind_save_report
         end
 
         if KnapsackPro::Config::Env.queue_recording_enabled?
-          KnapsackPro.logger.info('Test suite time execution queue recording enabled.')
-          bind_time_tracker
-          bind_save_queue_report
+          KnapsackPro.logger.debug('Test suite time execution queue recording enabled.')
+          bind_queue_mode
         end
       end
 
@@ -34,6 +33,21 @@ module KnapsackPro
 
       def bind_save_queue_report
         raise NotImplementedError
+      end
+
+      def bind_tracker_reset
+        raise NotImplementedError
+      end
+
+      def bind_before_queue_hook
+        raise NotImplementedError
+      end
+
+      def bind_queue_mode
+        bind_tracker_reset
+        bind_before_queue_hook
+        bind_time_tracker
+        bind_save_queue_report
       end
     end
   end

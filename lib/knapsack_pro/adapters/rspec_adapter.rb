@@ -21,23 +21,24 @@ module KnapsackPro
 
       def bind_time_tracker
         ::RSpec.configure do |config|
-          config.before(:each) do
+          config.around(:each) do |example|
             current_example_group =
               if ::RSpec.respond_to?(:current_example)
                 ::RSpec.current_example.metadata[:example_group]
               else
                 example.metadata
               end
+
             KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
             KnapsackPro.tracker.start_timer
-          end
 
-          config.after(:each) do
+            example.run
+
             KnapsackPro.tracker.stop_timer
           end
 
           config.after(:suite) do
-            KnapsackPro.logger.info(KnapsackPro::Presenter.global_time)
+            KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
           end
         end
       end
@@ -54,6 +55,25 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.after(:suite) do
             KnapsackPro::Report.save_subset_queue_to_file
+          end
+        end
+      end
+
+      def bind_tracker_reset
+        ::RSpec.configure do |config|
+          config.before(:suite) do
+            KnapsackPro.tracker.reset!
+          end
+        end
+      end
+
+      def bind_before_queue_hook
+        ::RSpec.configure do |config|
+          config.before(:suite) do
+            unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+              KnapsackPro::Hooks::Queue.call_before_queue
+              ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+            end
           end
         end
       end

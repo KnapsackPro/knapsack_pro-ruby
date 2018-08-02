@@ -153,6 +153,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_dir' do
+    subject { described_class.test_dir }
+
+    context 'when ENV exists' do
+      let(:test_dir) { 'spec' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_DIR' => test_dir }) }
+      it { should eql test_dir }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.repository_adapter' do
     subject { described_class.repository_adapter }
 
@@ -302,6 +316,74 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.modify_default_rspec_formatters' do
+    subject { described_class.modify_default_rspec_formatters }
+
+    context 'when ENV exists' do
+      let(:modify_default_rspec_formatters) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS' => modify_default_rspec_formatters }) }
+      it { should eq modify_default_rspec_formatters }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be true }
+    end
+  end
+
+  describe '.modify_default_rspec_formatters?' do
+    subject { described_class.modify_default_rspec_formatters? }
+
+    before do
+      expect(described_class).to receive(:modify_default_rspec_formatters).and_return(modify_default_rspec_formatters)
+    end
+
+    context 'when enabled' do
+      let(:modify_default_rspec_formatters) { true }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:modify_default_rspec_formatters) { false }
+
+      it { should be false }
+    end
+  end
+
+  describe '.branch_encrypted' do
+    subject { described_class.branch_encrypted }
+
+    context 'when ENV exists' do
+      let(:branch_encrypted) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_BRANCH_ENCRYPTED' => branch_encrypted }) }
+      it { should eq branch_encrypted }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.branch_encrypted?' do
+    subject { described_class.branch_encrypted? }
+
+    before do
+      expect(described_class).to receive(:branch_encrypted).and_return(branch_encrypted)
+    end
+
+    context 'when enabled' do
+      let(:branch_encrypted) { 'true' }
+
+      it { should be true }
+    end
+
+    context 'when disabled' do
+      let(:branch_encrypted) { nil }
+
+      it { should be false }
+    end
+  end
+
   describe '.salt' do
     subject { described_class.salt }
 
@@ -398,7 +480,7 @@ describe KnapsackPro::Config::Env do
 
     context "when ENV doesn't exist" do
       it do
-        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_TEST_SUITE_TOKEN')
+        expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_TEST_SUITE_TOKEN. You should set environment variable like KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC (note there is suffix _RSPEC at the end). knapsack_pro gem will set KNAPSACK_PRO_TEST_SUITE_TOKEN based on KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC value. If you use other test runner than RSpec then use proper suffix.')
       end
     end
   end
@@ -424,6 +506,20 @@ describe KnapsackPro::Config::Env do
       let(:test_suite_token_minitest) { 'minitest-token' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST' => test_suite_token_minitest }) }
       it { should eq test_suite_token_minitest }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.test_suite_token_test_unit' do
+    subject { described_class.test_suite_token_test_unit }
+
+    context 'when ENV exists' do
+      let(:test_suite_token_test_unit) { 'test-unit-token' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_SUITE_TOKEN_TEST_UNIT' => test_suite_token_test_unit }) }
+      it { should eq test_suite_token_test_unit }
     end
 
     context "when ENV doesn't exist" do
@@ -531,10 +627,16 @@ describe KnapsackPro::Config::Env do
         allow(KnapsackPro::Config::CI::Buildkite).to receive_message_chain(:new, env_name).and_return(buildkite_env)
       end
 
-      it { should eq circle_env }
+      context do
+        let(:buildkite_env) { nil }
+        let(:semaphore_env) { nil }
+
+        it { should eq circle_env }
+      end
 
       context do
         let(:circle_env) { nil }
+        let(:buildkite_env) { nil }
 
         it { should eq semaphore_env }
       end
@@ -551,14 +653,38 @@ describe KnapsackPro::Config::Env do
   describe '.log_level' do
     subject { described_class.log_level }
 
-    context 'when ENV exists' do
-      let(:log_level) { 'debug' }
+    context 'when ENV set to fatal' do
+      let(:log_level) { 'fatal' }
       before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
-      it { should eql ::Logger::DEBUG }
+      it { should eql ::Logger::FATAL }
+    end
+
+    context 'when ENV set to error' do
+      let(:log_level) { 'error' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::ERROR }
+    end
+
+    context 'when ENV set to warn' do
+      let(:log_level) { 'warn' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::WARN }
+    end
+
+    context 'when ENV set to info' do
+      let(:log_level) { 'info' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::INFO }
+    end
+
+    context 'when ENV set with capital letters' do
+      let(:log_level) { 'WARN' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_LEVEL' => log_level }) }
+      it { should eql ::Logger::WARN }
     end
 
     context "when ENV doesn't exist" do
-      it { should eql ::Logger::INFO }
+      it { should eql ::Logger::DEBUG }
     end
   end
 end

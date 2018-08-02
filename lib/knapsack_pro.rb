@@ -4,18 +4,22 @@ require 'net/http'
 require 'json'
 require 'uri'
 require 'rake/testtask'
-require 'timecop'
 require 'digest'
 require 'securerandom'
 require_relative 'knapsack_pro/version'
+require_relative 'knapsack_pro/extensions/time'
+require_relative 'knapsack_pro/hooks/queue'
 require_relative 'knapsack_pro/utils'
 require_relative 'knapsack_pro/logger_wrapper'
 require_relative 'knapsack_pro/config/ci/base'
 require_relative 'knapsack_pro/config/ci/circle'
+require_relative 'knapsack_pro/config/ci/gitlab_ci'
 require_relative 'knapsack_pro/config/ci/semaphore'
 require_relative 'knapsack_pro/config/ci/buildkite'
 require_relative 'knapsack_pro/config/ci/travis'
 require_relative 'knapsack_pro/config/ci/snap_ci'
+require_relative 'knapsack_pro/config/ci/codeship'
+require_relative 'knapsack_pro/config/ci/heroku'
 require_relative 'knapsack_pro/config/env'
 require_relative 'knapsack_pro/config/env_generator'
 require_relative 'knapsack_pro/client/api/action'
@@ -46,17 +50,23 @@ require_relative 'knapsack_pro/adapters/base_adapter'
 require_relative 'knapsack_pro/adapters/rspec_adapter'
 require_relative 'knapsack_pro/adapters/cucumber_adapter'
 require_relative 'knapsack_pro/adapters/minitest_adapter'
+require_relative 'knapsack_pro/adapters/test_unit_adapter'
 require_relative 'knapsack_pro/adapters/spinach_adapter'
 require_relative 'knapsack_pro/runners/base_runner'
 require_relative 'knapsack_pro/runners/rspec_runner'
 require_relative 'knapsack_pro/runners/cucumber_runner'
 require_relative 'knapsack_pro/runners/minitest_runner'
+require_relative 'knapsack_pro/runners/test_unit_runner'
 require_relative 'knapsack_pro/runners/spinach_runner'
 require_relative 'knapsack_pro/runners/queue/base_runner'
 require_relative 'knapsack_pro/runners/queue/rspec_runner'
+require_relative 'knapsack_pro/runners/queue/minitest_runner'
 require_relative 'knapsack_pro/crypto/encryptor'
+require_relative 'knapsack_pro/crypto/branch_encryptor'
 require_relative 'knapsack_pro/crypto/decryptor'
 require_relative 'knapsack_pro/crypto/digestor'
+
+require 'knapsack_pro/railtie' if defined?(Rails::Railtie)
 
 module KnapsackPro
   class << self
@@ -88,12 +98,6 @@ module KnapsackPro
     def load_tasks
       task_loader = KnapsackPro::TaskLoader.new
       task_loader.load_tasks
-    end
-
-    private
-
-    def set_progname(logger)
-      logger.progname = '[knapsack_pro]' if logger
     end
   end
 end

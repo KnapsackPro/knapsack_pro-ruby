@@ -78,10 +78,10 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           example_group: example_group
         })
       end
+      let(:example) { double }
 
       it do
-        expect(config).to receive(:before).with(:each).and_yield
-        expect(config).to receive(:after).with(:each).and_yield
+        expect(config).to receive(:around).with(:each).and_yield(example)
         expect(config).to receive(:after).with(:suite).and_yield
         expect(::RSpec).to receive(:configure).and_yield(config)
 
@@ -92,11 +92,13 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(tracker).to receive(:current_test_path=).with(test_path)
         expect(tracker).to receive(:start_timer)
 
+        expect(example).to receive(:run)
+
         expect(tracker).to receive(:stop_timer)
 
         expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:info).with(global_time)
+        expect(logger).to receive(:debug).with(global_time)
 
         subject.bind_time_tracker
       end
@@ -121,6 +123,30 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
 
         subject.bind_save_queue_report
+      end
+    end
+
+    describe '#bind_tracker_reset' do
+      it do
+        expect(config).to receive(:before).with(:suite).and_yield
+        expect(::RSpec).to receive(:configure).and_yield(config)
+
+        tracker = instance_double(KnapsackPro::Tracker)
+        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+        expect(tracker).to receive(:reset!)
+
+        subject.bind_tracker_reset
+      end
+    end
+
+    describe '#bind_before_queue_hook' do
+      it do
+        expect(config).to receive(:before).with(:suite).and_yield
+        expect(::RSpec).to receive(:configure).and_yield(config)
+
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_before_queue)
+
+        subject.bind_before_queue_hook
       end
     end
   end

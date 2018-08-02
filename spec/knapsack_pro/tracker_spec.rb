@@ -85,6 +85,22 @@ describe KnapsackPro::Tracker do
       it { expect(tracker.test_files_with_time['b_spec.rb']).to be_within(delta).of(0) }
       it_behaves_like '#to_a'
     end
+
+    # https://github.com/KnapsackPro/knapsack_pro-ruby/issues/32
+    context 'when start timer was not called (rspec-retry issue)' do
+      before do
+        test_paths.each_with_index do |test_path, index|
+          tracker.current_test_path = test_path
+          tracker.stop_timer
+        end
+      end
+
+      it { expect(tracker.global_time).to eq 0 }
+      it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
+      it { expect(tracker.test_files_with_time['a_spec.rb']).to eq 0 }
+      it { expect(tracker.test_files_with_time['b_spec.rb']).to eq 0 }
+      it_behaves_like '#to_a'
+    end
   end
 
   describe '#reset!' do
@@ -98,5 +114,9 @@ describe KnapsackPro::Tracker do
     end
 
     it_behaves_like 'default trakcer attributes'
+
+    it "global time since beginning won't be reset" do
+      expect(tracker.global_time_since_beginning).to be >= 0.1
+    end
   end
 end

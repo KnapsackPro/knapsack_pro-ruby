@@ -39,6 +39,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_FILE_PATTERN']
         end
 
+        def test_dir
+          ENV['KNAPSACK_PRO_TEST_DIR']
+        end
+
         def repository_adapter
           ENV['KNAPSACK_PRO_REPOSITORY_ADAPTER']
         end
@@ -75,6 +79,22 @@ module KnapsackPro
           test_files_encrypted == 'true'
         end
 
+        def modify_default_rspec_formatters
+          ENV.fetch('KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS', true)
+        end
+
+        def modify_default_rspec_formatters?
+          modify_default_rspec_formatters.to_s == 'true'
+        end
+
+        def branch_encrypted
+          ENV['KNAPSACK_PRO_BRANCH_ENCRYPTED']
+        end
+
+        def branch_encrypted?
+          branch_encrypted == 'true'
+        end
+
         def salt
           required_env('KNAPSACK_PRO_SALT')
         end
@@ -104,7 +124,8 @@ module KnapsackPro
         end
 
         def test_suite_token
-          required_env('KNAPSACK_PRO_TEST_SUITE_TOKEN')
+          env_name = 'KNAPSACK_PRO_TEST_SUITE_TOKEN'
+          ENV[env_name] || raise("Missing environment variable #{env_name}. You should set environment variable like #{env_name}_RSPEC (note there is suffix _RSPEC at the end). knapsack_pro gem will set #{env_name} based on #{env_name}_RSPEC value. If you use other test runner than RSpec then use proper suffix.")
         end
 
         def test_suite_token_rspec
@@ -113,6 +134,10 @@ module KnapsackPro
 
         def test_suite_token_minitest
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST']
+        end
+
+        def test_suite_token_test_unit
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_TEST_UNIT']
         end
 
         def test_suite_token_cucumber
@@ -148,10 +173,12 @@ module KnapsackPro
 
         def log_level
           {
-            'debug' => ::Logger::DEBUG,
-            'info'  => ::Logger::INFO,
+            'fatal'  => ::Logger::FATAL,
+            'error'  => ::Logger::ERROR,
             'warn'  => ::Logger::WARN,
-          }[ENV['KNAPSACK_PRO_LOG_LEVEL']] || ::Logger::INFO
+            'info'  => ::Logger::INFO,
+            'debug' => ::Logger::DEBUG,
+          }[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::DEBUG
         end
 
         private

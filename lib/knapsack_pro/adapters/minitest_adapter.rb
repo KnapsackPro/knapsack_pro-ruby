@@ -39,7 +39,7 @@ module KnapsackPro
         ::Minitest::Test.send(:include, BindTimeTrackerMinitestPlugin)
 
         add_post_run_callback do
-          KnapsackPro.logger.info(KnapsackPro::Presenter.global_time)
+          KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
 
@@ -52,6 +52,34 @@ module KnapsackPro
       def set_test_helper_path(file_path)
         test_dir_path = File.dirname(file_path)
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
+      end
+
+      module BindQueueModeMinitestPlugin
+        def before_setup
+          super
+
+          unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+            KnapsackPro::Hooks::Queue.call_before_queue
+            ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+          end
+
+          KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::MinitestAdapter.test_path(self)
+          KnapsackPro.tracker.start_timer
+        end
+
+        def after_teardown
+          KnapsackPro.tracker.stop_timer
+
+          super
+        end
+      end
+
+      def bind_queue_mode
+        ::Minitest::Test.send(:include, BindQueueModeMinitestPlugin)
+
+        add_post_run_callback do
+          KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
+        end
       end
 
       private

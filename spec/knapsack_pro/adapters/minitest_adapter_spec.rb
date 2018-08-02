@@ -2,6 +2,10 @@ module FakeMinitest
   class Test < ::Minitest::Test
     include KnapsackPro::Adapters::MinitestAdapter::BindTimeTrackerMinitestPlugin
   end
+
+  class TestQueueMode < ::Minitest::Test
+    include KnapsackPro::Adapters::MinitestAdapter::BindQueueModeMinitestPlugin
+  end
 end
 
 describe KnapsackPro::Adapters::MinitestAdapter do
@@ -83,6 +87,47 @@ describe KnapsackPro::Adapters::MinitestAdapter do
     end
   end
 
+  describe 'BindQueueModeMinitestPlugin' do
+    let(:tracker) { instance_double(KnapsackPro::Tracker) }
+
+    subject { ::FakeMinitest::TestQueueMode.new }
+
+    before do
+      allow(KnapsackPro).to receive(:tracker).and_return(tracker)
+    end
+
+    describe '#before_setup' do
+      let(:file) { 'test/models/user_test.rb' }
+
+      before do
+        stub_const('ENV', {
+          'KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED' => nil,
+        })
+      end
+
+      it do
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_before_queue).once
+
+        expect(described_class).to receive(:test_path).with(subject).twice.and_return(file)
+        expect(tracker).to receive(:current_test_path=).with(file).twice
+        expect(tracker).to receive(:start_timer).twice
+
+        subject.before_setup
+
+        # second call should not trigger KnapsackPro::Hooks::Queue.call_before_queue
+        subject.before_setup
+      end
+    end
+
+    describe '#after_teardown' do
+      it do
+        expect(tracker).to receive(:stop_timer)
+
+        subject.after_teardown
+      end
+    end
+  end
+
   describe 'bind methods' do
     describe '#bind_time_tracker' do
       let(:logger) { instance_double(Logger) }
@@ -95,7 +140,7 @@ describe KnapsackPro::Adapters::MinitestAdapter do
 
         expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:info).with(global_time)
+        expect(logger).to receive(:debug).with(global_time)
 
         subject.bind_time_tracker
       end
@@ -108,6 +153,23 @@ describe KnapsackPro::Adapters::MinitestAdapter do
         expect(KnapsackPro::Report).to receive(:save)
 
         subject.bind_save_report
+      end
+    end
+
+    describe '#bind_queue_mode' do
+      let(:logger) { instance_double(Logger) }
+      let(:global_time) { 'Global time: 01m 05s' }
+
+      it do
+        expect(::Minitest::Test).to receive(:send).with(:include, KnapsackPro::Adapters::MinitestAdapter::BindQueueModeMinitestPlugin)
+
+        expect(::Minitest).to receive(:after_run).and_yield
+
+        expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
+        expect(KnapsackPro).to receive(:logger).and_return(logger)
+        expect(logger).to receive(:debug).with(global_time)
+
+        subject.bind_queue_mode
       end
     end
   end

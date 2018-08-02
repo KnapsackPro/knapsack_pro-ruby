@@ -1,7 +1,7 @@
 module KnapsackPro
   module Client
     class Connection
-      TIMEOUT = 30
+      TIMEOUT = 15
       REQUEST_RETRY_TIMEBOX = 2
 
       def initialize(action)
@@ -90,20 +90,20 @@ module KnapsackPro
 
         request_uuid = http_response.header['X-Request-Id']
 
-        logger.info("API request UUID: #{request_uuid}")
-        logger.info("Test suite split seed: #{seed}") if has_seed?
-        logger.info('API response:')
+        logger.debug("API request UUID: #{request_uuid}")
+        logger.debug("Test suite split seed: #{seed}") if has_seed?
+        logger.debug('API response:')
         if errors?
           logger.error(response)
         else
-          logger.info(response)
+          logger.debug(response)
         end
 
         response
-      rescue Errno::ECONNREFUSED, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
+      rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
         retries += 1
-        if retries < 5
+        if retries < 3
           wait = retries * REQUEST_RETRY_TIMEBOX
           logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
           sleep wait

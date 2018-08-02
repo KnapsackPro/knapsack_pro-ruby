@@ -20,8 +20,7 @@ describe KnapsackPro::Report do
     before do
       test_files = [{path: fake_path}]
       tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
-      expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
-      expect(tracker).to receive(:reset!)
+      expect(KnapsackPro).to receive(:tracker).and_return(tracker)
 
       subset_queue_id = 'fake-subset-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
@@ -89,6 +88,9 @@ describe KnapsackPro::Report do
       encrypted_test_files = double
       expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(unsymbolize_test_files).and_return(encrypted_test_files)
 
+      encrypted_branch = double
+      expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
       node_total = double
       node_index = double
       expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
@@ -97,7 +99,7 @@ describe KnapsackPro::Report do
       action = double
       expect(KnapsackPro::Client::API::V1::BuildSubsets).to receive(:create).with({
         commit_hash: commit_hash,
-        branch: branch,
+        branch: encrypted_branch,
         node_total: node_total,
         node_index: node_index,
         test_files: encrypted_test_files,
@@ -130,7 +132,7 @@ describe KnapsackPro::Report do
           it do
             logger = instance_double(Logger)
             expect(KnapsackPro).to receive(:logger).and_return(logger)
-            expect(logger).to receive(:info).with('Saved time execution report on API server.')
+            expect(logger).to receive(:debug).with('Saved time execution report on Knapsack Pro API server.')
             subject
           end
         end
@@ -140,7 +142,12 @@ describe KnapsackPro::Report do
         let(:success?) { false }
         let(:errors?) { nil }
 
-        it { subject }
+        it do
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:warn).with('Time execution report was not saved on Knapsack Pro API server due to connection problem.')
+          subject
+        end
       end
     end
 

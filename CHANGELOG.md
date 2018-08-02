@@ -2,6 +2,232 @@
 
 * TODO
 
+### 0.55.1
+
+* Switch to fallback mode when failed to open TCP connection to API
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/63
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.55.0...v0.55.1
+
+### 0.55.0
+
+* Fix to record proper time for around(:each) in RSpec
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/62
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.54.0...v0.55.0
+
+### 0.54.0
+
+* Add Queue Mode for Minitest
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/60
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.53.0...v0.54.0
+
+### 0.53.0
+
+* Add support for Heroku CI environment variables.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/55
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.52.0...v0.53.0
+
+### 0.52.0
+
+* Add support for Cucumber 3.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/54
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.51.0...v0.52.0
+
+### 0.51.0
+
+* Add support for test-unit test runner.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/53
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.50.1...v0.51.0
+
+### 0.50.1
+
+* Update RSpec timing adapter to be more resilient.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/52
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.50.0...v0.50.1
+
+### 0.50.0
+
+* Add support for Codeship environment variables.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/51
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.49.0...v0.50.0
+
+### 0.49.0
+
+* Show short warning for not executed test files on CI node. Show explanation in debug logs.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/50
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.48.0...v0.49.0
+
+### 0.48.0
+
+* Fallback mode for Queue Mode when Knapsack Pro API doesn't work.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/49
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.47.0...v0.48.0
+
+### 0.47.0
+
+* Add in Queue Mode the RSpec summary with info about examples, failures and pending tests.
+* Fix not working message `Global time execution for tests` at end of each subset of tests from work queue.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/48
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.46.0...v0.47.0
+
+### 0.46.0
+
+* Autoload knapsack_pro rake tasks with Rails Railties.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/47
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.45.0...v0.46.0
+
+### 0.45.0
+
+* Add before and after queue hooks
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/46
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.44.0...v0.45.0
+
+### 0.44.0
+
+* Add ability to set test_dir using an environment variable.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/45
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.43.0...v0.44.0
+
+### 0.43.0
+
+* Extract correct test directory from test file pattern that has multiple patterns.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/43
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.42.0...v0.43.0
+
+### 0.42.0
+
+* Clear RSpec examples without shared examples in similar way as in RSpec 3.6.0
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/42
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.41.0...v0.42.0
+
+### 0.41.0
+
+* Add after subset queue hook and example how to use JUnit formatter in Queue Mode.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/41
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.40.0...v0.41.0
+
+### 0.40.0
+
+* Replace rake task installer `knapsack_pro:install` with online installation guide. Remove `tty-prompt` gem dependency.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/39
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.39.0...v0.40.0
+
+### 0.39.0
+
+* Remove timecop gem from required dependencies list.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/38
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.38.0...v0.39.0
+
+### 0.38.0
+
+* Add support for Gitlab CI.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/36
+
+* More info about Buildkite in installer.
+* More info about CircleCI in installer.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.37.0...v0.38.0
+
+### 0.37.0
+
+* Add another explanation why test files could not be executed on CI node in Queue Mode.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/34
+
+* Show better explanation what to do when there is missing test suite token environment variable.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/35
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.36.0...v0.37.0
+
+### 0.36.0
+
+* Show messages about not executed test files as warnings in logs.
+* Handle case when start timer was not called (rspec-retry issue).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/33
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.35.0...v0.36.0
+
+### 0.35.0
+
+* Add `RSpecQueueProfileFormatterExtension` to show profile summary only once at the very end of RSpec Queue Mode output.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.34.0...v0.35.0
+
+### 0.34.0
+
+* Fix command visible at the end of RSpec Queue Mode output to be able retry test files with spaces in name.
+* Fix command visible at the end of RSpec Queue Mode output to be able retry test files without RSpecQueueSummaryFormatter which is dedicated only for Queue Mode.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.33.0...v0.34.0
+
+### 0.33.0
+
+* Add RSpec Queue Formatter to hide duplicated pending and failed tests in Queue Mode
+
+  You can keep duplicated pending/failed summary with flag `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS`. More can be found in read me.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/31
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.32.0...v0.33.0
+
+### 0.32.0
+
+* Add encryption for branch names
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/30
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.31.0...v0.32.0
+
+### 0.31.0
+
+* Add supported for log levels `fatal` and `error` by `KNAPSACK_PRO_LOG_LEVEL` environment variable.
+* Allow `KNAPSACK_PRO_LOG_LEVEL` case insensitive.
+* Move all messages related to requests to Knapsack Pro API in log `debug` level and keep `info` level only for important messages like how to retry tests in development or info why something works this way or the other (for instance why tests were not executed on the CI node).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/29
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.30.0...v0.31.0
+
 ### 0.30.0
 
 * Update license to MIT.

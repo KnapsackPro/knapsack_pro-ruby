@@ -37,7 +37,7 @@ module KnapsackPro
         end
 
         ::Kernel.at_exit do
-          KnapsackPro.logger.info(KnapsackPro::Presenter.global_time)
+          KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
 
@@ -56,7 +56,11 @@ module KnapsackPro
       private
 
       def Around(*tag_expressions, &proc)
-        ::Cucumber::RbSupport::RbDsl.register_rb_hook('around', tag_expressions, proc)
+        if ::Cucumber::VERSION.to_i >= 3
+          ::Cucumber::Glue::Dsl.register_rb_hook('around', tag_expressions, proc)
+        else
+          ::Cucumber::RbSupport::RbDsl.register_rb_hook('around', tag_expressions, proc)
+        end
       end
     end
   end

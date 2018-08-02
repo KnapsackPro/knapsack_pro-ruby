@@ -33,11 +33,17 @@ describe KnapsackPro::Runners::Queue::BaseRunner do
 
       context 'when can_initialize_queue flag has value' do
         let(:can_initialize_queue) { double }
-        let(:args) { { can_initialize_queue: can_initialize_queue } }
+        let(:executed_test_files) { double }
+        let(:args) do
+          {
+            can_initialize_queue: can_initialize_queue,
+            executed_test_files: executed_test_files,
+          }
+        end
         let(:test_file_paths) { double }
 
         before do
-          expect(allocator).to receive(:test_file_paths).and_return(test_file_paths)
+          expect(allocator).to receive(:test_file_paths).with(can_initialize_queue, executed_test_files).and_return(test_file_paths)
         end
 
         it { should eq test_file_paths }

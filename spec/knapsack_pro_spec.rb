@@ -2,7 +2,7 @@ describe KnapsackPro do
   describe '.root' do
     subject { described_class.root }
 
-    it { expect(subject).to match 'knapsack' }
+    it { expect(subject).to match 'knapsack_pro-ruby' }
   end
 
   describe '.logger' do
@@ -18,7 +18,7 @@ describe KnapsackPro do
 
       before do
         expect(Logger).to receive(:new).with(STDOUT).and_return(logger)
-        expect(logger).to receive(:level=).with(Logger::INFO)
+        expect(logger).to receive(:level=).with(Logger::DEBUG)
         expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
       end
 

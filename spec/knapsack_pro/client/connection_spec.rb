@@ -30,8 +30,8 @@ describe KnapsackPro::Client::Connection do
         expect(Net::HTTP).to receive(:new).with('api.knapsackpro.dev', 3000).and_return(http)
 
         expect(http).to receive(:use_ssl=).with(false)
-        expect(http).to receive(:open_timeout=).with(30)
-        expect(http).to receive(:read_timeout=).with(30)
+        expect(http).to receive(:open_timeout=).with(15)
+        expect(http).to receive(:read_timeout=).with(15)
 
         header = { 'X-Request-Id' => 'fake-uuid' }
         http_response = instance_double(Net::HTTPOK, body: body, header: header)
@@ -52,8 +52,8 @@ describe KnapsackPro::Client::Connection do
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
-          expect(logger).to receive(:info).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:info).with('API response:')
+          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:debug).with('API response:')
         end
 
         it do
@@ -72,15 +72,15 @@ describe KnapsackPro::Client::Connection do
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-          expect(logger).to receive(:info).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:info).with("Test suite split seed: seed-uuid")
-          expect(logger).to receive(:info).with('API response:')
+          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
+          expect(logger).to receive(:debug).with('API response:')
         end
 
         it do
           parsed_response = { 'build_distribution_id' => 'seed-uuid' }
 
-          expect(logger).to receive(:info).with(parsed_response)
+          expect(logger).to receive(:debug).with(parsed_response)
 
           expect(subject).to eq(parsed_response)
           expect(connection.success?).to be true
@@ -93,12 +93,12 @@ describe KnapsackPro::Client::Connection do
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
-          expect(logger).to receive(:info).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:info).with('API response:')
+          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:debug).with('API response:')
         end
 
         it do
-          expect(logger).to receive(:info).with('')
+          expect(logger).to receive(:debug).with('')
 
           expect(subject).to eq('')
           expect(connection.success?).to be true

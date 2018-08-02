@@ -14,6 +14,7 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
       else
+        KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. Read more about fallback mode at https://github.com/KnapsackPro/knapsack_pro-ruby#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily")
         fallback_test_files
       end
     end
@@ -29,10 +30,14 @@ module KnapsackPro
       KnapsackPro::Crypto::Encryptor.call(test_files)
     end
 
+    def encrypted_branch
+      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
+    end
+
     def build_action
       KnapsackPro::Client::API::V1::BuildDistributions.subset(
         commit_hash: repository_adapter.commit_hash,
-        branch: repository_adapter.branch,
+        branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
         test_files: encrypted_test_files,

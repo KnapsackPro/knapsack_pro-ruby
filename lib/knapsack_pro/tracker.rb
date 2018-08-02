@@ -2,10 +2,11 @@ module KnapsackPro
   class Tracker
     include Singleton
 
-    attr_reader :global_time, :test_files_with_time
+    attr_reader :global_time_since_beginning, :global_time, :test_files_with_time
     attr_writer :current_test_path
 
     def initialize
+      @global_time_since_beginning = 0
       set_defaults
     end
 
@@ -18,10 +19,10 @@ module KnapsackPro
     end
 
     def stop_timer
-      @execution_time = now_without_mock_time.to_f - @start_time
-      update_global_time
-      update_test_file_time
-      @execution_time
+      execution_time = @start_time ? now_without_mock_time.to_f - @start_time : 0.0
+      update_global_time(execution_time)
+      update_test_file_time(execution_time)
+      execution_time
     end
 
     def current_test_path
@@ -48,17 +49,22 @@ module KnapsackPro
       @test_path = nil
     end
 
-    def update_global_time
-      @global_time += @execution_time
+    def update_global_time(execution_time)
+      @global_time += execution_time
+      @global_time_since_beginning += execution_time
     end
 
-    def update_test_file_time
+    def update_test_file_time(execution_time)
       @test_files_with_time[current_test_path] ||= 0
-      @test_files_with_time[current_test_path] += @execution_time
+      @test_files_with_time[current_test_path] += execution_time
     end
 
     def now_without_mock_time
-      Time.now_without_mock_time
+      if defined?(Timecop)
+        Time.now_without_mock_time
+      else
+        Time.raw_now
+      end
     end
   end
 end
