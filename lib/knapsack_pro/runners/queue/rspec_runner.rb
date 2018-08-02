@@ -34,7 +34,7 @@ module KnapsackPro
             accumulator = run_tests(accumulator)
           end
 
-          exit(accumulator[:exitstatus])
+          Kernel.exit(accumulator[:exitstatus])
         end
 
         def self.run_tests(opts)

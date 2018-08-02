@@ -34,10 +34,24 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:args) { '--example-arg example-value' }
 
         it 'uses default formatter progress' do
-          result = double
-          expect(described_class).to receive(:run_tests).with(runner, true, ['--example-arg', 'example-value', '--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
+          expected_exitstatus = 0
+          expected_accumulator = {
+            status: :completed,
+            exitstatus: expected_exitstatus
+          }
+          accumulator = {
+            status: :next,
+            runner: runner,
+            can_initialize_queue: true,
+            args: ['--example-arg', 'example-value', '--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            exitstatus: 0,
+            all_test_file_paths: [],
+          }
+          expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
-          expect(subject).to eq result
+          expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+          subject
         end
       end
 
@@ -45,10 +59,24 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:args) { '--format documentation' }
 
         it 'uses provided format param instead of default formatter progress' do
-          result = double
-          expect(described_class).to receive(:run_tests).with(runner, true, ['--format', 'documentation', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
+          expected_exitstatus = 0
+          expected_accumulator = {
+            status: :completed,
+            exitstatus: expected_exitstatus
+          }
+          accumulator = {
+            status: :next,
+            runner: runner,
+            can_initialize_queue: true,
+            args: ['--format', 'documentation', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            exitstatus: 0,
+            all_test_file_paths: [],
+          }
+          expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
-          expect(subject).to eq result
+          expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+          subject
         end
       end
     end
@@ -57,10 +85,24 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       let(:args) { nil }
 
       it do
-        result = double
-        expect(described_class).to receive(:run_tests).with(runner, true, ['--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'], 0, []).and_return(result)
+        expected_exitstatus = 0
+        expected_accumulator = {
+          status: :completed,
+          exitstatus: expected_exitstatus
+        }
+        accumulator = {
+          status: :next,
+          runner: runner,
+          can_initialize_queue: true,
+          args: ['--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+          exitstatus: 0,
+          all_test_file_paths: [],
+        }
+        expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
-        expect(subject).to eq result
+        expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+        subject
       end
     end
   end
