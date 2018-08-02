@@ -112,11 +112,21 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     let(:can_initialize_queue) { double(:can_initialize_queue) }
     let(:args) { ['--example-arg', 'example-value', '--default-path', 'fake-test-dir'] }
     let(:exitstatus) { double }
+    let(:all_test_file_paths) { [] }
+    let(:accumulator) do
+      {
+        runner: runner,
+        can_initialize_queue: can_initialize_queue,
+        args: args,
+        exitstatus: exitstatus,
+        all_test_file_paths: all_test_file_paths,
+      }
+    end
 
-    subject { described_class.run_tests(runner, can_initialize_queue, args, exitstatus, []) }
+    subject { described_class.run_tests(accumulator) }
 
     before do
-      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: []).and_return(test_file_paths)
+      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: all_test_file_paths).and_return(test_file_paths)
     end
 
     context 'when test files exist' do
@@ -142,22 +152,20 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         expect(described_class).to receive(:rspec_clear_examples)
 
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
-
-        # second call of run_tests because of recursion
-        expect(runner).to receive(:test_file_paths).with(can_initialize_queue: false, executed_test_files: ['a_spec.rb', 'b_spec.rb']).and_return([])
       end
 
       context 'when exit code is zero' do
         let(:exit_code) { 0 }
 
         it do
-          expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
-          expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
-          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
-          expect(described_class).to receive(:exit).with(exitstatus)
-
-          subject
+          expect(subject).to eq({
+            status: :next,
+            runner: runner,
+            can_initialize_queue: false,
+            args: args,
+            exitstatus: exitstatus,
+            all_test_file_paths: test_file_paths,
+          })
         end
       end
 
@@ -165,13 +173,14 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:exit_code) { double }
 
         it do
-          expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
-          expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
-          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
-          expect(described_class).to receive(:exit).with(exit_code)
-
-          subject
+          expect(subject).to eq({
+            status: :next,
+            runner: runner,
+            can_initialize_queue: false,
+            args: args,
+            exitstatus: exit_code,
+            all_test_file_paths: test_file_paths,
+          })
         end
       end
     end
@@ -179,12 +188,35 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     context "when test files don't exist" do
       let(:test_file_paths) { [] }
 
-      it do
-        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-        expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
-        expect(described_class).to receive(:exit).with(exitstatus)
+      context 'when all_test_file_paths exist' do
+        let(:all_test_file_paths) { ['a_spec.rb'] }
 
-        subject
+        it do
+          expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
+          expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
+
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+
+          expect(subject).to eq({
+            status: :completed,
+            exitstatus: exitstatus,
+          })
+        end
+      end
+
+      context "when all_test_file_paths don't exist" do
+        let(:all_test_file_paths) { [] }
+
+        it do
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+
+          expect(subject).to eq({
+            status: :completed,
+            exitstatus: exitstatus,
+          })
+        end
       end
     end
   end
