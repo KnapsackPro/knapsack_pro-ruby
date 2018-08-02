@@ -37,12 +37,12 @@ module KnapsackPro
           Kernel.exit(accumulator[:exitstatus])
         end
 
-        def self.run_tests(opts)
-          runner = opts.fetch(:runner)
-          can_initialize_queue = opts.fetch(:can_initialize_queue)
-          args = opts.fetch(:args)
-          exitstatus = opts.fetch(:exitstatus)
-          all_test_file_paths = opts.fetch(:all_test_file_paths)
+        def self.run_tests(accumulator)
+          runner = accumulator.fetch(:runner)
+          can_initialize_queue = accumulator.fetch(:can_initialize_queue)
+          args = accumulator.fetch(:args)
+          exitstatus = accumulator.fetch(:exitstatus)
+          all_test_file_paths = accumulator.fetch(:all_test_file_paths)
 
           test_file_paths = runner.test_file_paths(
             can_initialize_queue: can_initialize_queue,
