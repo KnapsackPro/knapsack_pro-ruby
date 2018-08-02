@@ -28,10 +28,24 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
       let(:args) { '--verbose --pride' }
 
       it do
-        result = double
-        expect(described_class).to receive(:run_tests).with(runner, true, ['--verbose', '--pride'], 0, []).and_return(result)
+        expected_exitstatus = 0
+        expected_accumulator = {
+          status: :completed,
+          exitstatus: expected_exitstatus
+        }
+        accumulator = {
+          status: :next,
+          runner: runner,
+          can_initialize_queue: true,
+          args: ['--verbose', '--pride'],
+          exitstatus: 0,
+          all_test_file_paths: [],
+        }
+        expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
-        expect(subject).to eq result
+        expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+        subject
       end
     end
 
@@ -39,10 +53,24 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
       let(:args) { nil }
 
       it do
-        result = double
-        expect(described_class).to receive(:run_tests).with(runner, true, [], 0, []).and_return(result)
+        expected_exitstatus = 0
+        expected_accumulator = {
+          status: :completed,
+          exitstatus: expected_exitstatus
+        }
+        accumulator = {
+          status: :next,
+          runner: runner,
+          can_initialize_queue: true,
+          args: [],
+          exitstatus: 0,
+          all_test_file_paths: [],
+        }
+        expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
-        expect(subject).to eq result
+        expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+        subject
       end
     end
   end
