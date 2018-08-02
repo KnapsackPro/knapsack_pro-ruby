@@ -1,3 +1,3 @@
 module KnapsackPro
-  VERSION = '0.55.1'
+  VERSION = '0.55.2'
 end
