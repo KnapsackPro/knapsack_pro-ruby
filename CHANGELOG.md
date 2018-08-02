@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.55.2
+
+* Remove recursion in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/64
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.55.1...v0.55.2
+
 ### 0.55.1
 
 * Switch to fallback mode when failed to open TCP connection to API
