@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.56.0
+
+* Add support for Cirrus CI
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/65
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.55.2...v0.56.0
+
 ### 0.55.2
 
 * Remove recursion in Queue Mode
