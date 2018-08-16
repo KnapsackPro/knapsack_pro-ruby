@@ -106,6 +106,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for codeship.com users](#info-for-codeshipcom-users)
     - [Info for Heroku CI users](#info-for-heroku-ci-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
+    - [Info for cirrus-ci.org users](#info-for-cirrus-ciorg-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
 - [FAQ](#faq)
   - [Common problems](#common-problems)
@@ -978,6 +979,27 @@ You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/herok
 #### Info for snap-ci.com users
 
 Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDEX`. The only thing you need to do is to configure number of workers for your project in configuration settings in order to enable parallelism. Next thing is to set below commands to be executed in your stage:
+
+    # Step for RSpec
+    bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber
+    bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest
+    bundle exec rake knapsack_pro:minitest
+
+    # Step for test-unit
+    bundle exec rake knapsack_pro:test_unit
+
+    # Step for Spinach
+    bundle exec rake knapsack_pro:spinach
+
+Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
+#### Info for cirrus-ci.org users
+
+Knapsack Pro supports cirrus-ci.org ENVs `CI_NODE_TOTAL` and `CI_NODE_INDEX`. The only thing you need to do is to configure number of parallel CI nodes for your project. Next thing is to set one of below commands to be executed on each parallel CI node:
 
     # Step for RSpec
     bundle exec rake knapsack_pro:rspec
