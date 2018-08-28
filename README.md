@@ -1018,6 +1018,8 @@ Knapsack Pro supports cirrus-ci.org ENVs `CI_NODE_TOTAL` and `CI_NODE_INDEX`. Th
 
 Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
+Here is example for [`.cirrus.yml` configuration file](https://cirrus-ci.org/examples/#ruby).
+
 #### Info for Jenkins users
 
 In order to run parallel jobs with Jenkins you should use Jenkins Pipeline.
