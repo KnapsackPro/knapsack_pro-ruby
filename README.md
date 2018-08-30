@@ -142,6 +142,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
       - [How to use junit formatter with knapsack_pro regular mode?](#how-to-use-junit-formatter-with-knapsack_pro-regular-mode)
       - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
         - [How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
+        - [Why `tmp/rspec_final_results.xml` is corrupted when I use junit formatter with knapsack_pro queue mode?](#why-tmprspec_final_resultsxml-is-corrupted-when-i-use-junit-formatter-with-knapsack_pro-queue-mode)
     - [How many API keys I need?](#how-many-api-keys-i-need)
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
@@ -1512,6 +1513,11 @@ KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
   end
 end
 ```
+
+###### Why `tmp/rspec_final_results.xml` is corrupted when I use junit formatter with knapsack_pro queue mode?
+
+The `tmp/rspec_final_results.xml` might be corrupted due syntax error in your test suite. First check if your test suite is green.
+Another reason might be that you did not configure the junit formatter as shown in the example for Queue Mode. Please check above 2 questions & answers explaing that.
 
 #### How many API keys I need?
 
