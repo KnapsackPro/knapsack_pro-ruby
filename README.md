@@ -141,6 +141,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [How to use junit formatter?](#how-to-use-junit-formatter)
       - [How to use junit formatter with knapsack_pro regular mode?](#how-to-use-junit-formatter-with-knapsack_pro-regular-mode)
       - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
+        - [How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
     - [How many API keys I need?](#how-many-api-keys-i-need)
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
@@ -1479,6 +1480,8 @@ The xml report will contain all tests executed across intermediate test subset r
         FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
       end
     end
+
+###### How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?
 
 Note if you use a CI provider or your own CI solution that uses common local drive for all parallel CI nodes then above solution needs to be adjusted to produce report file with CI node index number in the file name to avoid file conflicts. Example file name with CI node index number: `tmp/rspec_final_results_N.xml`.
 
