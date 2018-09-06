@@ -1,4 +1,3 @@
-# http://docs.solanolabs.com/Setup/tddium-set-environment-variables/
 describe KnapsackPro::Config::CI::SolanoCI do
   let(:env) { {} }
 

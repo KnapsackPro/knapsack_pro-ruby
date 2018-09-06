@@ -1,3 +1,4 @@
+# http://docs.solanolabs.com/Setup/tddium-set-environment-variables/
 module KnapsackPro
   module Config
     module CI
