@@ -106,6 +106,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for codeship.com users](#info-for-codeshipcom-users)
     - [Info for Heroku CI users](#info-for-heroku-ci-users)
     - [Info for Solano CI users](#info-for-solano-ci-users)
+    - [Info for AppVeyor users](#info-for-appveyor-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
     - [Info for cirrus-ci.org users](#info-for-cirrus-ciorg-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
@@ -1008,7 +1009,38 @@ You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/herok
     # Step for Spinach for second CI node
     KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
+#### Info for AppVeyor users
+
+[AppVeyor](https://www.appveyor.com) does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same CI build.
+
+    # Step for RSpec for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+    # Step for RSpec for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+    # Step for Cucumber for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+    # Step for Minitest for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
+
+    # Step for test-unit for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+    # Step for test-unit for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
+
+    # Step for Spinach for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+    # Step for Spinach for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 #### Info for snap-ci.com users
 
