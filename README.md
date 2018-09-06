@@ -105,6 +105,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for Gitlab CI users](#info-for-gitlab-ci-users)
     - [Info for codeship.com users](#info-for-codeshipcom-users)
     - [Info for Heroku CI users](#info-for-heroku-ci-users)
+    - [Info for Solano CI users](#info-for-solano-ci-users)
+    - [Info for AppVeyor users](#info-for-appveyor-users)
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
     - [Info for cirrus-ci.org users](#info-for-cirrus-ciorg-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
@@ -842,7 +844,7 @@ Knapsack Pro supports semaphoreapp ENVs `SEMAPHORE_THREAD_COUNT` and `SEMAPHORE_
 
 Tests will be split across threads.
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 #### Info for buildkite.com users
 
@@ -863,7 +865,7 @@ Knapsack Pro supports buildkite ENVs `BUILDKITE_PARALLEL_JOB_COUNT` and `BUILDKI
     # Step for Spinach
     bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 Here you can find article [how to set up a new pipeline for your project in Buildkite and configure Knapsack Pro](http://docs.knapsackpro.com/2017/auto-balancing-7-hours-tests-between-100-parallel-jobs-on-ci-buildkite-example) and 2 example repositories for Ruby/Rails projects:
 
@@ -978,6 +980,68 @@ Note the [Heroku CI Parallel Test Runs](https://devcenter.heroku.com/articles/he
 
 You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/heroku-ci).
 
+#### Info for Solano CI users
+
+[Solano CI](https://www.solanolabs.com) does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same CI build.
+
+    # Step for RSpec for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+    # Step for RSpec for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+    # Step for Cucumber for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+    # Step for Minitest for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
+
+    # Step for test-unit for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+    # Step for test-unit for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
+
+    # Step for Spinach for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+    # Step for Spinach for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
+#### Info for AppVeyor users
+
+[AppVeyor](https://www.appveyor.com) does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same CI build.
+
+    # Step for RSpec for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+    # Step for RSpec for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
+
+    # Step for Cucumber for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+    # Step for Cucumber for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+
+    # Step for Minitest for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+    # Step for Minitest for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
+
+    # Step for test-unit for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+    # Step for test-unit for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
+
+    # Step for Spinach for first CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+    # Step for Spinach for second CI node
+    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+
 #### Info for snap-ci.com users
 
 Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDEX`. The only thing you need to do is to configure number of workers for your project in configuration settings in order to enable parallelism. Next thing is to set below commands to be executed in your stage:
@@ -997,7 +1061,7 @@ Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDE
     # Step for Spinach
     bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 #### Info for cirrus-ci.org users
 
@@ -1018,7 +1082,7 @@ Knapsack Pro supports cirrus-ci.org ENVs `CI_NODE_TOTAL` and `CI_NODE_INDEX`. Th
     # Step for Spinach
     bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 Here is example for [`.cirrus.yml` configuration file](https://cirrus-ci.org/examples/#ruby).
 

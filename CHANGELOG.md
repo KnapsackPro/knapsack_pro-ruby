@@ -2,6 +2,14 @@
 
 * TODO
 
+### 0.57.0
+
+* Add support for Solano CI and AppVeyor
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/66
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.56.0...v0.57.0
+
 ### 0.56.0
 
 * Add support for Cirrus CI
