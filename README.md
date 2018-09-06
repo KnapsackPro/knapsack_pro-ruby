@@ -844,7 +844,7 @@ Knapsack Pro supports semaphoreapp ENVs `SEMAPHORE_THREAD_COUNT` and `SEMAPHORE_
 
 Tests will be split across threads.
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 #### Info for buildkite.com users
 
@@ -865,7 +865,7 @@ Knapsack Pro supports buildkite ENVs `BUILDKITE_PARALLEL_JOB_COUNT` and `BUILDKI
     # Step for Spinach
     bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 Here you can find article [how to set up a new pipeline for your project in Buildkite and configure Knapsack Pro](http://docs.knapsackpro.com/2017/auto-balancing-7-hours-tests-between-100-parallel-jobs-on-ci-buildkite-example) and 2 example repositories for Ruby/Rails projects:
 
@@ -1061,7 +1061,7 @@ Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDE
     # Step for Spinach
     bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 #### Info for cirrus-ci.org users
 
@@ -1082,7 +1082,7 @@ Knapsack Pro supports cirrus-ci.org ENVs `CI_NODE_TOTAL` and `CI_NODE_INDEX`. Th
     # Step for Spinach
     bundle exec rake knapsack_pro:spinach
 
-Please remember to set up token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
+Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
 Here is example for [`.cirrus.yml` configuration file](https://cirrus-ci.org/examples/#ruby).
 
