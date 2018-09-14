@@ -166,6 +166,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
 - [Gem tests](#gem-tests)
   - [Spec](#spec)
 - [Contributing](#contributing)
+  - [Publishing](#publishing)
 - [Mentions](#mentions)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1944,6 +1945,29 @@ To run specs for Knapsack Pro gem type:
 4. Push to the branch (`git push origin my-new-feature`)
 5. You can create example tests in related repository with example of [rails application and knapsack_pro gem usage](https://github.com/KnapsackPro/rails-app-with-knapsack_pro).
 6. Create a new Pull Request
+
+### Publishing
+
+Update version in `lib/knapsack_pro/version.rb` and `CHANGELOG.md`:
+
+```
+$ git commit -m "Bump version X.X.X"
+$ git push origin master
+```
+
+Create git tag for release:
+
+```
+$ git tag -a vX.X.X -m "Release vX.X.X"
+$ git push --tags
+```
+
+Build gem and publish it to RubyGems.org:
+
+```
+$ gem build knapsack_pro.gemspec
+$ gem push knapsack_pro-X.X.X.gem
+```
 
 ## Mentions
 
