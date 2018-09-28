@@ -13,7 +13,10 @@ module KnapsackPro
       end
 
       def success?
-        !!response_body
+        return false if !response_body
+
+        status = http_response.code.to_i
+        status >= 200 && status < 500
       end
 
       def errors?
@@ -22,7 +25,7 @@ module KnapsackPro
 
       private
 
-      attr_reader :action, :response_body
+      attr_reader :action, :http_response, :response_body
 
       def logger
         KnapsackPro.logger
@@ -85,7 +88,7 @@ module KnapsackPro
         http.open_timeout = TIMEOUT
         http.read_timeout = TIMEOUT
 
-        http_response = http.post(uri.path, request_body, json_headers)
+        @http_response = http.post(uri.path, request_body, json_headers)
         @response_body = parse_response_body(http_response.body)
 
         request_uuid = http_response.header['X-Request-Id']
