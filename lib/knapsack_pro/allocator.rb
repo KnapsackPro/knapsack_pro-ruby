@@ -10,8 +10,7 @@ module KnapsackPro
     def test_file_paths
       connection = KnapsackPro::Client::Connection.new(build_action)
       response = connection.call
-      if connection.success?
-        raise ArgumentError.new(response) if connection.errors?
+      if connection.success? && !connection.errors?
         prepare_test_files(response)
       else
         KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. Read more about fallback mode at https://github.com/KnapsackPro/knapsack_pro-ruby#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily")
