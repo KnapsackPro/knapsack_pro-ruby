@@ -49,7 +49,7 @@ describe KnapsackPro::Client::Connection do
 
       context 'when body response is json and API response code is 400' do
         let(:body) { '{"errors": "value"}' }
-        let(:code) { "400" } # it must be string code
+        let(:code) { '400' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
@@ -70,7 +70,7 @@ describe KnapsackPro::Client::Connection do
 
       context 'when body response is json and API response code is 500' do
         let(:body) { '{"error": "Internal Server Error"}' }
-        let(:code) { "500" } # it must be string code
+        let(:code) { '500' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
@@ -91,7 +91,7 @@ describe KnapsackPro::Client::Connection do
 
       context 'when body response is json with build_distribution_id' do
         let(:body) { '{"build_distribution_id": "seed-uuid"}' }
-        let(:code) { "200" } # it must be string code
+        let(:code) { '200' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
@@ -113,7 +113,7 @@ describe KnapsackPro::Client::Connection do
 
       context 'when body response is empty' do
         let(:body) { '' }
-        let(:code) { "200" } # it must be string code
+        let(:code) { '200' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
@@ -156,25 +156,25 @@ describe KnapsackPro::Client::Connection do
       end
 
       context 'when response code is 200' do
-        let(:code) { "200" } # it must be string code
+        let(:code) { '200' } # it must be string code
 
         it { should be true }
       end
 
       context 'when response code is 300' do
-        let(:code) { "300" } # it must be string code
+        let(:code) { '300' } # it must be string code
 
         it { should be true }
       end
 
       context 'when response code is 400' do
-        let(:code) { "400" } # it must be string code
+        let(:code) { '400' } # it must be string code
 
         it { should be true }
       end
 
       context 'when response code is 500' do
-        let(:code) { "500" } # it must be string code
+        let(:code) { '500' } # it must be string code
 
         it { should be false }
       end
