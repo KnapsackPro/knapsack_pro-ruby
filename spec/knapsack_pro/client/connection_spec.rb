@@ -112,17 +112,17 @@ describe KnapsackPro::Client::Connection do
     subject { connection.success? }
 
     before do
-      allow(connection).to receive(:response).and_return(response)
+      allow(connection).to receive(:response_body).and_return(response_body)
     end
 
     context 'when response has no value' do
-      let(:response) { nil }
+      let(:response_body) { nil }
 
       it { should be false }
     end
 
     context 'when response has value' do
-      let(:response) do
+      let(:response_body) do
         { 'fake' => 'response' }
       end
 
@@ -134,18 +134,18 @@ describe KnapsackPro::Client::Connection do
     subject { connection.errors? }
 
     before do
-      allow(connection).to receive(:response).and_return(response)
+      allow(connection).to receive(:response_body).and_return(response_body)
     end
 
     context 'when response has no value' do
-      let(:response) { nil }
+      let(:response_body) { nil }
 
       it { should be false }
     end
 
     context 'when response has value' do
       context 'when response has no errors' do
-        let(:response) do
+        let(:response_body) do
           { 'fake' => 'response' }
         end
 
@@ -153,7 +153,7 @@ describe KnapsackPro::Client::Connection do
       end
 
       context 'when response has errors' do
-        let(:response) do
+        let(:response_body) do
           { 'errors' => [{ 'field' => 'is wrong' }] }
         end
 
@@ -161,7 +161,7 @@ describe KnapsackPro::Client::Connection do
       end
 
       context 'when response has error (i.e. internal server error)' do
-        let(:response) do
+        let(:response_body) do
           { 'error' => 'Internal Server Error' }
         end
 

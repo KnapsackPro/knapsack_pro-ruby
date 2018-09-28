@@ -13,16 +13,16 @@ module KnapsackPro
       end
 
       def success?
-        !!response
+        !!response_body
       end
 
       def errors?
-        !!(response && (response['errors'] || response['error']))
+        !!(response_body && (response_body['errors'] || response_body['error']))
       end
 
       private
 
-      attr_reader :action, :response
+      attr_reader :action, :response_body
 
       def logger
         KnapsackPro.logger
@@ -61,7 +61,7 @@ module KnapsackPro
         }
       end
 
-      def parse_response(body)
+      def parse_response_body(body)
         return '' if body == '' || body.nil?
         JSON.parse(body)
       rescue JSON::ParserError
@@ -69,8 +69,8 @@ module KnapsackPro
       end
 
       def seed
-        return if @response.nil? || @response == ''
-        response['build_distribution_id']
+        return if @response_body.nil? || @response_body == ''
+        response_body['build_distribution_id']
       end
 
       def has_seed?
@@ -86,7 +86,7 @@ module KnapsackPro
         http.read_timeout = TIMEOUT
 
         http_response = http.post(uri.path, request_body, json_headers)
-        @response = parse_response(http_response.body)
+        @response_body = parse_response_body(http_response.body)
 
         request_uuid = http_response.header['X-Request-Id']
 
@@ -94,12 +94,12 @@ module KnapsackPro
         logger.debug("Test suite split seed: #{seed}") if has_seed?
         logger.debug('API response:')
         if errors?
-          logger.error(response)
+          logger.error(response_body)
         else
-          logger.debug(response)
+          logger.debug(response_body)
         end
 
-        response
+        response_body
       rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
         retries += 1
