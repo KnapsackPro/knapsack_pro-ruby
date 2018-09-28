@@ -2,6 +2,15 @@
 
 * TODO
 
+### 1.0.0
+
+* Release 1.0.0 is backward compatible with all previous releases.
+* Run tests in Fallback Mode when API response is 5xx
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/69
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v0.57.0...v1.0.0
+
 ### 0.57.0
 
 * Add support for Solano CI and AppVeyor
