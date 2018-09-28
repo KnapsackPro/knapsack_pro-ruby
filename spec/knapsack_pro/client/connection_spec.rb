@@ -34,7 +34,7 @@ describe KnapsackPro::Client::Connection do
         expect(http).to receive(:read_timeout=).with(15)
 
         header = { 'X-Request-Id' => 'fake-uuid' }
-        http_response = instance_double(Net::HTTPOK, body: body, header: header)
+        http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).with(
           endpoint_path,
           "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
@@ -47,8 +47,9 @@ describe KnapsackPro::Client::Connection do
         ).and_return(http_response)
       end
 
-      context 'when body response is json' do
+      context 'when body response is json and API response code is 400' do
         let(:body) { '{"errors": "value"}' }
+        let(:code) { '400' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
@@ -67,8 +68,30 @@ describe KnapsackPro::Client::Connection do
         end
       end
 
+      context 'when body response is json and API response code is 500' do
+        let(:body) { '{"error": "Internal Server Error"}' }
+        let(:code) { '500' } # it must be string code
+
+        before do
+          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:debug).with('API response:')
+        end
+
+        it do
+          parsed_response = { 'error' => 'Internal Server Error' }
+
+          expect(logger).to receive(:error).with(parsed_response)
+
+          expect(subject).to eq(parsed_response)
+          expect(connection.success?).to be false
+          expect(connection.errors?).to be true
+        end
+      end
+
       context 'when body response is json with build_distribution_id' do
         let(:body) { '{"build_distribution_id": "seed-uuid"}' }
+        let(:code) { '200' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
@@ -90,6 +113,7 @@ describe KnapsackPro::Client::Connection do
 
       context 'when body response is empty' do
         let(:body) { '' }
+        let(:code) { '200' } # it must be string code
 
         before do
           expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
@@ -112,21 +136,48 @@ describe KnapsackPro::Client::Connection do
     subject { connection.success? }
 
     before do
-      allow(connection).to receive(:response).and_return(response)
+      allow(connection).to receive(:response_body).and_return(response_body)
     end
 
     context 'when response has no value' do
-      let(:response) { nil }
+      let(:response_body) { nil }
 
       it { should be false }
     end
 
     context 'when response has value' do
-      let(:response) do
+      let(:response_body) do
         { 'fake' => 'response' }
       end
 
-      it { should be true }
+      before do
+        http_response = double(code: code)
+        allow(connection).to receive(:http_response).and_return(http_response)
+      end
+
+      context 'when response code is 200' do
+        let(:code) { '200' } # it must be string code
+
+        it { should be true }
+      end
+
+      context 'when response code is 300' do
+        let(:code) { '300' } # it must be string code
+
+        it { should be true }
+      end
+
+      context 'when response code is 400' do
+        let(:code) { '400' } # it must be string code
+
+        it { should be true }
+      end
+
+      context 'when response code is 500' do
+        let(:code) { '500' } # it must be string code
+
+        it { should be false }
+      end
     end
   end
 
@@ -134,18 +185,18 @@ describe KnapsackPro::Client::Connection do
     subject { connection.errors? }
 
     before do
-      allow(connection).to receive(:response).and_return(response)
+      allow(connection).to receive(:response_body).and_return(response_body)
     end
 
     context 'when response has no value' do
-      let(:response) { nil }
+      let(:response_body) { nil }
 
       it { should be false }
     end
 
     context 'when response has value' do
       context 'when response has no errors' do
-        let(:response) do
+        let(:response_body) do
           { 'fake' => 'response' }
         end
 
@@ -153,7 +204,7 @@ describe KnapsackPro::Client::Connection do
       end
 
       context 'when response has errors' do
-        let(:response) do
+        let(:response_body) do
           { 'errors' => [{ 'field' => 'is wrong' }] }
         end
 
@@ -161,7 +212,7 @@ describe KnapsackPro::Client::Connection do
       end
 
       context 'when response has error (i.e. internal server error)' do
-        let(:response) do
+        let(:response_body) do
           { 'error' => 'Internal Server Error' }
         end
 
