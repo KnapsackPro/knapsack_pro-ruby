@@ -1,6 +1,14 @@
 module KnapsackPro
   module Config
     class Env
+      LOG_LEVELS = {
+        'fatal'  => ::Logger::FATAL,
+        'error'  => ::Logger::ERROR,
+        'warn'  => ::Logger::WARN,
+        'info'  => ::Logger::INFO,
+        'debug' => ::Logger::DEBUG,
+      }
+
       class << self
         def ci_node_total
           (ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] ||
@@ -172,13 +180,7 @@ module KnapsackPro
         end
 
         def log_level
-          {
-            'fatal'  => ::Logger::FATAL,
-            'error'  => ::Logger::ERROR,
-            'warn'  => ::Logger::WARN,
-            'info'  => ::Logger::INFO,
-            'debug' => ::Logger::DEBUG,
-          }[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::DEBUG
+          LOG_LEVELS[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::DEBUG
         end
 
         private
