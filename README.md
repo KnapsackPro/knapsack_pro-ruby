@@ -412,7 +412,7 @@ Please use a separate API token for queue mode from one used already for regular
 
 Use this command to run queue mode:
 
-    # RSpec
+    # RSpec >= 3.x
     bundle exec rake knapsack_pro:queue:rspec
 
     # Minitest
