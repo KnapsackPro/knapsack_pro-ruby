@@ -12,4 +12,10 @@ describe KnapsackPro::LoggerWrapper do
       it { should include "[knapsack_pro] Test message\n" }
     end
   end
+
+  it 'can set logger level via logger wrapper' do
+    logger_wrapper.level = ::Logger::INFO
+
+    expect(logger_wrapper.level).to eq 1
+  end
 end
