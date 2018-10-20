@@ -404,6 +404,8 @@ things like external requests done in individual tests).
 On the Knapsack Pro API side, there is test file queue generated for your CI build. Each CI node periodically requests the Knapsack Pro API for test files
 that should be executed next. Thanks to that each CI node will finish tests at the same time.
 
+See how it works and what problems can be solved with Queue Mode https://youtu.be/hUEB1XDKEFY
+
 ### How to use queue mode?
 
 Please use a separate API token for queue mode from one used already for regular mode.
