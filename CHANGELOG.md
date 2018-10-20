@@ -2,6 +2,14 @@
 
 * TODO
 
+### 1.0.1
+
+* Fix bug with not being able to set log level via logger wrapper.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/70
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.0.0...v1.0.1
+
 ### 1.0.0
 
 * Release 1.0.0 is backward compatible with all previous releases.
