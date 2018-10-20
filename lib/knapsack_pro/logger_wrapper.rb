@@ -8,9 +8,13 @@ module KnapsackPro
 
     attr_reader :logger
 
-    def method_missing(m, *args, &block)
-      args[0] = "[knapsack_pro] #{args[0]}"
-      logger.send(m, *args, &block)
+    LOG_LEVEL_METHODS = KnapsackPro::Config::Env::LOG_LEVELS.keys.map(&:to_sym)
+
+    def method_missing(method, *args, &block)
+      if LOG_LEVEL_METHODS.include?(method)
+        args[0] = "[knapsack_pro] #{args[0]}"
+      end
+      logger.send(method, *args, &block)
     end
   end
 end
