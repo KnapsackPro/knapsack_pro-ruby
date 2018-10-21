@@ -15,6 +15,8 @@ module KnapsackPro
     end
 
     def start_timer
+      puts '@'*50
+      puts @test_files_with_time.inspect
       @start_time = now_without_mock_time.to_f
     end
 
@@ -28,6 +30,14 @@ module KnapsackPro
     def current_test_path
       raise("current_test_path needs to be set by Knapsack Pro Adapter's bind method") unless @current_test_path
       @current_test_path.sub(/^\.\//, '')
+    end
+
+    def set_prerun_tests(test_file_paths)
+      test_file_paths.each do |test_file_path|
+        @test_files_with_time[test_file_path] = 0.1
+      end
+      puts '@'*50
+      puts @test_files_with_time.inspect
     end
 
     def to_a

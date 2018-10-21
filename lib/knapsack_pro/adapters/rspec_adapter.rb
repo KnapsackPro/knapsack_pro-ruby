@@ -62,7 +62,7 @@ module KnapsackPro
       def bind_tracker_reset
         ::RSpec.configure do |config|
           config.before(:suite) do
-            KnapsackPro.tracker.reset!
+            #KnapsackPro.tracker.reset!
           end
         end
       end

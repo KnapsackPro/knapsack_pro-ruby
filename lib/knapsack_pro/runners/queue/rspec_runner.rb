@@ -48,6 +48,8 @@ module KnapsackPro
             can_initialize_queue: can_initialize_queue,
             executed_test_files: all_test_file_paths
           )
+          KnapsackPro.tracker.reset!
+          KnapsackPro.tracker.set_prerun_tests(test_file_paths)
 
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
