@@ -31,23 +31,13 @@ module KnapsackPro
         raise NotImplementedError
       end
 
-      def bind_save_queue_report
-        raise NotImplementedError
-      end
-
-      def bind_tracker_reset
-        raise NotImplementedError
-      end
-
       def bind_before_queue_hook
         raise NotImplementedError
       end
 
       def bind_queue_mode
-        bind_tracker_reset
         bind_before_queue_hook
         bind_time_tracker
-        bind_save_queue_report
       end
     end
   end

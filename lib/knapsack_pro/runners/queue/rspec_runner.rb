@@ -48,8 +48,6 @@ module KnapsackPro
             can_initialize_queue: can_initialize_queue,
             executed_test_files: all_test_file_paths
           )
-          KnapsackPro.tracker.reset!
-          KnapsackPro.tracker.set_prerun_tests(test_file_paths)
 
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
@@ -71,6 +69,9 @@ module KnapsackPro
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
+            KnapsackPro.tracker.reset!
+            KnapsackPro.tracker.set_prerun_tests(test_file_paths)
+
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
 
@@ -83,6 +84,8 @@ module KnapsackPro
             rspec_clear_examples
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
+
+            KnapsackPro::Report.save_subset_queue_to_file
 
             return {
               status: :next,

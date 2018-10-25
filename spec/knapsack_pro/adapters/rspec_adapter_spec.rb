@@ -115,30 +115,6 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       end
     end
 
-    describe '#bind_save_queue_report' do
-      it do
-        expect(config).to receive(:after).with(:suite).and_yield
-        expect(::RSpec).to receive(:configure).and_yield(config)
-
-        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
-
-        subject.bind_save_queue_report
-      end
-    end
-
-    describe '#bind_tracker_reset' do
-      it do
-        expect(config).to receive(:before).with(:suite).and_yield
-        expect(::RSpec).to receive(:configure).and_yield(config)
-
-        tracker = instance_double(KnapsackPro::Tracker)
-        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
-        expect(tracker).to receive(:reset!)
-
-        subject.bind_tracker_reset
-      end
-    end
-
     describe '#bind_before_queue_hook' do
       it do
         expect(config).to receive(:before).with(:suite).and_yield
