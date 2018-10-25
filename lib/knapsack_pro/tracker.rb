@@ -15,8 +15,6 @@ module KnapsackPro
     end
 
     def start_timer
-      puts 'S'*50
-      puts @test_files_with_time.inspect
       @start_time = now_without_mock_time.to_f
     end
 
@@ -40,8 +38,6 @@ module KnapsackPro
         # The time is required by Knapsack Pro API.
         @test_files_with_time[test_file_path] = 0.1
       end
-      puts '@'*50
-      puts @test_files_with_time.inspect
     end
 
     def to_a
