@@ -2,6 +2,14 @@
 
 * TODO
 
+### 1.0.2
+
+* Track time execution of all tests assigned to CI node in Queue Mode even when they did not run due syntax error or being pending/empty in test run.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/71
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.0.1...v1.0.2
+
 ### 1.0.1
 
 * Fix bug with not being able to set log level via logger wrapper.
