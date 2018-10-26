@@ -30,6 +30,16 @@ module KnapsackPro
       @current_test_path.sub(/^\.\//, '')
     end
 
+    def set_prerun_tests(test_file_paths)
+      test_file_paths.each do |test_file_path|
+        # Set a default time for test file
+        # in case when the test file will not be run
+        # due syntax error or being pending.
+        # The time is required by Knapsack Pro API.
+        @test_files_with_time[test_file_path] = 0.1
+      end
+    end
+
     def to_a
       test_files = []
       @test_files_with_time.each do |path, time_execution|

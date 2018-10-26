@@ -59,6 +59,7 @@ module KnapsackPro
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
             KnapsackPro.tracker.reset!
+            KnapsackPro.tracker.set_prerun_tests(test_file_paths)
 
             all_test_file_paths += test_file_paths
 

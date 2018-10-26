@@ -106,7 +106,10 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
         expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SUBSET_QUEUE_ID', subset_queue_id)
 
-        expect(KnapsackPro).to receive_message_chain(:tracker, :reset!)
+        tracker = instance_double(KnapsackPro::Tracker)
+        expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
+        expect(tracker).to receive(:reset!)
+        expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
         # .minitest_run
         expect(described_class).to receive(:require).with('./a_test.rb')
