@@ -2,6 +2,14 @@
 
 * TODO
 
+### 1.1.0
+
+* Add test file exclude pattern.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/72
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.0.2...v1.1.0
+
 ### 1.0.2
 
 * Track time execution of all tests assigned to CI node in Queue Mode even when they did not run due syntax error or being pending/empty in test run.
