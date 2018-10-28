@@ -153,6 +153,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_file_exclude_pattern' do
+    subject { described_class.test_file_exclude_pattern }
+
+    context 'when ENV exists' do
+      let(:test_file_exclude_pattern) { 'spec/features/*_spec.rb' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN' => test_file_exclude_pattern }) }
+      it { should eq test_file_exclude_pattern }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.test_dir' do
     subject { described_class.test_dir }
 
