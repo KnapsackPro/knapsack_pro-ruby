@@ -21,7 +21,16 @@ module KnapsackPro
     attr_reader :test_file_pattern
 
     def test_files
-      Dir.glob(test_file_pattern).uniq.sort
+      test_file_paths = Dir.glob(test_file_pattern).uniq
+
+      excluded_test_file_paths =
+        if KnapsackPro::Config::Env.test_file_exclude_pattern
+          Dir.glob(KnapsackPro::Config::Env.test_file_exclude_pattern).uniq
+        else
+          []
+        end
+
+      (test_file_paths - excluded_test_file_paths).sort
     end
 
     def test_file_hash_for(test_file_path)
