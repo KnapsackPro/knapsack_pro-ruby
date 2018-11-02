@@ -155,6 +155,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why I don't see all test files being recorded in user dashboard](#why-i-dont-see-all-test-files-being-recorded-in-user-dashboard)
     - [Why when I use 2 different CI providers then not all test files are executed?](#why-when-i-use-2-different-ci-providers-then-not-all-test-files-are-executed)
     - [How to run only RSpec feature tests or non feature tests?](#how-to-run-only-rspec-feature-tests-or-non-feature-tests)
+    - [How to exclude tests from running them?](#how-to-exclude-tests-from-running-them)
     - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
     - [How to run knapsack_pro only on a few parallel CI nodes instead of all?](#how-to-run-knapsack_pro-only-on-a-few-parallel-ci-nodes-instead-of-all)
     - [How to use simplecov in Queue Mode?](#how-to-use-simplecov-in-queue-mode)
@@ -1863,6 +1864,27 @@ KNAPSACK_PRO_TEST_DIR=spec \
 KNAPSACK_PRO_TEST_FILE_PATTERN="spec/features/**{,/*/**}/*_spec.rb" \
 bundle exec rake knapsack_pro:queue:rspec
 ```
+
+You can also learn [how to use exclude pattern](#how-to-exclude-tests-from-running-them).
+
+#### How to exclude tests from running them?
+
+For instance you would like to run all tests except tests in `features` directory then you could do:
+
+```
+KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN="spec/features/**{,/*/**}/*_spec.rb" \
+bundle exec rake knapsack_pro:queue:rspec
+```
+
+You can define at the same time the pattern for tests you would like to run and the exclude pattern. For instance run all controller tests except admin controller tests.
+
+```
+KNAPSACK_PRO_TEST_FILE_PATTERN="spec/controllers/**{,/*/**}/*_spec.rb" \
+KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN="spec/controllers/admin/**{,/*/**}/*_spec.rb" \
+bundle exec rake knapsack_pro:queue:rspec
+```
+
+The test file pattern and exclude pattern support any glob pattern handled by [`Dir.glob`](http://ruby-doc.org/core-2.4.1/Dir.html#method-c-glob).
 
 #### How to use CodeClimate with knapsack_pro?
 
