@@ -18,18 +18,39 @@ describe KnapsackPro::TestFileFinder do
 
     subject { described_class.new(test_file_pattern).call }
 
-    it do
-      should eq([
-        {
-          'path' => 'spec_fake/controllers/users_controller_spec.rb',
-        },
-        {
-          'path' => 'spec_fake/models/admin_spec.rb',
-        },
-        {
-          'path' => 'spec_fake/models/user_spec.rb',
-        },
-      ])
+    context 'when KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN is not defined' do
+      it do
+        should eq([
+          {
+            'path' => 'spec_fake/controllers/users_controller_spec.rb',
+          },
+          {
+            'path' => 'spec_fake/models/admin_spec.rb',
+          },
+          {
+            'path' => 'spec_fake/models/user_spec.rb',
+          },
+        ])
+      end
+    end
+
+    context 'when KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN is defined' do
+      let(:test_file_exclude_pattern) { 'spec_fake/controllers/*_spec.rb' }
+
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN' => test_file_exclude_pattern })
+      end
+
+      it do
+        should eq([
+          {
+            'path' => 'spec_fake/models/admin_spec.rb',
+          },
+          {
+            'path' => 'spec_fake/models/user_spec.rb',
+          },
+        ])
+      end
     end
   end
 end
