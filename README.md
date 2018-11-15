@@ -102,7 +102,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for Travis users](#info-for-travis-users)
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
-    - [Info for Gitlab CI users](#info-for-gitlab-ci-users)
+    - [Info for GitLab CI users](#info-for-gitlab-ci-users)
       - [GitLab CI `>= 11.5`](#gitlab-ci--115)
       - [GitLab CI `< 11.5` (old GitLab CI)](#gitlab-ci--115-old-gitlab-ci)
     - [Info for codeship.com users](#info-for-codeshipcom-users)
@@ -885,9 +885,9 @@ Here you can find article [how to set up a new pipeline for your project in Buil
 
 If you want to use Buildkite retry single agent feature to retry just failed tests on particular agent (CI node) then you should set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
-#### Info for Gitlab CI users
+#### Info for GitLab CI users
 
-Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to [Secret Variables](https://gitlab.com/help/ci/variables/README.md#secret-variables) in `Gitlab CI Settings -> CI/CD Pipelines -> Secret Variables`.
+Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to [Secret Variables](https://gitlab.com/help/ci/variables/README.md#secret-variables) in `GitLab CI Settings -> CI/CD Pipelines -> Secret Variables`.
 
 ##### GitLab CI `>= 11.5`
 
@@ -915,7 +915,7 @@ Here you can find info [how to configure the GitLab parallel CI nodes](https://d
 
 ##### GitLab CI `< 11.5` (old GitLab CI)
 
-Gitlab CI does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same `test` stage. Below is relevant part of `.gitlab-ci.yml` configuration for 2 parallel jobs.
+GitLab CI does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same `test` stage. Below is relevant part of `.gitlab-ci.yml` configuration for 2 parallel jobs.
 
 ```
 # .gitlab-ci.yml
