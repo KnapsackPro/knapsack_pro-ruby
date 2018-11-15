@@ -895,17 +895,19 @@ Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KN
 test:
   parallel: 2
 
-  # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
-  script: bundle exec rake knapsack_pro:queue:rspec
+  # Knapsack Pro Regular Mode (deterministic test suite split)
+  script: bundle exec rake knapsack_pro:rspec
 
   # Other commands you could use:
 
   # Knapsack Pro Regular Mode (deterministic test suite split)
-  # bundle exec rake knapsack_pro:rspec
   # bundle exec rake knapsack_pro:cucumber
   # bundle exec rake knapsack_pro:minitest
+  # bundle exec rake knapsack_pro:test_unit
+  # bundle exec rake knapsack_pro:spinach
 
   # Knapsack Pro Queue Mode (dynamic test suite split)
+  # bundle exec rake knapsack_pro:queue:rspec
   # bundle exec rake knapsack_pro:queue:minitest
 ```
 
