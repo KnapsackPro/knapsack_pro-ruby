@@ -4,11 +4,14 @@ module KnapsackPro
     module CI
       class GitlabCI < Base
         def node_total
-          # not provided by Gitlab CI
+          ENV['CI_NODE_TOTAL']
         end
 
         def node_index
-          # not provided by Gitlab CI
+          return unless ENV['GITLAB_CI']
+          # GitLab 11.5
+          index = ENV['CI_NODE_INDEX']
+          index.to_i - 1 if index
         end
 
         def node_build_id

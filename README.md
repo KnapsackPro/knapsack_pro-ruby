@@ -103,6 +103,8 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Info for semaphoreapp.com users](#info-for-semaphoreappcom-users)
     - [Info for buildkite.com users](#info-for-buildkitecom-users)
     - [Info for Gitlab CI users](#info-for-gitlab-ci-users)
+      - [GitLab CI `>= 11.5`](#gitlab-ci--115)
+      - [GitLab CI `< 11.5` (old GitLab CI)](#gitlab-ci--115-old-gitlab-ci)
     - [Info for codeship.com users](#info-for-codeshipcom-users)
     - [Info for Heroku CI users](#info-for-heroku-ci-users)
     - [Info for Solano CI users](#info-for-solano-ci-users)
@@ -885,6 +887,32 @@ If you want to use Buildkite retry single agent feature to retry just failed tes
 
 #### Info for Gitlab CI users
 
+Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to [Secret Variables](https://gitlab.com/help/ci/variables/README.md#secret-variables) in `Gitlab CI Settings -> CI/CD Pipelines -> Secret Variables`.
+
+##### GitLab CI `>= 11.5`
+
+```yaml
+test:
+  parallel: 2
+
+  # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
+  script: bundle exec rake knapsack_pro:queue:rspec
+
+  # Other commands you could use:
+
+  # Knapsack Pro Regular Mode (deterministic test suite split)
+  # bundle exec rake knapsack_pro:rspec
+  # bundle exec rake knapsack_pro:cucumber
+  # bundle exec rake knapsack_pro:minitest
+
+  # Knapsack Pro Queue Mode (dynamic test suite split)
+  # bundle exec rake knapsack_pro:queue:minitest
+```
+
+Here you can find info [how to configure the GitLab parallel CI nodes](https://docs.gitlab.com/ee/ci/yaml/#parallel).
+
+##### GitLab CI `< 11.5` (old GitLab CI)
+
 Gitlab CI does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same `test` stage. Below is relevant part of `.gitlab-ci.yml` configuration for 2 parallel jobs.
 
 ```
@@ -914,8 +942,6 @@ test_ci_node_1:
     - bundle exec rake knapsack_pro:cucumber
     - bundle exec rake knapsack_pro:queue:rspec
 ```
-
-Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to [Secret Variables](https://gitlab.com/help/ci/variables/README.md#secret-variables) in `Gitlab CI Settings -> CI/CD Pipelines -> Secret Variables`.
 
 #### Info for codeship.com users
 
