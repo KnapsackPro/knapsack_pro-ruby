@@ -2,6 +2,14 @@
 
 * TODO
 
+### 1.2.0
+
+* Add support for GitLab CI env vars CI_NODE_TOTAL and CI_NODE_INDEX.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/73
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.1.0...v1.2.0
+
 ### 1.1.0
 
 * Add test file exclude pattern.
