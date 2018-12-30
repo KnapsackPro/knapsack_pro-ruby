@@ -118,6 +118,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why I see `LoadError: cannot load such file -- spec_helper`?](#why-i-see-loaderror-cannot-load-such-file----spec_helper)
     - [Why my CI build fails when I use Test::Unit even when all tests passed?](#why-my-ci-build-fails-when-i-use-testunit-even-when-all-tests-passed)
     - [Why I see HEAD as branch name in user dashboard for Build metrics for my API token?](#why-i-see-head-as-branch-name-in-user-dashboard-for-build-metrics-for-my-api-token)
+    - [Why Capybara feature tests randomly fail when using CI parallelisation?](#why-capybara-feature-tests-randomly-fail-when-using-ci-parallelisation)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
@@ -1221,6 +1222,20 @@ The same can happen for CI provider not supported by default by knapsack_pro whe
 knapack_pro uses git command `git -C /home/user/project_dir rev-parse --abbrev-ref HEAD` to detect branch name. See [source of knapack_pro](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/repository_adapters/git_adapter.rb). In most of cases it's good way to detect branch name. But if your CI provider during CI build checkouts to specific git commit then git cannot provide the name of the branch. In such scenario you would see `HEAD` as your branch name. It is good enough situation and knapack_pro will work correctly. The benefit of knowing exactly the branch name allows KnapsackPro API to better track history of test files timing changes across branches in order to better do split of test suite. The difference should be rather very small so it's not a problem that you have `HEAD` as branch name.
 
 If you would like to see exact branch name instead of `HEAD` in your `build metrics` history in [user dashboard](https://knapsackpro.com/dashboard) then you can explicitly provide the branch name with `KNAPSACK_PRO_BRANCH` for each CI build.
+
+#### Why Capybara feature tests randomly fail when using CI parallelisation?
+
+It can happen that when you use CI parallelisation then your CI machine is overloaded and some of Capybara feature specs may randomly fail when tested website loaded slowly.
+
+You can try to increase default Capybara max wait time from 2 seconds to something bigger like 5 seconds to ensure the Capybara will wait longer till the website is loaded before marking test as failed.
+
+```ruby
+# spec/rails_helper.rb
+Capybara.default_max_wait_time = 5 # in seconds
+```
+
+For instance, this tip might be helpful for Heroku CI users who use Heroku dynos with lower performance.
+
 
 #### Queue Mode problems
 
