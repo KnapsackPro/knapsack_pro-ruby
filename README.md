@@ -130,6 +130,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
       - [How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec)
       - [Parallel tests Cucumber and RSpec with Cucumber failures exit CI node early leaving fewer CI nodes to finish RSpec Queue.](#parallel-tests-cucumber-and-rspec-with-cucumber-failures-exit-ci-node-early-leaving-fewer-ci-nodes-to-finish-rspec-queue)
       - [Why when I reran the same build (same commit hash, etc) on Codeship then no tests would get executed in Queue Mode?](#why-when-i-reran-the-same-build-same-commit-hash-etc-on-codeship-then-no-tests-would-get-executed-in-queue-mode)
+      - [Why knapsack_pro hangs / freezes / is stale i.e. for Codeship in Queue Mode?](#why-knapsack_pro-hangs--freezes--is-stale-ie-for-codeship-in-queue-mode)
       - [How to find seed in RSpec output when I use Queue Mode for RSpec?](#how-to-find-seed-in-rspec-output-when-i-use-queue-mode-for-rspec)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
@@ -1358,6 +1359,14 @@ This way knapsack_pro won’t use build ID provided by Codeship and each build w
 There is one edge case with that solution. Please note that the knapsack_pro gem doesn't have a CI build ID in order to generate a queue for each particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 
 To avoid this you should specify a unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
+
+##### Why knapsack_pro hangs / freezes / is stale i.e. for Codeship in Queue Mode?
+
+Some users with larger projects notice that in Queue Mode knapsack_pro ruby process hangs, for instance for CodeShip CI users.
+
+It happens due too big RSpec log output in Queue Mode. To produce less logs on output you can change log level to `KNAPSACK_PRO_LOG_LEVEL=warn`.
+
+Learn more about [log levels](#how-can-i-change-log-level).
 
 ##### How to find seed in RSpec output when I use Queue Mode for RSpec?
 
