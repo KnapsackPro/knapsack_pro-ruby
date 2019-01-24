@@ -122,6 +122,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
+      - [Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?](#why-when-i-use-queue-mode-for-rspec-then-i-see-error-superclass-mismatch-for-class)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
       - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
@@ -1282,6 +1283,60 @@ FactoryBot.define do
   end
 end
 ```
+
+##### Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?
+
+You may see error like:
+
+```
+TypeError:
+  superclass mismatch for class BatchClass
+```
+
+when you have 2 test files like this one:
+
+```
+# spec/a_spec.rb
+class BaseBatchClass
+end
+
+module Mock
+  module FakeModels
+    class BatchClass < BaseBatchClass
+      def args
+      end
+    end
+  end
+end
+
+describe 'A test of something' do
+  it do
+  end
+end
+```
+
+```
+# spec/b_spec.rb
+class DifferentBaseBatchClass
+end
+
+module Mock
+  module FakeModels
+    # Note the base class is different here!
+    class BatchClass < DifferentBaseBatchClass
+      def args
+      end
+    end
+  end
+end
+
+describe 'B test of something' do
+  it do
+  end
+end
+```
+
+Instead of mocking like shown above you could use [RSpec stub_const](https://relishapp.com/rspec/rspec-mocks/docs/mutating-constants) to solve error `superclass mismatch for class BatchClass`.
 
 ##### Why I don't see collected time execution data for my build in user dashboard?
 
