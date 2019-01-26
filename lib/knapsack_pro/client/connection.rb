@@ -103,7 +103,7 @@ module KnapsackPro
         end
 
         response_body
-      rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
+      rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
         retries += 1
         if retries < 3
