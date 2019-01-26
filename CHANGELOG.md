@@ -2,6 +2,12 @@
 
 * TODO
 
+### 1.3.0
+
+* Add metadata to the gemspec
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.2.1...v1.3.0
+
 ### 1.2.1
 
 * Run Fallback Mode for exception `Errno::EPIPE`
