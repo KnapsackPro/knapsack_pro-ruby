@@ -6,12 +6,19 @@ require 'knapsack_pro/version'
 Gem::Specification.new do |spec|
   spec.name          = "knapsack_pro"
   spec.version       = KnapsackPro::VERSION
-  spec.authors       = ["ArturT"]
-  spec.email         = ["arturtrzop@gmail.com"]
+  spec.authors       = ['ArturT']
+  spec.email         = ['arturtrzop@gmail.com']
   spec.summary       = %q{Knapsack Pro splits tests across CI nodes and makes sure that tests will run comparable time on each node.}
   spec.description   = %q{Parallel tests across CI server nodes based on each test file's time execution. It uses KnapsackPro.com API.}
-  spec.homepage      = "https://github.com/KnapsackPro/knapsack_pro-ruby"
-  spec.license       = "MIT"
+  spec.homepage      = 'https://knapsackpro.com'
+  spec.license       = 'MIT'
+  spec.metadata    = {
+    'bug_tracker_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby/issues',
+    'changelog_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/CHANGELOG.md',
+    'documentation_uri' => 'https://docs.knapsackpro.com/integration/',
+    'homepage_uri' => 'https://knapsackpro.com',
+    'source_code_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby'
+  }
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
