@@ -2,6 +2,14 @@
 
 * TODO
 
+### 1.2.1
+
+* Run Fallback Mode for exception `Errno::EPIPE`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/75
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.2.0...v1.2.1
+
 ### 1.2.0
 
 * Add support for GitLab CI env vars CI_NODE_TOTAL and CI_NODE_INDEX.
