@@ -150,6 +150,9 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
       - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
         - [How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
         - [Why `tmp/rspec_final_results.xml` is corrupted when I use junit formatter with knapsack_pro queue mode?](#why-tmprspec_final_resultsxml-is-corrupted-when-i-use-junit-formatter-with-knapsack_pro-queue-mode)
+    - [How to use JSON formatter for RSpec?](#how-to-use-json-formatter-for-rspec)
+      - [How to use RSpec JSON formatter with knapsack_pro Queue Mode?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode)
+        - [How to use RSpec JSON formatter with knapsack_pro Queue Mode when CI nodes use common local drive?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
     - [How many API keys I need?](#how-many-api-keys-i-need)
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
@@ -1698,6 +1701,67 @@ end
 
 The `tmp/rspec_final_results.xml` might be corrupted due syntax error in your test suite. First check if your test suite is green.
 Another reason might be that you did not configure the junit formatter as shown in the example for Queue Mode. Please check above 2 questions & answers explaing that.
+
+#### How to use JSON formatter for RSpec?
+
+##### How to use RSpec JSON formatter with knapsack_pro Queue Mode?
+
+You need to specify `format` and `out` argument (it's important to provide both).
+
+```
+# Queue Mode
+bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format json --out tmp/rspec.json]"
+```
+
+The JSON report will contain all tests executed across intermediate test subset runs based on work queue. You need to add after subset queue hook to rename `rspec.json` to `rspec_final_results.json` thanks to that the final results file will contain valid json with all tests executed on the CI node. This is related to the way how Queue Mode works. Detailed explanation is in the [issue](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/40).
+
+```
+# spec_helper.rb or rails_helper.rb
+
+# TODO This must be the same path as value for rspec --out argument
+# Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.json may not work. Please use full path instead.
+TMP_RSPEC_JSON_REPORT = 'tmp/rspec.json'
+# move results to FINAL_RSPEC_JSON_REPORT so the results won't accumulate with duplicated JSON in TMP_RSPEC_JSON_REPORT
+FINAL_RSPEC_JSON_REPORT = 'tmp/rspec_final_results.json'
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  if File.exist?(TMP_RSPEC_JSON_REPORT)
+    FileUtils.mv(TMP_RSPEC_JSON_REPORT, FINAL_RSPEC_JSON_REPORT)
+  end
+end
+```
+
+###### How to use RSpec JSON formatter with knapsack_pro Queue Mode when CI nodes use common local drive?
+
+Note if you use a CI provider or your own CI solution that uses common local drive for all parallel CI nodes then above solution needs to be adjusted to produce report file with CI node index number in the file name to avoid file conflicts. Example file name with CI node index number: `tmp/rspec_final_results_N.json`.
+
+```
+# Queue Mode
+
+# must be exported to read correctly the value in below knapsack_pro command
+export KNAPSACK_PRO_CI_NODE_INDEX=0
+# if your CI provider exposes CI node index under other environment variable name then you could use it instead
+
+bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format json --out tmp/rspec_$KNAPSACK_PRO_CI_NODE_INDEX.json]"
+```
+
+In below code we use CI node index number in `TMP_RSPEC_JSON_REPORT` and `FINAL_RSPEC_JSON_REPORT`:
+
+```
+# spec_helper.rb or rails_helper.rb
+
+# TODO This must be the same path as value for rspec --out argument
+# Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.json may not work. Please use full path instead.
+TMP_RSPEC_JSON_REPORT = "tmp/rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.json"
+# move results to FINAL_RSPEC_JSON_REPORT so the results won't accumulate with duplicated JSON in TMP_RSPEC_JSON_REPORT
+FINAL_RSPEC_JSON_REPORT = "tmp/rspec_final_results_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.json"
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  if File.exist?(TMP_RSPEC_JSON_REPORT)
+    FileUtils.mv(TMP_RSPEC_JSON_REPORT, FINAL_RSPEC_JSON_REPORT)
+  end
+end
+```
 
 #### How many API keys I need?
 
