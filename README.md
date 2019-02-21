@@ -925,7 +925,7 @@ Here you can find info [how to configure the GitLab parallel CI nodes](https://d
 
 GitLab CI does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same `test` stage. Below is relevant part of `.gitlab-ci.yml` configuration for 2 parallel jobs.
 
-```
+```yaml
 # .gitlab-ci.yml
 stages:
   - test
@@ -999,7 +999,7 @@ For any sensitive environment variables (like Knapsack Pro API token) that you d
 
 Note the [Heroku CI Parallel Test Runs](https://devcenter.heroku.com/articles/heroku-ci-parallel-test-runs) are in Beta and you may need to ask Heroku support to enabled it for your project.
 
-```
+```json
 # app.json
 {
   "environments": {
