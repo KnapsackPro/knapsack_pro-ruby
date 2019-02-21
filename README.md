@@ -1614,7 +1614,7 @@ This way forked repositories have working test suite but without optimal test su
 Create the file `bin/knapsack_pro_rspec` with executable chmod in your main project repository.
 Below example is for rspec. You can change `$KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to `$KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` if you use cucumber etc.
 
-```
+```bash
 #!/bin/bash
 if [ "$KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC" = "" ]; then
   KNAPSACK_PRO_ENDPOINT=https://api-disabled-for-fork.knapsackpro.com \
@@ -1639,31 +1639,37 @@ Remember to follow other steps required for your CI provider.
 You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
 Here you can find example how to generate `rspec.xml` file with junit format and at the same time show normal documentation format output for RSpec.
 
-    # Regular Mode
-    bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+```
+# Regular Mode
+bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+```
 
 ##### How to use junit formatter with knapsack_pro queue mode?
 
 You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
 
-    # Queue Mode
-    bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+```
+# Queue Mode
+bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+```
 
 The xml report will contain all tests executed across intermediate test subset runs based on work queue. You need to add after subset queue hook to rename `rspec.xml` to `rspec_final_results.xml` thanks to that the final results file will contain only single xml tag with all tests executed on the CI node. This is related to the way how queue mode works. Detailed explanation is in the [issue](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/40).
 
-    # spec_helper.rb or rails_helper.rb
+```ruby
+# spec_helper.rb or rails_helper.rb
 
-    # TODO This must be the same path as value for rspec --out argument
-    # Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
-    TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
-    # move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
-    FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
+# TODO This must be the same path as value for rspec --out argument
+# Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
+TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
+# move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
+FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
 
-    KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
-      if File.exist?(TMP_RSPEC_XML_REPORT)
-        FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
-      end
-    end
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  if File.exist?(TMP_RSPEC_XML_REPORT)
+    FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
+  end
+end
+```
 
 ###### How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?
 
@@ -1681,7 +1687,7 @@ bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format Rspec
 
 In below code we use CI node index number in `TMP_RSPEC_XML_REPORT` and `FINAL_RSPEC_XML_REPORT`:
 
-```
+```ruby
 # spec_helper.rb or rails_helper.rb
 
 # TODO This must be the same path as value for rspec --out argument
@@ -1715,7 +1721,7 @@ bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format json 
 
 The JSON report will contain all tests executed across intermediate test subset runs based on work queue. You need to add after subset queue hook to rename `rspec.json` to `rspec_final_results.json` thanks to that the final results file will contain valid json with all tests executed on the CI node. This is related to the way how Queue Mode works. Detailed explanation is in the [issue](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/40).
 
-```
+```ruby
 # spec_helper.rb or rails_helper.rb
 
 # TODO This must be the same path as value for rspec --out argument
@@ -1747,7 +1753,7 @@ bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format json 
 
 In below code we use CI node index number in `TMP_RSPEC_JSON_REPORT` and `FINAL_RSPEC_JSON_REPORT`:
 
-```
+```ruby
 # spec_helper.rb or rails_helper.rb
 
 # TODO This must be the same path as value for rspec --out argument
