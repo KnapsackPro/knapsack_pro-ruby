@@ -1138,7 +1138,7 @@ You can learn basics about it in the article [Parallelism and Distributed Builds
 
 Here is example `Jenkinsfile` working with Jenkins Pipeline.
 
-```
+```groovy
 timeout(time: 60, unit: 'MINUTES') {
   node() {
     stage('Checkout') {
