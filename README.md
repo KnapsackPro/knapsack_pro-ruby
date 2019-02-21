@@ -241,7 +241,6 @@ Ensure you have `require false` in your Gemfile for webmock gem (see below) when
 
 ```ruby
 # Gemfile
-
 group :test do
   gem 'vcr'
   gem 'webmock', require: false
