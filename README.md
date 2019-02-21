@@ -1550,23 +1550,23 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
   To retry the particular CI node do this on your machine:
 
-      ```bash
-      RACK_ENV=test \
-      RAILS_ENV=test \
-      KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
-      KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
-      KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
-      KNAPSACK_PRO_CI_NODE_TOTAL=2 \
-      KNAPSACK_PRO_CI_NODE_INDEX=0 \
-      KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
-      bundle exec rake "knapsack_pro:queue:rspec"
-      ```
+  ```bash
+  RACK_ENV=test \
+  RAILS_ENV=test \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+  KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+  KNAPSACK_PRO_CI_NODE_INDEX=0 \
+  KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+  bundle exec rake "knapsack_pro:queue:rspec"
+  ```
 
   If you were running your tests with `--order random` on your CI like this:
 
-      ```bash
-      bundle exec rake "knapsack_pro:queue:rspec[--order random]"
-      ```
+  ```bash
+  bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+  ```
 
   Then you can find the seed number visible in rspec output:
 
@@ -1575,17 +1575,17 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
   You can pass the seed in your local environment to reproduce the tests in the same order as they were executed on CI node:
 
-      ```bash
-      RACK_ENV=test \
-      RAILS_ENV=test \
-      KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
-      KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
-      KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
-      KNAPSACK_PRO_CI_NODE_TOTAL=2 \
-      KNAPSACK_PRO_CI_NODE_INDEX=0 \
-      KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
-      bundle exec rake "knapsack_pro:queue:rspec[--seed 123]"
-      ```
+  ```bash
+  RACK_ENV=test \
+  RAILS_ENV=test \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+  KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+  KNAPSACK_PRO_CI_NODE_INDEX=0 \
+  KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+  bundle exec rake "knapsack_pro:queue:rspec[--seed 123]"
+  ```
 
 #### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
