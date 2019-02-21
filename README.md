@@ -196,8 +196,8 @@ end
 
 And then execute:
 
-```
-$ bundle install
+```bash
+bundle install
 ```
 
 If you are not using Rails then add this line at the bottom of `Rakefile`:
@@ -353,37 +353,41 @@ __Tip:__ In case you have for instance multiple rspec test suites then prepend e
 
 On your CI server run this command for the first CI node. Update `KNAPSACK_PRO_CI_NODE_INDEX` for the next one.
 
-    # Step for RSpec
-    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber
-    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest
-    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+# Step for Minitest
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit
-    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+# Step for test-unit
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach
-    $ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+# Step for Spinach
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+```
 
 You can add `KNAPSACK_PRO_TEST_FILE_PATTERN` if your tests are not in default directory. For instance:
 
-    # Step for RSpec
-    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_specs/**{,/*/**}/*_spec.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec
+KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_specs/**{,/*/**}/*_spec.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber
-    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**{,/*/**}/*.feature" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber
+KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**{,/*/**}/*.feature" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest
-    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**{,/*/**}/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+# Step for Minitest
+KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**{,/*/**}/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit
-    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**{,/*/**}/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+# Step for test-unit
+KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_tests/**{,/*/**}/*_test.rb" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach
-    $ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**{,/*/**}/*.feature" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+# Step for Spinach
+KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**{,/*/**}/*.feature" KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+```
 
 __Tip:__ If you use one of the supported CI providers then instead of the above steps you should [take a look at this](#supported-ci-providers).
 
@@ -426,15 +430,19 @@ Please use a separate API token for queue mode from one used already for regular
 
 Use this command to run queue mode:
 
-    # RSpec >= 3.x
-    bundle exec rake knapsack_pro:queue:rspec
+```bash
+# RSpec >= 3.x
+bundle exec rake knapsack_pro:queue:rspec
 
-    # Minitest
-    bundle exec rake knapsack_pro:queue:minitest
+# Minitest
+bundle exec rake knapsack_pro:queue:minitest
+```
 
 If the above command fails then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
 
-    bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
+```bash
+bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
+```
 
 Note: when you run queue mode command for the first time it might be slower.
 The second build should have a more optimal test suite split.
@@ -584,55 +592,73 @@ This is only for maintainer of knapsack_pro gem. Not for the end users.
 
 Knapsack Pro allows you to pass arguments through to rspec. For example if you want to run only specs that have the tag `focus`. If you do this with rspec directly it would look like:
 
-    $ bundle exec rake rspec --tag focus
+```bash
+bundle exec rake rspec --tag focus
+```
 
 To do this with Knapsack Pro you simply add your rspec arguments as parameters to the knapsack_pro rake task.
 
-    $ bundle exec rake "knapsack_pro:rspec[--tag focus]"
+```bash
+bundle exec rake "knapsack_pro:rspec[--tag focus]"
+```
 
 #### Passing arguments to cucumber
 
 Add arguments to knapsack_pro cucumber task like this:
 
-    $ bundle exec rake "knapsack_pro:cucumber[--name feature]"
+```bash
+bundle exec rake "knapsack_pro:cucumber[--name feature]"
+```
 
 #### Passing arguments to minitest
 
 Add arguments to knapsack_pro minitest task like this:
 
-    $ bundle exec rake "knapsack_pro:minitest[--arg_name value]"
+```bash
+bundle exec rake "knapsack_pro:minitest[--arg_name value]"
+```
 
 For instance to run verbose tests:
 
-    $ bundle exec rake "knapsack_pro:minitest[--verbose]"
+```bash
+bundle exec rake "knapsack_pro:minitest[--verbose]"
+```
 
 #### Passing arguments to test-unit
 
 Add arguments to knapsack_pro test-unit task like this:
 
-    $ bundle exec rake "knapsack_pro:test_unit[--arg_name value]"
+```bash
+bundle exec rake "knapsack_pro:test_unit[--arg_name value]"
+```
 
 For instance to run verbose tests:
 
-    $ bundle exec rake "knapsack_pro:test_unit[--verbose]"
+```bash
+bundle exec rake "knapsack_pro:test_unit[--verbose]"
+```
 
 #### Passing arguments to spinach
 
 Add arguments to knapsack_pro spinach task like this:
 
-    $ bundle exec rake "knapsack_pro:spinach[--arg_name value]"
+```bash
+bundle exec rake "knapsack_pro:spinach[--arg_name value]"
+```
 
 ### Knapsack Pro binary
 
 You can install knapsack_pro globally and use binary. For instance:
 
-    $ knapsack_pro rspec "--tag custom_tag_name --profile"
-    $ knapsack_pro queue:rspec "--tag custom_tag_name --profile"
-    $ knapsack_pro cucumber "--name feature"
-    $ knapsack_pro minitest "--verbose --pride"
-    $ knapsack_pro queue:minitest "--verbose"
-    $ knapsack_pro test_unit "--verbose"
-    $ knapsack_pro spinach "--arg_name value"
+```bash
+knapsack_pro rspec "--tag custom_tag_name --profile"
+knapsack_pro queue:rspec "--tag custom_tag_name --profile"
+knapsack_pro cucumber "--name feature"
+knapsack_pro minitest "--verbose --pride"
+knapsack_pro queue:minitest "--verbose"
+knapsack_pro test_unit "--verbose"
+knapsack_pro spinach "--arg_name value"
+```
 
 This is optional way of using knapsack_pro when you don't want to add it to `Gemfile`.
 
@@ -651,7 +677,9 @@ You can generate API key for your test suite in [your dashboard](https://knapsac
 
 Next step is to generate salt which will be used to encrypt test files or branch names.
 
-    $ bundle exec rake knapsack_pro:salt
+```bash
+bundle exec rake knapsack_pro:salt
+```
 
 Add to your CI server generated environment variable `KNAPSACK_PRO_SALT`.
 
@@ -663,7 +691,9 @@ You need to add environment variable `KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true` to
 
 If you need to check what is the encryption hash for particular test file you can check that with the rake task:
 
-    $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
+```bash
+KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
+```
 
 You can pass the name of test runner like `rspec`, `minitest`, `test_unit`, `cucumber`, `spinach` as argument to rake task.
 
@@ -683,11 +713,13 @@ Note: there are a few branch names that won't be encrypted because we use them a
 
 If you need to check what is the encryption hash for particular branch then use the rake task:
 
-    # show all local branches and respective hashes
-    $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names
+```bash
+# show all local branches and respective hashes
+$ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names
 
-    # show hash for branch provided as argument to rake task
-    $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names[not-encrypted-branch-name]
+# show hash for branch provided as argument to rake task
+$ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names[not-encrypted-branch-name]
+```
 
 ### Supported CI providers
 
@@ -733,7 +765,7 @@ test:
 
 Here is another example for CircleCI 2.0 platform.
 
-```YAML
+```yaml
 # CircleCI 2.0
 
 # some tests that are not balanced and executed only on first CI node
@@ -837,29 +869,31 @@ More info about global and matrix ENV configuration in [travis docs](https://doc
 
 Knapsack Pro supports semaphoreapp ENVs `SEMAPHORE_THREAD_COUNT` and `SEMAPHORE_CURRENT_THREAD`. The only thing you need to do is set up knapsack_pro rspec/cucumber/minitest/test_unit command for as many threads as you need. Here is an example:
 
-    # Thread 1
-    ## Step for RSpec
-    bundle exec rake knapsack_pro:rspec
-    ## Step for Cucumber
-    bundle exec rake knapsack_pro:cucumber
-    ## Step for Minitest
-    bundle exec rake knapsack_pro:minitest
-    ## Step for test-unit
-    bundle exec rake knapsack_pro:test_unit
-    ## Step for Spinach
-    bundle exec rake knapsack_pro:spinach
+```bash
+# Thread 1
+## Step for RSpec
+bundle exec rake knapsack_pro:rspec
+## Step for Cucumber
+bundle exec rake knapsack_pro:cucumber
+## Step for Minitest
+bundle exec rake knapsack_pro:minitest
+## Step for test-unit
+bundle exec rake knapsack_pro:test_unit
+## Step for Spinach
+bundle exec rake knapsack_pro:spinach
 
-    # Thread 2
-    ## Step for RSpec
-    bundle exec rake knapsack_pro:rspec
-    ## Step for Cucumber
-    bundle exec rake knapsack_pro:cucumber
-    ## Step for Minitest
-    bundle exec rake knapsack_pro:minitest
-    ## Step for test-unit
-    bundle exec rake knapsack_pro:test_unit
-    ## Step for Spinach
-    bundle exec rake knapsack_pro:spinach
+# Thread 2
+## Step for RSpec
+bundle exec rake knapsack_pro:rspec
+## Step for Cucumber
+bundle exec rake knapsack_pro:cucumber
+## Step for Minitest
+bundle exec rake knapsack_pro:minitest
+## Step for test-unit
+bundle exec rake knapsack_pro:test_unit
+## Step for Spinach
+bundle exec rake knapsack_pro:spinach
+```
 
 Tests will be split across threads.
 
@@ -869,20 +903,22 @@ Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` a
 
 Knapsack Pro supports buildkite ENVs `BUILDKITE_PARALLEL_JOB_COUNT` and `BUILDKITE_PARALLEL_JOB`. The only thing you need to do is to configure the parallelism parameter in your build step and run the appropiate command in your build
 
-    # Step for RSpec
-    bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec
+bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber
-    bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber
+bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest
-    bundle exec rake knapsack_pro:minitest
+# Step for Minitest
+bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit
-    bundle exec rake knapsack_pro:test_unit
+# Step for test-unit
+bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach
-    bundle exec rake knapsack_pro:spinach
+# Step for Spinach
+bundle exec rake knapsack_pro:spinach
+```
 
 Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
@@ -959,7 +995,7 @@ Codeship does not provide parallel jobs environment variables so you will have t
 
 Configure test pipelines (1/2 used)
 
-```
+```bash
 # first CI node running in parallel
 
 # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
@@ -972,7 +1008,7 @@ KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knaps
 
 Configure test pipelines (2/2 used)
 
-```
+```bash
 # second CI node running in parallel
 
 # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
@@ -1029,30 +1065,32 @@ You can learn more about [Heroku CI](https://devcenter.heroku.com/articles/herok
 
 [Solano CI](https://www.solanolabs.com) does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same CI build.
 
-    # Step for RSpec for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
-    # Step for RSpec for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+# Step for RSpec for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
-    # Step for Cucumber for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
-    # Step for Minitest for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
+# Step for Minitest for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+# Step for Minitest for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
-    # Step for test-unit for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
+# Step for test-unit for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+# Step for test-unit for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
-    # Step for Spinach for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+# Step for Spinach for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+# Step for Spinach for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+```
 
 Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
@@ -1060,30 +1098,32 @@ Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` a
 
 [AppVeyor](https://www.appveyor.com) does not provide parallel jobs environment variables so you will have to define `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX` for each parallel job running as part of the same CI build.
 
-    # Step for RSpec for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
-    # Step for RSpec for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:rspec
+# Step for RSpec for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
-    # Step for Cucumber for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
-    # Step for Minitest for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
+# Step for Minitest for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:minitest
+# Step for Minitest for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
-    # Step for test-unit for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
+# Step for test-unit for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:test_unit
+# Step for test-unit for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach for first CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
-    # Step for Spinach for second CI node
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+# Step for Spinach for first CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:spinach
+# Step for Spinach for second CI node
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:spinach
+```
 
 Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
@@ -1091,20 +1131,22 @@ Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` a
 
 Knapsack Pro supports snap-ci.com ENVs `SNAP_WORKER_TOTAL` and `SNAP_WORKER_INDEX`. The only thing you need to do is to configure number of workers for your project in configuration settings in order to enable parallelism. Next thing is to set below commands to be executed in your stage:
 
-    # Step for RSpec
-    bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec
+bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber
-    bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber
+bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest
-    bundle exec rake knapsack_pro:minitest
+# Step for Minitest
+bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit
-    bundle exec rake knapsack_pro:test_unit
+# Step for test-unit
+bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach
-    bundle exec rake knapsack_pro:spinach
+# Step for Spinach
+bundle exec rake knapsack_pro:spinach
+```
 
 Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
@@ -1112,20 +1154,22 @@ Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` a
 
 Knapsack Pro supports cirrus-ci.org ENVs `CI_NODE_TOTAL` and `CI_NODE_INDEX`. The only thing you need to do is to configure number of parallel CI nodes for your project. Next thing is to set one of below commands to be executed on each parallel CI node:
 
-    # Step for RSpec
-    bundle exec rake knapsack_pro:rspec
+```bash
+# Step for RSpec
+bundle exec rake knapsack_pro:rspec
 
-    # Step for Cucumber
-    bundle exec rake knapsack_pro:cucumber
+# Step for Cucumber
+bundle exec rake knapsack_pro:cucumber
 
-    # Step for Minitest
-    bundle exec rake knapsack_pro:minitest
+# Step for Minitest
+bundle exec rake knapsack_pro:minitest
 
-    # Step for test-unit
-    bundle exec rake knapsack_pro:test_unit
+# Step for test-unit
+bundle exec rake knapsack_pro:test_unit
 
-    # Step for Spinach
-    bundle exec rake knapsack_pro:spinach
+# Step for Spinach
+bundle exec rake knapsack_pro:spinach
+```
 
 Please remember to set up API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` as global environment.
 
@@ -1260,7 +1304,7 @@ You can learn more about [recent RSpec team changes](https://github.com/Knapsack
 
 You can use [knapsack_pro binary](#knapsack-pro-binary) instead of rake task version to solve problem:
 
-```
+```bash
 # knapsack_pro binary for Queue Mode
 $ bundle exec knapsack_pro queue:rspec
 ```
@@ -1300,7 +1344,7 @@ TypeError:
 
 when you have 2 test files like this one:
 
-```
+```ruby
 # spec/a_spec.rb
 class BaseBatchClass
 end
@@ -1320,7 +1364,7 @@ describe 'A test of something' do
 end
 ```
 
-```
+```ruby
 # spec/b_spec.rb
 class DifferentBaseBatchClass
 end
@@ -1383,7 +1427,7 @@ Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry
 
 Please use fixed version of capybara-screenshot.
 
-```
+```ruby
 # Gemfile
 group :test do
   gem 'capybara-screenshot', github: 'mattheworiordan/capybara-screenshot', branch: 'master'
@@ -1438,7 +1482,7 @@ In output for RSpec in knapack_pro Queue Mode you may see message:
 
 The seed number is used by RSpec only when you tell it, you need to provide argument `--order random`:
 
-```
+```bash
 bundle exec rake "knapsack_pro:queue:rspec[--order random]"
 ```
 
@@ -1450,7 +1494,7 @@ Randomized with seed 11055
 
 You can use the seed number to run tests in development:
 
-```
+```bash
 bundle exec rspec --seed 11055 --default-path spec "spec/a_spec.rb" "spec/b_spec.rb"
 ```
 
@@ -1465,12 +1509,14 @@ If you don't use RSpec argument `--order random` then you don't need to provide 
 In your development environment you can debug tests that were run on the particular CI node.
 For instance to run subset of tests for the first CI node with specified seed you can do.
 
-    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
-    KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
-    KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
-    KNAPSACK_PRO_CI_NODE_TOTAL=2 \
-    KNAPSACK_PRO_CI_NODE_INDEX=0 \
-    bundle exec rake "knapsack_pro:rspec[--seed 123]"
+```bash
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
+KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+KNAPSACK_PRO_PROJECT_DIR=~/projects/rails-app \
+KNAPSACK_PRO_CI_NODE_TOTAL=2 \
+KNAPSACK_PRO_CI_NODE_INDEX=0 \
+bundle exec rake "knapsack_pro:rspec[--seed 123]"
+```
 
 Above example is for RSpec. You can use respectively rake task name and token environment variable when you want to run tests for minitest, test_unit, cucumber or spinach.
 It should work when all CI nodes finished work and sent time execution data to Knapsack Pro API.
@@ -1480,11 +1526,15 @@ If at least one CI node has not sent time execution data to the Knapsack Pro API
 Check test runner output on particular CI node you would like to retry in development. You should see at the beginning of rspec command an output that can
 be copied and executed in development.
 
-    /Users/ubuntu/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.4.4/exe/rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
+```
+/Users/ubuntu/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.4.4/exe/rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
+```
 
 Command similar to above can be executed in your development this way:
 
-    bundle exec rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
+```bash
+bundle exec rspec spec/foo_spec.rb spec/bar_spec.rb --default-path spec
+```
 
 If you were running your tests with `--order random` on your CI then you can additionaly pass seed param with proper value in above command (`--seed 123`).
 
@@ -1500,6 +1550,7 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
   To retry the particular CI node do this on your machine:
 
+      ```bash
       RACK_ENV=test \
       RAILS_ENV=test \
       KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
@@ -1509,10 +1560,13 @@ There are a few ways to reproduce tests executed on CI node in your development 
       KNAPSACK_PRO_CI_NODE_INDEX=0 \
       KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
       bundle exec rake "knapsack_pro:queue:rspec"
+      ```
 
   If you were running your tests with `--order random` on your CI like this:
 
+      ```bash
       bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+      ```
 
   Then you can find the seed number visible in rspec output:
 
@@ -1521,6 +1575,7 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
   You can pass the seed in your local environment to reproduce the tests in the same order as they were executed on CI node:
 
+      ```bash
       RACK_ENV=test \
       RAILS_ENV=test \
       KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=token \
@@ -1530,6 +1585,7 @@ There are a few ways to reproduce tests executed on CI node in your development 
       KNAPSACK_PRO_CI_NODE_INDEX=0 \
       KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
       bundle exec rake "knapsack_pro:queue:rspec[--seed 123]"
+      ```
 
 #### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
@@ -1593,14 +1649,16 @@ You need to create API token per each tag. In this example we need 3 different A
 
 You need to run below commands for each CI node.
 
-    # run only tests with tagA
-    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tagA bundle exec rake "knapsack_pro:rspec[--tag tagA]"
+```bash
+# run only tests with tagA
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tagA bundle exec rake "knapsack_pro:rspec[--tag tagA]"
 
-    # run only tests with tagB
-    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tagB bundle exec rake "knapsack_pro:rspec[--tag tagB]"
+# run only tests with tagB
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tagB bundle exec rake "knapsack_pro:rspec[--tag tagB]"
 
-    # run other tests without tag A & B
-    KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tests_without_tags_A_and_B bundle exec rake "knapsack_pro:rspec[--tag ~tagA --tag ~tagB]"
+# run other tests without tag A & B
+KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=api_key_for_tests_without_tags_A_and_B bundle exec rake "knapsack_pro:rspec[--tag ~tagA --tag ~tagB]"
+```
 
 #### How to make knapsack_pro works for forked repositories of my project?
 
@@ -1641,7 +1699,7 @@ Remember to follow other steps required for your CI provider.
 You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
 Here you can find example how to generate `rspec.xml` file with junit format and at the same time show normal documentation format output for RSpec.
 
-```
+```bash
 # Regular Mode
 bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
 ```
@@ -1650,7 +1708,7 @@ bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitF
 
 You can use junit formatter for rspec thanks to gem [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
 
-```
+```bash
 # Queue Mode
 bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
 ```
@@ -1677,7 +1735,7 @@ end
 
 Note if you use a CI provider or your own CI solution that uses common local drive for all parallel CI nodes then above solution needs to be adjusted to produce report file with CI node index number in the file name to avoid file conflicts. Example file name with CI node index number: `tmp/rspec_final_results_N.xml`.
 
-```
+```bash
 # Queue Mode
 
 # must be exported to read correctly the value in below knapsack_pro command
@@ -1716,7 +1774,7 @@ Another reason might be that you did not configure the junit formatter as shown 
 
 You need to specify `format` and `out` argument (it's important to provide both).
 
-```
+```bash
 # Queue Mode
 bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format json --out tmp/rspec.json]"
 ```
@@ -1863,7 +1921,7 @@ This means we would have 4 parallel knapack_pro commands in total across all CI 
 
 Create in your project directory an executable file `bin/parallel_tests`:
 
-```
+```bash
 #!/bin/bash
 # This file should be in bin/parallel_tests
 
@@ -1889,7 +1947,7 @@ Now you need to set parallel_tests command per CI node:
 
 * CI node 0 (first CI node):
 
-    ```
+    ```bash
     export PARALLEL_TESTS_CONCURRENCY=2; # this must be export
     RAILS_ENV=test \
     KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
@@ -1900,7 +1958,7 @@ Now you need to set parallel_tests command per CI node:
 
 * CI node 1 (second CI node):
 
-    ```
+    ```bash
     export PARALLEL_TESTS_CONCURRENCY=2; # this must be export
     RAILS_ENV=test \
     KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
@@ -1911,7 +1969,7 @@ Now you need to set parallel_tests command per CI node:
 
 Please note you need to update `$YOUR_CI_NODE_TOTAL` and `$YOUR_CI_NODE_INDEX` to the ENVs provided by your CI provider. For instance in case of CircleCI it would be `$CIRCLE_NODE_TOTAL` and `$CIRCLE_NODE_INDEX`. Below is an example for CircleCI configuration:
 
-```
+```yaml
 # circle.yml for CircleCI 1.0
 # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx can be set in CircleCI ENV settings
 test:
@@ -1947,7 +2005,7 @@ You can use [only failures option in RSpec](https://relishapp.com/rspec/rspec-co
 
 Please add to your RSpec configuration:
 
-```
+```ruby
 RSpec.configure do |c|
   c.example_status_persistence_file_path = "tmp/rspec_examples.txt"
 end
@@ -1955,7 +2013,7 @@ end
 
 Then you can execute rspec with only failed tests after main knapsack_pro command finish.
 
-```
+```bash
 # Run knapack_pro in Queue Mode and it will save failed tests in tmp/rspec_examples.txt
 bundle exec rake knapsack_pro:queue:rspec
 
@@ -2028,7 +2086,7 @@ Run all specs from multiple directories except `spec/features` directory which i
 If you would like to run additional directory please add it after comma in `KNAPSACK_PRO_TEST_FILE_PATTERN`.
 Ensure the list of directories match your spec directory structure.
 
-```
+```bash
 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_NON_FEATURE_TESTS \
 KNAPSACK_PRO_TEST_DIR=spec \
 KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/*_spec.rb,spec/controllers/**/*_spec.rb,spec/mailers/**/*_spec.rb,spec/models/**/*_spec.rb,spec/presenters/**/*_spec.rb,spec/requests/**/*_spec.rb,spec/routing/**/*_spec.rb,spec/services/**/*_spec.rb,spec/workers/**/*_spec.rb,spec/jobs/**/*_spec.rb}" \
@@ -2037,7 +2095,7 @@ bundle exec rake knapsack_pro:queue:rspec
 
 When you would like to run tests only from `spec/features` directory then run:
 
-```
+```bash
 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_FEATURE_TESTS \
 KNAPSACK_PRO_TEST_DIR=spec \
 KNAPSACK_PRO_TEST_FILE_PATTERN="spec/features/**{,/*/**}/*_spec.rb" \
@@ -2050,14 +2108,14 @@ You can also learn [how to use exclude pattern](#how-to-exclude-tests-from-runni
 
 For instance you would like to run all tests except tests in `features` directory then you could do:
 
-```
+```bash
 KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN="spec/features/**{,/*/**}/*_spec.rb" \
 bundle exec rake knapsack_pro:queue:rspec
 ```
 
 You can define at the same time the pattern for tests you would like to run and the exclude pattern. For instance run all controller tests except admin controller tests.
 
-```
+```bash
 KNAPSACK_PRO_TEST_FILE_PATTERN="spec/controllers/**{,/*/**}/*_spec.rb" \
 KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN="spec/controllers/admin/**{,/*/**}/*_spec.rb" \
 bundle exec rake knapsack_pro:queue:rspec
@@ -2093,7 +2151,7 @@ or preview the [ENV variables that knapack_pro can read](https://github.com/Knap
 
 If you would like to make [simplecov](https://github.com/colszowka/simplecov) gem work with knapack_pro Queue Mode to correctly track code coverage for parallel CI nodes please do:
 
-```
+```ruby
 # spec_helper.rb or rails_helper.rb
 require 'knapsack_pro'
 
