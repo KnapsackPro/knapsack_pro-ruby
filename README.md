@@ -531,6 +531,7 @@ There might be some cached test suite splits for git commits you have run in pas
 At this moment the queue mode works for:
 
 * RSpec
+* Minitest
 
 ## Extra configuration for CI server
 
