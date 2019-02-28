@@ -119,6 +119,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
     - [Why my CI build fails when I use Test::Unit even when all tests passed?](#why-my-ci-build-fails-when-i-use-testunit-even-when-all-tests-passed)
     - [Why I see HEAD as branch name in user dashboard for Build metrics for my API token?](#why-i-see-head-as-branch-name-in-user-dashboard-for-build-metrics-for-my-api-token)
     - [Why Capybara feature tests randomly fail when using CI parallelisation?](#why-capybara-feature-tests-randomly-fail-when-using-ci-parallelisation)
+    - [Why knapsack_pro freezes / hangs my CI (for instance Travis)?](#why-knapsack_pro-freezes--hangs-my-ci-for-instance-travis)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
@@ -1287,6 +1288,19 @@ Capybara.default_max_wait_time = 5 # in seconds
 
 For instance, this tip might be helpful for Heroku CI users who use Heroku dynos with lower performance.
 
+#### Why knapsack_pro freezes / hangs my CI (for instance Travis)?
+
+[Freeze error can occur for example on Travis CI](https://docs.travis-ci.com/user/common-build-problems/#ruby-tests-frozen-and-cancelled-after-10-minute-log-silence).
+The `timecop` gem can result in sporadic freezing due to issues with ordering calls of `Timecop.return`, `Timecop.freeze`, and `Timecop.travel`. For instance, if using RSpec, ensure to have a `Timecop.return` configured to run after all examples:
+
+```ruby
+# in, e.g. spec/spec_helper.rb
+RSpec.configure do |c|
+  c.after(:all) do
+    Timecop.return
+  end
+end
+```
 
 #### Queue Mode problems
 
