@@ -20,12 +20,6 @@ The knapsack_pro gem supports:
 
 __Would you like to try knapsack_pro gem?__ You can [get an API token here](http://knapsackpro.com?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=get_api_token).
 
-## Is knapsack_pro gem free?
-
-* If your __project is open source__ then you can use Knapsack Pro for free. Please let me know via email (arturtrzop@gmail.com) and I will mark your account on KnapsackPro.com as open source.
-
-* If your __project is commercial__ then I'd like to get feedback from you and work closely together to validate if the solution I'm building provide a value for the users. Switching to a paid plan is a good way to validate that and a way to get support from happy users. Maybe you will be the next one who will join and support the project. Thanks!
-
 # How does knapsack_pro work?
 
 ## Basics
