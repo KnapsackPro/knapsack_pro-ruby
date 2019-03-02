@@ -40,6 +40,10 @@ For instance when you run tests with `rake knapsack_pro:rspec`:
 
 The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite split.
 
+## FAQ
+
+You can see list of questions for common problems and tips in below [Table of Contents](#table-of-contents). Scroll 1 page down and you will see the FAQ in the table of contents.
+
 # Requirements
 
 `>= Ruby 2.0.0`
