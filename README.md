@@ -125,6 +125,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
       - [Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?](#why-when-i-use-queue-mode-for-rspec-then-i-see-error-superclass-mismatch-for-class)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
+      - [Why all test files have 0.1s time execution for my CI build in user dashboard?](#why-all-test-files-have-01s-time-execution-for-my-ci-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
       - [Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?](#why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests)
       - [Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?](#does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again)
@@ -1408,6 +1409,14 @@ If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build
 * you have `Knapsack::Adapters::RspecAdapter.bind` in your `rails_helper.rb` or `spec_helper.rb`
 * you explicitly set `RAILS_ENV=test` on your CI nodes (for instance you use Docker then please set `RAILS_ENV`)
 * knapsack_pro Queue Mode saves temporary files with collected time execution data in `your_rails_project/tmp/knapsack_pro/queue/`. Please ensure you don't clean `tmp` directory in your tests so knapsack_pro can publish time execution data to Knapsack Pro API server.
+
+##### Why all test files have 0.1s time execution for my CI build in user dashboard?
+
+If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build metrics` for your API token and you open CI build for your last git commit you should see there info about collected time execution data from all CI nodes. If you see all test files have 0.1s time execution then please ensure:
+
+* you don't clean up `tmp` directory in your tests (for instance in RSpec hooks like `before` or `after`) so knapsack_pro can publish measured time execution data to Knapsack Pro API server. knapsack_pro Queue Mode saves temporary files with collected time execution data in `your_rails_project/tmp/knapsack_pro/queue/`.
+
+The 0.1s is a default time execution used when test file is an empty file or its content are all pending tests.
 
 ##### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
 
