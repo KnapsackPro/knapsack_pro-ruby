@@ -582,9 +582,11 @@ Note this is for knapack_pro regular mode only.
 
 This is only for maintainer of knapsack_pro gem. Not for the end users.
 
-`KNAPSACK_PRO_ENDPOINT` - Default value is `https://api.knapsackpro.com` which is endpoint for [Knapsack Pro API](http://docs.knapsackpro.com).
+* `KNAPSACK_PRO_ENDPOINT` - Default value is `https://api.knapsackpro.com` which is endpoint for [Knapsack Pro API](http://docs.knapsackpro.com).
 
-`KNAPSACK_PRO_MODE` - Default value is `production`. When mode is `development` then endpoint is `http://api.knapsackpro.test:3000`. When mode is `test` then endpoint is `http://api-staging.knapsackpro.com`.
+* `KNAPSACK_PRO_MODE` - Default value is `production` and then endpoint is `https://api.knapsackpro.com`.
+  * When mode is `development` then endpoint is `http://api.knapsackpro.test:3000`.
+  * When mode is `test` then endpoint is `https://api-staging.knapsackpro.com`.
 
 ### Passing arguments to rake task
 
