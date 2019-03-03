@@ -117,7 +117,7 @@ module KnapsackPro
 
           case mode
           when :development
-            'http://api.knapsackpro.dev:3000'
+            'http://api.knapsackpro.test:3000'
           when :test
             'https://api-staging.knapsackpro.com'
           when :production

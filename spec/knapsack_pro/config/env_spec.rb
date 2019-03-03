@@ -430,7 +430,7 @@ describe KnapsackPro::Config::Env do
 
       context 'when development mode' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'development' }) }
-        it { should eq 'http://api.knapsackpro.dev:3000' }
+        it { should eq 'http://api.knapsackpro.test:3000' }
       end
 
       context 'when test mode' do

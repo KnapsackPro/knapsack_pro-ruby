@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.4.0
+
+* Use .test domain for development mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/76
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.3.0...v1.4.0
+
 ### 1.3.0
 
 * Add metadata to the gemspec

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://api.knapsackpro.dev:3000/v1/build_distributions/subset
+    uri: http://api.knapsackpro.test:3000/v1/build_distributions/subset
     body:
       encoding: UTF-8
       string: '{"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","test_files":[{"path":"a_spec.rb"},{"path":"b_spec.rb"}],"test_suite_token":"3fa64859337f6e56409d49f865d13fd7"}'

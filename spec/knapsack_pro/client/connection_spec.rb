@@ -13,7 +13,7 @@ describe KnapsackPro::Client::Connection do
 
   before do
     stub_const('ENV', {
-      'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.dev:3000',
+      'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
       'KNAPSACK_PRO_TEST_SUITE_TOKEN' => '3fa64859337f6e56409d49f865d13fd7',
     })
   end
@@ -27,7 +27,7 @@ describe KnapsackPro::Client::Connection do
       before do
         http = instance_double(Net::HTTP)
 
-        expect(Net::HTTP).to receive(:new).with('api.knapsackpro.dev', 3000).and_return(http)
+        expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
 
         expect(http).to receive(:use_ssl=).with(false)
         expect(http).to receive(:open_timeout=).with(15)
