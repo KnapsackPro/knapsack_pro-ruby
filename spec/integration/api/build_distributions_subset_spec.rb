@@ -1,6 +1,6 @@
 describe 'Request API /v1/build_distributions/subset' do
-  let(:valid_endpoint) { 'http://api.knapsackpro.dev:3000' }
-  let(:invalid_endpoint) { 'http://api.fake-knapsackpro.dev:3000' }
+  let(:valid_endpoint) { 'http://api.knapsackpro.test:3000' }
+  let(:invalid_endpoint) { 'http://api.fake-knapsackpro.test:3000' }
   let(:valid_test_suite_token) { '3fa64859337f6e56409d49f865d13fd7' }
   let(:invalid_test_suite_token) { 'fake' }
 
