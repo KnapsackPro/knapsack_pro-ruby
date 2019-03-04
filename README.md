@@ -2024,7 +2024,9 @@ To ensure everything works you can check output for each CI node.
 
 Flaky (nondeterministic) tests, are tests that exhibit both a passing and a failing result with the same code.
 
-You can use [only failures option in RSpec](https://relishapp.com/rspec/rspec-core/docs/command-line/only-failures) to rerun failed tests.
+I recommend to use [rspec-retry](https://github.com/NoRedInk/rspec-retry) gem that can retry failing test. It can be useful for randomly failing features specs. For instance you can configure it to retry 3 times features test before marking it as failing.
+
+Alternative way is to use built into [RSpec only failures option](https://relishapp.com/rspec/rspec-core/docs/command-line/only-failures) to rerun failed tests.
 
 Please add to your RSpec configuration:
 
