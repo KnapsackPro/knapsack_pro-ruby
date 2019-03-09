@@ -121,6 +121,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
+      - [Why when I use Queue Mode for RSpec then my rake tasks are run twice?](#why-when-i-use-queue-mode-for-rspec-then-my-rake-tasks-are-run-twice)
       - [Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?](#why-when-i-use-queue-mode-for-rspec-then-i-see-error-superclass-mismatch-for-class)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why all test files have 0.1s time execution for my CI build in user dashboard?](#why-all-test-files-have-01s-time-execution-for-my-ci-build-in-user-dashboard)
@@ -1347,6 +1348,25 @@ FactoryBot.define do
   end
 end
 ```
+
+##### Why when I use Queue Mode for RSpec then my rake tasks are run twice?
+
+Why rake tasks are being ran twice in Queue Mode? If you have tests for your rake task then you want to ensure you clear the rake task before loading it inside of test file.
+In Queue Mode the  rake task could be already loaded and loading it again in test file may result in running the task twice.
+
+```ruby
+before do
+  # Clear rake task from memory if it was already loaded.
+  # This ensures rake task is loaded only once in knapsack_pro Queue Mode.
+  Rake::Task[task_name].clear if Rake::Task.task_defined?(task_name)
+
+  # loaad rake task only once here
+  Rake.application.rake_require("tasks/dummy")
+  Rake::Task.define_task(:environment)
+end
+```
+
+Here is the full [example how to test rake task along with dummy rake task](https://github.com/KnapsackPro/rails-app-with-knapsack_pro/commit/9f068e900deb3554bd72633e8d61c1cc7f740306) from our example rails project.
 
 ##### Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?
 
