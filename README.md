@@ -2170,7 +2170,7 @@ The test file pattern and exclude pattern support any glob pattern handled by [`
 
 #### How to use CodeClimate with knapsack_pro?
 
-You can check CodeClimate docs about [parallel and multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-and-multiple-test-suites).
+You can check CodeClimate docs about [parallel tests](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-tests) and [multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-multiple-test-suites).
 
 #### How to run knapsack_pro only on a few parallel CI nodes instead of all?
 
