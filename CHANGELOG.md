@@ -2,7 +2,7 @@
 
 ### 1.5.0
 
-* Add support for Semaphore 2.0
+* Add support for Semaphore CI 2.0
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/77
 
