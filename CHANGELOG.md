@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.5.0
+
+* Add support for Semaphore CI 2.0
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/77
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.4.0...v1.5.0
+
 ### 1.4.0
 
 * Use .test domain for development mode
