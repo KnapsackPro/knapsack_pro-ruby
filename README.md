@@ -144,6 +144,7 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [for knapack_pro regular mode](#for-knapack_pro-regular-mode-1)
       - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode-1)
     - [How can I change log level?](#how-can-i-change-log-level)
+    - [How to write knapack_pro logs to a file?](#how-to-write-knapack_pro-logs-to-a-file)
     - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
       - [A. Create multiple small test files](#a-create-multiple-small-test-files)
       - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
@@ -1751,6 +1752,36 @@ Recommended log levels you can use:
 
 * `debug` is default log level and it is recommended to log details about requests to Knapsack Pro API. Thanks to that you can debug things or ensure everything works. For instance in [user dashboard](https://knapsackpro.com/dashboard) you can find tips referring to debug logs.
 * `info` level shows message like how to retry tests in development or info why something works this way or the other (for instance why tests were not executed on the CI node). You can use `info` level when you really don't want to see all debug messages from default log level.
+
+#### How to write knapack_pro logs to a file?
+
+In your `rails_helper.rb` or `spec_helper.rb` you can set custom Knapsack Pro logger and write to custom log file.
+
+```ruby
+require 'logger'
+KnapsackPro.logger = Logger.new(Rails.root.join('log', "knapsack_pro_node_#{KnapsackPro::Config::Env.ci_node_index}.log"))
+KnapsackPro.logger.level = Logger::DEBUG
+```
+
+Note if you run knapsack_pro in Queue Mode then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb`/`spec_helper.rb` where the configuration of logger actually is loaded for the first time.
+
+If you would like to keep knapsack_pro logs after your CI build finished then you could use artifacts or some cache mechanize for your CI provider.
+
+For instance, for [CircleCI 2.0 artifacts](https://circleci.com/docs/2.0/artifacts/) you can specify log directory:
+
+```yaml
+- run:
+  name: RSpec via knapsack_pro Queue Mode
+  command: |
+    # export word is important here!
+    export RAILS_ENV=test
+    bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+- store_artifacts:
+  path: log
+```
+
+Now you can preview logs in `Artifacts` tab in the Circle CI build view.
 
 #### How to split tests based on test level instead of test file level?
 
