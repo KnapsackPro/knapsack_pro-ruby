@@ -144,7 +144,10 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [for knapack_pro regular mode](#for-knapack_pro-regular-mode-1)
       - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode-1)
     - [How can I change log level?](#how-can-i-change-log-level)
-    - [How to write knapack_pro logs to a file?](#how-to-write-knapack_pro-logs-to-a-file)
+    - [How to write knapsack_pro logs to a file?](#how-to-write-knapsack_pro-logs-to-a-file)
+      - [set directory where to write log file (option 1 - recommended)](#set-directory-where-to-write-log-file-option-1---recommended)
+      - [set custom logger config (option 2)](#set-custom-logger-config-option-2)
+      - [How to preserve logs on my CI after CI build completed?](#how-to-preserve-logs-on-my-ci-after-ci-build-completed)
     - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
       - [A. Create multiple small test files](#a-create-multiple-small-test-files)
       - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
@@ -1753,7 +1756,19 @@ Recommended log levels you can use:
 * `debug` is default log level and it is recommended to log details about requests to Knapsack Pro API. Thanks to that you can debug things or ensure everything works. For instance in [user dashboard](https://knapsackpro.com/dashboard) you can find tips referring to debug logs.
 * `info` level shows message like how to retry tests in development or info why something works this way or the other (for instance why tests were not executed on the CI node). You can use `info` level when you really don't want to see all debug messages from default log level.
 
-#### How to write knapack_pro logs to a file?
+#### How to write knapsack_pro logs to a file?
+
+##### set directory where to write log file (option 1 - recommended)
+
+Set `KNAPSACK_PRO_LOG_DIR=log` environment variable in order to notify knapsack_pro gem to write logs to `log` directory.
+If you have Rails project then this should work for you.
+
+knapsack_pro will create a file with CI node index in name. For instance if you run tests on 2 CI nodes:
+
+* `log/knapsack_pro_node_0.log`
+* `log/knapsack_pro_node_1.log`
+
+##### set custom logger config (option 2)
 
 In your `rails_helper.rb` you can set custom Knapsack Pro logger and write to custom log file.
 
@@ -1767,7 +1782,13 @@ KnapsackPro.logger = Logger.new(Rails.root.join('log', "knapsack_pro_node_#{Knap
 KnapsackPro.logger.level = Logger::DEBUG
 ```
 
-Note if you run knapsack_pro in Queue Mode then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb` where the configuration of logger actually is loaded for the first time.
+Note if you run knapsack_pro then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb` where the configuration of logger actually is loaded for the first time.
+
+That is why you may prefer to use option 1 instead of this.
+
+##### How to preserve logs on my CI after CI build completed?
+
+Follow this tip if you use one of above options to write knapsack_pro log to the file.
 
 If you would like to keep knapsack_pro logs after your CI build finished then you could use artifacts or some cache mechanize for your CI provider.
 
