@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.6.0
+
+* Retry request 3 times when API returns 5xx HTTP status
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/78
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.5.0...v1.6.0
+
 ### 1.5.0
 
 * Add support for Semaphore CI 2.0
