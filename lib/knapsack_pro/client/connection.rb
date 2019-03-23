@@ -2,6 +2,7 @@ module KnapsackPro
   module Client
     class Connection
       TIMEOUT = 15
+      MAX_RETRY = 3
       REQUEST_RETRY_TIMEBOX = 2
 
       def initialize(action)
@@ -106,7 +107,7 @@ module KnapsackPro
       rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
         retries += 1
-        if retries < 3
+        if retries < MAX_RETRY
           wait = retries * REQUEST_RETRY_TIMEBOX
           logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
           sleep wait
