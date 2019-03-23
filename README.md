@@ -1760,13 +1760,17 @@ Recommended log levels you can use:
 
 ##### set directory where to write log file (option 1 - recommended)
 
-Set `KNAPSACK_PRO_LOG_DIR=log` environment variable in order to notify knapsack_pro gem to write logs to `log` directory.
+Set `KNAPSACK_PRO_LOG_DIR=log` environment variable in order to notify knapsack_pro gem to write logs to `log` directory instead of stdout.
 If you have Rails project then this should work for you.
 
 knapsack_pro will create a file with CI node index in name. For instance if you run tests on 2 CI nodes:
 
 * `log/knapsack_pro_node_0.log`
 * `log/knapsack_pro_node_1.log`
+
+`KNAPSACK_PRO_LOG_DIR` has higher priority than custom log set in `rails_helper.rb` as shown below (option 2).
+
+You can change log level with [KNAPSACK_PRO_LOG_LEVEL environment variable](#how-can-i-change-log-level).
 
 ##### set custom logger config (option 2)
 
