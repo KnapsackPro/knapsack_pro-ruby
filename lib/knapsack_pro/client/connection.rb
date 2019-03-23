@@ -91,7 +91,7 @@ module KnapsackPro
         @http_response = http.post(uri.path, request_body, json_headers)
         @response_body = parse_response_body(http_response.body)
 
-        request_uuid = http_response.header['X-Request-Id']
+        request_uuid = http_response.header['X-Request-Id'] || 'N/A'
 
         logger.debug("API request UUID: #{request_uuid}")
         logger.debug("Test suite split seed: #{seed}") if has_seed?
