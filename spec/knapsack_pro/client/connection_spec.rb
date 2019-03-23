@@ -68,27 +68,6 @@ describe KnapsackPro::Client::Connection do
         end
       end
 
-      context 'when body response is json and API response code is 500' do
-        let(:body) { '{"error": "Internal Server Error"}' }
-        let(:code) { '500' } # it must be string code
-
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with('API response:')
-        end
-
-        it do
-          parsed_response = { 'error' => 'Internal Server Error' }
-
-          expect(logger).to receive(:error).with(parsed_response)
-
-          expect(subject).to eq(parsed_response)
-          expect(connection.success?).to be false
-          expect(connection.errors?).to be true
-        end
-      end
-
       context 'when body response is json with build_distribution_id' do
         let(:body) { '{"build_distribution_id": "seed-uuid"}' }
         let(:code) { '200' } # it must be string code
@@ -127,6 +106,61 @@ describe KnapsackPro::Client::Connection do
           expect(subject).to eq('')
           expect(connection.success?).to be true
           expect(connection.errors?).to be false
+        end
+      end
+    end
+
+    context 'when retry request for http method POST' do
+      before do
+        http = instance_double(Net::HTTP)
+
+        expect(Net::HTTP).to receive(:new).exactly(3).with('api.knapsackpro.test', 3000).and_return(http)
+
+        expect(http).to receive(:use_ssl=).exactly(3).with(false)
+        expect(http).to receive(:open_timeout=).exactly(3).with(15)
+        expect(http).to receive(:read_timeout=).exactly(3).with(15)
+
+        header = { 'X-Request-Id' => 'fake-uuid' }
+        http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
+        expect(http).to receive(:post).exactly(3).with(
+          endpoint_path,
+          "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
+          {
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+            'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+          }
+        ).and_return(http_response)
+      end
+
+      context 'when body response is json and API response code is 500' do
+        let(:body) { '{"error": "Internal Server Error"}' }
+        let(:code) { '500' } # it must be string code
+
+        before do
+          expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
+          expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
+          expect(logger).to receive(:debug).exactly(3).with('API response:')
+        end
+
+        it do
+          parsed_response = { 'error' => 'Internal Server Error' }
+
+          expect(logger).to receive(:error).exactly(3).with(parsed_response)
+
+          server_error = described_class::ServerError.new(parsed_response)
+          expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
+
+          expect(logger).to receive(:warn).with("Wait 2s and retry request to Knapsack Pro API.")
+          expect(logger).to receive(:warn).with("Wait 4s and retry request to Knapsack Pro API.")
+          expect(Kernel).to receive(:sleep).with(2)
+          expect(Kernel).to receive(:sleep).with(4)
+
+          expect(subject).to eq(parsed_response)
+
+          expect(connection.success?).to be false
+          expect(connection.errors?).to be true
         end
       end
     end
@@ -218,6 +252,39 @@ describe KnapsackPro::Client::Connection do
 
         it { should be true }
       end
+    end
+  end
+
+  describe '#server_error?' do
+    subject { connection.server_error? }
+
+    before do
+      http_response = double(code: code)
+      allow(connection).to receive(:http_response).and_return(http_response)
+    end
+
+    context 'when response code is 200' do
+      let(:code) { '200' } # it must be string code
+
+      it { should be false }
+    end
+
+    context 'when response code is 300' do
+      let(:code) { '300' } # it must be string code
+
+      it { should be false }
+    end
+
+    context 'when response code is 400' do
+      let(:code) { '400' } # it must be string code
+
+      it { should be false }
+    end
+
+    context 'when response code is 500' do
+      let(:code) { '500' } # it must be string code
+
+      it { should be true }
     end
   end
 end

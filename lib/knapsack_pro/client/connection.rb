@@ -1,6 +1,8 @@
 module KnapsackPro
   module Client
     class Connection
+      class ServerError < StandardError; end
+
       TIMEOUT = 15
       MAX_RETRY = 3
       REQUEST_RETRY_TIMEBOX = 2
@@ -22,6 +24,11 @@ module KnapsackPro
 
       def errors?
         !!(response_body && (response_body['errors'] || response_body['error']))
+      end
+
+      def server_error?
+        status = http_response.code.to_i
+        status >= 500 && status < 600
       end
 
       private
@@ -103,15 +110,21 @@ module KnapsackPro
           logger.debug(response_body)
         end
 
+        if server_error?
+          raise ServerError.new(response_body)
+        end
+
         response_body
-      rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
+      rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
         logger.warn(e.inspect)
         retries += 1
         if retries < MAX_RETRY
           wait = retries * REQUEST_RETRY_TIMEBOX
           logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
-          sleep wait
+          Kernel.sleep(wait)
           retry
+        else
+          response_body
         end
       end
     end
