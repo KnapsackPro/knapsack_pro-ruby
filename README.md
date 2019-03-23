@@ -1755,9 +1755,13 @@ Recommended log levels you can use:
 
 #### How to write knapack_pro logs to a file?
 
-In your `rails_helper.rb` or `spec_helper.rb` you can set custom Knapsack Pro logger and write to custom log file.
+In your `rails_helper.rb` you can set custom Knapsack Pro logger and write to custom log file.
 
 ```ruby
+# Ensure you load Rails before using Rails const below.
+# This line should be already in your rails_helper.rb
+require File.expand_path('../../config/environment', __FILE__)
+
 require 'logger'
 KnapsackPro.logger = Logger.new(Rails.root.join('log', "knapsack_pro_node_#{KnapsackPro::Config::Env.ci_node_index}.log"))
 KnapsackPro.logger.level = Logger::DEBUG
