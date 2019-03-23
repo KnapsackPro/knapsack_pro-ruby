@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.7.0
+
+* Add `KNAPSACK_PRO_LOG_DIR` to set directory where to write logs
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/79
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.6.0...v1.7.0
+
 ### 1.6.0
 
 * Retry request 3 times when API returns 5xx HTTP status

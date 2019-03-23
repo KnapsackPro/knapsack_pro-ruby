@@ -138,13 +138,16 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [How to find seed in RSpec output when I use Queue Mode for RSpec?](#how-to-find-seed-in-rspec-output-when-i-use-queue-mode-for-rspec)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
-      - [for knapack_pro regular mode](#for-knapack_pro-regular-mode)
+      - [for knapsack_pro regular mode](#for-knapsack_pro-regular-mode)
       - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode)
     - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
-      - [for knapack_pro regular mode](#for-knapack_pro-regular-mode-1)
+      - [for knapsack_pro regular mode](#for-knapsack_pro-regular-mode-1)
       - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode-1)
     - [How can I change log level?](#how-can-i-change-log-level)
-    - [How to write knapack_pro logs to a file?](#how-to-write-knapack_pro-logs-to-a-file)
+    - [How to write knapsack_pro logs to a file?](#how-to-write-knapsack_pro-logs-to-a-file)
+      - [set directory where to write log file (option 1 - recommended)](#set-directory-where-to-write-log-file-option-1---recommended)
+      - [set custom logger config (option 2)](#set-custom-logger-config-option-2)
+      - [How to preserve logs on my CI after CI build completed?](#how-to-preserve-logs-on-my-ci-after-ci-build-completed)
     - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
       - [A. Create multiple small test files](#a-create-multiple-small-test-files)
       - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
@@ -481,7 +484,7 @@ There might be some cached test suite splits for git commits you have run in pas
     * If you retry CI node in first hour since the CI build started for the first time then the retried CI node won't execute tests because the queue was consumed. There is important reason why it works like that. For instance some CI providers like Buildkite allows to start CI node later than the others so sometimes the particular CI node may start work while all other CI nodes finished work. In that case we don't want to run tests on the CI node because queue was already consumed. We don't know whether the CI node is part of the build or it is retried CI node hence the 1 hour lock on initializing a new queue.
     * If you retry CI node after 1 hour since the CI build started for the first time then the retried CI node will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run. You probably would expect the retried CI node to run the tests that were executed there on the first place. To achieve that you need to [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
-  * When you use unsupported CI provider by knapack_pro gem or you forget to set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` per CI build then:
+  * When you use unsupported CI provider by knapsack_pro gem or you forget to set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` per CI build then:
     * when you retry single CI node then it will initialize a new queue and it will run whole test suite from the queue because there will be no other CI nodes running connected to the queue. The order of tests on retried CI node will be different than on the first run.
     * when you retry all CI nodes then a new queue will be initialized and all CI nodes will connect to it.
 
@@ -522,9 +525,9 @@ There might be some cached test suite splits for git commits you have run in pas
 
 * `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=true` (default)
 
-  By default, the knapack_pro will monkey patch [RSpec Formatters](https://www.relishapp.com/rspec/rspec-core/v/2-6/docs/command-line/format-option) in order to
+  By default, the knapsack_pro will monkey patch [RSpec Formatters](https://www.relishapp.com/rspec/rspec-core/v/2-6/docs/command-line/format-option) in order to
   hide the summary of pending and failed tests after each intermediate run of tests fetched from the work queue on Knapsack Pro API.
-  knapack_pro shows summary of all pending and failed tests at the very end when work queue ended. If you use your custom formatter and you have problem with it then you can disable `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false` monkey patching.
+  knapsack_pro shows summary of all pending and failed tests at the very end when work queue ended. If you use your custom formatter and you have problem with it then you can disable `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false` monkey patching.
 
 * `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false`
 
@@ -550,7 +553,7 @@ In case when you use other CI provider for instance [Jenkins](https://jenkins-ci
 
 #### KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)
 
-Note this is for knapack_pro regular mode only.
+Note this is for knapsack_pro regular mode only.
 
 * `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true` (default)
 
@@ -799,7 +802,7 @@ Please remember to add additional containers for your project in CircleCI settin
 
 ##### CircleCI and knapsack_pro Queue Mode
 
-If you use knapack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
+If you use knapsack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
 
 Here you can read how to configure [junit formatter](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode). Step for CircleCI is to copy the xml report to `$CIRCLE_TEST_REPORTS` directory. Below is full config for your `spec_helper.rb`:
 
@@ -875,7 +878,7 @@ More info about global and matrix ENV configuration in [travis docs](https://doc
 
 ##### Semaphore 2.0
 
-knapack_pro gem supports environment variables provided by Semaphore CI 2.0 to run your tests. You will have to define a few things in `.semaphore/semaphore.yml` config file.
+knapsack_pro gem supports environment variables provided by Semaphore CI 2.0 to run your tests. You will have to define a few things in `.semaphore/semaphore.yml` config file.
 
 * You need to set `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC`. If you don't want to commit secrets in yml file then you can [follow this guide](https://docs.semaphoreci.com/article/66-environment-variables-and-secrets).
 * You need to create as many jobs with unique names (Node 0 - Knapsack Pro, Node 1 - Knapsack Pro etc) as many parallel jobs you want to run. If your test suite is long you should use more parallel jobs.
@@ -1349,8 +1352,8 @@ If you are going to relay on rspec to autobalance build when cucumber tests were
 
     ERROR -- : [knapsack_pro] {"errors"=>[{"commit_hash"=>["parameter is required"]}]}
 
-When Knapsack Pro API returns error like above the problem is because you use CI provider not supported by knapack_pro which means
-knapack_pro gem cannot determine the git commit hash and branch name. To fix this problem you can do:
+When Knapsack Pro API returns error like above the problem is because you use CI provider not supported by knapsack_pro which means
+knapsack_pro gem cannot determine the git commit hash and branch name. To fix this problem you can do:
 
 * if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
 * if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
@@ -1369,11 +1372,11 @@ Please ensure you are actually using only Test::Unit runner. You may use some hy
 
 #### Why I see HEAD as branch name in user dashboard for Build metrics for my API token?
 
-knapack_pro detects your branch name from environment variables of [supported CI providers](#supported-ci-providers). Sometimes the CI provider may expose the `HEAD` instead of branch name (for instance for pull request merge commits).
+knapsack_pro detects your branch name from environment variables of [supported CI providers](#supported-ci-providers). Sometimes the CI provider may expose the `HEAD` instead of branch name (for instance for pull request merge commits).
 
 The same can happen for CI provider not supported by default by knapsack_pro when you use [KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported) to use local git installed on CI node to detect the branch name and git commit.
 
-knapack_pro uses git command `git -C /home/user/project_dir rev-parse --abbrev-ref HEAD` to detect branch name. See [source of knapack_pro](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/repository_adapters/git_adapter.rb). In most of cases it's good way to detect branch name. But if your CI provider during CI build checkouts to specific git commit then git cannot provide the name of the branch. In such scenario you would see `HEAD` as your branch name. It is good enough situation and knapack_pro will work correctly. The benefit of knowing exactly the branch name allows KnapsackPro API to better track history of test files timing changes across branches in order to better do split of test suite. The difference should be rather very small so it's not a problem that you have `HEAD` as branch name.
+knapsack_pro uses git command `git -C /home/user/project_dir rev-parse --abbrev-ref HEAD` to detect branch name. See [source of knapsack_pro](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/repository_adapters/git_adapter.rb). In most of cases it's good way to detect branch name. But if your CI provider during CI build checkouts to specific git commit then git cannot provide the name of the branch. In such scenario you would see `HEAD` as your branch name. It is good enough situation and knapsack_pro will work correctly. The benefit of knowing exactly the branch name allows KnapsackPro API to better track history of test files timing changes across branches in order to better do split of test suite. The difference should be rather very small so it's not a problem that you have `HEAD` as branch name.
 
 If you would like to see exact branch name instead of `HEAD` in your `build metrics` history in [user dashboard](https://knapsackpro.com/dashboard) then you can explicitly provide the branch name with `KNAPSACK_PRO_BRANCH` for each CI build.
 
@@ -1441,7 +1444,7 @@ end
 Workaround is to replace `task` with explicit association:
 
 ```ruby
-# this will work in knapack_pro Queue Mode
+# this will work in knapsack_pro Queue Mode
 FactoryBot.define do
   factory :assignment do
     association :task
@@ -1542,17 +1545,17 @@ The 0.1s is a default time execution used when test file is an empty file or its
 
 The problem may happen when you use old knapsack_pro `< 0.33.0` or if you use custom rspec formatter, or when you set flag [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests).
 
-When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
+When you use Queue Mode then knapsack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
 This means RSpec will remember failed tests so far and it will present them at the end of each executed test subset if flag `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false`.
-You can see the list of all failed test files at the end of knapack_pro queue mode command.
+You can see the list of all failed test files at the end of knapsack_pro queue mode command.
 
 ##### Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?
 
 The problem may happen when you use old knapsack_pro `< 0.33.0` or if you use custom rspec formatter, or when you set flag [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests).
 
-When you use Queue Mode then knapack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
+When you use Queue Mode then knapsack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
 This means RSpec will remember pending tests so far and it will present them at the end of each executed test subset if flag `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false`.
-You can see the list of all pending test files at the end of knapack_pro queue mode command.
+You can see the list of all pending test files at the end of knapsack_pro queue mode command.
 
 ##### Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?
 
@@ -1560,7 +1563,7 @@ No. In Queue Mode the RSpec configuration is updated every time when knapsack_pr
 
 ##### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
 
-This may happen when you use not supported CI provider by knapack_pro. It's because of missing value of CI build ID. You can set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` for each CI build. The problem with test suite run again happens when one of your CI node started work later when all other CI nodes already executed whole test suite.
+This may happen when you use not supported CI provider by knapsack_pro. It's because of missing value of CI build ID. You can set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` for each CI build. The problem with test suite run again happens when one of your CI node started work later when all other CI nodes already executed whole test suite.
 The slow CI node that started work late will initialize a new queue hence the tests executed twice.
 
 To solve this problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID` as mentioned above or you can set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
@@ -1617,7 +1620,7 @@ Learn more about [log levels](#how-can-i-change-log-level).
 
 ##### How to find seed in RSpec output when I use Queue Mode for RSpec?
 
-In output for RSpec in knapack_pro Queue Mode you may see message:
+In output for RSpec in knapsack_pro Queue Mode you may see message:
 
 > INFO -- : [knapsack_pro] To retry in development the subset of tests fetched from API queue please run below command on your machine. If you use --order random then remember to add proper --seed 123 that you will find at the end of rspec command.
 >
@@ -1647,7 +1650,7 @@ If you don't use RSpec argument `--order random` then you don't need to provide 
 
 #### How to run tests for particular CI node in your development environment
 
-##### for knapack_pro regular mode
+##### for knapsack_pro regular mode
 
 In your development environment you can debug tests that were run on the particular CI node.
 For instance to run subset of tests for the first CI node with specified seed you can do.
@@ -1732,13 +1735,13 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
 #### What happens when Knapsack Pro API is not available/not reachable temporarily?
 
-##### for knapack_pro regular mode
+##### for knapsack_pro regular mode
 
-knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it switch to fallback behavior and it will split test files across CI nodes based on popular test directory names. When knapack_pro starts fallback mode then you will see a warning in the output.
+knapsack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds til it switch to fallback behavior and it will split test files across CI nodes based on popular test directory names. When knapsack_pro starts fallback mode then you will see a warning in the output.
 
 ##### for knapsack_pro queue mode
 
-knapack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds till it switches to fallback behavior and it will split test files across CI nodes based on popular test directory names. Note that if one of CI nodes will lose connection to Knapsack Pro API but other not then you may see that some of the test files will be executed on multiple CI nodes. Fallback mode guarantees each of test files is run at least once across CI nodes. Thanks to that we know if the whole test suite is green or not. When knapack_pro starts fallback mode then you will see a warning in the output.
+knapsack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds till it switches to fallback behavior and it will split test files across CI nodes based on popular test directory names. Note that if one of CI nodes will lose connection to Knapsack Pro API but other not then you may see that some of the test files will be executed on multiple CI nodes. Fallback mode guarantees each of test files is run at least once across CI nodes. Thanks to that we know if the whole test suite is green or not. When knapsack_pro starts fallback mode then you will see a warning in the output.
 
 #### How can I change log level?
 
@@ -1753,7 +1756,19 @@ Recommended log levels you can use:
 * `debug` is default log level and it is recommended to log details about requests to Knapsack Pro API. Thanks to that you can debug things or ensure everything works. For instance in [user dashboard](https://knapsackpro.com/dashboard) you can find tips referring to debug logs.
 * `info` level shows message like how to retry tests in development or info why something works this way or the other (for instance why tests were not executed on the CI node). You can use `info` level when you really don't want to see all debug messages from default log level.
 
-#### How to write knapack_pro logs to a file?
+#### How to write knapsack_pro logs to a file?
+
+##### set directory where to write log file (option 1 - recommended)
+
+Set `KNAPSACK_PRO_LOG_DIR=log` environment variable in order to notify knapsack_pro gem to write logs to `log` directory.
+If you have Rails project then this should work for you.
+
+knapsack_pro will create a file with CI node index in name. For instance if you run tests on 2 CI nodes:
+
+* `log/knapsack_pro_node_0.log`
+* `log/knapsack_pro_node_1.log`
+
+##### set custom logger config (option 2)
 
 In your `rails_helper.rb` you can set custom Knapsack Pro logger and write to custom log file.
 
@@ -1767,7 +1782,13 @@ KnapsackPro.logger = Logger.new(Rails.root.join('log', "knapsack_pro_node_#{Knap
 KnapsackPro.logger.level = Logger::DEBUG
 ```
 
-Note if you run knapsack_pro in Queue Mode then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb` where the configuration of logger actually is loaded for the first time.
+Note if you run knapsack_pro then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb` where the configuration of logger actually is loaded for the first time.
+
+That is why you may prefer to use option 1 instead of this.
+
+##### How to preserve logs on my CI after CI build completed?
+
+Follow this tip if you use one of above options to write knapsack_pro log to the file.
 
 If you would like to keep knapsack_pro logs after your CI build finished then you could use artifacts or some cache mechanize for your CI provider.
 
@@ -1800,7 +1821,7 @@ A lot of small test files will give you better test suite split results.
 
 Another way is to use tags to mark subset of tests in particular test file and then split tests based on tags.
 
-This example is for knapack_pro Regular Mode. You can also use knapack_pro Queue Mode with tags.
+This example is for knapsack_pro Regular Mode. You can also use knapsack_pro Queue Mode with tags.
 
 Here is example of test file with specified tags for describe groups:
 
@@ -2047,7 +2068,7 @@ When you have short test suite, for instance in javascript then you could distri
 * CI 1
   * Step 1: `bundle exec rake knapsack_pro:queue:rspec`
 
-You will run your javascript tests on single CI node and the knapack_pro will auto-balance CI build with Queue Mode. Thanks to that CI build time execution will be flat and optimal (as fast as possible).
+You will run your javascript tests on single CI node and the knapsack_pro will auto-balance CI build with Queue Mode. Thanks to that CI build time execution will be flat and optimal (as fast as possible).
 
 #### How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?
 
@@ -2094,7 +2115,7 @@ end
 You can run knapsack_pro with [parallel_tests](https://github.com/grosser/parallel_tests) gem to run multiple concurrent knapsack_pro commands per CI node.
 
 Let's consider this example. We have 2 CI node. On each CI node we want to run 2 concurrent knapsack_pro commands by parallel_tests gem (`PARALLEL_TESTS_CONCURRENCY=2`).
-This means we would have 4 parallel knapack_pro commands in total across all CI nodes. So from knapsack_pro perspective you will have 4 nodes in total.
+This means we would have 4 parallel knapsack_pro commands in total across all CI nodes. So from knapsack_pro perspective you will have 4 nodes in total.
 
 Create in your project directory an executable file `bin/parallel_tests`:
 
@@ -2193,7 +2214,7 @@ end
 Then you can execute rspec with only failed tests after main knapsack_pro command finish.
 
 ```bash
-# Run knapack_pro in Queue Mode and it will save failed tests in tmp/rspec_examples.txt
+# Run knapsack_pro in Queue Mode and it will save failed tests in tmp/rspec_examples.txt
 bundle exec rake knapsack_pro:queue:rspec
 
 # run only failed tests from tmp/rspec_examples.txt
@@ -2255,7 +2276,7 @@ If you would like to run only non feature tests then use negation `~type:feature
 KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$API_TOKEN_FOR_NON_FEATURE_TESTS bundle exec rake "knapsack_pro:queue:rspec[--tag ~type:feature]"
 ```
 
-Note above examples are for knapack_pro Queue Mode and when you will run tests you may notice that all test files are run by RSpec but only tests specified by tag like `tag type:feature` will be executed. Basically RSpec will just load all files but run just specified tags.
+Note above examples are for knapsack_pro Queue Mode and when you will run tests you may notice that all test files are run by RSpec but only tests specified by tag like `tag type:feature` will be executed. Basically RSpec will just load all files but run just specified tags.
 
 **Option 2: specify directory pattern**
 
@@ -2308,9 +2329,9 @@ You can check CodeClimate docs about [parallel tests](https://docs.codeclimate.c
 
 #### How to run knapsack_pro only on a few parallel CI nodes instead of all?
 
-You may want to run knapack_pro only on a few CI nodes when you would like to run a different job on other CI nodes.
+You may want to run knapsack_pro only on a few CI nodes when you would like to run a different job on other CI nodes.
 
-For instance, you have 3 parallel CI nodes. You would like to run knapack_pro only on two CI nodes. The last CI node you want to use for the different job like running linters etc.
+For instance, you have 3 parallel CI nodes. You would like to run knapsack_pro only on two CI nodes. The last CI node you want to use for the different job like running linters etc.
 
 In such case, you can override the number of total CI nodes available by your CI provider. For instance, Heroku CI provider exposes in ENV variables `CI_NODE_TOTAL=3`.
 
@@ -2320,15 +2341,15 @@ You can then run knapsack_pro command this way on the first and the second CI no
 KNAPSACK_PRO_CI_NODE_TOTAL=$((CI_NODE_TOTAL-1)) bundle exec rake knapsack_pro:rspec
 ```
 
-We decrease the number of CI node total by 1 that knapack_pro can see. This way you can run tests with knapsack_pro only on two CI nodes.
+We decrease the number of CI node total by 1 that knapsack_pro can see. This way you can run tests with knapsack_pro only on two CI nodes.
 On the 3rd CI node, you can run other things like linters etc.
 
 If you would like to check what is the CI node total ENV variable name exposed by your CI provider you can check that in your CI provider environment variables docs
-or preview the [ENV variables that knapack_pro can read](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci) for supported CI providers.
+or preview the [ENV variables that knapsack_pro can read](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci) for supported CI providers.
 
 #### How to use simplecov in Queue Mode?
 
-If you would like to make [simplecov](https://github.com/colszowka/simplecov) gem work with knapack_pro Queue Mode to correctly track code coverage for parallel CI nodes please do:
+If you would like to make [simplecov](https://github.com/colszowka/simplecov) gem work with knapsack_pro Queue Mode to correctly track code coverage for parallel CI nodes please do:
 
 ```ruby
 # spec_helper.rb or rails_helper.rb
@@ -2346,7 +2367,7 @@ This way there should be no conflict between code coverage reports generated per
 
 #### Do I need to use separate API token for Queue Mode and Regular Mode?
 
-I recommend to record timing of a new test suite with `API token A` and knapsack_pro Regular Mode. After you recorded test suite timing then you should use the `API token A` to run your tests in knapack_pro Queue Mode. This way Queue Mode will leverage test suite timing recorded in a fast way with Regular Mode so the first run in Queue Mode won't be slow due to recording test files timing for the first time.
+I recommend to record timing of a new test suite with `API token A` and knapsack_pro Regular Mode. After you recorded test suite timing then you should use the `API token A` to run your tests in knapsack_pro Queue Mode. This way Queue Mode will leverage test suite timing recorded in a fast way with Regular Mode so the first run in Queue Mode won't be slow due to recording test files timing for the first time.
 
 When you want to go back from Queue Mode to Regular Mode then the fact of using the same API token could cause edge cases that some builds might not be well balanced in Regular Mode. That is why I recommend using separate API token for Regular Mode and Queue Mode. If you plan to use only Queue Mode then no worry.
 

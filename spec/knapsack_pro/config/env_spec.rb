@@ -701,4 +701,18 @@ describe KnapsackPro::Config::Env do
       it { should eql ::Logger::DEBUG }
     end
   end
+
+  describe '.log_dir' do
+    subject { described_class.log_dir }
+
+    context 'when ENV set to directory path' do
+      let(:log_dir) { 'log' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_LOG_DIR' => log_dir }) }
+      it { should eql 'log' }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
 end

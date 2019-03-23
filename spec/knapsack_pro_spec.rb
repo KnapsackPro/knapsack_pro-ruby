@@ -13,6 +13,39 @@ describe KnapsackPro do
     before { described_class.reset_logger! }
     after { described_class.reset_logger! }
 
+    context 'when KNAPSACK_PRO_LOG_DIR is set' do
+      let(:logger) { instance_double(Logger) }
+
+      context 'when KNAPSACK_PRO_CI_NODE_INDEX is set' do
+        before do
+          stub_const('ENV', {
+            'KNAPSACK_PRO_LOG_DIR' => 'log',
+            'KNAPSACK_PRO_CI_NODE_INDEX' => 1,
+          })
+
+          expect(Logger).to receive(:new).with('log/knapsack_pro_node_1.log').and_return(logger)
+          expect(logger).to receive(:level=).with(Logger::DEBUG)
+          expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
+        end
+
+        it { should eql logger_wrapper }
+      end
+
+      context 'when KNAPSACK_PRO_CI_NODE_INDEX is not set' do
+        before do
+          stub_const('ENV', {
+            'KNAPSACK_PRO_LOG_DIR' => 'log',
+          })
+
+          expect(Logger).to receive(:new).with('log/knapsack_pro_node_0.log').and_return(logger)
+          expect(logger).to receive(:level=).with(Logger::DEBUG)
+          expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
+        end
+
+        it { should eql logger_wrapper }
+      end
+    end
+
     context 'when default logger' do
       let(:logger) { instance_double(Logger) }
 

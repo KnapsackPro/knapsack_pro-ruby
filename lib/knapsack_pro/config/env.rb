@@ -187,6 +187,10 @@ module KnapsackPro
           LOG_LEVELS[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::DEBUG
         end
 
+        def log_dir
+          ENV['KNAPSACK_PRO_LOG_DIR']
+        end
+
         private
 
         def required_env(env_name)
