@@ -1767,7 +1767,7 @@ KnapsackPro.logger = Logger.new(Rails.root.join('log', "knapsack_pro_node_#{Knap
 KnapsackPro.logger.level = Logger::DEBUG
 ```
 
-Note if you run knapsack_pro in Queue Mode then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb`/`spec_helper.rb` where the configuration of logger actually is loaded for the first time.
+Note if you run knapsack_pro in Queue Mode then the very first request to Knapsack Pro API still will be shown to stdout because we need to have set of test files needed to run RSpec before we load `rails_helper.rb` where the configuration of logger actually is loaded for the first time.
 
 If you would like to keep knapsack_pro logs after your CI build finished then you could use artifacts or some cache mechanize for your CI provider.
 
