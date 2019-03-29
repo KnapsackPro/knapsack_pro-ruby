@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.8.0
+
+* Run Fallback Mode when `OpenSSL::SSL::SSLError` certificate verify failed for API
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/80
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.7.0...v1.8.0
+
 ### 1.7.0
 
 * Add `KNAPSACK_PRO_LOG_DIR` to set directory where to write logs
