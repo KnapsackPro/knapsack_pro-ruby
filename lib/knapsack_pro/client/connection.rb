@@ -115,7 +115,7 @@ module KnapsackPro
         end
 
         response_body
-      rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout => e
+      rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         logger.warn(e.inspect)
         retries += 1
         if retries < MAX_RETRY
