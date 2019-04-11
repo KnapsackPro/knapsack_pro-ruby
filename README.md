@@ -165,6 +165,8 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
+      - [parallel_tests with knapsack_pro on parallel CI nodes](#parallel_tests-with-knapsack_pro-on-parallel-ci-nodes)
+      - [parallel_tests with knapsack_pro on single CI machine](#parallel_tests-with-knapsack_pro-on-single-ci-machine)
     - [How to retry failed tests (flaky tests)?](#how-to-retry-failed-tests-flaky-tests)
     - [How can I run tests from multiple directories?](#how-can-i-run-tests-from-multiple-directories)
     - [Why I don't see all test files being recorded in user dashboard](#why-i-dont-see-all-test-files-being-recorded-in-user-dashboard)
@@ -2116,6 +2118,8 @@ end
 
 #### How to run knapsack_pro with parallel_tests gem?
 
+##### parallel_tests with knapsack_pro on parallel CI nodes
+
 You can run knapsack_pro with [parallel_tests](https://github.com/grosser/parallel_tests) gem to run multiple concurrent knapsack_pro commands per CI node.
 
 Let's consider this example. We have 2 CI node. On each CI node we want to run 2 concurrent knapsack_pro commands by parallel_tests gem (`PARALLEL_TESTS_CONCURRENCY=2`).
@@ -2198,6 +2202,49 @@ To ensure everything works you can check output for each CI node.
     KNAPSACK_PRO_CI_NODE_TOTAL=4 KNAPSACK_PRO_CI_NODE_INDEX=3 PARALLEL_TESTS_CONCURRENCY=2
     (tests output here)
     ```
+
+##### parallel_tests with knapsack_pro on single CI machine
+
+This tip is only relevant to you if you cannot use multiple parallel CI nodes on your CI provider. In such case, you can run your tests on a single CI machine with knapsack_pro Queue Mode in order to auto balance execution of tests and thanks to this better utilize CI machine resources.
+
+You can run knapsack_pro with [parallel_tests](https://github.com/grosser/parallel_tests) gem to run multiple concurrent knapsack_pro commands on single CI node.
+
+Create in your project directory an executable file `bin/parallel_tests_knapsack_pro_single_machine`:
+
+```bash
+#!/bin/bash
+# bin/parallel_tests_knapsack_pro_single_machine
+
+export KNAPSACK_PRO_CI_NODE_TOTAL=$PARALLEL_TESTS_CONCURRENCY
+
+if [ "$TEST_ENV_NUMBER" == "" ]; then
+  export KNAPSACK_PRO_CI_NODE_INDEX=0
+else
+  export KNAPSACK_PRO_CI_NODE_INDEX=$(( $TEST_ENV_NUMBER - 1 ))
+fi
+
+echo KNAPSACK_PRO_CI_NODE_TOTAL=$KNAPSACK_PRO_CI_NODE_TOTAL KNAPSACK_PRO_CI_NODE_INDEX=$KNAPSACK_PRO_CI_NODE_INDEX PARALLEL_TESTS_CONCURRENCY=$PARALLEL_TESTS_CONCURRENCY
+
+bundle exec rake knapsack_pro:queue:rspec
+```
+
+Then you need another script `bin/parallel_tests_knapsack_pro_single_machine_run` to run above script with `parallel_tests`:
+
+```bash
+#!/bin/bash
+# bin/parallel_tests_knapsack_pro_single_machine_run
+
+export PARALLEL_TESTS_CONCURRENCY=2;
+
+RAILS_ENV=test \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=xxx \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=/home/user/rails-app-repo \
+  PARALLEL_TESTS_CONCURRENCY=$PARALLEL_TESTS_CONCURRENCY \
+  bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests_knapsack_pro_single_machine'
+```
+
+Now you can run `bin/parallel_tests_knapsack_pro_single_machine_run` and it will execute 2 parallel processes with `parallel_tests`. Each process will run knapsack_pro Queue Mode to autobalance test files distribution across the processes.
 
 #### How to retry failed tests (flaky tests)?
 
