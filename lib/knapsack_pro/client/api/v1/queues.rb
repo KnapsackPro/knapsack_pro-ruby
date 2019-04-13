@@ -5,19 +5,26 @@ module KnapsackPro
         class Queues < Base
           class << self
             def queue(args)
+              request_hash = {
+                :fixed_queue_split => KnapsackPro::Config::Env.fixed_queue_split,
+                :can_initialize_queue => args.fetch(:can_initialize_queue),
+                :commit_hash => args.fetch(:commit_hash),
+                :branch => args.fetch(:branch),
+                :node_total => args.fetch(:node_total),
+                :node_index => args.fetch(:node_index),
+                :node_build_id => KnapsackPro::Config::Env.ci_node_build_id,
+              }
+
+              if request_hash[:can_initialize_queue]
+                request_hash.merge!({
+                  :test_files => args.fetch(:test_files)
+                })
+              end
+
               action_class.new(
                 endpoint_path: '/v1/queues/queue',
                 http_method: :post,
-                request_hash: {
-                  :fixed_queue_split => KnapsackPro::Config::Env.fixed_queue_split,
-                  :can_initialize_queue => args.fetch(:can_initialize_queue),
-                  :commit_hash => args.fetch(:commit_hash),
-                  :branch => args.fetch(:branch),
-                  :node_total => args.fetch(:node_total),
-                  :node_index => args.fetch(:node_index),
-                  :node_build_id => KnapsackPro::Config::Env.ci_node_build_id,
-                  :test_files => args.fetch(:test_files)
-                }
+                request_hash: request_hash
               )
             end
           end
