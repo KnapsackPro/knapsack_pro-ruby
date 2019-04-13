@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.9.0
+
+* Reduce data transfer and speed up usage of Knapsack Pro API for Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/81
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.8.0...v1.9.0
+
 ### 1.8.0
 
 * Run Fallback Mode when `OpenSSL::SSL::SSLError` certificate verify failed for API
