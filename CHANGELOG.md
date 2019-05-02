@@ -6,6 +6,10 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/83
 
+* Fix bug: default test file time should not be added to measured time
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/84
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.9.0...v1.10.0
 
 ### 1.9.0
