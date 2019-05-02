@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.10.1
+
+* Fix log info when measured time of tests was lost
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/85
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.10.0...v1.10.1
+
 ### 1.10.0
 
 * Logs error on lost info about recorded timing for test files due to missing json files in Queue Mode
