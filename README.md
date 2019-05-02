@@ -1540,6 +1540,15 @@ If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build
 If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build metrics` for your API token and you open CI build for your last git commit you should see there info about collected time execution data from all CI nodes. If you see all test files have 0.1s time execution then please ensure:
 
 * you don't clean up `tmp` directory in your tests (for instance in RSpec hooks like `before` or `after`) so knapsack_pro can publish measured time execution data to Knapsack Pro API server. knapsack_pro Queue Mode saves temporary files with collected time execution data in `your_rails_project/tmp/knapsack_pro/queue/`.
+* please ensure you have in your `rails_helper.rb` or `spec_helper.rb` line:
+
+```ruby
+require 'knapsack_pro'
+
+# CUSTOM_CONFIG_GOES_HERE
+
+KnapsackPro::Adapters::RSpecAdapter.bind
+```
 
 The 0.1s is a default time execution used when test file is an empty file or its content are all pending tests.
 
