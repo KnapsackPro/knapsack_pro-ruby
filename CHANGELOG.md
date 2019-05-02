@@ -2,7 +2,7 @@
 
 ### 1.10.0
 
-* Logs error on lost info about recorded timing for test files due missing json files in Queue Mode
+* Logs error on lost info about recorded timing for test files due to missing json files in Queue Mode
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/83
 
