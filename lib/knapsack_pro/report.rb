@@ -27,7 +27,7 @@ module KnapsackPro
       end
     end
 
-    def self.save_node_queue_to_api(executed_test_files_count)
+    def self.save_node_queue_to_api
       test_files = []
       Dir.glob("#{queue_path}/*.json").each do |file|
         report = JSON.parse(File.read(file))
@@ -35,15 +35,17 @@ module KnapsackPro
       end
 
       if test_files.empty?
-        if executed_test_files_count == 0
-          KnapsackPro.logger.warn("No test files were executed on this CI node.")
-          KnapsackPro.logger.debug("When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.")
-          KnapsackPro.logger.debug("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what testes should be executed here.")
-        end
+        KnapsackPro.logger.warn("No test files were executed on this CI node.")
+        KnapsackPro.logger.debug("When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.")
+        KnapsackPro.logger.debug("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what testes should be executed here.")
+      end
 
-        if executed_test_files_count > 0
-          KnapsackPro.logger.error("#{executed_test_files_count} test files were executed on this CI node but the recorded time of it was lost. Probably you have a code (i.e. RSpec hooks) that clears tmp directory in your project. Please ensure you do not remove the content of tmp/knapsack_pro/queue/ directory between tests run. Another reason might be that you forgot to add Knapsack::Adapters::RspecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/")
-        end
+      measured_test_files = test_files
+        .map { |t| t['time_execution'] }
+        .select { |time_execution| time_execution != KnapsackPro::Tracker::DEFAULT_TEST_FILE_TIME }
+
+      if test_files.size > 0 && measured_test_files.size == 0
+        KnapsackPro.logger.error("#{test_files.size} test files were executed on this CI node but the recorded time of it was lost. Probably you have a code (i.e. RSpec hooks) that clears tmp directory in your project. Please ensure you do not remove the content of tmp/knapsack_pro/queue/ directory between tests run. Another reason might be that you forgot to add Knapsack::Adapters::RspecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/")
       end
 
       create_build_subset(test_files)

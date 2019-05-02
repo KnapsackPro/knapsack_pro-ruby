@@ -161,7 +161,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
       it 'returns exit code 0' do
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-        expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(0)
+        expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
 
         expect(subject).to eq({
           status: :completed,
