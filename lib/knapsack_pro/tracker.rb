@@ -2,6 +2,10 @@ module KnapsackPro
   class Tracker
     include Singleton
 
+    # when test file is pending, empty with no tests or has syntax error then assume time execution
+    # to better allocate it in Queue Mode for future CI build runs
+    DEFAULT_TEST_FILE_TIME = 0.1 # seconds
+
     attr_reader :global_time_since_beginning, :global_time, :test_files_with_time
     attr_writer :current_test_path
 
@@ -36,16 +40,19 @@ module KnapsackPro
         # in case when the test file will not be run
         # due syntax error or being pending.
         # The time is required by Knapsack Pro API.
-        @test_files_with_time[test_file_path] = 0.1
+        @test_files_with_time[test_file_path] = {
+          time_execution: DEFAULT_TEST_FILE_TIME,
+          measured_time: false,
+        }
       end
     end
 
     def to_a
       test_files = []
-      @test_files_with_time.each do |path, time_execution|
+      @test_files_with_time.each do |path, hash|
         test_files << {
           path: path,
-          time_execution: time_execution
+          time_execution: hash[:time_execution]
         }
       end
       test_files
@@ -65,8 +72,21 @@ module KnapsackPro
     end
 
     def update_test_file_time(execution_time)
-      @test_files_with_time[current_test_path] ||= 0
-      @test_files_with_time[current_test_path] += execution_time
+      @test_files_with_time[current_test_path] ||= {
+        time_execution: 0,
+        measured_time: false,
+      }
+
+      hash = @test_files_with_time[current_test_path]
+
+      if hash[:measured_time]
+        hash[:time_execution] += execution_time
+      else
+        hash[:time_execution] = execution_time
+        hash[:measured_time] = true
+      end
+
+      @test_files_with_time[current_test_path] = hash
     end
 
     def now_without_mock_time
