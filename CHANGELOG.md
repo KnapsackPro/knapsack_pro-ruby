@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.10.0
+
+* Logs error on lost info about recorded timing for test files due to missing json files in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/83
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.9.0...v1.10.0
+
 ### 1.9.0
 
 * Reduce data transfer and speed up usage of Knapsack Pro API for Queue Mode

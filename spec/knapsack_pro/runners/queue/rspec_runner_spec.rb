@@ -203,7 +203,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
 
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(1)
 
           expect(subject).to eq({
             status: :completed,
@@ -217,7 +217,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(0)
 
           expect(subject).to eq({
             status: :completed,

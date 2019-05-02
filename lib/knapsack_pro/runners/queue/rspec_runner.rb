@@ -59,7 +59,7 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_after_queue
 
-            KnapsackPro::Report.save_node_queue_to_api
+            KnapsackPro::Report.save_node_queue_to_api(all_test_file_paths.count)
 
             return {
               status: :completed,
