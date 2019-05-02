@@ -56,8 +56,8 @@ describe KnapsackPro::Tracker do
 
       it { expect(tracker.global_time).to be_within(delta).of(0.3) }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
-      it { expect(tracker.test_files_with_time['a_spec.rb']).to be_within(delta).of(0.1) }
-      it { expect(tracker.test_files_with_time['b_spec.rb']).to be_within(delta).of(0.2) }
+      it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to be_within(delta).of(0.1) }
+      it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be_within(delta).of(0.2) }
       it_behaves_like '#to_a'
     end
 
@@ -81,8 +81,8 @@ describe KnapsackPro::Tracker do
       it { expect(tracker.global_time).to be > 0 }
       it { expect(tracker.global_time).to be_within(delta).of(0) }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
-      it { expect(tracker.test_files_with_time['a_spec.rb']).to be_within(delta).of(0) }
-      it { expect(tracker.test_files_with_time['b_spec.rb']).to be_within(delta).of(0) }
+      it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to be_within(delta).of(0) }
+      it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be_within(delta).of(0) }
       it_behaves_like '#to_a'
     end
 
@@ -97,8 +97,8 @@ describe KnapsackPro::Tracker do
 
       it { expect(tracker.global_time).to eq 0 }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
-      it { expect(tracker.test_files_with_time['a_spec.rb']).to eq 0 }
-      it { expect(tracker.test_files_with_time['b_spec.rb']).to eq 0 }
+      it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to eq 0 }
+      it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to eq 0 }
       it_behaves_like '#to_a'
     end
   end
