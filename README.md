@@ -1424,6 +1424,13 @@ You can learn more about [recent RSpec team changes](https://github.com/Knapsack
 To solve failing tests in Queue Mode you can check:
 
 * you use full namespacing. If you see error like `NameError: uninitialized constant MyModule::ModelName` then in some cases a top-level constant would be matched if the code hadn't been loaded for the scoped constant. Try to use full namespacing `::SomeModule::MyModule::ModelName` etc.
+* you can try to use binary version of knapsack_pro instead of running it via rake task. This helps if your rake tasks mess up with tests and make knapsack_pro Queue Mode fail. [See example](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail):
+
+    ```
+    # Knapsack Pro Queue Mode run via binary
+    bundle exec knapsack_pro queue:rspec "--profile 10 --format progress"
+    ```
+
 * You can check below questions for common reasons of failing tests in Queue Mode
 
 ##### Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?
