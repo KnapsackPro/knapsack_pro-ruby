@@ -2324,9 +2324,13 @@ require 'spec_helper'
 
 #### Why I don't see all test files being recorded in user dashboard
 
-If you open `Build metrics` for particular API token at [user dashboard](https://knapsackpro.com/dashboard) and you don't see all time execution data recorded for all test files then you should know that knapsack_pro does not track test files with empty content or when the test file contains only pending tests.
+If you open `Build metrics` for particular API token at [user dashboard](https://knapsackpro.com/dashboard) and you don't see all time execution data recorded for all test files then you should know that knapsack_pro version older than [`1.0.2`](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/CHANGELOG.md#102) does not track test files with empty content or when the test file contains only pending tests.
 
 The test files with pending tests are executed so you will see it in RSpec output but just not recorded in Knapsack Pro API because there is nothing to record time for.
+
+We recommend to update to the latest version of knapsack_pro.
+
+Please check also this question [why you may don't see time execution data](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard) in your dashboard.
 
 #### Why when I use 2 different CI providers then not all test files are executed?
 
