@@ -120,6 +120,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [Why I see HEAD as branch name in user dashboard for Build metrics for my API token?](#why-i-see-head-as-branch-name-in-user-dashboard-for-build-metrics-for-my-api-token)
     - [Why Capybara feature tests randomly fail when using CI parallelisation?](#why-capybara-feature-tests-randomly-fail-when-using-ci-parallelisation)
     - [Why knapsack_pro freezes / hangs my CI (for instance Travis)?](#why-knapsack_pro-freezes--hangs-my-ci-for-instance-travis)
+    - [Why my tests hitting external API fails?](#why-my-tests-hitting-external-api-fails)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
