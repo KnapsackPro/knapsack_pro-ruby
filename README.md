@@ -1409,6 +1409,26 @@ RSpec.configure do |c|
 end
 ```
 
+#### Why my tests hitting external API fails?
+
+If you use knapsack_pro and you have tests that do real HTTP requests to external API you need to ensure your tests can be run across parallel CI nodes.
+
+Let's say you have tests that do requests to Stripe API or any other API. Before running each test you want to make sure Stripe Sandbox is clean up so you have removed all fake subscriptions and customers from Stripe Sandbox.
+
+```ruby
+# RSpec hook
+before(:each) do
+  Stripe::Subscription.all.each { |sub| sub.delete }
+  Stripe::Customer.all.each { |customer| customer.delete }
+end
+```
+
+But this will cause a problem when 2 different test files will run on 2 different CI nodes at the same time and this hook will be called. You will remove subscriptions and customers while another parallel test was running. Simply speaking you have tests that are written in a way that you can't run them in parallel.
+
+To fix that you can think of:
+* using [VCR](https://github.com/vcr/vcr) gem to record HTTP requests and then instead of doing real HTTP requests just reply recorded requests.
+* maybe you could write your tests in a way when you generate some fake customers or subscriptions with fake id and each test has different customer id so there will be no conflict when 2 tests are run at the same time.
+
 #### Queue Mode problems
 
 ##### Why when I use Queue Mode for RSpec then my tests fail?
