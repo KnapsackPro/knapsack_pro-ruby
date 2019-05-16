@@ -178,6 +178,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [How to run knapsack_pro only on a few parallel CI nodes instead of all?](#how-to-run-knapsack_pro-only-on-a-few-parallel-ci-nodes-instead-of-all)
     - [How to use simplecov in Queue Mode?](#how-to-use-simplecov-in-queue-mode)
     - [Do I need to use separate API token for Queue Mode and Regular Mode?](#do-i-need-to-use-separate-api-token-for-queue-mode-and-regular-mode)
+    - [How to stop running tests on the first failed test (fail fast tests in RSpec)?](#how-to-stop-running-tests-on-the-first-failed-test-fail-fast-tests-in-rspec)
   - [Questions around data usage and security](#questions-around-data-usage-and-security)
     - [What data is sent to your servers?](#what-data-is-sent-to-your-servers)
     - [How is that data secured?](#how-is-that-data-secured)
@@ -2469,6 +2470,32 @@ This way there should be no conflict between code coverage reports generated per
 I recommend to record timing of a new test suite with `API token A` and knapsack_pro Regular Mode. After you recorded test suite timing then you should use the `API token A` to run your tests in knapsack_pro Queue Mode. This way Queue Mode will leverage test suite timing recorded in a fast way with Regular Mode so the first run in Queue Mode won't be slow due to recording test files timing for the first time.
 
 When you want to go back from Queue Mode to Regular Mode then the fact of using the same API token could cause edge cases that some builds might not be well balanced in Regular Mode. That is why I recommend using separate API token for Regular Mode and Queue Mode. If you plan to use only Queue Mode then no worry.
+
+#### How to stop running tests on the first failed test (fail fast tests in RSpec)?
+
+If you want to stop running tests as soon as one of it fails then you can pass [--fail-fast](https://relishapp.com/rspec/rspec-core/docs/command-line/fail-fast-option) RSpec option to knapsack_pro:
+
+```
+# Regular Mode
+bundle exec rake "knapsack_pro:rspec[--fail-fast]"
+
+# Queue Mode
+bundle exec rake "knapsack_pro:queue:rspec[--fail-fast]"
+```
+
+You may add a parameter to tell RSpec to stop running the test suite after N failed tests, for example: `--fail-fast=3`.
+
+```
+Note there is no = sign on purpose here:
+
+# Regular Mode
+bundle exec rake "knapsack_pro:rspec[--fail-fast 3]"
+
+# Queue Mode
+bundle exec rake "knapsack_pro:queue:rspec[--fail-fast 3]"
+```
+
+There is a downside to it. If you stop running tests then tests that were never run will have no recorded timing of execution and because of that, the future CI build might have tests split across CI nodes in no optimal way.
 
 ### Questions around data usage and security
 
