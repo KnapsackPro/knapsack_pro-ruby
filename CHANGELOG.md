@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.11.0
+
+* Add support for `KNAPSACK_PRO_TEST_FILE_LIST` environment variable to run explicitly listed tests
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/86
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.10.1...v1.11.0
+
 ### 1.10.1
 
 * Fix log info when measured time of tests was lost
