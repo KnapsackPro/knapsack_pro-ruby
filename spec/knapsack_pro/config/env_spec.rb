@@ -167,6 +167,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_file_list' do
+    subject { described_class.test_file_list }
+
+    context 'when ENV exists' do
+      let(:test_file_list) { 'spec/features/dashboard_spec.rb,spec/models/user.rb:10,spec/models/user.rb:29' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_LIST' => test_file_list }) }
+      it { should eq test_file_list }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.test_dir' do
     subject { described_class.test_dir }
 

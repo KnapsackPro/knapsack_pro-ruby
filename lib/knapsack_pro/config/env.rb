@@ -51,6 +51,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN']
         end
 
+        def test_file_list
+          ENV['KNAPSACK_PRO_TEST_FILE_LIST']
+        end
+
         def test_dir
           ENV['KNAPSACK_PRO_TEST_DIR']
         end
