@@ -52,5 +52,31 @@ describe KnapsackPro::TestFileFinder do
         ])
       end
     end
+
+    context 'when KNAPSACK_PRO_TEST_FILE_LIST is defined' do
+      # added spaces next to comma to check space is removed later
+      let(:test_file_list) { 'spec/bar_spec.rb,spec/foo_spec.rb, spec/time_helpers_spec.rb:10 , spec/time_helpers_spec.rb:38' }
+
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_LIST' => test_file_list })
+      end
+
+      it do
+        expect(subject).to eq([
+          {
+            'path' => 'spec/bar_spec.rb',
+          },
+          {
+            'path' => 'spec/foo_spec.rb',
+          },
+          {
+            'path' => 'spec/time_helpers_spec.rb:10',
+          },
+          {
+            'path' => 'spec/time_helpers_spec.rb:38',
+          },
+        ])
+      end
+    end
   end
 end

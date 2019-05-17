@@ -21,6 +21,10 @@ module KnapsackPro
     attr_reader :test_file_pattern
 
     def test_files
+      if KnapsackPro::Config::Env.test_file_list
+        return KnapsackPro::Config::Env.test_file_list.split(',').map(&:strip)
+      end
+
       test_file_paths = Dir.glob(test_file_pattern).uniq
 
       excluded_test_file_paths =
