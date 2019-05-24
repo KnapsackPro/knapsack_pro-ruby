@@ -175,8 +175,8 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [How to run only RSpec feature tests or non feature tests?](#how-to-run-only-rspec-feature-tests-or-non-feature-tests)
     - [How to exclude tests from running them?](#how-to-exclude-tests-from-running-them)
     - [How to run a specific list of test files or only some tests from test file?](#how-to-run-a-specific-list-of-test-files-or-only-some-tests-from-test-file)
-    - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
     - [How to run knapsack_pro only on a few parallel CI nodes instead of all?](#how-to-run-knapsack_pro-only-on-a-few-parallel-ci-nodes-instead-of-all)
+    - [How to use CodeClimate with knapsack_pro?](#how-to-use-codeclimate-with-knapsack_pro)
     - [How to use simplecov in Queue Mode?](#how-to-use-simplecov-in-queue-mode)
     - [Do I need to use separate API token for Queue Mode and Regular Mode?](#do-i-need-to-use-separate-api-token-for-queue-mode-and-regular-mode)
     - [How to stop running tests on the first failed test (fail fast tests in RSpec)?](#how-to-stop-running-tests-on-the-first-failed-test-fail-fast-tests-in-rspec)
@@ -2436,12 +2436,6 @@ Note when you set `KNAPSACK_PRO_TEST_FILE_LIST` then below environment variables
 * `KNAPSACK_PRO_TEST_FILE_PATTERN`
 * `KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN`
 
-#### How to use CodeClimate with knapsack_pro?
-
-You can check CodeClimate docs about [parallel tests](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-tests) and [multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-multiple-test-suites).
-
-You can also read our article [how to merge CodeClimate reports for parallel jobs (CI nodes)](https://docs.knapsackpro.com/2019/how-to-merge-codeclimate-reports-for-parallel-jobs-ci-nodes).
-
 #### How to run knapsack_pro only on a few parallel CI nodes instead of all?
 
 You may want to run knapsack_pro only on a few CI nodes when you would like to run a different job on other CI nodes.
@@ -2461,6 +2455,12 @@ On the 3rd CI node, you can run other things like linters etc.
 
 If you would like to check what is the CI node total ENV variable name exposed by your CI provider you can check that in your CI provider environment variables docs
 or preview the [ENV variables that knapsack_pro can read](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci) for supported CI providers.
+
+#### How to use CodeClimate with knapsack_pro?
+
+You can check CodeClimate docs about [parallel tests](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-tests) and [multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-multiple-test-suites).
+
+You can also read our article [how to merge CodeClimate reports for parallel jobs (CI nodes)](https://docs.knapsackpro.com/2019/how-to-merge-codeclimate-reports-for-parallel-jobs-ci-nodes).
 
 #### How to use simplecov in Queue Mode?
 
