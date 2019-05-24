@@ -2460,7 +2460,9 @@ or preview the [ENV variables that knapsack_pro can read](https://github.com/Kna
 
 You can check CodeClimate docs about [parallel tests](https://docs.codeclimate.com/docs/configuring-test-coverage#section-parallel-tests) and [multiple test suites](https://docs.codeclimate.com/docs/configuring-test-coverage#section-multiple-test-suites).
 
-You can also read our article [how to merge CodeClimate reports for parallel jobs (CI nodes)](https://docs.knapsackpro.com/2019/how-to-merge-codeclimate-reports-for-parallel-jobs-ci-nodes).
+You can also read our articles:
+* [CodeClimate and CircleCI 2.0 parallel builds config for RSpec with SimpleCov and JUnit formatter](https://docs.knapsackpro.com/2019/codeclimate-and-circleci-2-0-parallel-builds-config-for-rspec-with-simplecov-and-junit-formatter)
+* [How to merge CodeClimate reports for parallel jobs (CI nodes) on Semaphore CI 2.0](https://docs.knapsackpro.com/2019/how-to-merge-codeclimate-reports-for-parallel-jobs-ci-nodes).
 
 #### How to use simplecov in Queue Mode?
 
