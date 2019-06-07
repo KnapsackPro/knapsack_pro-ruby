@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.12.0
+
+* Add Queue Mode for Cucumber
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/87
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.11.0...v1.12.0
+
 ### 1.11.0
 
 * Add support for `KNAPSACK_PRO_TEST_FILE_LIST` environment variable to run explicitly listed tests
