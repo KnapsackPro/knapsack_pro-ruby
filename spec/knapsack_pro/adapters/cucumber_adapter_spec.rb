@@ -168,5 +168,37 @@ describe KnapsackPro::Adapters::CucumberAdapter do
         end
       end
     end
+
+    describe '#bind_before_queue_hook' do
+      let(:block) { double }
+      let(:scenario) { double(:scenario) }
+
+      context 'when KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED is not set' do
+        it do
+          expect(subject).to receive(:Around).and_yield(scenario, block)
+
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_before_queue)
+          expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
+
+          expect(block).to receive(:call)
+
+          subject.bind_before_queue_hook
+        end
+      end
+
+      context 'when KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED is set' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED' => 'true' }) }
+
+        it do
+          expect(subject).to receive(:Around).and_yield(scenario, block)
+
+          expect(KnapsackPro::Hooks::Queue).not_to receive(:call_before_queue)
+
+          expect(block).to receive(:call)
+
+          subject.bind_before_queue_hook
+        end
+      end
+    end
   end
 end

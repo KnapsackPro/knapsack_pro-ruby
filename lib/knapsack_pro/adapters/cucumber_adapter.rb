@@ -53,16 +53,6 @@ module KnapsackPro
         end
       end
 
-      private
-
-      def Around(*tag_expressions, &proc)
-        if ::Cucumber::VERSION.to_i >= 3
-          ::Cucumber::Glue::Dsl.register_rb_hook('around', tag_expressions, proc)
-        else
-          ::Cucumber::RbSupport::RbDsl.register_rb_hook('around', tag_expressions, proc)
-        end
-      end
-
       def bind_before_queue_hook
         Around do |object, block|
           unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
@@ -79,6 +69,16 @@ module KnapsackPro
         ::Kernel.at_exit do
           KnapsackPro::Hooks::Queue.call_after_subset_queue
           KnapsackPro::Report.save_subset_queue_to_file
+        end
+      end
+
+      private
+
+      def Around(*tag_expressions, &proc)
+        if ::Cucumber::VERSION.to_i >= 3
+          ::Cucumber::Glue::Dsl.register_rb_hook('around', tag_expressions, proc)
+        else
+          ::Cucumber::RbSupport::RbDsl.register_rb_hook('around', tag_expressions, proc)
         end
       end
     end
