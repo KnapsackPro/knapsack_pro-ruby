@@ -809,6 +809,13 @@ Here is another example for CircleCI 2.0 platform.
     # export word is important here!
     export RAILS_ENV=test
     bundle exec rake "knapsack_pro:queue:minitest[--verbose]"
+
+- run:
+  name: Cucumber via knapsack_pro Queue Mode
+  command: |
+    # export word is important here!
+    export RAILS_ENV=test
+    bundle exec rake knapsack_pro:queue:cucumber
 ```
 
 Please remember to add additional containers for your project in CircleCI settings.
@@ -1072,6 +1079,7 @@ test:
   # Knapsack Pro Queue Mode (dynamic test suite split)
   # bundle exec rake knapsack_pro:queue:rspec
   # bundle exec rake knapsack_pro:queue:minitest
+  # bundle exec rake knapsack_pro:queue:cucumber
 ```
 
 Here you can find info [how to configure the GitLab parallel CI nodes](https://docs.gitlab.com/ee/ci/yaml/#parallel).
@@ -1095,6 +1103,8 @@ test_ci_node_0:
     - export KNAPSACK_PRO_CI_NODE_INDEX=0
     # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
     - bundle exec rake knapsack_pro:cucumber
+    # or use Cucumber tests in Knapsack Pro Queue Mode (dynamic test suite split)
+    - bundle exec rake knapsack_pro:queue:cucumber
     # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
     # It will autobalance build because it is executed after Cucumber tests.
     - bundle exec rake knapsack_pro:queue:rspec
@@ -1105,6 +1115,7 @@ test_ci_node_1:
   script:
     - export KNAPSACK_PRO_CI_NODE_INDEX=1
     - bundle exec rake knapsack_pro:cucumber
+    - bundle exec rake knapsack_pro:queue:cucumber
     - bundle exec rake knapsack_pro:queue:rspec
 ```
 
@@ -1120,6 +1131,9 @@ Configure test pipelines (1/2 used)
 # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
 
+# or use Cucumber tests in Knapsack Pro Queue Mode (dynamic test suite split)
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:cucumber
+
 # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
 # It will autobalance build because it is executed after Cucumber tests.
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:rspec
@@ -1132,6 +1146,9 @@ Configure test pipelines (2/2 used)
 
 # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+
+# or use Cucumber tests in Knapsack Pro Queue Mode (dynamic test suite split)
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:queue:cucumber
 
 # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
 # It will autobalance build because it is executed after Cucumber tests.
