@@ -64,19 +64,22 @@ module KnapsackPro
       end
 
       def bind_before_queue_hook
-        # NOTE KnapsackPro::Hooks::Queue.call_before_queue is called in:
-        # lib/knapsack_pro/runners/queue/cucumber_runner.rb
-      end
-
-      def bind_save_subset_queue_to_file
-        ::Kernel.at_exit do
-          KnapsackPro::Report.save_subset_queue_to_file
+        Around do |object, block|
+          unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+            KnapsackPro::Hooks::Queue.call_before_queue
+            ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+          end
+          block.call
         end
       end
 
       def bind_queue_mode
         super
-        bind_save_subset_queue_to_file
+
+        ::Kernel.at_exit do
+          KnapsackPro::Hooks::Queue.call_after_subset_queue
+          KnapsackPro::Report.save_subset_queue_to_file
+        end
       end
     end
   end
