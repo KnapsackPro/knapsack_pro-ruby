@@ -550,6 +550,7 @@ At this moment the queue mode works for:
 
 * RSpec
 * Minitest
+* Cucumber
 
 ## Extra configuration for CI server
 
@@ -674,6 +675,7 @@ You can install knapsack_pro globally and use binary. For instance:
 knapsack_pro rspec "--tag custom_tag_name --profile"
 knapsack_pro queue:rspec "--tag custom_tag_name --profile"
 knapsack_pro cucumber "--name feature"
+knapsack_pro queue:cucumber "--name feature"
 knapsack_pro minitest "--verbose --pride"
 knapsack_pro queue:minitest "--verbose"
 knapsack_pro test_unit "--verbose"
