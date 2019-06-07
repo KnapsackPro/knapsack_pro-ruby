@@ -437,9 +437,12 @@ See how it works and what problems can be solved with Queue Mode https://youtu.b
 
 ### How to use queue mode?
 
-Please use a separate API token for queue mode from one used already for regular mode.
+Please don't use the same API token to run tests in Regular Mode and Queue Mode at the same time for your daily work.
 
-Use this command to run queue mode:
+Only when you setup your project for the first time use the same API token and please record whole test suite with Regular Mode then change knapsack pro command to Queue Mode and keep using the same API token.
+Thanks to that your first CI build run in Queue Mode will use timing data recorded with Regular Mode to run tests in Queue Mode faster for the very first run.
+
+Use this command to run Queue Mode:
 
 ```bash
 # RSpec >= 3.x
@@ -447,16 +450,19 @@ bundle exec rake knapsack_pro:queue:rspec
 
 # Minitest
 bundle exec rake knapsack_pro:queue:minitest
+
+# Cucumber
+bundle exec rake knapsack_pro:queue:cucumber
 ```
 
-If the above command fails then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
+If the above command fails for RSpec then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
 
 ```bash
 bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
 ```
 
-Note: when you run queue mode command for the first time it might be slower.
-The second build should have a more optimal test suite split.
+Note: when you run Queue Mode command for the first time without recording tests first in Regular Mode then CI build might be slower.
+The second CI build should have optimal test suite split with faster tests distribution across CI nodes in Queue Mode.
 
 __Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.__
 
