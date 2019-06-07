@@ -84,7 +84,7 @@ module KnapsackPro
 
           cmd = %Q[bundle exec cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
 
-          system(cmd)
+          Kernel.system(cmd)
           $?.exitstatus
         end
       end
