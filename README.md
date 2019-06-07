@@ -158,6 +158,7 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
         - [How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
         - [Why `tmp/rspec_final_results.xml` is corrupted when I use junit formatter with knapsack_pro queue mode?](#why-tmprspec_final_resultsxml-is-corrupted-when-i-use-junit-formatter-with-knapsack_pro-queue-mode)
+        - [How to use junit formatter with knapsack_pro queue mode in Cucumber?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-in-cucumber)
     - [How to use JSON formatter for RSpec?](#how-to-use-json-formatter-for-rspec)
       - [How to use RSpec JSON formatter with knapsack_pro Queue Mode?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode)
         - [How to use RSpec JSON formatter with knapsack_pro Queue Mode when CI nodes use common local drive?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
@@ -2040,6 +2041,15 @@ end
 
 The `tmp/rspec_final_results.xml` might be corrupted due syntax error in your test suite. First check if your test suite is green.
 Another reason might be that you did not configure the junit formatter as shown in the example for Queue Mode. Please check above 2 questions & answers explaing that.
+
+###### How to use junit formatter with knapsack_pro queue mode in Cucumber?
+
+Please provide in `--out` argument directory path where xml files for each test file will be created. It must be a directory in order to work in Queue Mode because in Queue Mode the Cucumber test runner is executed multiple times.
+Each time for set of tests fetched from Queue so it means multiple xml files will be created in junit format.
+
+```bash
+bundle exec rake "knapsack_pro:queue:cucumber[--format junit --out tmp/test-reports/cucumber/queue_mode/]"
+```
 
 #### How to use JSON formatter for RSpec?
 
