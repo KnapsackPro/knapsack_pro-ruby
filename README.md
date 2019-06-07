@@ -463,7 +463,7 @@ If the above command fails for RSpec then you may need to explicitly pass an arg
 bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
 ```
 
-Note: when you run Queue Mode command for the first time without recording tests first in Regular Mode then CI build might be slower.
+Note: when you run Queue Mode command for the first time without recording tests first in Regular Mode then CI build might be slower (especially for Cucumber).
 The second CI build should have optimal test suite split with faster tests distribution across CI nodes in Queue Mode.
 
 __Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.__
