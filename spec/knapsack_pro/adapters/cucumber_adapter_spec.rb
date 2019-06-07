@@ -200,5 +200,18 @@ describe KnapsackPro::Adapters::CucumberAdapter do
         end
       end
     end
+
+    describe '#bind_queue_mode' do
+      it do
+        expect(subject).to receive(:bind_before_queue_hook)
+        expect(subject).to receive(:bind_time_tracker)
+
+        expect(::Kernel).to receive(:at_exit).and_yield
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
+        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+
+        subject.bind_queue_mode
+      end
+    end
   end
 end
