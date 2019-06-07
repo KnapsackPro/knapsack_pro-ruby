@@ -168,5 +168,52 @@ describe KnapsackPro::Adapters::CucumberAdapter do
         end
       end
     end
+
+    describe '#bind_before_queue_hook' do
+      let(:block) { double }
+      let(:scenario) { double(:scenario) }
+
+      context 'when KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED is not set' do
+        before { stub_const("ENV", {}) }
+
+        it do
+          expect(subject).to receive(:Around).and_yield(scenario, block)
+
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_before_queue)
+          expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
+
+          expect(block).to receive(:call)
+
+          subject.bind_before_queue_hook
+        end
+      end
+
+      context 'when KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED is set' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED' => 'true' }) }
+
+        it do
+          expect(subject).to receive(:Around).and_yield(scenario, block)
+
+          expect(KnapsackPro::Hooks::Queue).not_to receive(:call_before_queue)
+
+          expect(block).to receive(:call)
+
+          subject.bind_before_queue_hook
+        end
+      end
+    end
+
+    describe '#bind_queue_mode' do
+      it do
+        expect(subject).to receive(:bind_before_queue_hook)
+        expect(subject).to receive(:bind_time_tracker)
+
+        expect(::Kernel).to receive(:at_exit).and_yield
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
+        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+
+        subject.bind_queue_mode
+      end
+    end
   end
 end

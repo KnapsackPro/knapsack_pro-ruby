@@ -53,6 +53,25 @@ module KnapsackPro
         end
       end
 
+      def bind_before_queue_hook
+        Around do |object, block|
+          unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
+            KnapsackPro::Hooks::Queue.call_before_queue
+            ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+          end
+          block.call
+        end
+      end
+
+      def bind_queue_mode
+        super
+
+        ::Kernel.at_exit do
+          KnapsackPro::Hooks::Queue.call_after_subset_queue
+          KnapsackPro::Report.save_subset_queue_to_file
+        end
+      end
+
       private
 
       def Around(*tag_expressions, &proc)

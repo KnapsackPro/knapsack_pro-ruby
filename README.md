@@ -158,6 +158,7 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
         - [How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
         - [Why `tmp/rspec_final_results.xml` is corrupted when I use junit formatter with knapsack_pro queue mode?](#why-tmprspec_final_resultsxml-is-corrupted-when-i-use-junit-formatter-with-knapsack_pro-queue-mode)
+        - [How to use junit formatter with knapsack_pro queue mode in Cucumber?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-in-cucumber)
     - [How to use JSON formatter for RSpec?](#how-to-use-json-formatter-for-rspec)
       - [How to use RSpec JSON formatter with knapsack_pro Queue Mode?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode)
         - [How to use RSpec JSON formatter with knapsack_pro Queue Mode when CI nodes use common local drive?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
@@ -165,6 +166,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
+    - [What hooks are supported in Queue Mode?](#what-hooks-are-supported-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
       - [parallel_tests with knapsack_pro on parallel CI nodes](#parallel_tests-with-knapsack_pro-on-parallel-ci-nodes)
       - [parallel_tests with knapsack_pro on single CI machine](#parallel_tests-with-knapsack_pro-on-single-ci-machine)
@@ -437,9 +439,12 @@ See how it works and what problems can be solved with Queue Mode https://youtu.b
 
 ### How to use queue mode?
 
-Please use a separate API token for queue mode from one used already for regular mode.
+Please don't use the same API token to run tests in Regular Mode and Queue Mode at the same time for your daily work.
 
-Use this command to run queue mode:
+Only when you setup your project for the first time use the same API token and please record whole test suite with Regular Mode then change knapsack pro command to Queue Mode and keep using the same API token.
+Thanks to that your first CI build run in Queue Mode will use timing data recorded with Regular Mode to run tests in Queue Mode faster for the very first run.
+
+Use this command to run Queue Mode:
 
 ```bash
 # RSpec >= 3.x
@@ -447,16 +452,19 @@ bundle exec rake knapsack_pro:queue:rspec
 
 # Minitest
 bundle exec rake knapsack_pro:queue:minitest
+
+# Cucumber
+bundle exec rake knapsack_pro:queue:cucumber
 ```
 
-If the above command fails then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
+If the above command fails for RSpec then you may need to explicitly pass an argument to require the `rails_helper` file or `spec_helper` in case you are not doing this in some of your test files:
 
 ```bash
 bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
 ```
 
-Note: when you run queue mode command for the first time it might be slower.
-The second build should have a more optimal test suite split.
+Note: when you run Queue Mode command for the first time without recording tests first in Regular Mode then CI build might be slower (especially for Cucumber).
+The second CI build should have optimal test suite split with faster tests distribution across CI nodes in Queue Mode.
 
 __Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.__
 
@@ -544,6 +552,7 @@ At this moment the queue mode works for:
 
 * RSpec
 * Minitest
+* Cucumber
 
 ## Extra configuration for CI server
 
@@ -668,6 +677,7 @@ You can install knapsack_pro globally and use binary. For instance:
 knapsack_pro rspec "--tag custom_tag_name --profile"
 knapsack_pro queue:rspec "--tag custom_tag_name --profile"
 knapsack_pro cucumber "--name feature"
+knapsack_pro queue:cucumber "--name feature"
 knapsack_pro minitest "--verbose --pride"
 knapsack_pro queue:minitest "--verbose"
 knapsack_pro test_unit "--verbose"
@@ -801,6 +811,13 @@ Here is another example for CircleCI 2.0 platform.
     # export word is important here!
     export RAILS_ENV=test
     bundle exec rake "knapsack_pro:queue:minitest[--verbose]"
+
+- run:
+  name: Cucumber via knapsack_pro Queue Mode
+  command: |
+    # export word is important here!
+    export RAILS_ENV=test
+    bundle exec rake knapsack_pro:queue:cucumber
 ```
 
 Please remember to add additional containers for your project in CircleCI settings.
@@ -1064,6 +1081,7 @@ test:
   # Knapsack Pro Queue Mode (dynamic test suite split)
   # bundle exec rake knapsack_pro:queue:rspec
   # bundle exec rake knapsack_pro:queue:minitest
+  # bundle exec rake knapsack_pro:queue:cucumber
 ```
 
 Here you can find info [how to configure the GitLab parallel CI nodes](https://docs.gitlab.com/ee/ci/yaml/#parallel).
@@ -1087,6 +1105,8 @@ test_ci_node_0:
     - export KNAPSACK_PRO_CI_NODE_INDEX=0
     # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
     - bundle exec rake knapsack_pro:cucumber
+    # or use Cucumber tests in Knapsack Pro Queue Mode (dynamic test suite split)
+    - bundle exec rake knapsack_pro:queue:cucumber
     # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
     # It will autobalance build because it is executed after Cucumber tests.
     - bundle exec rake knapsack_pro:queue:rspec
@@ -1097,6 +1117,7 @@ test_ci_node_1:
   script:
     - export KNAPSACK_PRO_CI_NODE_INDEX=1
     - bundle exec rake knapsack_pro:cucumber
+    - bundle exec rake knapsack_pro:queue:cucumber
     - bundle exec rake knapsack_pro:queue:rspec
 ```
 
@@ -1112,6 +1133,9 @@ Configure test pipelines (1/2 used)
 # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:cucumber
 
+# or use Cucumber tests in Knapsack Pro Queue Mode (dynamic test suite split)
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:cucumber
+
 # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
 # It will autobalance build because it is executed after Cucumber tests.
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:rspec
@@ -1124,6 +1148,9 @@ Configure test pipelines (2/2 used)
 
 # Cucumber tests in Knapsack Pro Regular Mode (deterministic test suite split)
 KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:cucumber
+
+# or use Cucumber tests in Knapsack Pro Queue Mode (dynamic test suite split)
+KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:queue:cucumber
 
 # RSpec tests in Knapsack Pro Queue Mode (dynamic test suite split)
 # It will autobalance build because it is executed after Cucumber tests.
@@ -2016,6 +2043,15 @@ end
 The `tmp/rspec_final_results.xml` might be corrupted due syntax error in your test suite. First check if your test suite is green.
 Another reason might be that you did not configure the junit formatter as shown in the example for Queue Mode. Please check above 2 questions & answers explaing that.
 
+###### How to use junit formatter with knapsack_pro queue mode in Cucumber?
+
+Please provide in `--out` argument directory path where xml files for each test file will be created. It must be a directory in order to work in Queue Mode because in Queue Mode the Cucumber test runner is executed multiple times.
+Each time for set of tests fetched from Queue so it means multiple xml files will be created in junit format.
+
+```bash
+bundle exec rake "knapsack_pro:queue:cucumber[--format junit --out tmp/test-reports/cucumber/queue_mode/]"
+```
+
 #### How to use JSON formatter for RSpec?
 
 ##### How to use RSpec JSON formatter with knapsack_pro Queue Mode?
@@ -2157,6 +2193,61 @@ KnapsackPro::Hooks::Queue.after_queue do |queue_id|
   # Note this hook won't be called inside of RSpec after(:suite) block because
   # we are not able to determine which after(:suite) block will be called as the last one
   # due to the fact the Knapsack Pro Queue Mode allocates tests in dynamic way.
+end
+```
+
+#### What hooks are supported in Queue Mode?
+
+* RSpec in knapsack_pro Queue Mode supports hooks:
+
+```ruby
+# spec_helper.rb or rails_helper.rb
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  print 'Before Queue Hook - run before test suite'
+end
+
+# this will be run after set of tests fetched from Queue has been executed
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  print 'After Subset Queue Hook - run after subset of test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  print 'After Queue Hook - run after test suite'
+end
+```
+
+* Minitest in knapsack_pro Queue Mode supports hooks:
+
+```ruby
+# test/test_helper.rb
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  print 'Before Queue Hook - run before test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  print 'After Subset Queue Hook - run after subset of test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  print 'After Queue Hook - run after test suite'
+end
+```
+
+* Cucumber in knapsack_pro Queue Mode supports hooks:
+
+```ruby
+# features/support/knapsack_pro.rb
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  print 'Before Queue Hook - run before test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  print 'After Subset Queue Hook - run after subset of test suite'
+end
+
+# this hook is not supported and won't run
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  print 'After Queue Hook - run after test suite'
 end
 ```
 
