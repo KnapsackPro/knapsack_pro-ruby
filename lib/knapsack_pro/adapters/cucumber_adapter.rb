@@ -62,6 +62,10 @@ module KnapsackPro
           ::Cucumber::RbSupport::RbDsl.register_rb_hook('around', tag_expressions, proc)
         end
       end
+
+      def bind_before_queue_hook
+        # TODO
+      end
     end
   end
 end
