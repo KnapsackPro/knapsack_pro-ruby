@@ -11,6 +11,8 @@ module KnapsackPro
 
           runner = new(KnapsackPro::Adapters::CucumberAdapter)
 
+          KnapsackPro::Hooks::Queue.call_before_queue
+
           accumulator = {
             status: :next,
             runner: runner,
@@ -56,12 +58,13 @@ module KnapsackPro
 
             all_test_file_paths += test_file_paths
 
-            result = cucumber_run(runner, test_file_paths, args)
-            exitstatus = 1 unless result
+            result_exitstatus = cucumber_run(runner, test_file_paths, args)
+            exitstatus = 1 if result_exitstatus != 0
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
-            KnapsackPro::Report.save_subset_queue_to_file
+            # KnapsackPro::Report.save_subset_queue_to_file is done in adapter:
+            # lib/knapsack_pro/adapters/cucumber_adapter.rb
 
             return {
               status: :next,
@@ -77,20 +80,19 @@ module KnapsackPro
         private
 
         def self.cucumber_run(runner, test_file_paths, args)
-          task_name = "knapsack_pro:cucumber_run:#{ENV.fetch('KNAPSACK_PRO_SUBSET_QUEUE_ID')}"
           stringify_test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
 
-          puts 'S'*100
-          Cucumber::Rake::Task.new(task_name) do |t|
-            t.cucumber_opts = "#{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}"
-          end
-          #Rake::Task[task_name].invoke
-          Rake::Task[task_name].execute
-          puts 'A'*100
+          cmd = %Q[bundle exec cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
 
-          r = $?.exitstatus
-          puts '$'*100
-          puts r
+          system(cmd)
+          $?.exitstatus
+
+          #task_name = "knapsack_pro:cucumber_run:#{ENV.fetch('KNAPSACK_PRO_SUBSET_QUEUE_ID')}"
+          #Cucumber::Rake::Task.new(task_name) do |t|
+            #t.cucumber_opts = "#{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}"
+          #end
+          ##Rake::Task[task_name].invoke
+          #Rake::Task[task_name].execute
         end
       end
     end
