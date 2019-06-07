@@ -103,7 +103,7 @@ describe KnapsackPro::Report do
         expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
         expect(logger).to receive(:warn).with('2 test files were executed on this CI node but the recorded time was lost due to:')
         expect(logger).to receive(:warn).with('1. Probably you have a code (i.e. RSpec hooks) that clears tmp directory in your project. Please ensure you do not remove the content of tmp/knapsack_pro/queue/ directory between tests run.')
-        expect(logger).to receive(:warn).with('2. Another reason might be that you forgot to add Knapsack::Adapters::RspecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/')
+        expect(logger).to receive(:warn).with('2. Another reason might be that you forgot to add Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/')
         expect(logger).to receive(:warn).with('3. All your tests are empty test files, are pending tests or have syntax error and could not be executed hence no measured time execution by knapsack_pro.')
 
         expect(described_class).to receive(:create_build_subset).with(
