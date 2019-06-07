@@ -1,9 +1,8 @@
 describe KnapsackPro::Runners::Queue::CucumberRunner do
   describe '.run' do
-    # TODO change this file to cucumber stuff
-    let(:test_suite_token_minitest) { 'fake-token' }
+    let(:test_suite_token_cucumber) { 'fake-token' }
     let(:queue_id) { 'fake-queue-id' }
-    let(:test_dir) { 'fake-test-dir' }
+    let(:test_dir) { 'fake-features-dir' }
     let(:runner) do
       instance_double(described_class, test_dir: test_dir)
     end
@@ -11,22 +10,20 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
     subject { described_class.run(args) }
 
     before do
-      expect(described_class).to receive(:require).with('minitest')
+      expect(described_class).to receive(:require).with('cucumber/rake/task')
 
-      expect(KnapsackPro::Config::Env).to receive(:test_suite_token_minitest).and_return(test_suite_token_minitest)
+      expect(KnapsackPro::Config::Env).to receive(:test_suite_token_cucumber).and_return(test_suite_token_cucumber)
       expect(KnapsackPro::Config::EnvGenerator).to receive(:set_queue_id).and_return(queue_id)
 
-      expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_minitest)
+      expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_cucumber)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_RECORDING_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
 
-      expect(described_class).to receive(:new).with(KnapsackPro::Adapters::MinitestAdapter).and_return(runner)
-
-      expect($LOAD_PATH).to receive(:unshift).with(test_dir)
+      expect(described_class).to receive(:new).with(KnapsackPro::Adapters::CucumberAdapter).and_return(runner)
     end
 
     context 'when args provided' do
-      let(:args) { '--verbose --pride' }
+      let(:args) { '--retry 5 --no-strict-flaky' }
 
       it do
         expected_exitstatus = 0
@@ -38,7 +35,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
           status: :next,
           runner: runner,
           can_initialize_queue: true,
-          args: ['--verbose', '--pride'],
+          args: args,
           exitstatus: 0,
           all_test_file_paths: [],
         }
@@ -63,7 +60,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
           status: :next,
           runner: runner,
           can_initialize_queue: true,
-          args: [],
+          args: nil,
           exitstatus: 0,
           all_test_file_paths: [],
         }
@@ -77,9 +74,12 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
   end
 
   describe '.run_tests' do
-    let(:runner) { instance_double(described_class) }
+    let(:test_dir) { 'fake-features-dir' }
+    let(:runner) do
+      instance_double(described_class, test_dir: test_dir)
+    end
     let(:can_initialize_queue) { double(:can_initialize_queue) }
-    let(:args) { ['--verbose', '--pride'] }
+    let(:args) { '--retry 5 --no-strict-flaky' }
     let(:exitstatus) { 0 }
     let(:all_test_file_paths) { [] }
     let(:accumulator) do
@@ -99,7 +99,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
     end
 
     context 'when test files exist' do
-      let(:test_file_paths) { ['a_test.rb', 'b_test.rb'] }
+      let(:test_file_paths) { ['features/a.feature', 'features/b.feature'] }
 
       before do
         subset_queue_id = 'fake-subset-queue-id'
@@ -112,22 +112,16 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
         expect(tracker).to receive(:reset!)
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
-        # .minitest_run
-        expect(described_class).to receive(:require).with('./a_test.rb')
-        expect(described_class).to receive(:require).with('./b_test.rb')
+        # .cucumber_run
+        expect(Kernel).to receive(:system).with('bundle exec cucumber --retry 5 --no-strict-flaky --require fake-features-dir -- "features/a.feature" "features/b.feature"')
 
-        expect(Minitest).to receive(:run).with(args).and_return(is_tests_green)
+        expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
 
-        expect(Minitest::Runnable).to receive(:reset)
-
-
-        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
-
-        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+        expect($?).to receive(:exitstatus).and_return(exitstatus)
       end
 
       context 'when tests are passing' do
-        let(:is_tests_green) { true }
+        let(:exitstatus) { 0 }
 
         it 'returns exit code 0' do
           expect(subject).to eq({
@@ -142,7 +136,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
       end
 
       context 'when tests are failing' do
-        let(:is_tests_green) { false }
+        let(:exitstatus) { 1 }
 
         it 'returns exit code 1' do
           expect(subject).to eq({
