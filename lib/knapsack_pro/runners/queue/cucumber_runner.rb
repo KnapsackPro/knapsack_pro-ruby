@@ -3,27 +3,19 @@ module KnapsackPro
     module Queue
       class CucumberRunner < BaseRunner
         def self.run(args)
-          # TODO change this file to cucumber stuff
-          require 'minitest'
+          require 'cucumber/rake/task'
 
-          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_minitest
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_cucumber
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-          runner = new(KnapsackPro::Adapters::MinitestAdapter)
-
-          # Add test_dir to load path to make work:
-          #   require 'test_helper'
-          # in test files.
-          $LOAD_PATH.unshift(runner.test_dir)
-
-          cli_args = (args || '').split
+          runner = new(KnapsackPro::Adapters::CucumberAdapter)
 
           accumulator = {
             status: :next,
             runner: runner,
             can_initialize_queue: true,
-            args: cli_args,
+            args: args,
             exitstatus: 0,
             all_test_file_paths: [],
           }
@@ -64,7 +56,7 @@ module KnapsackPro
 
             all_test_file_paths += test_file_paths
 
-            result = minitest_run(runner, test_file_paths, args)
+            result = cucumber_run(runner, test_file_paths, args)
             exitstatus = 1 unless result
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
@@ -84,17 +76,21 @@ module KnapsackPro
 
         private
 
-        def self.minitest_run(runner, test_file_paths, args)
-          test_file_paths.each do |test_file_path|
-            require "./#{test_file_path}"
+        def self.cucumber_run(runner, test_file_paths, args)
+          task_name = "knapsack_pro:cucumber_run:#{ENV.fetch('KNAPSACK_PRO_SUBSET_QUEUE_ID')}"
+          stringify_test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+
+          puts 'S'*100
+          Cucumber::Rake::Task.new(task_name) do |t|
+            t.cucumber_opts = "#{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}"
           end
+          #Rake::Task[task_name].invoke
+          Rake::Task[task_name].execute
+          puts 'A'*100
 
-          # duplicate args because Minitest modifies args
-          result = Minitest.run(args.dup)
-
-          Minitest::Runnable.reset
-
-          result
+          r = $?.exitstatus
+          puts '$'*100
+          puts r
         end
       end
     end
