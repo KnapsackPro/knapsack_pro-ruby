@@ -166,6 +166,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
+    - [What hooks are supported in Queue Mode?](#what-hooks-are-supported-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
       - [parallel_tests with knapsack_pro on parallel CI nodes](#parallel_tests-with-knapsack_pro-on-parallel-ci-nodes)
       - [parallel_tests with knapsack_pro on single CI machine](#parallel_tests-with-knapsack_pro-on-single-ci-machine)
@@ -2192,6 +2193,61 @@ KnapsackPro::Hooks::Queue.after_queue do |queue_id|
   # Note this hook won't be called inside of RSpec after(:suite) block because
   # we are not able to determine which after(:suite) block will be called as the last one
   # due to the fact the Knapsack Pro Queue Mode allocates tests in dynamic way.
+end
+```
+
+#### What hooks are supported in Queue Mode?
+
+* RSpec in knapsack_pro Queue Mode supports hooks:
+
+```ruby
+# spec_helper.rb or rails_helper.rb
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  print 'Before Queue Hook - run before test suite'
+end
+
+# this will be run after set of tests fetched from Queue has been executed
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  print 'After Subset Queue Hook - run after subset of test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  print 'After Queue Hook - run after test suite'
+end
+```
+
+* Minitest in knapsack_pro Queue Mode supports hooks:
+
+```ruby
+# test/test_helper.rb
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  print 'Before Queue Hook - run before test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  print 'After Subset Queue Hook - run after subset of test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  print 'After Queue Hook - run after test suite'
+end
+```
+
+* Cucumber in knapsack_pro Queue Mode supports hooks:
+
+```ruby
+# features/support/knapsack_pro.rb
+KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+  print 'Before Queue Hook - run before test suite'
+end
+
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  print 'After Subset Queue Hook - run after subset of test suite'
+end
+
+# this hook is not supported and won't run
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  print 'After Queue Hook - run after test suite'
 end
 ```
 
