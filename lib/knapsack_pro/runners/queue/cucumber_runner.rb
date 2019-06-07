@@ -86,13 +86,6 @@ module KnapsackPro
 
           system(cmd)
           $?.exitstatus
-
-          #task_name = "knapsack_pro:cucumber_run:#{ENV.fetch('KNAPSACK_PRO_SUBSET_QUEUE_ID')}"
-          #Cucumber::Rake::Task.new(task_name) do |t|
-            #t.cucumber_opts = "#{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}"
-          #end
-          ##Rake::Task[task_name].invoke
-          #Rake::Task[task_name].execute
         end
       end
     end
