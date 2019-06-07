@@ -11,8 +11,6 @@ module KnapsackPro
 
           runner = new(KnapsackPro::Adapters::CucumberAdapter)
 
-          KnapsackPro::Hooks::Queue.call_before_queue
-
           accumulator = {
             status: :next,
             runner: runner,
@@ -61,10 +59,9 @@ module KnapsackPro
             result_exitstatus = cucumber_run(runner, test_file_paths, args)
             exitstatus = 1 if result_exitstatus != 0
 
-            KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-            # KnapsackPro::Report.save_subset_queue_to_file is done in adapter:
-            # lib/knapsack_pro/adapters/cucumber_adapter.rb
+            # KnapsackPro::Hooks::Queue.call_after_subset_queue
+            # KnapsackPro::Report.save_subset_queue_to_file
+            # are called in adapter: lib/knapsack_pro/adapters/cucumber_adapter.rb
 
             return {
               status: :next,
@@ -85,6 +82,12 @@ module KnapsackPro
           cmd = %Q[bundle exec cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
 
           Kernel.system(cmd)
+
+          # it must be set here so when we call next time above cmd we won't run again:
+          # KnapsackPro::Hooks::Queue.call_before_queue
+          # which is defined in lib/knapsack_pro/adapters/cucumber_adapter.rb
+          ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+
           $?.exitstatus
         end
       end
