@@ -174,6 +174,8 @@ describe KnapsackPro::Adapters::CucumberAdapter do
       let(:scenario) { double(:scenario) }
 
       context 'when KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED is not set' do
+        before { stub_const("ENV", {}) }
+
         it do
           expect(subject).to receive(:Around).and_yield(scenario, block)
 
