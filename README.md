@@ -121,6 +121,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [Why Capybara feature tests randomly fail when using CI parallelisation?](#why-capybara-feature-tests-randomly-fail-when-using-ci-parallelisation)
     - [Why knapsack_pro freezes / hangs my CI (for instance Travis)?](#why-knapsack_pro-freezes--hangs-my-ci-for-instance-travis)
     - [Why tests hitting external API fail?](#why-tests-hitting-external-api-fail)
+    - [Why green test suite for Cucumber 2.99 tests always fails with `invalid option: --require`?](#why-green-test-suite-for-cucumber-299-tests-always-fails-with-invalid-option---require)
     - [Queue Mode problems](#queue-mode-problems)
       - [Why when I use Queue Mode for RSpec then my tests fail?](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
@@ -1458,6 +1459,48 @@ But this will cause a problem when 2 different test files will run on 2 differen
 To fix that you can think of:
 * using [VCR](https://github.com/vcr/vcr) gem to record HTTP requests and then instead of doing real HTTP requests just reply recorded requests.
 * maybe you could write your tests in a way when you generate some fake customers or subscriptions with fake id and each test has different customer id so there will be no conflict when 2 tests are run at the same time.
+
+#### Why green test suite for Cucumber 2.99 tests always fails with `invalid option: --require`?
+
+If you use old Cucumber version 2.99 and `cucumber-rails` gem you could notice bug that knapsack_pro for Cucumber fails with `1` exit status. Error you may see:
+
+```
+invalid option: --require
+
+minitest options:
+    -h, --help                       Display this help.
+        --no-plugins                 Bypass minitest plugin auto-loading (or set $MT_NO_PLUGINS).
+    -s, --seed SEED                  Sets random seed. Also via env. Eg: SEED=n rake
+    -v, --verbose                    Verbose. Show progress processing files.
+    -n, --name PATTERN               Filter run on /regexp/ or string.
+        --exclude PATTERN            Exclude /regexp/ or string from run.
+
+Known extensions: rails, pride
+    -w, --warnings                   Run with Ruby warnings enabled
+    -e, --environment ENV            Run tests in the ENV environment
+    -b, --backtrace                  Show the complete backtrace
+    -d, --defer-output               Output test failures and errors after the test run
+    -f, --fail-fast                  Abort test run on first failure or error
+    -c, --[no-]color                 Enable color in the output
+    -p, --pride                      Pride. Show your testing pride!
+
+# exit status is 1 - which means failed tests
+> echo $?
+1
+```
+
+The root problem is that Rails add `minitest` gem and it is started when `cucumber/rails` is loaded. It should not be. You can fix it by adding below in file `features/support/env.rb`:
+
+```ruby
+# features/support/env.rb
+require 'cucumber/rails'
+
+# this must be after we require cucumber/rails
+require 'multi_test'
+MultiTest.disable_autorun
+```
+
+The solution comes from: [cucumber/multi_test](https://github.com/cucumber/multi_test/pull/2#issuecomment-21863459)
 
 #### Queue Mode problems
 
