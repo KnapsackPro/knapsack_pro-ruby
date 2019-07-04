@@ -2590,6 +2590,30 @@ On the 3rd CI node, you can run other things like linters etc.
 If you would like to check what is the CI node total ENV variable name exposed by your CI provider you can check that in your CI provider environment variables docs
 or preview the [ENV variables that knapsack_pro can read](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci) for supported CI providers.
 
+If you use for instance Heroku CI that allows you to provide only one test command you can make a bash script to control what's executed on particular CI node:
+
+```bash
+#!/bin/bash
+# add this file in bin/knapsack_pro_rspec_and_npm_test and change chmod
+# $ chmod a+x bin/knapsack_pro_rspec_and_npm_test
+
+# 15 is last CI node (index starts from 0, so in total we have 16 parallel Heroku dynos)
+if [ "$CI_NODE_TOTAL" == "15" ]; then
+  # run npm tests on the last CI node
+  npm test
+else
+  KNAPSACK_PRO_CI_NODE_TOTAL=$((CI_NODE_TOTAL-1)) bundle exec rake knapsack_pro:queue:rspec
+fi
+```
+
+then in your Heroku CI config `app.json` set:
+
+```
+"scripts": {
+  "test": "bin/knapsack_pro_rspec_and_npm_test"
+}
+```
+
 #### How to use CodeClimate with knapsack_pro?
 
 You can check articles about CodeClimate configuration with knapsack_pro gem:
