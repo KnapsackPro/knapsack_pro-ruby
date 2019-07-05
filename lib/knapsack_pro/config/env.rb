@@ -177,7 +177,9 @@ module KnapsackPro
 
         def ci_env_for(env_name)
           value = nil
-          ci_list = KnapsackPro::Config::CI.constants - [:Base]
+          ci_list = KnapsackPro::Config::CI.constants - [:Base, :GitlabCI]
+          # load GitLab CI first to avoid edge case with order of loading envs for CI_NODE_INDEX
+          ci_list = [:GitlabCI] + ci_list
           ci_list.each do |ci_name|
             ci_class = Object.const_get("KnapsackPro::Config::CI::#{ci_name}")
             ci = ci_class.new
