@@ -40,6 +40,13 @@ describe KnapsackPro::Config::Env do
 
         it { should eq 2 }
       end
+
+      context 'when order of loading envs does matter' do
+        context 'when GitLab CI' do
+          before { stub_const("ENV", { 'CI_NODE_INDEX' => '2', 'GITLAB_CI' => 'true' }) }
+          it { should eq 1 }
+        end
+      end
     end
 
     context "when ENV doesn't exist" do

@@ -15,7 +15,7 @@ module KnapsackPro
         end
 
         def node_build_id
-          ENV['CI_JOB_ID'] || # Gitlab Release 9.0+
+          ENV['CI_PIPELINE_ID'] || # Gitlab Release 9.0+
           ENV['CI_BUILD_ID']  # Gitlab Release 8.x
         end
 

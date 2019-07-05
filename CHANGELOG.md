@@ -1,5 +1,14 @@
 # Change Log
 
+### 1.12.1
+
+* Use `CI_PIPELINE_ID` as build ID for GitLab CI because it is unique across parallel jobs
+* Load GitLab CI first to avoid edge case with order of loading envs for `CI_NODE_INDEX`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/88
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.12.0...v1.12.1
+
 ### 1.12.0
 
 * Add Queue Mode for Cucumber
