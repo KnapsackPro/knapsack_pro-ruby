@@ -1058,6 +1058,27 @@ Here you can find article [how to set up a new pipeline for your project in Buil
 
 If you want to use Buildkite retry single agent feature to retry just failed tests on particular agent (CI node) then you should set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
+When using the `docker-compose` plugin on Buildkite, you have to tell it which environment variables to pass to the docker container:
+
+```yaml
+steps:
+  - label: "Test"
+    parallelism: 2
+    plugins:
+      - docker-compose#3.0.3:
+        run: app
+        # use here proper knapsack_pro command for your test runner
+        command: bundle exec rake knapsack_pro:queue:rspec
+        config: docker-compose.test.yml
+        env:
+          - BUILDKITE_PARALLEL_JOB_COUNT
+          - BUILDKITE_PARALLEL_JOB
+          - BUILDKITE_BUILD_NUMBER
+          - BUILDKITE_COMMIT
+          - BUILDKITE_BRANCH
+          - BUILDKITE_BUILD_CHECKOUT_PATH
+```
+
 #### Info for GitLab CI users
 
 Remember to add API tokens like `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER` and `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` to [Secret Variables](https://gitlab.com/help/ci/variables/README.md#secret-variables) in `GitLab CI Settings -> CI/CD Pipelines -> Secret Variables`.
