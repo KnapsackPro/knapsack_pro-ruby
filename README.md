@@ -1058,7 +1058,7 @@ Here you can find article [how to set up a new pipeline for your project in Buil
 
 If you want to use Buildkite retry single agent feature to retry just failed tests on particular agent (CI node) then you should set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
-When using the `docker-compose` plugin on Buildkite, you have to tell it which environment variables to pass to the docker container:
+When using the `docker-compose` plugin on Buildkite, you have to tell it which environment variables to pass to the docker container. Thanks to it knapsack_pro can detect info about CI build like commit, branch name, amount of parallel nodes.
 
 ```yaml
 steps:
