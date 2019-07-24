@@ -2712,7 +2712,7 @@ Regarding payments we use the BraintreePayments.com and they store credit cards 
 
 I’m the only admin so I can preview data in case you need help with debugging some problem etc. I’m not able to decrypt them without knowing the salt.
 
-When you sign in to your user dashboard then you can preview data for recent 100 builds on CI. If the test file paths are encrypted then you only see hashes for test file paths.
+When you sign in to your user dashboard then you can preview data for recent CI builds. If the test file paths are encrypted then you only see hashes for test file paths.
 You need to [decrypt](#how-to-debug-test-file-names) them locally on your machine to find out what each test file hash is.
 
 ## Gem tests
