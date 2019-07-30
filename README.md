@@ -127,6 +127,7 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail)
       - [Why when I use Queue Mode for RSpec then my rake tasks are run twice?](#why-when-i-use-queue-mode-for-rspec-then-my-rake-tasks-are-run-twice)
       - [Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?](#why-when-i-use-queue-mode-for-rspec-then-i-see-error-superclass-mismatch-for-class)
+      - [Why when I use Queue Mode for RSpec then `.rspec` config is ignored?](#why-when-i-use-queue-mode-for-rspec-then-rspec-config-is-ignored)
       - [Why I don't see collected time execution data for my build in user dashboard?](#why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard)
       - [Why all test files have 0.1s time execution for my CI build in user dashboard?](#why-all-test-files-have-01s-time-execution-for-my-ci-build-in-user-dashboard)
       - [Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?](#why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result)
@@ -1652,6 +1653,16 @@ end
 ```
 
 Instead of mocking like shown above you could use [RSpec stub_const](https://relishapp.com/rspec/rspec-mocks/docs/mutating-constants) to solve error `superclass mismatch for class BatchClass`.
+
+##### Why when I use Queue Mode for RSpec then `.rspec` config is ignored?
+
+The `.rspec` config file is ignored in Queue Mode because knapsack_pro has to pass explicitly arguments to `RSpec::Core::Runner` underhood. You can set your arguments from `.rspec` file in inline way.
+
+```
+bundle exec rake "knapsack_pro:queue:rspec[--format documentation --require rails_helper]"
+```
+
+See [passing arguments to RSpec](#passing-arguments-to-rspec).
 
 ##### Why I don't see collected time execution data for my build in user dashboard?
 
