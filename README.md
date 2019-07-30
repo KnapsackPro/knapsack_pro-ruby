@@ -1656,7 +1656,7 @@ Instead of mocking like shown above you could use [RSpec stub_const](https://rel
 
 ##### Why when I use Queue Mode for RSpec then `.rspec` config is ignored?
 
-The `.rspec` config file is ignored in Queue Mode because knapsack_pro has to pass explicitly arguments to `RSpec::Core::Runner` underhood. You can set your arguments from `.rspec` file in inline way.
+The `.rspec` config file is ignored in Queue Mode because knapsack_pro has to pass explicitly arguments to `RSpec::Core::Runner` underhood. You can set your arguments from `.rspec` file in an inline way.
 
 ```
 bundle exec rake "knapsack_pro:queue:rspec[--format documentation --require rails_helper]"
