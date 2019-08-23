@@ -905,9 +905,7 @@ More info about global and matrix ENV configuration in [travis docs](https://doc
 knapsack_pro gem supports environment variables provided by Semaphore CI 2.0 to run your tests. You will have to define a few things in `.semaphore/semaphore.yml` config file.
 
 * You need to set `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC`. If you don't want to commit secrets in yml file then you can [follow this guide](https://docs.semaphoreci.com/article/66-environment-variables-and-secrets).
-* You need to create as many jobs with unique names (Node 0 - Knapsack Pro, Node 1 - Knapsack Pro etc) as many parallel jobs you want to run. If your test suite is long you should use more parallel jobs.
-* If you have 2 parallel jobs you need to set `KNAPSACK_PRO_CI_NODE_TOTAL=2` for each job.
-* You need to set job index starting from 0 like `KNAPSACK_PRO_CI_NODE_INDEX=0` for Node 0.
+* You should create as many parallel jobs as you need with `parallelism` property. If your test suite is long you should use more parallel jobs.
 
 Below you can find full Semaphore CI 2.0 config for Rails project.
 
