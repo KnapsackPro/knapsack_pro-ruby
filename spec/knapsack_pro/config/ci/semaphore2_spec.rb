@@ -10,13 +10,27 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#node_total' do
     subject { described_class.new.node_total }
 
-    it { should be nil }
+    context 'when environment exists' do
+      let(:env) { { 'SEMAPHORE_JOB_COUNT' => 4 } }
+      it { should eql 4 }
+    end
+
+    context "when environment doesn't exist" do
+      it { should be nil }
+    end
   end
 
   describe '#node_index' do
     subject { described_class.new.node_index }
 
-    it { should be nil }
+    context 'when environment exists' do
+      let(:env) { { 'SEMAPHORE_JOB_INDEX' => 4 } }
+      it { should eql 3 }
+    end
+
+    context "when environment doesn't exist" do
+      it { should be nil }
+    end
   end
 
   describe '#node_build_id' do
