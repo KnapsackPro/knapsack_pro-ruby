@@ -986,13 +986,10 @@ blocks:
           - bundle exec rake db:setup
 
       jobs:
-      - name: Node 0 - Knapsack Pro
+      - name: Run tests with Knapsack Pro
+        parallelism: 2
         commands:
-          - KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=0 bundle exec rake knapsack_pro:queue:rspec
-
-      - name: Node 1 - Knapsack Pro
-        commands:
-          - KNAPSACK_PRO_CI_NODE_TOTAL=2 KNAPSACK_PRO_CI_NODE_INDEX=1 bundle exec rake knapsack_pro:queue:rspec
+        - bundle exec rake knapsack_pro:queue:rspec
 ```
 
 ##### Semaphore 1.0
