@@ -4,11 +4,12 @@ module KnapsackPro
     module CI
       class Semaphore2 < Base
         def node_total
-          # not provided
+          ENV['SEMAPHORE_JOB_COUNT']
         end
 
         def node_index
-          # not provided
+          index = ENV['SEMAPHORE_JOB_INDEX']
+          index.to_i - 1 if index
         end
 
         def node_build_id
