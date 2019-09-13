@@ -112,6 +112,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [Info for snap-ci.com users](#info-for-snap-cicom-users)
     - [Info for cirrus-ci.org users](#info-for-cirrus-ciorg-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
+    - [Info for GitHub Actions users](#info-for-github-actions-users)
 - [FAQ](#faq)
   - [Common problems](#common-problems)
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
@@ -1407,6 +1408,98 @@ Here is [list of environment variables per test runner](#set-api-key-token).
 
 Above example shows how to run cucumber tests in regular mode and later the rspec tests in queue mode to autobalance build.
 If you are going to relay on rspec to autobalance build when cucumber tests were not perfectly distributed you should be aware about [possible edge case if your rspec test suite is very short](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again).
+
+#### Info for GitHub Actions users
+
+knapsack_pro gem supports environment variables provided by GitHub Actions to run your tests. You will have to define a few things in `.github/workflows/main.yaml` config file.
+
+* You need to set API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` in GitHub settings -> Secrets for your repository. [Creating and using secrets in GitHub Actions](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
+* You should create as many parallel jobs as you need with [`matrix` property](https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix). If your test suite is long you should use more parallel jobs. See comment in below config.
+
+Below you can find full GitHub Actions config for Ruby on Rails project.
+
+```yaml
+name: Main
+
+on: [push]
+
+jobs:
+  vm-job:
+    runs-on: ubuntu-latest
+
+    # If you need DB like PostgreSQL then define service below.
+    # Example for Redis can be found here:
+    # https://github.com/actions/example-services/tree/master/.github/workflows
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: postgres
+        ports:
+        # will assign a random free host port
+        - 5432/tcp
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    strategy:
+      matrix:
+        # Set N number of parallel jobs you want to run tests on.
+        # Use higher number if you have slow tests to split them on more parallel jobs.
+        # Remember to update ci_node_index below to 0..N-1
+        ci_node_total: [2]
+        # set N-1 indexes for parallel jobs
+        # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+        ci_node_index: [0, 1]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.3
+
+    # required to compile pg ruby gem
+    - name: install PostgreSQL client
+      run: sudo apt-get install libpq-dev
+
+    - name: Build and create DB
+      env:
+        # use localhost for the host here because we have specified a container for the job.
+        # If we were running the job on the VM this would be postgres
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        RAILS_ENV: test
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+        bin/rails db:setup
+
+    - name: Run tests
+      env:
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        RAILS_ENV: test
+        KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+        KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+        KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+      run: |
+        # run tests in Knapsack Pro Regular Mode
+        bundle exec rake knapsack_pro:rspec
+        bundle exec rake knapsack_pro:cucumber
+        bundle exec rake knapsack_pro:minitest
+        bundle exec rake knapsack_pro:test_unit
+        bundle exec rake knapsack_pro:spinach
+
+        # you use Knapsack Pro in Queue Mode once recorded first CI build with Regular Mode
+        bundle exec rake knapsack_pro:queue:rspec
+        bundle exec rake knapsack_pro:queue:cucumber
+        bundle exec rake knapsack_pro:queue:minitest
+```
 
 ## FAQ
 
