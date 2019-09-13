@@ -1414,7 +1414,7 @@ If you are going to relay on rspec to autobalance build when cucumber tests were
 knapsack_pro gem supports environment variables provided by GitHub Actions to run your tests. You will have to define a few things in `.github/workflows/main.yaml` config file.
 
 * You need to set API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` in GitHub settings -> Secrets for your repository. [Creating and using secrets in GitHub Actions](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
-* You should create as many parallel jobs as you need with [`matrix` property](https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix). If your test suite is long you should use more parallel jobs. See comment in below config.
+* You should create as many parallel jobs as you need with [`matrix` property](https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix). If your test suite is slow you should use more parallel jobs. See comment in below config.
 
 Below you can find full GitHub Actions config for Ruby on Rails project.
 
