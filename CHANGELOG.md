@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.14.0
+
+* Add support for GitHub Actions
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/90
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.13.0...v1.14.0
+
 ### 1.13.0
 
 * Add support for job index and job count for parallelism in Semaphore 2.0
