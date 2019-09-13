@@ -1419,6 +1419,7 @@ knapsack_pro gem supports environment variables provided by GitHub Actions to ru
 Below you can find full GitHub Actions config for Ruby on Rails project.
 
 ```yaml
+# .github/workflows/main.yaml
 name: Main
 
 on: [push]
