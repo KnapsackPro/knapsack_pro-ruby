@@ -1495,7 +1495,7 @@ jobs:
         bundle exec rake knapsack_pro:test_unit
         bundle exec rake knapsack_pro:spinach
 
-        # you use Knapsack Pro in Queue Mode once recorded first CI build with Regular Mode
+        # you can use Knapsack Pro in Queue Mode once recorded first CI build with Regular Mode
         bundle exec rake knapsack_pro:queue:rspec
         bundle exec rake knapsack_pro:queue:cucumber
         bundle exec rake knapsack_pro:queue:minitest
