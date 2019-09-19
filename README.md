@@ -1445,6 +1445,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     strategy:
+      fail-fast: false
       matrix:
         # Set N number of parallel jobs you want to run tests on.
         # Use higher number if you have slow tests to split them on more parallel jobs.
