@@ -247,7 +247,7 @@ end
 
 # add below when you hook into webmock
 require 'webmock/rspec'
-WebMock.disable_net_connect!(allow: ['api.knapsackpro.com'])
+WebMock.disable_net_connect!(allow_localhost: true, allow: ['api.knapsackpro.com'])
 
 # add below when you use FakeWeb
 require 'fakeweb'
@@ -262,6 +262,22 @@ group :test do
   gem 'vcr'
   gem 'webmock', require: false
   gem 'fakeweb', require: false # example when you use fakeweb
+end
+```
+
+If you happen to see your tests failing due to WebMock not allowing requests to Knapsack Pro API it means you probably reconfigure WebMock in some of your tests.
+For instance, you may use `WebMock.reset!` or it's called automatically in `after(:each)` block, if you `require 'webmock/rspec'` ([more about the issue](https://github.com/bblimke/webmock/issues/484#issuecomment-116193449)). It will remove api.knapsackpro.com from whitelisted domains. Please try below:
+
+```ruby
+RSpec.configure do |config|
+  config.after(:suite) do
+    WebMock.disable_net_connect!(
+      allow_localhost: true,
+      allow: [
+        'api.knapsackpro.com',
+      ],
+    )
+  end
 end
 ```
 
