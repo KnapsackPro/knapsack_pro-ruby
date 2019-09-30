@@ -2358,6 +2358,7 @@ Knapsack Pro Queue Mode runs subset of test files from the work queue many times
 
 ```ruby
 # spec_helper.rb or rails_helper.rb
+# step for percy-capybara gem version < 4
 
 KnapsackPro::Hooks::Queue.before_queue do |queue_id|
   # executes before Queue Mode starts work
