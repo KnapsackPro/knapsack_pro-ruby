@@ -8,7 +8,7 @@ jobs:
     parallelism: 1
     docker:
       # specify the version you desire here
-      - image: circleci/ruby:2.5.0
+      - image: circleci/ruby:2.6.5
         environment:
           CODECLIMATE_REPO_TOKEN: b6626e682a8e97e0c5978febc92c3526792a2d018b41b8e1b52689da37fb7d92
 
