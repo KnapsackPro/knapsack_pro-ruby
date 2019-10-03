@@ -168,6 +168,8 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [How many API keys I need?](#how-many-api-keys-i-need)
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
+      - [percy-capybara gem version < 4 (old)](#percy-capybara-gem-version--4-old)
+      - [percy-capybara gem version >= 4](#percy-capybara-gem-version--4)
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
     - [What hooks are supported in Queue Mode?](#what-hooks-are-supported-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
@@ -2353,6 +2355,8 @@ You will run your javascript tests on single CI node and the knapsack_pro will a
 
 #### How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?
 
+##### percy-capybara gem version < 4 (old)
+
 Some tools like [Percy.io](https://percy.io/docs/clients/ruby/capybara-rails) requires to set hooks for RSpec `before(:suite)` and `after(:suite)`.
 Knapsack Pro Queue Mode runs subset of test files from the work queue many times. This means the RSpec hooks `before(:suite)` and `after(:suite)` will execute multiple times. If you want to run some code only once before Queue Mode starts work and after it finishes then you should do it this way:
 
@@ -2370,6 +2374,32 @@ KnapsackPro::Hooks::Queue.after_queue do |queue_id|
   Percy::Capybara.finalize_build
 end
 ```
+
+##### percy-capybara gem version >= 4
+
+If you use [percy-capybara 4.x](https://docs.percy.io/v1/docs/capybara) then you don't need to set RSpec hooks. Insted you need to run knapsack_pro via percy npm command.
+
+```
+npx percy exec -- rake knapsack_pro:queue:rspec
+
+# or you can use knapsack_pro binary version instead of rake task
+npx percy exec -- knapsack_pro queue:rspec
+```
+
+Read more about [knapsack_pro binary version](#knapsack-pro-binary).
+
+Also you need to follow [Percy step for parallelism](https://docs.percy.io/docs/parallel-test-suites#section-manual-configuration-with-environment-variables).
+
+* `PERCY_PARALLEL_NONCE` - A unique identifier for this build. This can be anything, but it must be the same across parallel build nodes. Usually, this is just the CI build number or a shared timestamp. You can google environment variables for CI provider you use to check what's the env var for build ID.
+
+  You can also find CI build number for your CI provider in [knapsack_pro source code](https://github.com/KnapsackPro/knapsack_pro-ruby/tree/master/lib/knapsack_pro/config/ci). knapsack_pro has built in environment variables integration for various CI providers. See for example [CircleCI](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/config/ci/circle.rb) - look for method `node_build_id`.
+
+  ```bash
+  # example for using CircleCI build ID
+  export PERCY_PARALLEL_NONCE=$CIRCLE_BUILD_NUM
+  ```
+
+* `PERCY_PARALLEL_TOTAL` - The total number of parallel build nodes.
 
 #### How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?
 
