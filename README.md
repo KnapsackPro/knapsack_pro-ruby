@@ -140,6 +140,7 @@ You can see list of questions for common problems and tips in below [Table of Co
       - [Why when I reran the same build (same commit hash, etc) on Codeship then no tests would get executed in Queue Mode?](#why-when-i-reran-the-same-build-same-commit-hash-etc-on-codeship-then-no-tests-would-get-executed-in-queue-mode)
       - [Why knapsack_pro hangs / freezes / is stale i.e. for Codeship in Queue Mode?](#why-knapsack_pro-hangs--freezes--is-stale-ie-for-codeship-in-queue-mode)
       - [How to find seed in RSpec output when I use Queue Mode for RSpec?](#how-to-find-seed-in-rspec-output-when-i-use-queue-mode-for-rspec)
+      - [How to configure puffing-billy gem with Knapsack Pro Queue Mode?](#how-to-configure-puffing-billy-gem-with-knapsack-pro-queue-mode)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
       - [for knapsack_pro regular mode](#for-knapsack_pro-regular-mode)
@@ -1915,6 +1916,51 @@ bundle exec rspec --seed 11055 --default-path spec "spec/a_spec.rb" "spec/b_spec
 ```
 
 If you don't use RSpec argument `--order random` then you don't need to provide `--seed` number when you want to reproduce tests in development.
+
+##### How to configure puffing-billy gem with Knapsack Pro Queue Mode?
+
+If you use [puffing-billy](https://github.com/oesmith/puffing-billy) gem you may notice [puffing-billy may crash](https://github.com/oesmith/puffing-billy/issues/253). It happen due to the way how knapsack_pro in Queue Mode uses `RSpec::Core::Runner` ([see](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)).
+
+Here is a patch for puffing-billy to make it work in knapsack_pro Queue Mode:
+
+```ruby
+# rails_helper.rb or spec_helper.rb
+
+# A patch to `puffing-billy`'s proxy so that it doesn't try to stop
+# eventmachine's reactor if it's not running.
+module BillyProxyPatch
+  def stop
+    return unless EM.reactor_running?
+    super
+  end
+end
+Billy::Proxy.prepend(BillyProxyPatch)
+
+# A patch to `puffing-billy` to start EM if it has been stopped
+Billy.module_eval do
+  def self.proxy
+    if @billy_proxy.nil? || !(EventMachine.reactor_running? && EventMachine.reactor_thread.alive?)
+      proxy = Billy::Proxy.new
+      proxy.start
+      @billy_proxy = proxy
+    else
+      @billy_proxy
+    end
+  end
+end
+
+if ENV["KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC"]
+  KnapsackPro::Hooks::Queue.before_queue do
+    # executes before Queue Mode starts work
+    Billy.proxy.start
+  end
+
+  KnapsackPro::Hooks::Queue.after_queue do
+    # executes after Queue Mode finishes work
+    Billy.proxy.stop
+  end
+end
+```
 
 ### General questions
 
