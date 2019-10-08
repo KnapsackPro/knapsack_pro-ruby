@@ -2364,7 +2364,7 @@ Here is example:
 
 * Step 1. API_KEY_A for `bundle exec rake knapsack_pro:cucumber`
 * Step 2. API_KEY_B for `bundle exec rake knapsack_pro:rspec`
-* Step 3. API_KEY_C for `KNAPSACK_PRO_TEST_FILE_PATTERN="specs/features/*_spec.rb" bundle exec rake knapsack_pro:rspec`
+* Step 3. API_KEY_C for `KNAPSACK_PRO_TEST_FILE_PATTERN="spec/features/*_spec.rb" bundle exec rake knapsack_pro:rspec`
 * Step 4. API_KEY_D for `bundle exec rake knapsack_pro:rspec[--tag tagA]`
 * Step 5. API_KEY_E for `bundle exec rake knapsack_pro:rspec[--tag ~tagA]`
 * Step 6. API_KEY_F for `bundle exec rake knapsack_pro:queue:rspec`
