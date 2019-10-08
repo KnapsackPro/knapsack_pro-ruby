@@ -2827,7 +2827,7 @@ If you use for instance Heroku CI that allows you to provide only one test comma
 # $ chmod a+x bin/knapsack_pro_rspec_and_npm_test
 
 # 15 is last CI node (index starts from 0, so in total we have 16 parallel Heroku dynos)
-if [ "$CI_NODE_TOTAL" == "15" ]; then
+if [ "$CI_NODE_INDEX" == "15" ]; then
   # run npm tests on the last CI node
   npm test
 else
