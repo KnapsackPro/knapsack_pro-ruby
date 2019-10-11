@@ -113,6 +113,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [Info for cirrus-ci.org users](#info-for-cirrus-ciorg-users)
     - [Info for Jenkins users](#info-for-jenkins-users)
     - [Info for GitHub Actions users](#info-for-github-actions-users)
+    - [Info for Codefresh.io users](#info-for-codefreshio-users)
 - [FAQ](#faq)
   - [Common problems](#common-problems)
     - [Why I see API error commit_hash parameter is required?](#why-i-see-api-error-commit_hash-parameter-is-required)
@@ -1519,6 +1520,128 @@ jobs:
         bundle exec rake knapsack_pro:queue:rspec
         bundle exec rake knapsack_pro:queue:cucumber
         bundle exec rake knapsack_pro:queue:minitest
+```
+
+#### Info for Codefresh.io users
+
+knapsack_pro gem supports environment variables provided by Codefresh.io to run your tests. You will have to define a few things in `.codefresh/codefresh.yml` config file.
+
+* You need to set API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` in Codefresh dashboard, see left menu Pipelines -> settings (cog icon next to pipeline) -> Variables tab (see vertical menu on the right side). Add there new API token depending on the test runner you use:
+  * KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
+  * KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER
+  * KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
+  * KNAPSACK_PRO_TEST_SUITE_TEST_UNIT
+  * KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH
+* Set where Codefresh YAML file can be found. In Codefresh dashboard, see left menu Pipelines -> settings (cog icon next to pipeline) -> Workflow tab (horizontal menu on the top) -> Path to YAML (set there `./.codefresh/codefresh.yml`).
+* Set how many parallel jobs (parallel CI nodes) you want to run with `KNAPSACK_PRO_CI_NODE_TOTAL` environment varible in `.codefresh/codefresh.yml` file.
+* Ensure in `matrix` section you listed all `KNAPSACK_PRO_CI_NODE_INDEX` environment variables with value from `0` to `KNAPSACK_PRO_CI_NODE_TOTAL-1`. Codefresh will generate matrix of parallel jobs where each job has different value for `KNAPSACK_PRO_CI_NODE_INDEX`. Thanks to that Knapsack Pro knows what tests should be run on each parallel job.
+
+Below you can find Codefresh yaml config and `Test.Dockerfile` used by Codefresh to run Ruby on Rails project with PostgreSQL inside of Docker container.
+
+```yaml
+# .codefresh/codefresh.yml
+version: "1.0"
+
+stages:
+  - "clone"
+  - "build"
+  - "tests"
+
+steps:
+  main_clone:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_BRANCH}}"
+    stage: "clone"
+  BuildTestDockerImage:
+    title: Building Test Docker image
+    type: build
+    arguments:
+      image_name: '${{CF_ACCOUNT}}/${{CF_REPO_NAME}}-test'
+      tag: '${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
+      dockerfile: Test.Dockerfile
+    stage: "build"
+
+  run_tests:
+    stage: "tests"
+    image: '${{BuildTestDockerImage}}'
+    working_directory: /src
+    fail_fast: false
+    environment:
+      - RAILS_ENV=test
+      # set how many parallel jobs you want to run
+      - KNAPSACK_PRO_CI_NODE_TOTAL=2
+      - PGHOST=postgres
+      - PGUSER=rails-app-with-knapsack_pro
+      - PGPASSWORD=password
+    services:
+      composition:
+        postgres:
+          image: postgres:latest
+          environment:
+            - POSTGRES_DB=rails-app-with-knapsack_pro_test
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_USER=rails-app-with-knapsack_pro
+          ports:
+            - 5432
+    matrix:
+      environment:
+        # please ensure you have here listed N-1 indexes
+        # where N is KNAPSACK_PRO_CI_NODE_TOTAL
+        - KNAPSACK_PRO_CI_NODE_INDEX=0
+        - KNAPSACK_PRO_CI_NODE_INDEX=1
+    commands:
+      - bin/rails db:prepare
+
+      # run tests in Knapsack Pro Regular Mode
+      - bundle exec rake knapsack_pro:rspec
+      - bundle exec rake knapsack_pro:cucumber
+      - bundle exec rake knapsack_pro:minitest
+      - bundle exec rake knapsack_pro:test_unit
+      - bundle exec rake knapsack_pro:spinach
+
+      # you can use Knapsack Pro in Queue Mode once recorded first CI build with Regular Mode
+      - bundle exec rake knapsack_pro:queue:rspec
+      - bundle exec rake knapsack_pro:queue:cucumber
+      - bundle exec rake knapsack_pro:queue:minitest
+```
+
+Add `Test.Dockerfile` to your project repository.
+
+```Dockerfile
+# Test.Dockerfile
+FROM ruby:2.6.5-alpine3.10
+
+# Prepare Docker image for Nokogiri
+RUN apk add --update \
+  build-base \
+  libxml2-dev \
+  libxslt-dev \
+  jq \
+  nodejs \
+  npm \
+  postgresql-dev \
+  python3-dev \
+  sqlite-dev \
+  git \
+  && rm -rf /var/cache/apk/*
+
+# Install AWS CLI
+RUN pip3 install awscli
+
+# Use libxml2, libxslt a packages from alpine for building nokogiri
+RUN bundle config build.nokogiri --use-system-libraries
+
+# Install Codefresh CLI
+RUN wget https://github.com/codefresh-io/cli/releases/download/v0.31.1/codefresh-v0.31.1-alpine-x64.tar.gz
+RUN tar -xf codefresh-v0.31.1-alpine-x64.tar.gz -C /usr/local/bin/
+
+COPY . /src
+
+WORKDIR /src
+
+RUN bundle install
 ```
 
 ## FAQ
