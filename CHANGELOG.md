@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.15.0
+
+* Add support for Codefresh.io CI provider
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/92
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.14.0...v1.15.0
+
 ### 1.14.0
 
 * Add support for GitHub Actions
