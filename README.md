@@ -1527,11 +1527,11 @@ jobs:
 knapsack_pro gem supports environment variables provided by Codefresh.io to run your tests. You will have to define a few things in `.codefresh/codefresh.yml` config file.
 
 * You need to set API token like `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC` in Codefresh dashboard, see left menu Pipelines -> settings (cog icon next to pipeline) -> Variables tab (see vertical menu on the right side). Add there new API token depending on the test runner you use:
-  * KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
-  * KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER
-  * KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
-  * KNAPSACK_PRO_TEST_SUITE_TEST_UNIT
-  * KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH
+  * `KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC`
+  * `KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER`
+  * `KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST`
+  * `KNAPSACK_PRO_TEST_SUITE_TEST_UNIT`
+  * `KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH`
 * Set where Codefresh YAML file can be found. In Codefresh dashboard, see left menu Pipelines -> settings (cog icon next to pipeline) -> Workflow tab (horizontal menu on the top) -> Path to YAML (set there `./.codefresh/codefresh.yml`).
 * Set how many parallel jobs (parallel CI nodes) you want to run with `KNAPSACK_PRO_CI_NODE_TOTAL` environment varible in `.codefresh/codefresh.yml` file.
 * Ensure in `matrix` section you listed all `KNAPSACK_PRO_CI_NODE_INDEX` environment variables with value from `0` to `KNAPSACK_PRO_CI_NODE_TOTAL-1`. Codefresh will generate matrix of parallel jobs where each job has different value for `KNAPSACK_PRO_CI_NODE_INDEX`. Thanks to that Knapsack Pro knows what tests should be run on each parallel job.
