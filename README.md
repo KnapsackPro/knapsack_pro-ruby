@@ -175,6 +175,7 @@ You can see list of questions for common problems and tips in below [Table of Co
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
     - [What hooks are supported in Queue Mode?](#what-hooks-are-supported-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
+      - [Should I use parallel_tests gem (what are pitfalls)?](#should-i-use-parallel_tests-gem-what-are-pitfalls)
       - [parallel_tests with knapsack_pro on parallel CI nodes](#parallel_tests-with-knapsack_pro-on-parallel-ci-nodes)
       - [parallel_tests with knapsack_pro on single CI machine](#parallel_tests-with-knapsack_pro-on-single-ci-machine)
     - [How to retry failed tests (flaky tests)?](#how-to-retry-failed-tests-flaky-tests)
@@ -2647,6 +2648,23 @@ end
 ```
 
 #### How to run knapsack_pro with parallel_tests gem?
+
+##### Should I use parallel_tests gem (what are pitfalls)?
+
+If you plan to use parallel_tests please be careful how many parallel processes with running tests you will start on a single CI node.
+Often it happens that running 2 or more processes with tests using parallel_tests gem on the CI node that has low performance leads to slower execution of test suite. You can accidentally make your whole test suite running slower by using parallel_tests if you have not enough powerful CI server (slow CPU, not enough RAM, slow disk).
+
+If you use parallel_tests and knapsack_pro you can see recorded tests timing in Knapsack Pro [user dashboard](https://knapsackpro.com/dashboard). See the "Build metrics" link next to your API token and check the last recorded CI build time. You will be able to see there how long each test files took to execute. If you notice that after adding parallel_tests gem your test files started to take more time than before it means you overloaded your CI server.
+
+You should:
+
+* reduce the number of parallel processes in parallel_tests gem
+* or buy a more powerful CI node to allow running more parallel processes (vertical scaling)
+* or don't use parallel_tests gem at all (recommended)
+
+In case of tests execution time increase (slower tests) I recommend using more parallel nodes offered by your CI provider to scale your tests horizontally. Basically, adding parallel CI nodes instead of vertically adding more CPU/RAM to CI node is a better option. Parallel_tests gem has mixed output results from the parallel processes so it's easier to just browse tests output from parallel CI nodes when you scale horizontally by using knapsack_pro without parallel_tests.
+
+If you want to use parallel_tests you can use it with Knapsack Pro Queue Mode to auto-balance tests split across parallel processes started by parallel_tests gem. See below tips on how to do it on [many parallel CI nodes where each node starts many parallel_tests processes](#parallel_tests-with-knapsack_pro-on-parallel-ci-nodes) or [on a single powerful CI server](#parallel_tests-with-knapsack_pro-on-single-ci-machine).
 
 ##### parallel_tests with knapsack_pro on parallel CI nodes
 
