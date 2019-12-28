@@ -870,11 +870,29 @@ end
 # Here is additional configuration to ensure the xml report will be visible by CircleCI
 KnapsackPro::Hooks::Queue.after_queue do |queue_id|
   # Metadata collection
-  # https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps
+  # https://circleci.com/docs/2.0/collect-test-data/#metadata-collection-in-custom-test-steps
   if File.exist?(FINAL_RSPEC_XML_REPORT) && ENV['CIRCLE_TEST_REPORTS']
     FileUtils.cp(FINAL_RSPEC_XML_REPORT, "#{ENV['CIRCLE_TEST_REPORTS']}/rspec.xml")
   end
 end
+```
+
+Ensure you have in CircleCI config yml
+
+```yaml
+- run:
+    name: RSpec via knapsack_pro Queue Mode
+    command: |
+      export CIRCLE_TEST_REPORTS=/tmp/test-results
+      mkdir $CIRCLE_TEST_REPORTS
+      bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+
+# collect reports
+- store_test_results:
+    path: /tmp/test-results
+- store_artifacts:
+    path: /tmp/test-results
+    destination: test-results
 ```
 
 #### Info for Travis users
