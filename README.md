@@ -42,7 +42,11 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
 
 ## FAQ
 
-You can see list of questions for common problems and tips in below [Table of Contents](#table-of-contents). Scroll 1 page down and you will see the FAQ in the table of contents.
+__NEW:__ Up to date [FAQ for knapsack_pro gem can be found here](https://knapsackpro.com/faq/knapsack_pro_client/knapsack_pro_ruby).
+
+__OLD:__ This README also contains FAQ questions but we keep adding new info only to our new FAQ page mentioned above.
+
+We keep this old FAQ in README to not break old links spread across the web. You can see old FAQ list of questions for common problems and tips in below [Table of Contents](#table-of-contents). Scroll 1 page down and you will see the FAQ in the table of contents.
 
 # Requirements
 
