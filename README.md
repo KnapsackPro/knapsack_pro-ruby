@@ -2840,7 +2840,7 @@ bundle exec rspec --only-failures
 
 #### How can I run tests from multiple directories?
 
-The test file pattern config option supports any glob pattern handled by [`Dir.glob`](http://ruby-doc.org/core-2.4.1/Dir.html#method-c-glob) and can be configured to pull test files from multiple directories. An example of this when using RSpec would be `""{spec,engines/*/spec}/**/*_spec.rb" "`. For complex cases like this, the test directory can't be extracted and must be specified manually using the `KNAPSACK_PRO_TEST_DIR` environment variable:
+The test file pattern config option supports any glob pattern handled by [`Dir.glob`](http://ruby-doc.org/core-2.4.1/Dir.html#method-c-glob) and can be configured to pull test files from multiple directories. An example of this when using RSpec would be `"{spec,engines/*/spec}/**/*_spec.rb"`. For complex cases like this, the test directory can't be extracted and must be specified manually using the `KNAPSACK_PRO_TEST_DIR` environment variable:
 
 ```
 # This is example where you have in engines directory multiple projects
