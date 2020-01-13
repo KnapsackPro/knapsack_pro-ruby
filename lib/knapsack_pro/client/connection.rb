@@ -67,9 +67,16 @@ module KnapsackPro
         {
           'Content-Type' => 'application/json',
           'Accept' => 'application/json',
-          'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+          'KNAPSACK-PRO-CLIENT-NAME' => client_name,
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
         }
+      end
+
+      def client_name
+        [
+          'knapsack_pro-ruby',
+          ENV['KNAPSACK_PRO_CLIENT_NAME'],
+        ].compact.join('/')
       end
 
       def parse_response_body(body)
