@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.16.0
+
+* Add test runner name to `KNAPSACK-PRO-CLIENT-NAME` header send to Knapsack Pro API
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/95
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.15.0...v1.16.0
+
 ### 1.15.0
 
 * Add support for Codefresh.io CI provider
