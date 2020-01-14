@@ -1,6 +1,6 @@
 module KnapsackPro
   class BaseAllocatorBuilder
-    CLIENT_NAME_MAP = {
+    TEST_RUNNER_MAP = {
       KnapsackPro::Adapters::RSpecAdapter => 'rspec',
       KnapsackPro::Adapters::CucumberAdapter => 'cucumber',
       KnapsackPro::Adapters::MinitestAdapter => 'minitest',
@@ -10,7 +10,7 @@ module KnapsackPro
 
     def initialize(adapter_class)
       @adapter_class = adapter_class
-      ENV['KNAPSACK_PRO_CLIENT_NAME'] = CLIENT_NAME_MAP[adapter_class]
+      ENV['KNAPSACK_PRO_TEST_RUNNER'] = TEST_RUNNER_MAP[adapter_class]
     end
 
     def allocator

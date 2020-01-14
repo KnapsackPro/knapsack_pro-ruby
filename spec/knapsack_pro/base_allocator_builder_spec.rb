@@ -8,7 +8,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       it do
         allocator_builder
-        expect(ENV['KNAPSACK_PRO_CLIENT_NAME']).to be_nil
+        expect(ENV['KNAPSACK_PRO_TEST_RUNNER']).to be_nil
       end
     end
 
@@ -17,7 +17,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       it do
         allocator_builder
-        expect(ENV['KNAPSACK_PRO_CLIENT_NAME']).to eq 'rspec'
+        expect(ENV['KNAPSACK_PRO_TEST_RUNNER']).to eq 'rspec'
       end
     end
 
@@ -26,7 +26,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       it do
         allocator_builder
-        expect(ENV['KNAPSACK_PRO_CLIENT_NAME']).to eq 'cucumber'
+        expect(ENV['KNAPSACK_PRO_TEST_RUNNER']).to eq 'cucumber'
       end
     end
 
@@ -35,7 +35,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       it do
         allocator_builder
-        expect(ENV['KNAPSACK_PRO_CLIENT_NAME']).to eq 'minitest'
+        expect(ENV['KNAPSACK_PRO_TEST_RUNNER']).to eq 'minitest'
       end
     end
 
@@ -44,7 +44,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       it do
         allocator_builder
-        expect(ENV['KNAPSACK_PRO_CLIENT_NAME']).to eq 'spinach'
+        expect(ENV['KNAPSACK_PRO_TEST_RUNNER']).to eq 'spinach'
       end
     end
 
@@ -53,7 +53,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       it do
         allocator_builder
-        expect(ENV['KNAPSACK_PRO_CLIENT_NAME']).to eq 'test-unit'
+        expect(ENV['KNAPSACK_PRO_TEST_RUNNER']).to eq 'test-unit'
       end
     end
   end

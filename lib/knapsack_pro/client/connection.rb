@@ -75,7 +75,7 @@ module KnapsackPro
       def client_name
         [
           'knapsack_pro-ruby',
-          ENV['KNAPSACK_PRO_CLIENT_NAME'],
+          ENV['KNAPSACK_PRO_TEST_RUNNER'],
         ].compact.join('/')
       end
 
