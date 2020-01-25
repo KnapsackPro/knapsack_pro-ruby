@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.16.1
+
+* Allow to use Queue Mode for old RSpec versions that don't have `RSpec.configuration.reset_filters` method
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/96
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.16.0...v1.16.1
+
 ### 1.16.0
 
 * Add test runner name to `KNAPSACK-PRO-CLIENT-NAME` header send to Knapsack Pro API

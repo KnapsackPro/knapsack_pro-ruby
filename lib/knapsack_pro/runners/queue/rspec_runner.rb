@@ -131,7 +131,11 @@ module KnapsackPro
           end
           RSpec.world.example_groups.clear
           RSpec.configuration.start_time = ::RSpec::Core::Time.now
-          RSpec.configuration.reset_filters
+
+          # skip reset filters for old RSpec versions
+          if RSpec.configuration.respond_to?(:reset_filters)
+            RSpec.configuration.reset_filters
+          end
         end
       end
     end
