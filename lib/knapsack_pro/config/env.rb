@@ -139,6 +139,10 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', false)
         end
 
+        def cucumber_queue_prefix
+          ENV.fetch('KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX', 'bundle exec')
+        end
+
         def test_suite_token
           env_name = 'KNAPSACK_PRO_TEST_SUITE_TOKEN'
           ENV[env_name] || raise("Missing environment variable #{env_name}. You should set environment variable like #{env_name}_RSPEC (note there is suffix _RSPEC at the end). knapsack_pro gem will set #{env_name} based on #{env_name}_RSPEC value. If you use other test runner than RSpec then use proper suffix.")
