@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.17.0
+
+* Add `KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX` to allow run Cucumber with spring gem in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/98
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.16.1...v1.17.0
+
 ### 1.16.1
 
 * Allow to use Queue Mode for old RSpec versions that don't have `RSpec.configuration.reset_filters` method
