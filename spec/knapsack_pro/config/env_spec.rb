@@ -504,6 +504,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.cucumber_queue_prefix' do
+    subject { described_class.cucumber_queue_prefix }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX' => 'bundle exec spring' }) }
+      it { should eq 'bundle exec spring' }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should eq 'bundle exec' }
+    end
+  end
+
   describe '.test_suite_token' do
     subject { described_class.test_suite_token }
 

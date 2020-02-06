@@ -79,7 +79,10 @@ module KnapsackPro
         def self.cucumber_run(runner, test_file_paths, args)
           stringify_test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
 
-          cmd = %Q[bundle exec cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
+          cmd = [
+            KnapsackPro::Config::Env.cucumber_queue_prefix,
+            %Q[cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
+          ].join(' ')
 
           Kernel.system(cmd)
 

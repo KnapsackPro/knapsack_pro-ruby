@@ -482,6 +482,11 @@ bundle exec rake knapsack_pro:queue:rspec
 bundle exec rake knapsack_pro:queue:minitest
 
 # Cucumber
+# If you use spring gem and spring-commands-cucumber gem to start Cucumber tests faster please set
+# export KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX=bundle exec spring
+# or you can use spring binstub
+# export KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX=bin/spring
+# Thanks to that Cucumber will start tests faster for each batch of tests fetched from Knapsack Pro Queue API
 bundle exec rake knapsack_pro:queue:cucumber
 ```
 
