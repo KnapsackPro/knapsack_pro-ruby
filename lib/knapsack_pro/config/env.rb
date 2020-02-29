@@ -36,10 +36,6 @@ module KnapsackPro
           ).to_i
         end
 
-        def can_run_fallback_mode?
-          ci_node_retry_count == 0
-        end
-
         def commit_hash
           ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
             ci_env_for(:commit_hash)
@@ -97,6 +93,14 @@ module KnapsackPro
 
         def subset_queue_id
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] || raise('Missing Subset Queue ID')
+        end
+
+        def fallback_mode_enabled
+          ENV.fetch('KNAPSACK_PRO_FALLBACK_MODE_ENABLED', true)
+        end
+
+        def fallback_mode_enabled?
+          fallback_mode_enabled.to_s == 'true'
         end
 
         def test_files_encrypted

@@ -100,22 +100,6 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.can_run_fallback_mode?' do
-    subject { described_class.can_run_fallback_mode? }
-
-    context 'when ENV exists (stub #ci_node_retry_count)' do
-      before do
-        expect(described_class).to receive(:ci_node_retry_count).and_return(1)
-      end
-
-      it { should be false }
-    end
-
-    context "when ENV doesn't exist" do
-      it { should be true }
-    end
-  end
-
   describe '.commit_hash' do
     subject { described_class.commit_hash }
 
@@ -353,6 +337,32 @@ describe KnapsackPro::Config::Env do
       it do
         expect { subject }.to raise_error('Missing Subset Queue ID')
       end
+    end
+  end
+
+  describe '.fallback_mode_enabled' do
+    subject { described_class.fallback_mode_enabled }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_FALLBACK_MODE_ENABLED' => 'false' }) }
+      it { should eq 'false' }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be true }
+    end
+  end
+
+  describe '.fallback_mode_enabled?' do
+    subject { described_class.fallback_mode_enabled? }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_FALLBACK_MODE_ENABLED' => 'false' }) }
+      it { should be false }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be true }
     end
   end
 
