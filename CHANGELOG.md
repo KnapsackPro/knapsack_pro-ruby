@@ -1,10 +1,18 @@
 # Change Log
 
-### Unreleased
+### 1.18.0
+
+* __IMPORTANT__ Do not allow Fallback Mode when the CI node was retried to avoid running the wrong set of tests
+
+    Please read the PR description if you are using retry failed CI node feature on your CI (for instance you use Buildkite).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/100
 
 * Increase delay between request retry to Knapsack Pro API from 2s to 4s for 2nd request and from 4s to 8s for 3rd request
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/99
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.17.0...v1.18.0
 
 ### 1.17.0
 
