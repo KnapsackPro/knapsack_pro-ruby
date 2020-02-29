@@ -1,5 +1,11 @@
 # Change Log
 
+### Unreleased
+
+* Increase delay between request retry to Knapsack Pro API from 2s to 4s for 2nd request and from 4s to 8s for 3rd request
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/99
+
 ### 1.17.0
 
 * Add `KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX` to allow run Cucumber with spring gem in Queue Mode

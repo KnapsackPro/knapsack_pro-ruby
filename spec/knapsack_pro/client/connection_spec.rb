@@ -152,10 +152,10 @@ describe KnapsackPro::Client::Connection do
           server_error = described_class::ServerError.new(parsed_response)
           expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
 
-          expect(logger).to receive(:warn).with("Wait 2s and retry request to Knapsack Pro API.")
           expect(logger).to receive(:warn).with("Wait 4s and retry request to Knapsack Pro API.")
-          expect(Kernel).to receive(:sleep).with(2)
+          expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
           expect(Kernel).to receive(:sleep).with(4)
+          expect(Kernel).to receive(:sleep).with(8)
 
           expect(subject).to eq(parsed_response)
 
