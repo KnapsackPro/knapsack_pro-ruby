@@ -5,7 +5,7 @@ module KnapsackPro
 
       TIMEOUT = 15
       MAX_RETRY = 3
-      REQUEST_RETRY_TIMEBOX = 2
+      REQUEST_RETRY_TIMEBOX = 4
 
       def initialize(action)
         @action = action
