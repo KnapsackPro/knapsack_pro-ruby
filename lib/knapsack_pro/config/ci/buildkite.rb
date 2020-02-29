@@ -14,6 +14,10 @@ module KnapsackPro
           ENV['BUILDKITE_BUILD_NUMBER']
         end
 
+        def node_retry_count
+          ENV['BUILDKITE_RETRY_COUNT']
+        end
+
         def commit_hash
           ENV['BUILDKITE_COMMIT']
         end

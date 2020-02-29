@@ -77,6 +77,45 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.ci_node_retry_count' do
+    subject { described_class.ci_node_retry_count }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_CI_NODE_RETRY_COUNT has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_RETRY_COUNT' => '1' }) }
+        it { should eq 1 }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:node_retry_count).and_return('2')
+        end
+
+        it { should eq 2 }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should eq 0 }
+    end
+  end
+
+  describe '.can_run_fallback_mode?' do
+    subject { described_class.can_run_fallback_mode? }
+
+    context 'when ENV exists (stub #ci_node_retry_count)' do
+      before do
+        expect(described_class).to receive(:ci_node_retry_count).and_return(1)
+      end
+
+      it { should be false }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be true }
+    end
+  end
+
   describe '.commit_hash' do
     subject { described_class.commit_hash }
 
@@ -490,12 +529,54 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.fixed_test_suite_split?' do
+    subject { described_class.fixed_test_suite_split? }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT' => 'true' }) }
+        it { should be true }
+      end
+
+      context 'when KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=false' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT' => 'false' }) }
+        it { should be false }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be true }
+    end
+  end
+
   describe '.fixed_queue_split' do
     subject { described_class.fixed_queue_split }
 
     context 'when ENV exists' do
       before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => true }) }
       it { should eq true }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
+  describe '.fixed_queue_split?' do
+    subject { described_class.fixed_queue_split? }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'true' }) }
+        it { should be true }
+      end
+
+      context 'when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'false' }) }
+        it { should be false }
+      end
     end
 
     context "when ENV doesn't exist" do
