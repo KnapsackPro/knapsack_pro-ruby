@@ -552,6 +552,8 @@ There might be some cached test suite splits for git commits you have run in pas
 
   Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
 
+  __IMPORTANT__: [Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)](#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode)
+
   * Note when fixed queue split is enabled then you can run tests in a dynamic way only once for particular commit hash and a total number of nodes and for the same branch.
 
   * When Knapsack Pro API server has already information about previous queue split then the information will be used. You will see at the beginning of the knapsack command the log with info that queue name is nil because it was not generated this time. You will get the list of all test files that were executed on the particular CI node in the past.
@@ -619,6 +621,8 @@ Note this is for knapsack_pro regular mode only.
       ```
       [knapsack_pro] Test suite split seed: 8a606431-02a1-4766-9878-0ea42a07ad21
       ```
+
+    __IMPORTANT__: [Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)](#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode)
 
 * `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=false`
 
