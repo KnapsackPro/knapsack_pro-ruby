@@ -565,18 +565,6 @@ There might be some cached test suite splits for git commits you have run in pas
     [knapsack_pro] {"queue_name"=>"retry-dead-ci-node:queue-id", "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
     ```
 
-  * __IMPORTANT:__ If you use __the feature to retry only a single failed CI node__ on your CI server (for instance you use Buildkite and you use [auto-retry](https://buildkite.com/docs/pipelines/command-step#retry-attributes) for the failed job) then you need to be aware of [a race condition that could happen](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/100). knapsack_pro should not allow running tests in Fallback Mode in the case when the failed CI node was retried to prevent running the wrong set of tests.
-
-    knapsack_pro has built-in support for retries of failed parallel CI nodes for listed CI servers:
-
-    * Buildkite (knapsack_pro reads `BUILDKITE_RETRY_COUNT`)
-
-    knapsack_pro reads ENV vars for above CI servers and it disables Fallback Mode when failed parallel CI node can't connect with Knapsack Pro API. This way we prevent running the wrong set of tests by Fallback Mode on retried CI node.
-
-    If you use other CI server you need to manually configure your CI server to set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT=1` only during retry CI node attempt. If `KNAPSACK_PRO_CI_NODE_RETRY_COUNT > 0` then knapsack_pro won't allow starting running tests in Fallback Mode and instead will raise error so a user can manually retry CI node later when a connection to Knapsack Pro API can be established.
-
-    If you cannot set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT` only for retried CI node or it is not possible for your CI server then you can disable Fallback Mode completely `KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false`.
-
   * To [reproduce tests executed on CI node](#for-knapsack_pro-queue-mode) in development environment please see FAQ.
 
 #### KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)
@@ -655,6 +643,22 @@ This is only for maintainer of knapsack_pro gem. Not for the end users.
 * `KNAPSACK_PRO_MODE` - Default value is `production` and then endpoint is `https://api.knapsackpro.com`.
   * When mode is `development` then endpoint is `http://api.knapsackpro.test:3000`.
   * When mode is `test` then endpoint is `https://api-staging.knapsackpro.com`.
+
+### Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)
+
+Read below required configuration step if you use Queue Mode and you set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node) or you use Regular Mode which has by default [`KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true`](#knapsack_pro_fixed_test_suite_splite-test-suite-splite-based-on-seed).
+
+* __IMPORTANT:__ If you use __the feature to retry only a single failed CI node__ on your CI server (for instance you use Buildkite and you use [auto-retry](https://buildkite.com/docs/pipelines/command-step#retry-attributes) for the failed job) then you need to be aware of [a race condition that could happen](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/100). knapsack_pro should not allow running tests in Fallback Mode in the case when the failed CI node was retried to prevent running the wrong set of tests.
+
+  knapsack_pro has built-in support for retries of failed parallel CI nodes for listed CI servers:
+
+  * Buildkite (knapsack_pro reads `BUILDKITE_RETRY_COUNT`)
+
+  knapsack_pro reads ENV vars for above CI servers and it disables Fallback Mode when failed parallel CI node can't connect with Knapsack Pro API. This way we prevent running the wrong set of tests by Fallback Mode on retried CI node.
+
+  If you use other CI server you need to manually configure your CI server to set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT=1` only during retry CI node attempt. If `KNAPSACK_PRO_CI_NODE_RETRY_COUNT > 0` then knapsack_pro won't allow starting running tests in Fallback Mode and instead will raise error so a user can manually retry CI node later when a connection to Knapsack Pro API can be established.
+
+  If you cannot set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT` only for retried CI node or it is not possible for your CI server then you can disable Fallback Mode completely `KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false`.
 
 ### Passing arguments to rake task
 
