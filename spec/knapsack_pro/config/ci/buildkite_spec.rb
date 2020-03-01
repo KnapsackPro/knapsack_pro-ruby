@@ -46,6 +46,19 @@ describe KnapsackPro::Config::CI::Buildkite do
     end
   end
 
+  describe '#node_retry_count' do
+    subject { described_class.new.node_retry_count }
+
+    context 'when environment exists' do
+      let(:env) { { 'BUILDKITE_RETRY_COUNT' => '1' } }
+      it { should eql '1' }
+    end
+
+    context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 

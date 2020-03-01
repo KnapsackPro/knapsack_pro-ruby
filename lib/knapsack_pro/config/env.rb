@@ -28,6 +28,14 @@ module KnapsackPro
             'missing-build-id'
         end
 
+        def ci_node_retry_count
+          (
+            ENV['KNAPSACK_PRO_CI_NODE_RETRY_COUNT'] ||
+            ci_env_for(:node_retry_count) ||
+            0
+          ).to_i
+        end
+
         def commit_hash
           ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
             ci_env_for(:commit_hash)
@@ -87,6 +95,14 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] || raise('Missing Subset Queue ID')
         end
 
+        def fallback_mode_enabled
+          ENV.fetch('KNAPSACK_PRO_FALLBACK_MODE_ENABLED', true)
+        end
+
+        def fallback_mode_enabled?
+          fallback_mode_enabled.to_s == 'true'
+        end
+
         def test_files_encrypted
           ENV['KNAPSACK_PRO_TEST_FILES_ENCRYPTED']
         end
@@ -135,8 +151,16 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT', true)
         end
 
+        def fixed_test_suite_split?
+          fixed_test_suite_split.to_s == 'true'
+        end
+
         def fixed_queue_split
           ENV.fetch('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', false)
+        end
+
+        def fixed_queue_split?
+          fixed_queue_split.to_s == 'true'
         end
 
         def cucumber_queue_prefix

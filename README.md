@@ -84,8 +84,9 @@ We keep this old FAQ in README to not break old links spread across the web. You
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
-    - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)
+    - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT (test suite split based on seed)](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed)
     - [Environment variables for debugging gem](#environment-variables-for-debugging-gem)
+  - [Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)](#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode)
   - [Passing arguments to rake task](#passing-arguments-to-rake-task)
     - [Passing arguments to rspec](#passing-arguments-to-rspec)
     - [Passing arguments to cucumber](#passing-arguments-to-cucumber)
@@ -551,6 +552,10 @@ There might be some cached test suite splits for git commits you have run in pas
 
   Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
 
+  __IMPORTANT__: [Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)](#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode)
+
+  Other useful info:
+
   * Note when fixed queue split is enabled then you can run tests in a dynamic way only once for particular commit hash and a total number of nodes and for the same branch.
 
   * When Knapsack Pro API server has already information about previous queue split then the information will be used. You will see at the beginning of the knapsack command the log with info that queue name is nil because it was not generated this time. You will get the list of all test files that were executed on the particular CI node in the past.
@@ -598,7 +603,7 @@ In case when you use other CI provider for instance [Jenkins](https://jenkins-ci
 
 `KNAPSACK_PRO_CI_NODE_INDEX` - index of current CI node starts from 0. Second CI node should have `KNAPSACK_PRO_CI_NODE_INDEX=1`.
 
-#### KNAPSACK_PRO_FIXED_TEST_SUITE_SPLITE (test suite split based on seed)
+#### KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT (test suite split based on seed)
 
 Note this is for knapsack_pro regular mode only.
 
@@ -609,13 +614,19 @@ Note this is for knapsack_pro regular mode only.
 
     Thanks to that when tests on one of your node failed you can retry the node with exactly the same subset of tests that were run on the node in the first place.
 
-    There is one edge case. When you run tests for the first time and there is no data collected about time execution of your tests then
-    we need to collect data to prepare the first test suite split. The second run of your tests will have fixed test suite split.
+    __IMPORTANT__: [Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)](#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode)
 
-    To compare if all your CI nodes are running based on the same test suite split seed you can check the value for seed in knapsack logging message
-    before your test starts. The message looks like:
+    Other useful info:
 
-        [knapsack_pro] Test suite split seed: 8a606431-02a1-4766-9878-0ea42a07ad21
+    * There is one edge case. When you run tests for the first time and there is no data collected about time execution of your tests then
+      we need to collect data to prepare the first test suite split. The second run of your tests will have fixed test suite split.
+
+      To compare if all your CI nodes are running based on the same test suite split seed you can check the value for seed in knapsack logging message
+      before your test starts. The message looks like:
+
+      ```
+      [knapsack_pro] Test suite split seed: 8a606431-02a1-4766-9878-0ea42a07ad21
+      ```
 
 * `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=false`
 
@@ -641,6 +652,22 @@ This is only for maintainer of knapsack_pro gem. Not for the end users.
 * `KNAPSACK_PRO_MODE` - Default value is `production` and then endpoint is `https://api.knapsackpro.com`.
   * When mode is `development` then endpoint is `http://api.knapsackpro.test:3000`.
   * When mode is `test` then endpoint is `https://api-staging.knapsackpro.com`.
+
+### Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)
+
+Read below required configuration step if you use Queue Mode and you set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node) or you use Regular Mode which has by default [`KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true`](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed).
+
+* __IMPORTANT:__ If you use __the feature to retry only a single failed CI node__ on your CI server (for instance you use Buildkite and you use [auto-retry](https://buildkite.com/docs/pipelines/command-step#retry-attributes) for the failed job) then you need to be aware of [a race condition that could happen](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/100). knapsack_pro should not allow running tests in Fallback Mode in the case when the failed CI node was retried to prevent running the wrong set of tests.
+
+  knapsack_pro has built-in support for retries of failed parallel CI nodes for listed CI servers:
+
+  * Buildkite (knapsack_pro reads `BUILDKITE_RETRY_COUNT`)
+
+  knapsack_pro reads ENV vars for above CI servers and it disables Fallback Mode when failed parallel CI node can't connect with Knapsack Pro API. This way we prevent running the wrong set of tests by Fallback Mode on retried CI node.
+
+  If you use other CI server you need to manually configure your CI server to set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT=1` only during retry CI node attempt. If `KNAPSACK_PRO_CI_NODE_RETRY_COUNT > 0` then knapsack_pro won't allow starting running tests in Fallback Mode and instead will raise error so a user can manually retry CI node later when a connection to Knapsack Pro API can be established.
+
+  If you cannot set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT` only for retried CI node or it is not possible for your CI server then you can disable Fallback Mode completely `KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false`.
 
 ### Passing arguments to rake task
 
