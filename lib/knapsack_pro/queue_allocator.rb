@@ -17,7 +17,7 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
       elsif !KnapsackPro::Config::Env.fallback_mode_enabled?
-        message = 'Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://github.com/KnapsackPro/knapsack_pro-ruby/pull/100'
+        message = 'Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode'
         KnapsackPro.logger.error(message)
         raise message
       elsif KnapsackPro::Config::Env.ci_node_retry_count > 0
