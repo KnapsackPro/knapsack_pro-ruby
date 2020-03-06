@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.18.1
+
+* Pass non zero exit status from Cucumber as exit status for Cucumber executed in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/101
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.18.0...v1.18.1
+
 ### 1.18.0
 
 * __IMPORTANT__ Do not allow Fallback Mode when the CI node was retried to avoid running the wrong set of tests
