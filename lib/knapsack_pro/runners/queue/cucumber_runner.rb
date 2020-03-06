@@ -57,7 +57,7 @@ module KnapsackPro
             all_test_file_paths += test_file_paths
 
             result_exitstatus = cucumber_run(runner, test_file_paths, args)
-            exitstatus = 1 if result_exitstatus != 0
+            exitstatus = result_exitstatus if result_exitstatus != 0
 
             # KnapsackPro::Hooks::Queue.call_after_subset_queue
             # KnapsackPro::Report.save_subset_queue_to_file
