@@ -29,7 +29,8 @@ module KnapsackPro
                 example.metadata
               end
 
-            KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
+            #KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
+            KnapsackPro.tracker.current_test_path = example.id
             KnapsackPro.tracker.start_timer
 
             example.run
