@@ -55,8 +55,8 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.before(:suite) do
             unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
-              KnapsackPro::Hooks::Queue.call_before_queue
               ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+              KnapsackPro::Hooks::Queue.call_before_queue
             end
           end
         end

@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.18.2
+
+* If `KnapsackPro::Hooks::Queue.before_queue` hook has block of code that raises an exception then ensure the hook was called only once.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/103
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.18.1...v1.18.2
+
 ### 1.18.1
 
 * Pass non zero exit status from Cucumber as exit status for Cucumber executed in Queue Mode
