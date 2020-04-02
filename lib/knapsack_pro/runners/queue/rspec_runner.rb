@@ -36,6 +36,17 @@ module KnapsackPro
           # 1. how to reset formatter because json formatter is applied to further RSpec::Core::Runner executions despit we create a new instance of it
           # 2. when using fake_stdout then it's applied to further RSpec::Core::Runner but it should not
           rspec_clear_examples
+          # this removes formatters but also aciddentally removes before hooks like:
+          # Expected correct output from tests with puts from hooks:
+          # FooBar
+          # before all
+          # around each start
+          # before each
+          # after each
+          # around each stop
+          # should equal true
+          #   .after all
+          RSpec.configuration.reset
 
           #require 'pry'; binding.pry
           #raise 'stop'
