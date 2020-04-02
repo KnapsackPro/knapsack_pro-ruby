@@ -11,7 +11,35 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-          runner = new(KnapsackPro::Adapters::RSpecAdapter)
+          adapter_class = KnapsackPro::Adapters::RSpecAdapter
+          runner = new(adapter_class)
+          test_file_pattern = TestFilePattern.call(adapter_class)
+          test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
+
+          cli_args = [
+            '--dry-run',
+            '--format', 'json',
+            '--default-path', runner.test_dir,
+          ] + test_file_paths.map { |t| t.fetch('path') }
+          options = RSpec::Core::ConfigurationOptions.new(cli_args)
+
+          #fake_stdout = StringIO.new
+          #exit_code = RSpec::Core::Runner.new(options).run($stderr, fake_stdout)
+          exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
+          if exit_code != 0
+            raise 'There was problem to generate test examples for test suite'
+          end
+          example_ids = RSpec.world.all_examples.map(&:id)
+          test_file_example_ids = example_ids.map { |id| KnapsackPro::TestFileCleaner.clean(id) }
+
+          # TODO
+          # 1. how to reset formatter because json formatter is applied to further RSpec::Core::Runner executions despit we create a new instance of it
+          # 2. when using fake_stdout then it's applied to further RSpec::Core::Runner but it should not
+          rspec_clear_examples
+
+          #require 'pry'; binding.pry
+          #raise 'stop'
+
 
           cli_args = (args || '').split
           # if user didn't provide the format then use explicitly default progress formatter
