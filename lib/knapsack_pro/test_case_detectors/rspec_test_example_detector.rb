@@ -25,6 +25,17 @@ module KnapsackPro
         end
       end
 
+      def test_file_example_paths
+        raise "No report found at #{REPORT_PATH}" unless File.exists?(REPORT_PATH)
+
+        json_report = File.read(REPORT_PATH)
+        hash_report = JSON.parse(json_report)
+        hash_report
+          .fetch('examples')
+          .map { |e| e.fetch('id') }
+          .map { |path| TestFileCleaner.clean(path) }
+      end
+
       private
 
       def adapter_class
