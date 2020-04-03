@@ -33,16 +33,22 @@ module KnapsackPro
           test_file_example_ids = example_ids.map { |id| KnapsackPro::TestFileCleaner.clean(id) }
 
           #RSpec.reset # resets dry-run but removes shared examples
+          # https://github.com/rspec/rspec-core/blob/master/lib/rspec/core/configuration.rb#L569
           #RSpec.configuration.reset
+
+          # in rspec 3.6.0+ clears examples without shared examples
+          # https://github.com/KnapsackPro/knapsack_pro-ruby/pull/42
           RSpec.clear_examples # first tests from Queue API won't run the whole test suite
+
           #RSpec.world.reset
 
-          RSpec.configuration.reset_reporter # clears formatters
-          #
-          #RSpec.world.reset
+          example_ids = RSpec.world.all_examples.map(&:id)
+          raise 'example_ids should be empty' unless example_ids.empty?
+
+          # clears formatters (this is already done by RSpec.clear_examples)
+          #RSpec.configuration.reset_reporter
 
           #rspec_clear_examples
-          #RSpec.world.reset
 
           #RSpec.instance_variable_set(:@word, nil)
           #RSpec.instance_variable_set(:@configuration, nil)
