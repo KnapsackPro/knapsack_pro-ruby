@@ -32,10 +32,32 @@ module KnapsackPro
           example_ids = RSpec.world.all_examples.map(&:id)
           test_file_example_ids = example_ids.map { |id| KnapsackPro::TestFileCleaner.clean(id) }
 
+          #RSpec.reset # resets dry-run but removes shared examples
+          #RSpec.configuration.reset
+          RSpec.clear_examples # first tests from Queue API won't run the whole test suite
+          #RSpec.world.reset
+
+          RSpec.configuration.reset_reporter # clears formatters
+          #
+          #RSpec.world.reset
+
+          #rspec_clear_examples
+          #RSpec.world.reset
+
+          #RSpec.instance_variable_set(:@word, nil)
+          #RSpec.instance_variable_set(:@configuration, nil)
+
+          #RSpec.clear_examples
+
+          #reset_options = RSpec::Core::ConfigurationOptions.new([])
+
+          #require 'pry'; binding.pry
+
           # TODO
           # 1. how to reset formatter because json formatter is applied to further RSpec::Core::Runner executions despit we create a new instance of it
           # 2. when using fake_stdout then it's applied to further RSpec::Core::Runner but it should not
-          rspec_clear_examples
+          #rspec_clear_examples
+
           # this removes formatters but also aciddentally removes before hooks like:
           # Expected correct output from tests with puts from hooks:
           # FooBar
@@ -46,7 +68,12 @@ module KnapsackPro
           # around each stop
           # should equal true
           #   .after all
-          RSpec.configuration.reset
+          #RSpec.configuration.reset
+
+          #RSpec.configuration.reset_reporter # clears formatters
+
+          #RSpec.configure { |c| c.dry_run = false }
+          #require 'pry'; binding.pry
 
           #require 'pry'; binding.pry
           #raise 'stop'
