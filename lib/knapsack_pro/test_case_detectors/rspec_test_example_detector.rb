@@ -33,7 +33,7 @@ module KnapsackPro
         hash_report
           .fetch('examples')
           .map { |e| e.fetch('id') }
-          .map { |path| test_file_hash_for(path) }
+          .map { |path_with_example_id| test_file_hash_for(path_with_example_id) }
       end
 
       private
