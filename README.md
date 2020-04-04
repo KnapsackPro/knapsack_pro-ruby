@@ -97,7 +97,7 @@ We keep this old FAQ in README to not break old links spread across the web. You
   - [Test file names encryption](#test-file-names-encryption)
     - [How to enable test file names encryption?](#how-to-enable-test-file-names-encryption)
     - [How to debug test file names?](#how-to-debug-test-file-names)
-      - [Preview encrypted RSPec test example paths?](#preview-encrypted-rspec-test-example-paths)
+      - [Preview encrypted RSpec test example paths?](#preview-encrypted-rspec-test-example-paths)
     - [How to enable branch names encryption?](#how-to-enable-branch-names-encryption)
     - [How to debug branch names?](#how-to-debug-branch-names)
   - [Supported CI providers](#supported-ci-providers)
@@ -782,7 +782,7 @@ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_test_file_names[rs
 
 You can pass the name of test runner like `rspec`, `minitest`, `test_unit`, `cucumber`, `spinach` as argument to rake task.
 
-##### Preview encrypted RSPec test example paths?
+##### Preview encrypted RSpec test example paths?
 
 If you split RSpec tests by test examples (by individual `it`) you can preview encrypted test example paths this way:
 
