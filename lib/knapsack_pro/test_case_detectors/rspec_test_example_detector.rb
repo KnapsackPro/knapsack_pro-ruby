@@ -33,7 +33,7 @@ module KnapsackPro
         hash_report
           .fetch('examples')
           .map { |e| e.fetch('id') }
-          .map { |path| TestFileCleaner.clean(path) }
+          .map { |path| test_file_hash_for(path) }
       end
 
       private
@@ -56,6 +56,12 @@ module KnapsackPro
 
       def remove_old_json_report
         File.delete(REPORT_PATH) if File.exists?(REPORT_PATH)
+      end
+
+      def test_file_hash_for(test_file_path)
+        {
+          'path' => TestFileCleaner.clean(test_file_path)
+        }
       end
     end
   end
