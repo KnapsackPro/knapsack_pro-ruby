@@ -609,6 +609,41 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.rspec_split_by_test_examples' do
+    subject { described_class.rspec_split_by_test_examples }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => true }) }
+      it { should eq true }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
+  describe '.rspec_split_by_test_examples?' do
+    subject { described_class.rspec_split_by_test_examples? }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true' }) }
+        it { should be true }
+      end
+
+      context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=false' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'false' }) }
+        it { should be false }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
   describe '.test_suite_token' do
     subject { described_class.test_suite_token }
 
