@@ -16,7 +16,9 @@ module KnapsackPro
           cli_args = (args || '').split
           # if user didn't provide the format then use explicitly default progress formatter
           # in order to avoid KnapsackPro::Formatters::RSpecQueueSummaryFormatter being the only default formatter
-          cli_args += ['--format', 'progress'] unless cli_args.include?('--format')
+          if !cli_args.include?('--format') && !cli_args.include?('-f')
+            cli_args += ['--format', 'progress']
+          end
           cli_args += [
             '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
             '--default-path', runner.test_dir,

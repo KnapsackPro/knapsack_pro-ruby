@@ -55,7 +55,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when format param is provided' do
+      context 'when format param is provided as --format' do
         let(:args) { '--format documentation' }
 
         it 'uses provided format param instead of default formatter progress' do
@@ -69,6 +69,31 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             runner: runner,
             can_initialize_queue: true,
             args: ['--format', 'documentation', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            exitstatus: 0,
+            all_test_file_paths: [],
+          }
+          expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
+
+          expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+          subject
+        end
+      end
+
+      context 'when format param is provided as -f' do
+        let(:args) { '-f d' }
+
+        it 'uses provided format param instead of default formatter progress' do
+          expected_exitstatus = 0
+          expected_accumulator = {
+            status: :completed,
+            exitstatus: expected_exitstatus
+          }
+          accumulator = {
+            status: :next,
+            runner: runner,
+            can_initialize_queue: true,
+            args: ['-f', 'd', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
             exitstatus: 0,
             all_test_file_paths: [],
           }
