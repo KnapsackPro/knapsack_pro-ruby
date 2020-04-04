@@ -31,7 +31,7 @@ module KnapsackPro
 
     def current_test_path
       raise("current_test_path needs to be set by Knapsack Pro Adapter's bind method") unless @current_test_path
-      @current_test_path.sub(/^\.\//, '')
+      KnapsackPro::TestFileCleaner.clean(@current_test_path)
     end
 
     def set_prerun_tests(test_file_paths)
