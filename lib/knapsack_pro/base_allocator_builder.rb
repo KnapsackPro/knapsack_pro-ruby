@@ -51,7 +51,9 @@ module KnapsackPro
 
         # generate RSpec JSON report in separate process to not pollute RSpec state
         cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
-        Kernel.system(cmd)
+        unless Kernel.system(cmd)
+          raise "Could not generate JSON report for RSpec. Rake task failed when running #{cmd}"
+        end
 
         # read JSON report
         detector = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new
