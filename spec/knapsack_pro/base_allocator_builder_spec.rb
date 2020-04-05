@@ -148,7 +148,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
           let(:test_files) { double(size: 1000) }
 
           it do
-            expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it'. Thanks to that a single test file can be split across parallel CI nodes). Analyzing 1000 test files.")
+            expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing 1000 test files.")
 
             expect(subject).to eq test_file_example_paths
           end
@@ -158,7 +158,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
           let(:test_files) { double(size: 1001) }
 
           it do
-            expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it'. Thanks to that a single test file can be split across parallel CI nodes). Analyzing 1001 test files.")
+            expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing 1001 test files.")
             expect(logger).to receive(:warn).with('You have more than 1000 test files, it may take longer to generate test examples. Please wait...')
 
             expect(subject).to eq test_file_example_paths

@@ -27,7 +27,7 @@ module KnapsackPro
       if adapter_class == KnapsackPro::Adapters::RSpecAdapter && KnapsackPro::Config::Env.rspec_split_by_test_examples?
         test_files_count = found_test_files.size
 
-        KnapsackPro.logger.warn("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it'. Thanks to that a single test file can be split across parallel CI nodes). Analyzing #{test_files_count} test files.")
+        KnapsackPro.logger.warn("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing #{test_files_count} test files.")
 
         if test_files_count > 1000
           KnapsackPro.logger.warn("You have more than 1000 test files, it may take longer to generate test examples. Please wait...")
