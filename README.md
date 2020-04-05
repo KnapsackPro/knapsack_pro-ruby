@@ -2350,7 +2350,7 @@ Now you can preview logs in `Artifacts` tab in the Circle CI build view.
 
 #### How to split tests based on test level instead of test file level?
 
-If you want to split one big test file (test file with long time execution) across multiple CI nodes then you can:
+If you want to split one big test file (test file with long time execution) across multiple CI nodes then you can [check this tip](#split-test-files-by-test-cases) or use other methods like:
 
 ##### A. Create multiple small test files
 
