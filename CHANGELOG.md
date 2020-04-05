@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.19.0
+
+* RSpec split test files by test examples (by individual `it`s)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/102
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.18.2...v1.19.0
+
 ### 1.18.2
 
 * If `KnapsackPro::Hooks::Queue.before_queue` hook has block of code that raises an exception then ensure the hook was called only once.
