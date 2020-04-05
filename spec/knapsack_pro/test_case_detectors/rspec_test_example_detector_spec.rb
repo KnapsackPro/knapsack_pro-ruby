@@ -57,6 +57,33 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   end
 
   describe '#test_file_example_paths' do
-    # TODO
+    subject { described_class.new.test_file_example_paths }
+
+    context 'when json report exists' do
+      it do
+        expect(File).to receive(:exists?).with(report_path).and_return(true)
+
+        json_file = {
+          'examples' => [
+            { id: './spec/a_spec.rb[1:1]' },
+            { id: './spec/a_spec.rb[1:2]' },
+          ]
+        }.to_json
+        expect(File).to receive(:read).with(report_path).and_return(json_file)
+
+        expect(subject).to eq([
+          { 'path' => 'spec/a_spec.rb[1:1]' },
+          { 'path' => 'spec/a_spec.rb[1:2]' },
+        ])
+      end
+    end
+
+    context 'when json report does not exist' do
+      it do
+        expect(File).to receive(:exists?).with(report_path).and_return(false)
+
+        expect { subject }.to raise_error(RuntimeError, 'No report found at tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report.json')
+      end
+    end
   end
 end
