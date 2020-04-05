@@ -82,6 +82,8 @@ We keep this old FAQ in README to not break old links spread across the web. You
     - [KNAPSACK_PRO_FIXED_QUEUE_SPLIT (remember queue split on retry CI node)](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node)
     - [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests)
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
+- [Split test files by test cases](#split-test-files-by-test-cases)
+  - [RSpec split test files by test examples (individual `it`)](#rspec-split-test-files-by-test-examples-individual-it)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT (test suite split based on seed)](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed)
@@ -592,6 +594,27 @@ At this moment the queue mode works for:
 * RSpec
 * Minitest
 * Cucumber
+
+## Split test files by test cases
+
+__Note:__ this is an experimental feature. It works for Regular Mode and Queue Mode. For large test suite with a few thousand test files, it may generate too many RSpec test example paths that may lead to too large JSON payload in request to Knapsack Pro API and this could trigger the API timeout.
+
+Please give us feedback so we could improve the feature.
+https://knapsackpro.com/contact
+
+__How it works__: You can split slow test file by test cases. Thanks to that the test file can be split across parallel CI nodes because test cases from the test file will run on different CI nodes.
+
+This is helpful when you have one or a few very slow test files that are a bottleneck for CI build speed and you don't want to manually create a few smaller test files from the slow test files. Instead, you can tell `knapsack_pro` gem to split your test files by test cases across parallel CI nodes.
+
+### RSpec split test files by test examples (individual `it`)
+
+In order to split RSpec test files by test examples across parallel CI nodes you need to set flag:
+
+```
+KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+```
+
+Thanks to that your CI build speed can be faster. We recommend using this feature with Queue Mode to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
 
 ## Extra configuration for CI server
 
