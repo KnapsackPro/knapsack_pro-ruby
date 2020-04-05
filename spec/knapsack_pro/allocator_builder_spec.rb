@@ -8,11 +8,8 @@ describe KnapsackPro::AllocatorBuilder do
     subject { allocator_builder.allocator }
 
     before do
-      test_file_pattern = double
-      expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
-
       test_files = double
-      expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files)
+      expect(allocator_builder).to receive(:test_files).and_return(test_files)
 
       repository_adapter = double
       expect(KnapsackPro::RepositoryAdapterInitiator).to receive(:call).and_return(repository_adapter)
