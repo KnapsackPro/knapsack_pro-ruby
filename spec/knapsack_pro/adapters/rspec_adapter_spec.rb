@@ -70,37 +70,75 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     describe '#bind_time_tracker' do
       let(:tracker) { instance_double(KnapsackPro::Tracker) }
       let(:logger) { instance_double(Logger) }
-      let(:test_path) { 'spec/a_spec.rb' }
       let(:global_time) { 'Global time: 01m 05s' }
-      let(:example_group) { double }
-      let(:current_example) do
-        OpenStruct.new(metadata: {
-          example_group: example_group
-        })
+
+      context 'when rspec split by test examples is disabled' do
+        let(:test_path) { 'spec/a_spec.rb' }
+        let(:example) { double }
+        let(:example_group) { double }
+        let(:current_example) do
+          OpenStruct.new(metadata: {
+            example_group: example_group
+          })
+        end
+
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(false)
+        end
+
+        it do
+          expect(config).to receive(:around).with(:each).and_yield(example)
+          expect(config).to receive(:after).with(:suite).and_yield
+          expect(::RSpec).to receive(:configure).and_yield(config)
+
+          expect(::RSpec).to receive(:current_example).twice.and_return(current_example)
+          expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
+
+          allow(KnapsackPro).to receive(:tracker).and_return(tracker)
+          expect(tracker).to receive(:current_test_path=).with(test_path)
+          expect(tracker).to receive(:start_timer)
+
+          expect(example).to receive(:run)
+
+          expect(tracker).to receive(:stop_timer)
+
+          expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:debug).with(global_time)
+
+          subject.bind_time_tracker
+        end
       end
-      let(:example) { double }
 
-      it do
-        expect(config).to receive(:around).with(:each).and_yield(example)
-        expect(config).to receive(:after).with(:suite).and_yield
-        expect(::RSpec).to receive(:configure).and_yield(config)
+      context 'when rspec split by test examples is enabled' do
+        let(:test_example_path) { 'spec/a_spec.rb[1:1]' }
+        let(:example) { double }
 
-        expect(::RSpec).to receive(:current_example).twice.and_return(current_example)
-        expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(true)
+        end
 
-        allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-        expect(tracker).to receive(:current_test_path=).with(test_path)
-        expect(tracker).to receive(:start_timer)
+        it do
+          expect(config).to receive(:around).with(:each).and_yield(example)
+          expect(config).to receive(:after).with(:suite).and_yield
+          expect(::RSpec).to receive(:configure).and_yield(config)
 
-        expect(example).to receive(:run)
+          expect(example).to receive(:id).and_return(test_example_path)
 
-        expect(tracker).to receive(:stop_timer)
+          allow(KnapsackPro).to receive(:tracker).and_return(tracker)
+          expect(tracker).to receive(:current_test_path=).with(test_example_path)
+          expect(tracker).to receive(:start_timer)
 
-        expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
-        expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with(global_time)
+          expect(example).to receive(:run)
 
-        subject.bind_time_tracker
+          expect(tracker).to receive(:stop_timer)
+
+          expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:debug).with(global_time)
+
+          subject.bind_time_tracker
+        end
       end
     end
 

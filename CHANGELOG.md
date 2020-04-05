@@ -1,5 +1,29 @@
 # Change Log
 
+### 1.19.0
+
+* RSpec split test files by test examples (by individual `it`s)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/102
+
+    __Note:__ See [PR](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/102) for more details. This is an experimental feature and it may not work for very large test suite.
+
+    __How to use it__: In order to split RSpec test files by test examples across parallel CI nodes you need to set flag:
+
+    ```
+    KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+    ```
+
+    Thanks to that your CI build speed can be faster. We recommend using this feature with Queue Mode to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
+
+    Doing tests split by test examples can generate a lot of logs by `knapsack_pro` gem in Queue Mode. We recommend to set log level to:
+
+    ```
+    KNAPSACK_PRO_LOG_LEVEL=warn
+    ```
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.18.2...v1.19.0
+
 ### 1.18.2
 
 * If `KnapsackPro::Hooks::Queue.before_queue` hook has block of code that raises an exception then ensure the hook was called only once.

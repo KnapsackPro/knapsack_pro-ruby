@@ -99,4 +99,80 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
     end
   end
+
+  describe '#test_files' do
+    subject { allocator_builder.test_files }
+
+    context 'when looking for test files on disk by default' do
+      it do
+        test_file_pattern = double
+        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+
+        test_files = double
+        expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files)
+
+        expect(subject).to eq test_files
+      end
+    end
+
+    context 'when RSpec adapter and rspec split by test examples is enabled' do
+      let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
+      let(:test_files) { double(size: 1000) }
+      let(:cmd) { 'bundle exec rake knapsack_pro:rspec_test_example_detector' }
+
+      before do
+        expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(true)
+
+        test_file_pattern = double
+        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+
+        expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files)
+
+        expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
+      end
+
+      context 'when rake task to detect RSpec test examples works' do
+        let(:cmd_result) { true }
+        let(:test_file_example_paths) { double }
+        let(:logger) { instance_double(Logger) }
+
+        before do
+          rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
+          expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
+          expect(rspec_test_example_detector).to receive(:test_file_example_paths).and_return(test_file_example_paths)
+
+          expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
+        end
+
+        context 'when up to 1000 test files detected on disk' do
+          let(:test_files) { double(size: 1000) }
+
+          it do
+            expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing 1000 test files.")
+
+            expect(subject).to eq test_file_example_paths
+          end
+        end
+
+        context 'when more than 1000 test files detected on disk' do
+          let(:test_files) { double(size: 1001) }
+
+          it do
+            expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing 1001 test files.")
+            expect(logger).to receive(:warn).with('You have more than 1000 test files, it may take longer to generate test examples. Please wait...')
+
+            expect(subject).to eq test_file_example_paths
+          end
+        end
+      end
+
+      context 'when rake task to detect RSpec test examples failed' do
+        let(:cmd_result) { false }
+
+        it do
+          expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running bundle exec rake knapsack_pro:rspec_test_example_detector')
+        end
+      end
+    end
+  end
 end

@@ -22,14 +22,20 @@ module KnapsackPro
       def bind_time_tracker
         ::RSpec.configure do |config|
           config.around(:each) do |example|
-            current_example_group =
-              if ::RSpec.respond_to?(:current_example)
-                ::RSpec.current_example.metadata[:example_group]
+            KnapsackPro.tracker.current_test_path =
+              if KnapsackPro::Config::Env.rspec_split_by_test_examples?
+                example.id
               else
-                example.metadata
+                current_example_group =
+                  if ::RSpec.respond_to?(:current_example)
+                    ::RSpec.current_example.metadata[:example_group]
+                  else
+                    example.metadata
+                  end
+
+                KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
               end
 
-            KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
             KnapsackPro.tracker.start_timer
 
             example.run
