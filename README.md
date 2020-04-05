@@ -606,7 +606,7 @@ __How it works__: You can split slow test file by test cases. Thanks to that the
 
 This is helpful when you have one or a few very slow test files that are a bottleneck for CI build speed and you don't want to manually create a few smaller test files from the slow test files. Instead, you can tell `knapsack_pro` gem to split your test files by test cases across parallel CI nodes.
 
-### RSpec split test files by test examples (individual `it`)
+### RSpec split test files by test examples (by individual `it`s)
 
 In order to split RSpec test files by test examples across parallel CI nodes you need to set flag:
 
