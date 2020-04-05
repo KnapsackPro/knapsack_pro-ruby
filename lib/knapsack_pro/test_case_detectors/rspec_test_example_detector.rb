@@ -43,11 +43,11 @@ module KnapsackPro
       end
 
       def test_dir
-        KnapsackPro::Config::Env.test_dir || TestFilePattern.test_dir(adapter_class)
+        KnapsackPro::Config::Env.test_dir || KnapsackPro::TestFilePattern.test_dir(adapter_class)
       end
 
       def test_file_pattern
-        TestFilePattern.call(adapter_class)
+        KnapsackPro::TestFilePattern.call(adapter_class)
       end
 
       def ensure_report_dir_exists
