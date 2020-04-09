@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.20.0
+
+* Add support for tests split by test examples to RSpec older than 3.6.0
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/104
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.19.0...v1.20.0
+
 ### 1.19.0
 
 * RSpec split test files by test examples (by individual `it`s)
