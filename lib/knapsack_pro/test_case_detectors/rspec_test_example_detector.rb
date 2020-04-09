@@ -7,14 +7,21 @@ module KnapsackPro
       def generate_json_report
         require 'rspec/core'
 
+        cli_format =
+          if Gem::Version.new(RSpec::Core::Version::STRING) < Gem::Version.new('3.6.0')
+            require_relative '../formatters/rspec_json_formatter'
+            ['--format', KnapsackPro::Formatters::RSpecJsonFormatter.to_s]
+          else
+            ['--format', 'json']
+          end
+
         ensure_report_dir_exists
         remove_old_json_report
 
         test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
 
-        cli_args = [
+        cli_args = cli_format + [
           '--dry-run',
-          '--format', 'json',
           '--out', REPORT_PATH,
           '--default-path', test_dir,
         ] + test_file_paths.map { |t| t.fetch('path') }

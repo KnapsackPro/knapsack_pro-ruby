@@ -27,8 +27,8 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       options = double
       expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
+        '--format', expected_format,
         '--dry-run',
-        '--format', 'json',
         '--out', report_path,
         '--default-path', test_dir,
         'spec/a_spec.rb', 'spec/b_spec.rb',
@@ -39,20 +39,38 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
       expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_return(exit_code)
     end
 
-    context 'when exit code from RSpec::Core::Runner is 0' do
-      let(:exit_code) { 0 }
+    shared_examples 'generate_json_report runs RSpec::Core::Runner' do
+      context 'when exit code from RSpec::Core::Runner is 0' do
+        let(:exit_code) { 0 }
 
-      it do
-        expect(subject).to be_nil
+        it do
+          expect(subject).to be_nil
+        end
+      end
+
+      context 'when exit code from RSpec::Core::Runner is 1' do
+        let(:exit_code) { 1 }
+
+        it do
+          expect { subject }.to raise_error(RuntimeError, 'There was problem to generate test examples for test suite')
+        end
       end
     end
 
-    context 'when exit code from RSpec::Core::Runner is 1' do
-      let(:exit_code) { 1 }
+    context 'when RSpec >= 3.6.0' do
+      let(:expected_format) { 'json' }
 
-      it do
-        expect { subject }.to raise_error(RuntimeError, 'There was problem to generate test examples for test suite')
+      it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
+    end
+
+    context 'when RSpec < 3.6.0' do
+      let(:expected_format) { 'KnapsackPro::Formatters::RSpecJsonFormatter' }
+
+      before do
+        stub_const('RSpec::Core::Version::STRING', '3.5.0')
       end
+
+      it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
     end
   end
 
