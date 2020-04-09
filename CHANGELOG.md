@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.20.1
+
+* Fix bug in RSpec split by test examples in < RSpec 3.6.0 (related to custom json formatter)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/105
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.20.0...v1.20.1
+
 ### 1.20.0
 
 * Add support for tests split by test examples to RSpec older than 3.6.0
