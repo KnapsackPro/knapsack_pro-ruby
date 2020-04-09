@@ -4,7 +4,7 @@ RSpec::Support.require_rspec_core('formatters/json_formatter')
 module KnapsackPro
   module Formatters
     class RSpecJsonFormatter < RSpec::Core::Formatters::JsonFormatter
-      RSpec::Core::Formatters.register self, :message, :dump_summary, :dump_profile, :stop, :seed, :close
+      RSpec::Core::Formatters.register self
 
       private
 
