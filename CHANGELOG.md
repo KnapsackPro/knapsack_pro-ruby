@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.21.0
+
+* Add slow test file pattern to define RSpec slow test files that should be split by test examples
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/106
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.20.1...v1.21.0
+
 ### 1.20.1
 
 * Fix bug in RSpec split by test examples in < RSpec 3.6.0 (related to custom json formatter)
