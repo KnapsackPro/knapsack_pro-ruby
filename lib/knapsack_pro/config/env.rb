@@ -55,6 +55,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_FILE_PATTERN']
         end
 
+        def slow_test_file_pattern
+          ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN']
+        end
+
         def test_file_exclude_pattern
           ENV['KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN']
         end
