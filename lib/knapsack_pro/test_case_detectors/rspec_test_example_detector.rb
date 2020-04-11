@@ -18,7 +18,18 @@ module KnapsackPro
         ensure_report_dir_exists
         remove_old_json_report
 
-        test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
+        test_file_paths =
+          if slow_test_file_pattern
+            KnapsackPro::TestFileFinder.call(slow_test_file_pattern, test_file_list_enabled: false)
+          else
+            KnapsackPro::TestFileFinder.call(test_file_pattern)
+          end
+
+        if test_file_paths.empty?
+          no_examples_json = { examples: [] }.to_json
+          File.write(REPORT_PATH, no_examples_json)
+          return
+        end
 
         cli_args = cli_format + [
           '--dry-run',
@@ -55,6 +66,10 @@ module KnapsackPro
 
       def test_file_pattern
         KnapsackPro::TestFilePattern.call(adapter_class)
+      end
+
+      def slow_test_file_pattern
+        KnapsackPro::Config::Env.slow_test_file_pattern
       end
 
       def ensure_report_dir_exists

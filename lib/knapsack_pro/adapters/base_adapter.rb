@@ -4,6 +4,14 @@ module KnapsackPro
       # Just example, please overwrite constant in subclass
       TEST_DIR_PATTERN = 'test/**{,/*/**}/*_test.rb'
 
+      def self.slow_test_file?(path)
+        @slow_test_file_paths ||= KnapsackPro::TestFileFinder.call(
+          KnapsackPro::Config::Env.slow_test_file_pattern,
+          test_file_list_enabled: false).map { |t| t.fetch('path') }
+        clean_path = KnapsackPro::TestFileCleaner.clean(path)
+        @slow_test_file_paths.include?(clean_path)
+      end
+
       def self.bind
         adapter = new
         adapter.bind

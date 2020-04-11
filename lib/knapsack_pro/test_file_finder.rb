@@ -1,11 +1,12 @@
 module KnapsackPro
   class TestFileFinder
-    def self.call(test_file_pattern)
-      new(test_file_pattern).call
+    def self.call(test_file_pattern, test_file_list_enabled: true)
+      new(test_file_pattern, test_file_list_enabled).call
     end
 
-    def initialize(test_file_pattern)
+    def initialize(test_file_pattern, test_file_list_enabled)
       @test_file_pattern = test_file_pattern
+      @test_file_list_enabled = test_file_list_enabled
     end
 
     def call
@@ -18,10 +19,10 @@ module KnapsackPro
 
     private
 
-    attr_reader :test_file_pattern
+    attr_reader :test_file_pattern, :test_file_list_enabled
 
     def test_files
-      if KnapsackPro::Config::Env.test_file_list
+      if test_file_list_enabled && KnapsackPro::Config::Env.test_file_list
         return KnapsackPro::Config::Env.test_file_list.split(',').map(&:strip)
       end
 
