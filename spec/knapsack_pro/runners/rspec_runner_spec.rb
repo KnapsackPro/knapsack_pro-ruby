@@ -24,11 +24,11 @@ describe KnapsackPro::Runners::RSpecRunner do
 
     context 'when test files were returned by Knapsack Pro API' do
       let(:test_dir) { 'fake-test-dir' }
-      let(:test_file_paths) { double(:test_file_paths) }
+      let(:stringify_test_file_paths) { "spec/a_spec.rb spec/b_spec.rb[1:1]" }
       let(:runner) do
         instance_double(described_class,
                         test_dir: test_dir,
-                        test_file_paths: test_file_paths,
+                        stringify_test_file_paths: stringify_test_file_paths,
                         test_files_to_execute_exist?: true)
       end
       let(:task) { double }
@@ -38,8 +38,8 @@ describe KnapsackPro::Runners::RSpecRunner do
 
         t = double
         expect(RSpec::Core::RakeTask).to receive(:new).with('knapsack_pro:rspec_run').and_yield(t)
-        expect(t).to receive(:rspec_opts=).with('--profile --color --default-path fake-test-dir')
-        expect(t).to receive(:pattern=).with(test_file_paths)
+        expect(t).to receive(:rspec_opts=).with('--profile --color --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
+        expect(t).to receive(:pattern=).with([])
       end
 
       context 'when task already exists' do
