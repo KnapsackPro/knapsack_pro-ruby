@@ -608,6 +608,8 @@ This is helpful when you have one or a few very slow test files that are a bottl
 
 ### RSpec split test files by test examples (by individual `it`s)
 
+❗__WARNING:__ This is an experimental feature. We detected edge cases for Queue Mode when test examples might be ignored by RSpec and won't run test. Do not use this feature for production yet. We'll appreciate your [feedback](https://knapsackpro.com/contact) how it works while you test it on a separate branch. We work on improvements.
+
 In order to split RSpec test files by test examples across parallel CI nodes you need to set environment variable:
 
 ```
