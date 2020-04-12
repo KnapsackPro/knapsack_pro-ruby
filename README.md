@@ -597,10 +597,10 @@ At this moment the queue mode works for:
 
 ## Split test files by test cases
 
-__Note:__ this is an experimental feature. It works for Regular Mode and Queue Mode. For large test suite with a few thousand test files, it may generate too many RSpec test example paths that may lead to too large JSON payload in request to Knapsack Pro API and this could trigger the API timeout.
-
-Please give us feedback so we could improve the feature.
-https://knapsackpro.com/contact
+> __Note:__ this is an experimental feature. It works for Regular Mode and Queue Mode. For large test suite with a few thousand test files, it may generate too many RSpec test example paths that may lead to too large JSON payload in request to Knapsack Pro API and this could trigger the API timeout.
+>
+> Please give us feedback so we could improve the feature.
+> https://knapsackpro.com/contact
 
 __How it works__: You can split slow test file by test cases. Thanks to that the test file can be split across parallel CI nodes because test cases from the test file will run on different CI nodes.
 
