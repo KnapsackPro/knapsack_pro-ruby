@@ -1,3 +1,11 @@
+module RSpec
+  def self.reset_by_knapsack_pro
+    #RSpec::ExampleGroups.remove_all_constants # this is already called by our rspec_clear_examples method
+    @world = nil
+    #@configuration = nil # this breaks configuration
+  end
+end
+
 module KnapsackPro
   module Runners
     module Queue
@@ -80,10 +88,27 @@ module KnapsackPro
             log_rspec_command(args, test_file_paths, :subset_queue)
 
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
+            #RSpec.configuration.load_spec_files
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
 
+            #RSpec.world.prepare_example_filtering
+            #RSpec.reset_by_knapsack_pro
+            #w=RSpec.world
+            #require 'pry'; binding.pry
+
+            #RSpec.configuration.clear_filters
+            #RSpec.configuration.reset_filters
             rspec_clear_examples
+            #RSpec.configuration.filter_run_including({})
+            #a=RSpec.world.filtered_examples
+            #a=RSpec.world.prepare_example_filtering
+            #a=RSpec.world.reset
+            #a=RSpec.world.inclusion_filter
+            #RSpec.world.example_groups.clear
+            #RSpec.world.inclusion_filter.clear
+            #RSpec.world.exclusion_filter.clear
+
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
