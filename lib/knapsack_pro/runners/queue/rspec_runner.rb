@@ -4,6 +4,18 @@ module RSpec
     @world = nil
     #@configuration = nil # this breaks configuration
   end
+
+  module Core
+    class World
+      def prepare_example_filtering_by_knapsack_pro
+        require 'pry'; binding.pry
+        @filtered_examples = Hash.new do |hash, group|
+          hash[group] = filter_manager.prune(group.examples)
+        end
+        require 'pry'; binding.pry
+      end
+    end
+  end
 end
 
 module KnapsackPro
@@ -92,6 +104,7 @@ module KnapsackPro
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
 
+            #RSpec.world.prepare_example_filtering_by_knapsack_pro
             #RSpec.world.prepare_example_filtering
             #RSpec.reset_by_knapsack_pro
             #w=RSpec.world
