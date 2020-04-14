@@ -10,6 +10,7 @@ module RSpec
       def prepare_example_filtering_by_knapsack_pro
         require 'pry'; binding.pry
         @filtered_examples = Hash.new do |hash, group|
+          require 'pry'; binding.pry
           hash[group] = filter_manager.prune(group.examples)
         end
         require 'pry'; binding.pry
