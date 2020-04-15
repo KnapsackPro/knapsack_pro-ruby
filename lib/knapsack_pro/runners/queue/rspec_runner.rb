@@ -1,3 +1,5 @@
+require 'rspec/core'
+
 module RSpec
   def self.reset_by_knapsack_pro
     #RSpec::ExampleGroups.remove_all_constants # this is already called by our rspec_clear_examples method
@@ -7,15 +9,63 @@ module RSpec
 
   module Core
     class World
-      def prepare_example_filtering_by_knapsack_pro
-        require 'pry'; binding.pry
+      def prepare_example_filtering#_by_knapsack_pro
+        # require 'pry'; binding.pry
         @filtered_examples = Hash.new do |hash, group|
-          require 'pry'; binding.pry
+          # require 'pry'; binding.pry
           hash[group] = filter_manager.prune(group.examples)
+          # hash[group] = group.examples
+          # hash[group] = []
+          # hash[group] = filter_manager.prune(group.examples)
+
+          # hash[group] = group.examples
+
         end
-        require 'pry'; binding.pry
+
+        # @filtered_examples = Hash.new([])
+
+        # @filtered_examples = {}
+        # require 'pry'; binding.pry
       end
     end
+
+    class Configuration
+      def extract_location(path)
+        match = /^(.*?)((?:\:\d+)+)$/.match(path)
+
+        # require 'pry'; binding.pry
+
+        if match
+          captures = match.captures
+          path = captures[0]
+          lines = captures[1][1..-1].split(":").map(&:to_i)
+          filter_manager.add_location path, lines
+        else
+          path, scoped_ids = Example.parse_id(path)
+          filter_manager.add_ids(path, scoped_ids.split(/\s*,\s*/)) if scoped_ids
+        end
+
+        return [] if path == default_path
+        File.expand_path(path)
+      end
+
+      # def exclusion_filter
+      #   binding.pry
+      #   filter_manager.exclusions
+      #   # {}
+      # end
+
+    end
+
+    # class ExclusionRules
+    #   def [](key)
+    #     nil
+    #   end
+
+    #   def fetch(*args, &block)
+    #     nil
+    #   end
+    # end
   end
 end
 
@@ -24,7 +74,7 @@ module KnapsackPro
     module Queue
       class RSpecRunner < BaseRunner
         def self.run(args)
-          require 'rspec/core'
+
           require_relative '../../formatters/rspec_queue_summary_formatter'
           require_relative '../../formatters/rspec_queue_profile_formatter_extension'
 
@@ -72,6 +122,20 @@ module KnapsackPro
             executed_test_files: all_test_file_paths
           )
 
+          # RSpec::Core::World.define_method(:prepare_example_filtering) do
+          #   @filtered_examples = Hash.new do |hash, group|
+          #     # require 'pry'; binding.pry
+          #     # hash[group] = filter_manager.prune(group.examples)
+          #     hash[group] = group.examples
+          #     # hash[group] = []
+          #     # hash[group] = filter_manager.prune(group.examples)
+
+          #     # hash[group] = group.examples
+          #   end
+
+          # end
+
+
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
@@ -102,11 +166,21 @@ module KnapsackPro
 
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
             #RSpec.configuration.load_spec_files
+            # binding.pry
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
 
-            #RSpec.world.prepare_example_filtering_by_knapsack_pro
+            # RSpec.world.prepare_example_filtering_by_knapsack_pro
+
+            # binding.pry
+
+
+
             #RSpec.world.prepare_example_filtering
+
+
+
+
             #RSpec.reset_by_knapsack_pro
             #w=RSpec.world
             #require 'pry'; binding.pry
