@@ -133,6 +133,7 @@ module KnapsackPro
           end
           RSpec.world.example_groups.clear
           RSpec.configuration.start_time = ::RSpec::Core::Time.now
+
           if KnapsackPro::Config::Env.rspec_split_by_test_examples?
             # Reset example group counts to ensure scoped example ids in metadata
             # have correct index (not increased by each subsequent run).
