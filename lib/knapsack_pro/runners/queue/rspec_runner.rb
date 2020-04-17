@@ -11,45 +11,6 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-          RSpec::Core::World.define_method(:prepare_example_filtering_by_knapsack_pro) do
-            @filtered_examples = Hash.new do |hash, group|
-              puts '### in prepare_example_filtering_by_knapsack_pro'
-              puts group.examples.inspect
-              #r = filter_manager.prune(group.examples)
-              result = filter_manager.prune_by_knapsack_pro(group.examples)
-              puts 'After prune:'
-              puts result.inspect
-              hash[group] = result
-              #hash[group] = group.examples # run test examples twice
-              #hash[group] = [] # run 0 tests
-            end
-          end
-
-          RSpec::Core::FilterManager.define_method(:prune_by_knapsack_pro) do |examples|
-            # Semantically, this is unnecessary (the filtering below will return the empty
-            # array unmodified), but for perf reasons it's worth exiting early here. Users
-            # commonly have top-level examples groups that do not have any direct examples
-            # and instead have nested groups with examples. In that kind of situation,
-            # `examples` will be empty.
-            return examples if examples.empty?
-
-            examples = prune_conditionally_filtered_examples(examples)
-
-            if inclusions.standalone?
-              examples.select { |e| inclusions.include_example?(e) }
-            else
-              locations, ids, non_scoped_inclusions = inclusions.split_file_scoped_rules
-
-              examples.select do |ex|
-                file_scoped_include?(ex.metadata, ids, locations) do
-                  !exclusions.include_example?(ex) && non_scoped_inclusions.include_example?(ex)
-                end
-              end
-            end
-          end
-
-          RSpec.world.prepare_example_filtering_by_knapsack_pro
-
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
           cli_args = (args || '').split
@@ -123,24 +84,7 @@ module KnapsackPro
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
 
-            #RSpec.world.prepare_example_filtering_by_knapsack_pro
-            #RSpec.world.prepare_example_filtering
-            #RSpec.reset_by_knapsack_pro
-            #w=RSpec.world
-            #require 'pry'; binding.pry
-
-            #RSpec.configuration.clear_filters
-            #RSpec.configuration.reset_filters
             rspec_clear_examples
-            #RSpec.configuration.filter_run_including({})
-            #a=RSpec.world.filtered_examples
-            #a=RSpec.world.prepare_example_filtering
-            #a=RSpec.world.reset
-            #a=RSpec.world.inclusion_filter
-            #RSpec.world.example_groups.clear
-            #RSpec.world.inclusion_filter.clear
-            #RSpec.world.exclusion_filter.clear
-
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
