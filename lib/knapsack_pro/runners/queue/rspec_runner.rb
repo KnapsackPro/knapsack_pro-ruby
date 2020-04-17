@@ -80,7 +80,6 @@ module KnapsackPro
             log_rspec_command(args, test_file_paths, :subset_queue)
 
             options = RSpec::Core::ConfigurationOptions.new(cli_args)
-            #RSpec.configuration.load_spec_files
             exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
 
