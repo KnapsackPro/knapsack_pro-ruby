@@ -608,7 +608,7 @@ This is helpful when you have one or a few very slow test files that are a bottl
 
 ### RSpec split test files by test examples (by individual `it`s)
 
-> ❗ __WARNING (known issues):__ This is an experimental feature. We detected edge cases for Queue Mode when test examples might be ignored by RSpec and won't run test. Do not use this feature for production yet. We'll appreciate your [feedback](https://knapsackpro.com/contact) how it works while you test it on a separate branch. We work on improvements.
+> ❗ __RSpec requirement:__ You need `RSpec >= 3.3.0` in order to use this feature in Knapsack Pro Queue Mode. In Knapsack Pro Regular Mode split by test examples should also work for older RSpec versions.
 
 In order to split RSpec test files by test examples across parallel CI nodes you need to set environment variable:
 
