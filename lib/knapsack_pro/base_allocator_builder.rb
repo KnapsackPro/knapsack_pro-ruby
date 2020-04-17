@@ -21,6 +21,7 @@ module KnapsackPro
       KnapsackPro::Config::Env.test_dir || TestFilePattern.test_dir(adapter_class)
     end
 
+    # detect test files present on the disk that should be run
     def test_files
       test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
 
