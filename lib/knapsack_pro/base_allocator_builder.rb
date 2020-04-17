@@ -26,6 +26,10 @@ module KnapsackPro
       test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
 
       if adapter_class == KnapsackPro::Adapters::RSpecAdapter && KnapsackPro::Config::Env.rspec_split_by_test_examples?
+        unless Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new('3.3.0')
+          raise 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases'
+        end
+
         if slow_test_file_pattern
           slow_test_file_paths = KnapsackPro::TestFileFinder.call(slow_test_file_pattern, test_file_list_enabled: false)
           test_files_count = slow_test_file_paths.size
