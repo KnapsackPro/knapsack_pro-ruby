@@ -618,12 +618,6 @@ KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 
 Thanks to that your CI build speed can be faster. We recommend using this feature with Queue Mode to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
 
-Doing tests split by test examples can generate a lot of logs by `knapsack_pro` gem in Queue Mode. We recommend to set log level to:
-
-```
-KNAPSACK_PRO_LOG_LEVEL=warn
-```
-
 ## Extra configuration for CI server
 
 ### Info about ENV variables
