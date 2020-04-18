@@ -74,6 +74,8 @@ module KnapsackPro
     def get_slow_test_files_from_api(test_file_paths)
       # TODO send test_file_paths to API to get list of slow test files that are subset of test_file_paths
       # this could be some service
+
+      # TODO KnapsackPro::TestFileFinder.ensure_test_files_exist_on_disk(adapter_class, test_files_from_api)
       []
     end
 
