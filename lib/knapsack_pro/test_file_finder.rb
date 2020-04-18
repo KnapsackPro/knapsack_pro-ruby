@@ -4,6 +4,20 @@ module KnapsackPro
       new(test_file_pattern, test_file_list_enabled).call
     end
 
+    # finds slow test files on disk based on ENV patterns
+    def self.slow_test_files(adapter_class)
+      raise 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN not defined' unless KnapsackPro::Config::Env.slow_test_file_pattern
+
+      test_file_pattern = TestFilePattern.call(adapter_class)
+      test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
+
+      slow_test_file_paths = KnapsackPro::TestFileFinder.call(KnapsackPro::Config::Env.slow_test_file_pattern, test_file_list_enabled: false)
+
+      # slow test files (KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN)
+      # should be subset of test file pattern (KNAPSACK_PRO_TEST_FILE_PATTERN)
+      slow_test_file_paths & test_file_paths
+    end
+
     def initialize(test_file_pattern, test_file_list_enabled)
       @test_file_pattern = test_file_pattern
       @test_file_list_enabled = test_file_list_enabled

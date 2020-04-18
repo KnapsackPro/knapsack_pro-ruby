@@ -79,7 +79,7 @@ module KnapsackPro
 
     def get_slow_test_files(test_file_paths)
       if slow_test_file_pattern
-        KnapsackPro::TestFileFinder.call(slow_test_file_pattern, test_file_list_enabled: false)
+        KnapsackPro::TestFileFinder.slow_test_files(adapter_class)
       else
         get_slow_test_files_from_api(test_file_paths)
       end
