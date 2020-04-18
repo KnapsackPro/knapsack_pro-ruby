@@ -39,10 +39,6 @@ module KnapsackPro
 
         KnapsackPro.logger.warn("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing #{test_files_count} test files.")
 
-        if test_files_count > 1000
-          KnapsackPro.logger.warn("You have more than 1000 test files, it may take longer to generate test examples. Please wait...")
-        end
-
         # generate RSpec JSON report in separate process to not pollute RSpec state
         cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
         unless Kernel.system(cmd)
