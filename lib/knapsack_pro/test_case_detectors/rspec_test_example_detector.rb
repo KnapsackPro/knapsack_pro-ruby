@@ -22,7 +22,11 @@ module KnapsackPro
           if slow_test_file_pattern
             KnapsackPro::TestFileFinder.call(slow_test_file_pattern, test_file_list_enabled: false)
           else
-            KnapsackPro::TestFileFinder.call(test_file_pattern)
+            # TODO read slow test files from JSON file on disk that was generated
+            # by get_slow_test_files_from_api(test_file_paths) method from
+            # lib/knapsack_pro/base_allocator_builder.rb
+            #KnapsackPro::TestFileFinder.call(test_file_pattern)
+            []
           end
 
         if test_file_paths.empty?
