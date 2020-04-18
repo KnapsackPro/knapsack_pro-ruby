@@ -32,16 +32,8 @@ module KnapsackPro
             current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
 
             KnapsackPro.tracker.current_test_path =
-              if KnapsackPro::Config::Env.rspec_split_by_test_examples?
-                if KnapsackPro::Config::Env.slow_test_file_pattern
-                  if KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(current_test_path)
-                    example.id
-                  else
-                    current_test_path
-                  end
-                else
-                  example.id
-                end
+              if KnapsackPro::Config::Env.rspec_split_by_test_examples? && KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(current_test_path)
+                example.id
               else
                 current_test_path
               end
