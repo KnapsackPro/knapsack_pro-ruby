@@ -71,11 +71,18 @@ module KnapsackPro
     end
 
     # test_file_paths - all test files on disk that you want to run tests for
-    def get_slow_test_files_from_api(test_file_paths)
-      # TODO send test_file_paths to API to get list of slow test files that are subset of test_file_paths
-      # this could be some service
+    def get_slow_test_files_from_api
+      # TODO get list of test files for last CI Build this could be some service
+
+      # TODO call service to merge a_spec.rb[1:1] taking 1s and a_spec.rb[1:2] taking 2s should be merged into a_spec.rb 3s)
+      # pass to it adapter_class
+
+      # TODO detect slow test files based on get total time of CI build / params[:node_total] * 0.7 and all tests above this threshold should be slow (i.e 20min / 4 nodes * 70% = 3,5min threshold for slwo spec)
 
       # TODO KnapsackPro::TestFileFinder.ensure_test_files_exist_on_disk(adapter_class, test_files_from_api)
+
+      # TODO save slow test files on the disk
+
       []
     end
 
@@ -83,7 +90,7 @@ module KnapsackPro
       if slow_test_file_pattern
         KnapsackPro::TestFileFinder.slow_test_files(adapter_class)
       else
-        get_slow_test_files_from_api(test_file_paths)
+        get_slow_test_files_from_api
       end
     end
 
