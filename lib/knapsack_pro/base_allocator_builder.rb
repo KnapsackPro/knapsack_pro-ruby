@@ -77,9 +77,9 @@ module KnapsackPro
       # TODO call service to merge a_spec.rb[1:1] taking 1s and a_spec.rb[1:2] taking 2s should be merged into a_spec.rb 3s)
       # pass to it adapter_class
 
-      # TODO detect slow test files based on get total time of CI build / params[:node_total] * 0.7 and all tests above this threshold should be slow (i.e 20min / 4 nodes * 70% = 3,5min threshold for slwo spec)
-
       # TODO KnapsackPro::TestFileFinder.ensure_test_files_exist_on_disk(adapter_class, test_files_from_api)
+
+      # TODO detect slow test files based on get total time of CI build / params[:node_total] * 0.7 and all tests above this threshold should be slow (i.e 20min / 4 nodes * 70% = 3,5min threshold for slwo spec)
 
       # TODO save slow test files on the disk
 
