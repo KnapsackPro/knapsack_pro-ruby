@@ -71,6 +71,7 @@ module KnapsackPro
     end
 
     # test_file_paths - all test files on disk that you want to run tests for
+    # TODO move this to external service
     def get_slow_test_files_from_api
       # TODO get list of test files for last CI Build this could be some service
 
@@ -94,6 +95,7 @@ module KnapsackPro
       end
     end
 
+    # TODO move this to external service
     # Args:
     #   test_file_paths - list of test files paths that you want to run tests for
     #   slow_test_file_paths - list of slow test files paths that should be split by test examples
