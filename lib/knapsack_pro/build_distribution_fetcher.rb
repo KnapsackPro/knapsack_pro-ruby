@@ -23,7 +23,7 @@ module KnapsackPro
     end
 
     def self.call
-      new.test_files
+      new.call
     end
 
     # get test files and time execution for last build distribution matching:

@@ -6,7 +6,8 @@ module KnapsackPro
       end
 
       # get list of recorded test files for last CI Build
-      test_files_from_api = KnapsackPro::BuildDistributionFetcher.test_files
+      build_distribution_entity = KnapsackPro::BuildDistributionFetcher.call
+      test_files_from_api = build_distribution_entity.test_files
 
       # TODO call service to merge a_spec.rb[1:1] taking 1s and a_spec.rb[1:2] taking 2s should be merged into a_spec.rb 3s)
       # pass to it adapter_class
