@@ -1,5 +1,7 @@
 module KnapsackPro
   class BuildDistributionFetcher
+    # get test files for last build distribution matching:
+    # branch, node_total, node_index
     def test_files
       connection = KnapsackPro::Client::Connection.new(build_action)
       response = connection.call
@@ -18,26 +20,17 @@ module KnapsackPro
       @repository_adapter ||= KnapsackPro::RepositoryAdapterInitiator.call
     end
 
-    def encrypted_branch
-      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
-    end
-
     def build_action
       KnapsackPro::Client::API::V1::BuildDistributions.last(
         commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
+        branch: repository_adapter.branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
       )
     end
 
-    def all_test_files
-      # TODO
-    end
-
     def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(all_test_files, response['test_files'])
-      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+      KnapsackPro::TestFilePresenter.paths(response['test_files'])
     end
   end
 end
