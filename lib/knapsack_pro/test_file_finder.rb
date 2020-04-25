@@ -18,6 +18,28 @@ module KnapsackPro
       slow_test_file_paths & test_file_paths
     end
 
+    # Args:
+    #   test_files - it can be list of slow test files that you want to run
+    # Return:
+    #   subset of test_files that are present on disk and it is subset of tests matching pattern KNAPSACK_PRO_TEST_FILE_PATTERN
+    #   Thanks to that we can select only slow test files that are within list of test file pattern we want to run tests for
+    def self.select_test_files_that_can_be_run(adapter_class, test_files)
+      test_file_pattern = TestFilePattern.call(adapter_class)
+      test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
+
+      test_file_paths_existing_on_disk = test_file_paths.map { |p| p.fetch('path') }
+
+      selected_test_files = []
+
+      test_files.each do |test_file|
+        if test_file_paths_existing_on_disk.include?(test_file.fetch('path'))
+          selected_test_files << test_file
+        end
+      end
+
+      selected_test_files
+    end
+
     def initialize(test_file_pattern, test_file_list_enabled)
       @test_file_pattern = test_file_pattern
       @test_file_list_enabled = test_file_list_enabled
