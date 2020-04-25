@@ -30,7 +30,7 @@ module KnapsackPro
           raise 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases'
         end
 
-        slow_test_file_paths = get_slow_test_files(test_file_paths)
+        slow_test_file_paths = get_slow_test_files
 
         KnapsackPro.logger.warn("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing #{slow_test_file_paths.size} slow test files.")
 
@@ -70,28 +70,12 @@ module KnapsackPro
       KnapsackPro::Config::Env.slow_test_file_pattern
     end
 
-    # test_file_paths - all test files on disk that you want to run tests for
-    # TODO move this to external service
-    def get_slow_test_files_from_api
-      # TODO get list of test files for last CI Build this could be some service
-
-      # TODO call service to merge a_spec.rb[1:1] taking 1s and a_spec.rb[1:2] taking 2s should be merged into a_spec.rb 3s)
-      # pass to it adapter_class
-
-      # TODO KnapsackPro::TestFileFinder.ensure_test_files_exist_on_disk(adapter_class, test_files_from_api)
-
-      # TODO detect slow test files based on get total time of CI build / params[:node_total] * 0.7 and all tests above this threshold should be slow (i.e 20min / 4 nodes * 70% = 3,5min threshold for slow spec)
-
-      # TODO save slow test files on the disk
-
-      []
-    end
-
-    def get_slow_test_files(test_file_paths)
+    def get_slow_test_files
       if slow_test_file_pattern
         KnapsackPro::TestFileFinder.slow_test_files(adapter_class)
       else
-        get_slow_test_files_from_api
+        # get slow test files from API that exist on disk
+        KnapsackPro::SlowTestFileFinder.call
       end
     end
 

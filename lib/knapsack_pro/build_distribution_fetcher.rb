@@ -1,5 +1,9 @@
 module KnapsackPro
   class BuildDistributionFetcher
+    def self.test_files
+      new.test_files
+    end
+
     # get test files for last build distribution matching:
     # branch, node_total, node_index
     def test_files
