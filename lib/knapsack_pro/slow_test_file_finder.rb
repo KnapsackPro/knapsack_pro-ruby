@@ -9,8 +9,7 @@ module KnapsackPro
       build_distribution_entity = KnapsackPro::BuildDistributionFetcher.call
       test_files_from_api = build_distribution_entity.test_files
 
-      # TODO call service to merge a_spec.rb[1:1] taking 1s and a_spec.rb[1:2] taking 2s should be merged into a_spec.rb 3s)
-      # pass to it adapter_class
+      KnapsackPro::TestCaseMergers::BaseMerger.call(adapter_class, test_files_from_api)
 
       # TODO KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(adapter_class, merged_test_file_paths_from_api)
 
