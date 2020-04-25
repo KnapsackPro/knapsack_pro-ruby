@@ -1,6 +1,10 @@
 module KnapsackPro
   class SlowTestFileFinder
     def self.call
+      if KnapsackPro::Config::Env.test_files_encrypted?
+        raise 'Split by test cases is not possible when you have enabled test file names encryption ( https://github.com/KnapsackPro/knapsack_pro-ruby#test-file-names-encryption ). You need to disable encryption with KNAPSACK_PRO_TEST_FILES_ENCRYPTED=false in order to use split by test cases https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases'
+      end
+
       # get list of recorded test files for last CI Build
       test_files_from_api = KnapsackPro::BuildDistributionFetcher.test_files
 
