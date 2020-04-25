@@ -1,17 +1,39 @@
 module KnapsackPro
   class BuildDistributionFetcher
-    def self.test_files
+    class BuildDistributionEntity
+      def new(response)
+        @response = response
+      end
+
+      def time_execution
+        responde.fetch('time_execution')
+      end
+
+      def test_files
+        response.fetch('test_files')
+      end
+
+      def test_file_paths
+        KnapsackPro::TestFilePresenter.paths(test_files)
+      end
+
+      private
+
+      attr_reader :response
+    end
+
+    def self.call
       new.test_files
     end
 
-    # get test files for last build distribution matching:
+    # get test files and time execution for last build distribution matching:
     # branch, node_total, node_index
-    def test_files
+    def call
       connection = KnapsackPro::Client::Connection.new(build_action)
       response = connection.call
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
-        prepare_test_files(response)
+        BuildDistributionEntity.new(response)
       else
         KnapsackPro.logger.warn("Fallback behaviour started. We could not connect with Knapsack Pro API to fetch last CI build test files that are needed to determine slow test files. No test files will be split by test cases. It means all test files will be split by the whole test files as if split by test cases would be disabled https://github.com/KnapsackPro/knapsack_pro-ruby/tree/rspec-split-by-examples-selected-test-files#split-test-files-by-test-cases")
         []
@@ -31,10 +53,6 @@ module KnapsackPro
         node_total: ci_node_total,
         node_index: ci_node_index,
       )
-    end
-
-    def prepare_test_files(response)
-      KnapsackPro::TestFilePresenter.paths(response['test_files'])
     end
   end
 end
