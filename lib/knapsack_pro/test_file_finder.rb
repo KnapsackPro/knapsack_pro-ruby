@@ -5,7 +5,7 @@ module KnapsackPro
     end
 
     # finds slow test files on disk based on ENV patterns
-    def self.slow_test_files(adapter_class)
+    def self.slow_test_files_by_pattern(adapter_class)
       raise 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN not defined' unless KnapsackPro::Config::Env.slow_test_file_pattern
 
       test_file_pattern = TestFilePattern.call(adapter_class)

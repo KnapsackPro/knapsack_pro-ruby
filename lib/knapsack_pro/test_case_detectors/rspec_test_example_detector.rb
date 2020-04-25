@@ -20,7 +20,7 @@ module KnapsackPro
 
         test_file_paths =
           if slow_test_file_pattern
-            KnapsackPro::TestFileFinder.slow_test_files(adapter_class)
+            KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
           else
             # TODO read slow test files from JSON file on disk that was generated
             # by get_slow_test_files_from_api(test_file_paths) method from
