@@ -13,10 +13,6 @@ module KnapsackPro
         response.fetch('test_files')
       end
 
-      def test_file_paths
-        KnapsackPro::TestFilePresenter.paths(test_files)
-      end
-
       private
 
       attr_reader :response
