@@ -75,7 +75,7 @@ module KnapsackPro
         KnapsackPro::TestFileFinder.slow_test_files(adapter_class)
       else
         # get slow test files from API that exist on disk
-        KnapsackPro::SlowTestFileFinder.call
+        KnapsackPro::SlowTestFileFinder.call(adapter_class)
       end
     end
 
