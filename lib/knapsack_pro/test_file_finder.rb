@@ -27,7 +27,7 @@ module KnapsackPro
       test_file_pattern = TestFilePattern.call(adapter_class)
       test_file_paths = KnapsackPro::TestFileFinder.call(test_file_pattern)
 
-      test_file_paths_existing_on_disk = test_file_paths.map { |p| p.fetch('path') }
+      test_file_paths_existing_on_disk = KnapsackPro::TestFilePresenter.paths(test_file_paths)
 
       selected_test_files = []
 
