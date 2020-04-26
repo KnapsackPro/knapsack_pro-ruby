@@ -6,12 +6,15 @@ module KnapsackPro
 
       def self.slow_test_file?(adapter_class, path)
         @slow_test_file_paths ||=
-          if KnapsackPro::Config::Env.slow_test_file_pattern
-            KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
-              .map { |t| t.fetch('path') }
-          else
-            # TODO get slow test file paths from JSON file based on data from API
-            []
+          begin
+            slow_test_files =
+              if KnapsackPro::Config::Env.slow_test_file_pattern
+                KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+              else
+                # get slow test files from JSON file based on data from API
+                KnapsackPro::SlowTestFileDeterminer.read_from_json_report
+              end
+            KnapsackPro::TestFilePresenter.paths(slow_test_files)
           end
         clean_path = KnapsackPro::TestFileCleaner.clean(path)
         @slow_test_file_paths.include?(clean_path)

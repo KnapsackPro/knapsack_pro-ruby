@@ -19,9 +19,8 @@ module KnapsackPro
 
       slow_test_files = KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk, build_distribution_entity.time_execution)
 
-      # TODO save slow test files on the disk
+      KnapsackPro::SlowTestFileDeterminer.save_to_json_report(slow_test_files)
 
-      # TODO return slow test files
       slow_test_files
     end
   end
