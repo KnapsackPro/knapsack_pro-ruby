@@ -1,5 +1,9 @@
 module KnapsackPro
   class SlowTestFileFinder
+    # Get recorded test files from API.
+    # Find slow tests among them that are still present on the disk.
+    # Save slow test files in json file on the disk.
+    # Returns slow test files.
     def self.call(adapter_class)
       if KnapsackPro::Config::Env.test_files_encrypted?
         raise 'Split by test cases is not possible when you have enabled test file names encryption ( https://github.com/KnapsackPro/knapsack_pro-ruby#test-file-names-encryption ). You need to disable encryption with KNAPSACK_PRO_TEST_FILES_ENCRYPTED=false in order to use split by test cases https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases'
@@ -18,6 +22,7 @@ module KnapsackPro
       # TODO save slow test files on the disk
 
       # TODO return slow test files
+      slow_test_files
     end
   end
 end
