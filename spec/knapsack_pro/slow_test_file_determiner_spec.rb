@@ -26,7 +26,7 @@ describe KnapsackPro::SlowTestFileDeterminer do
     end
   end
 
-  describe '.save_to_json_report' do
+  describe '.save_to_json_report', :clear_tmp do
     let(:json_report_path) { 'tmp/knapsack_pro/slow_test_file_determiner/slow_test_files.json' }
     let(:test_files) do
       [
@@ -40,12 +40,11 @@ describe KnapsackPro::SlowTestFileDeterminer do
 
     it do
       subject
-      expect(File.exists?(json_report_path)).to be true
       expect(File.read(json_report_path)).to eq(test_files.to_json)
     end
   end
 
-  describe '.read_from_json_report' do
+  describe '.read_from_json_report', :clear_tmp do
     let(:test_files) do
       [
         { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
@@ -56,12 +55,20 @@ describe KnapsackPro::SlowTestFileDeterminer do
 
     subject { described_class.read_from_json_report }
 
-    before do
-      described_class.save_to_json_report(test_files)
+    context 'when json report exists' do
+      before do
+        described_class.save_to_json_report(test_files)
+      end
+
+      it do
+        expect(subject).to eq test_files
+      end
     end
 
-    it do
-      expect(subject).to eq test_files
+    context 'when json report does not exist' do
+      it do
+        expect { subject }.to raise_error(RuntimeError, 'Report with slow test files was not generated yet. If you have enabled split by test cases https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases and you see this error it means that your tests accidentally cleaned up tmp/knapsack_pro directory. Please do not remove this directory during tests runtime!')
+      end
     end
   end
 end
