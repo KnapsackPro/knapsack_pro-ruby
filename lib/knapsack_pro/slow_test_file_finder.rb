@@ -11,7 +11,7 @@ module KnapsackPro
 
       merged_test_files_from_api = KnapsackPro::TestCaseMergers::BaseMerger.call(adapter_class, test_files_from_api)
 
-      # TODO KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(adapter_class, merged_test_files_from_api)
+      test_files_existing_on_disk = KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(adapter_class, merged_test_files_from_api)
 
       # TODO detect slow test files based on get total time of CI build / params[:node_total] * 0.7 and all tests above this threshold should be slow (i.e 20min / 4 nodes * 70% = 3,5min threshold for slow spec)
 
