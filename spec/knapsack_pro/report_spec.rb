@@ -129,7 +129,7 @@ describe KnapsackPro::Report do
         expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
         expect(logger).to receive(:warn).with('No test files were executed on this CI node.')
         expect(logger).to receive(:debug).with('When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.')
-        expect(logger).to receive(:debug).with("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what testes should be executed here.")
+        expect(logger).to receive(:debug).with("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what tests should be executed here.")
 
         expect(described_class).to receive(:create_build_subset).with([])
 
