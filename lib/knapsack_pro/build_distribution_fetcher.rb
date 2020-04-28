@@ -1,12 +1,12 @@
 module KnapsackPro
   class BuildDistributionFetcher
     class BuildDistributionEntity
-      def new(response)
+      def initialize(response)
         @response = response
       end
 
       def time_execution
-        responde.fetch('time_execution')
+        response.fetch('time_execution')
       end
 
       def test_files
