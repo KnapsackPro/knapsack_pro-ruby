@@ -32,7 +32,7 @@ module KnapsackPro
 
         slow_test_files = get_slow_test_files
 
-        KnapsackPro.logger.warn("Generating RSpec test examples JSON report to prepare your test suite to be split by test examples (by individual 'it's. Thanks to that a single test file can be split across parallel CI nodes). Analyzing #{slow_test_files.size} slow test files.")
+        KnapsackPro.logger.warn("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing #{slow_test_files.size} slow test files:\n#{slow_test_files.inspect}")
 
         # generate RSpec JSON report in separate process to not pollute RSpec state
         cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
