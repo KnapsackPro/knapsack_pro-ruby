@@ -58,7 +58,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
       action = double
       expect(KnapsackPro::Client::API::Action).to receive(:new).with({
         endpoint_path: '/v1/build_distributions/last',
-        http_method: :post,
+        http_method: :get,
         request_hash: {
           commit_hash: commit_hash,
           branch: branch,
