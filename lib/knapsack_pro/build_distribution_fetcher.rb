@@ -32,7 +32,10 @@ module KnapsackPro
         BuildDistributionEntity.new(response)
       else
         KnapsackPro.logger.warn("Fallback behaviour started. We could not connect with Knapsack Pro API to fetch last CI build test files that are needed to determine slow test files. No test files will be split by test cases. It means all test files will be split by the whole test files as if split by test cases would be disabled https://github.com/KnapsackPro/knapsack_pro-ruby/tree/rspec-split-by-examples-selected-test-files#split-test-files-by-test-cases")
-        []
+        BuildDistributionEntity.new({
+          'time_execution' => 0.0,
+          'test_files' => [],
+        })
       end
     end
 
