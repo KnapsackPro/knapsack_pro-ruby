@@ -48,11 +48,7 @@ module KnapsackPro
       end
 
       def request_hash
-        action
-        .request_hash
-        .merge({
-          test_suite_token: test_suite_token
-        })
+        action.request_hash
       end
 
       def request_body
@@ -69,6 +65,7 @@ module KnapsackPro
           'Accept' => 'application/json',
           'KNAPSACK-PRO-CLIENT-NAME' => client_name,
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+          'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
         }
       end
 
