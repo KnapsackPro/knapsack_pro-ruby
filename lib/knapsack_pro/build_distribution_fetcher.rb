@@ -46,8 +46,8 @@ module KnapsackPro
       KnapsackPro::Client::API::V1::BuildDistributions.last(
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
+        node_total: KnapsackPro::Config::Env.ci_node_total,
+        node_index: KnapsackPro::Config::Env.ci_node_index,
       )
     end
   end
