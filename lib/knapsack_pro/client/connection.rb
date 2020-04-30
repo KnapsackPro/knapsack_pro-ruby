@@ -100,6 +100,7 @@ module KnapsackPro
 
         request_uuid = http_response.header['X-Request-Id'] || 'N/A'
 
+        logger.debug("#{action.http_method.to_s.upcase} #{endpoint_url}")
         logger.debug("API request UUID: #{request_uuid}")
         logger.debug("Test suite split seed: #{seed}") if has_seed?
         logger.debug('API response:')
