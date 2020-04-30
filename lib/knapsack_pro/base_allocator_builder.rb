@@ -21,9 +21,17 @@ module KnapsackPro
       KnapsackPro::Config::Env.test_dir || TestFilePattern.test_dir(adapter_class)
     end
 
+    # in fallback mode we always want to run the whole test files
+    # (not split by test cases) to guarantee that each test will be executed
+    # at least once across parallel CI nodes
+    def fallback_mode_test_files
+      all_test_files_to_run
+    end
+
     # detect test files present on the disk that should be run
-    def test_files
-      test_files_to_run = KnapsackPro::TestFileFinder.call(test_file_pattern)
+    # this may include some fast test files + slow test files split by test cases
+    def fast_and_slow_test_files_to_run
+      test_files_to_run = all_test_files_to_run
 
       if adapter_class == KnapsackPro::Adapters::RSpecAdapter && KnapsackPro::Config::Env.rspec_split_by_test_examples?
         unless Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new('3.3.0')
@@ -64,6 +72,10 @@ module KnapsackPro
 
     def test_file_pattern
       TestFilePattern.call(adapter_class)
+    end
+
+    def all_test_files_to_run
+      KnapsackPro::TestFileFinder.call(test_file_pattern)
     end
 
     def slow_test_file_pattern
