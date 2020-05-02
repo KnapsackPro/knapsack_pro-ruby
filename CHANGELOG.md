@@ -6,7 +6,15 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/106
 
-https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.20.1...v1.21.0
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.20.2...v1.21.0
+
+### 1.20.2
+
+* Raise an error when running Cucumber in Queue Mode and Cucumber system process doesn't finish execution correctly (for instance Cucumber process was killed by CI server due to lack of memory)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/111
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.20.1...v1.20.2
 
 ### 1.20.1
 
