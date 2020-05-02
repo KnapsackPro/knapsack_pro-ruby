@@ -117,36 +117,49 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
 
         expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
 
-        expect($?).to receive(:exitstatus).and_return(exitstatus)
+        expect($?).to receive(:exited?).and_return(process_exited)
+        allow($?).to receive(:exitstatus).and_return(exitstatus)
       end
 
-      context 'when tests are passing' do
-        let(:exitstatus) { 0 }
+      context 'when system process finished its work (exited)' do
+        let(:process_exited) { true }
 
-        it 'returns exit code 0' do
-          expect(subject).to eq({
-            status: :next,
-            runner: runner,
-            can_initialize_queue: false,
-            args: args,
-            exitstatus: exitstatus,
-            all_test_file_paths: test_file_paths,
-          })
+        context 'when tests are passing' do
+          let(:exitstatus) { 0 }
+
+          it 'returns exit code 0' do
+            expect(subject).to eq({
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: exitstatus,
+              all_test_file_paths: test_file_paths,
+            })
+          end
+        end
+
+        context 'when tests are failing' do
+          let(:exitstatus) { 1 }
+
+          it 'returns exit code 1' do
+            expect(subject).to eq({
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: 1, # tests failed
+              all_test_file_paths: test_file_paths,
+            })
+          end
         end
       end
 
-      context 'when tests are failing' do
-        let(:exitstatus) { 1 }
+      context "when system process didn't finish its work (hasn't exited)" do
+        let(:process_exited) { false }
 
-        it 'returns exit code 1' do
-          expect(subject).to eq({
-            status: :next,
-            runner: runner,
-            can_initialize_queue: false,
-            args: args,
-            exitstatus: 1, # tests failed
-            all_test_file_paths: test_file_paths,
-          })
+        it 'raises an error' do
+          expect { subject }.to raise_error(RuntimeError, /^Cucumber process execution failed/)
         end
       end
     end

@@ -91,7 +91,16 @@ module KnapsackPro
           # which is defined in lib/knapsack_pro/adapters/cucumber_adapter.rb
           ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
 
-          $?.exitstatus
+          process_status = $?
+
+          unless process_status.exited?
+            raise "Cucumber process execution failed. It's likely that your CI server has exceeded"\
+                    " its available memory. Please try changing CI config or retrying the CI build.\n"\
+                    "Failed command: #{cmd}\n"\
+                    "Process status: #{process_status.inspect}"
+          end
+
+          process_status.exitstatus
         end
       end
     end
