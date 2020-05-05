@@ -623,7 +623,7 @@ Thanks to that your CI build speed can be faster. We recommend using this featur
 If you don't want to rely on a list of test files from Knapsack Pro API to determine slow test files that should be split by test cases then you can define your own list of slow test files.
 
 ```
-# how to enable split by test cases for RSpec
+# enable split by test cases for RSpec
 KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 
 # example slow test files pattern for RSpec
