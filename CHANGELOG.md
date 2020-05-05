@@ -2,7 +2,8 @@
 
 ### 1.21.0
 
-* Add slow test file pattern to define RSpec slow test files that should be split by test examples
+* Automatically detect slow test files for RSpec and split them by test examples when `KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true`
+* Add slow test file pattern `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` to define RSpec slow test files that should be split by test examples
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/106
 
