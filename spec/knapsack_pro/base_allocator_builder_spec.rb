@@ -145,7 +145,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
         end
 
         it do
-          expect(logger).to receive(:warn).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing 1000 slow test files.")
+          expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing 1000 slow test files.")
 
           expect(subject).to eq test_file_example_paths
         end
