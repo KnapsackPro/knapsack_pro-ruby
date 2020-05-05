@@ -631,7 +631,7 @@ KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="{spec/models/user_spec.rb,spec/controllers/
 
 `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` must be subset of `KNAPSACK_PRO_TEST_FILE_PATTERN` (example default pattern for RSpec is `KNAPSACK_PRO_TEST_FILE_PATTERN="spec/**{,/*/**}/*_spec.rb"`).
 
-> __Note:__ `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` pattern is mostly useful for debugging purpose by developers of `knapsack_pro` gem. If you want to use it then it's recommended to provide short list of slow test files with the pattern. If you use too broad list of slow test files then you may end up slowing your test suite, especially for RSpec it may result in slow generating list of test examples in your project and too long list of test file example paths won't be accepted by Knapsack Pro API.
+> __Warning:__ `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` pattern is mostly useful for debugging purpose by developers of `knapsack_pro` gem. If you want to use it then it's recommended to provide short list of slow test files with the pattern. If you use too broad list of slow test files then you may end up slowing your test suite, especially for RSpec it may result in slow generating list of test examples in your project. Too long list of test file example paths won't be accepted by Knapsack Pro API. CI providers like CircleCI may exceed server memory when running too many RSpec test examples.
 
 ## Extra configuration for CI server
 
