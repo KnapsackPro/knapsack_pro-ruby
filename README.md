@@ -605,8 +605,6 @@ This is helpful when you have one or a few very slow test files that are a bottl
 
 Knapsack Pro API will detect slow test files from your previously recorded CI builds and `knapsack_pro` gem will use this suggestion to split only slow test files by test examples. Test files that are fast won't be split by test examples because it is not needed.
 
-If you increase the number of parallel CI nodes on your CI server then Knapsack Pro API will be able to suggest a new set of slow test files that are a bottleneck for CI build speed. Run a new CI build and ensure it is recorded (you can preview recorded CI builds in the user dashboard) then `knapsack_pro` gem for 2nd CI build will use a new list of slow test files to split them by test examples and ensure your CI build is as fast as possible.
-
 ### RSpec split test files by test examples (by individual `it`s)
 
 > ❗ __RSpec requirement:__ You need `RSpec >= 3.3.0` in order to use this feature.
