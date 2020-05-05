@@ -83,7 +83,8 @@ We keep this old FAQ in README to not break old links spread across the web. You
     - [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests)
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Split test files by test cases](#split-test-files-by-test-cases)
-  - [RSpec split test files by test examples (individual `it`)](#rspec-split-test-files-by-test-examples-individual-it)
+  - [RSpec split test files by test examples (by individual `it`s)](#rspec-split-test-files-by-test-examples-by-individual-its)
+  - [How to manually define list of slow test files to be split by test cases](#how-to-manually-define-list-of-slow-test-files-to-be-split-by-test-cases)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT (test suite split based on seed)](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed)
@@ -616,6 +617,21 @@ KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 ```
 
 Thanks to that your CI build speed can be faster. We recommend using this feature with [Queue Mode](https://youtu.be/hUEB1XDKEFY) to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
+
+### How to manually define list of slow test files to be split by test cases
+
+If you don't want to relay on list of test files from Knapsack Pro API to determine slow test files that should be split by test cases then you can define your own list of slow test files.
+
+```
+KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+
+# example slow test files pattern for RSpec
+KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="{spec/models/user_spec.rb,spec/controllers/**/*_spec.rb}"
+```
+
+`KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` must be subset of `KNAPSACK_PRO_TEST_FILE_PATTERN` (example default pattern for RSpec is `KNAPSACK_PRO_TEST_FILE_PATTERN="spec/**{,/*/**}/*_spec.rb"`).
+
+> __Note:__ `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` pattern is mostly useful for debugging purpose by developers of `knapsack_pro` gem. If you want to use it then it's recommended to provide short list of slow test files with the pattern. If you use too broad list of slow test files then you may end up slowing your test suite, especially for RSpec it may result in slow generating list of test examples in your project and too long list of test file example paths won't be accepted by Knapsack Pro API.
 
 ## Extra configuration for CI server
 
