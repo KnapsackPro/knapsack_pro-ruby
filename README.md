@@ -84,7 +84,7 @@ We keep this old FAQ in README to not break old links spread across the web. You
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Split test files by test cases](#split-test-files-by-test-cases)
   - [RSpec split test files by test examples (by individual `it`s)](#rspec-split-test-files-by-test-examples-by-individual-its)
-  - [How to manually define list of slow test files to be split by test cases](#how-to-manually-define-list-of-slow-test-files-to-be-split-by-test-cases)
+  - [How to manually define a list of slow test files to be split by test cases](#how-to-manually-define-a-list-of-slow-test-files-to-be-split-by-test-cases)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT (test suite split based on seed)](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed)
@@ -618,7 +618,7 @@ KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 
 Thanks to that your CI build speed can be faster. We recommend using this feature with [Queue Mode](https://youtu.be/hUEB1XDKEFY) to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
 
-### How to manually define list of slow test files to be split by test cases
+### How to manually define a list of slow test files to be split by test cases
 
 If you don't want to rely on a list of test files from Knapsack Pro API to determine slow test files that should be split by test cases then you can define your own list of slow test files.
 
