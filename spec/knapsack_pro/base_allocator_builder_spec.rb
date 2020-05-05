@@ -100,8 +100,22 @@ describe KnapsackPro::BaseAllocatorBuilder do
     end
   end
 
-  describe '#test_files' do
-    subject { allocator_builder.test_files }
+  describe '#fallback_mode_test_files' do
+    subject { allocator_builder.fallback_mode_test_files }
+
+    it do
+      test_file_pattern = double
+      expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+
+      test_files = double
+      expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files)
+
+      expect(subject).to eq test_files
+    end
+  end
+
+  describe '#fast_and_slow_test_files_to_run' do
+    subject { allocator_builder.fast_and_slow_test_files_to_run }
 
     context 'when looking for test files on disk by default' do
       it do
