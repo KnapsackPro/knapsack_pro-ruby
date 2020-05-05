@@ -615,7 +615,7 @@ In order to split RSpec slow test files by test examples across parallel CI node
 KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 ```
 
-Thanks to that your CI build speed can be faster. We recommend using this feature with Queue Mode to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
+Thanks to that your CI build speed can be faster. We recommend using this feature with [Queue Mode](https://youtu.be/hUEB1XDKEFY) to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
 
 ## Extra configuration for CI server
 
