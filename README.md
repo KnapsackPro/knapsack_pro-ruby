@@ -620,7 +620,7 @@ Thanks to that your CI build speed can be faster. We recommend using this featur
 
 ### How to manually define list of slow test files to be split by test cases
 
-If you don't want to relay on list of test files from Knapsack Pro API to determine slow test files that should be split by test cases then you can define your own list of slow test files.
+If you don't want to rely on a list of test files from Knapsack Pro API to determine slow test files that should be split by test cases then you can define your own list of slow test files.
 
 ```
 KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
@@ -631,7 +631,9 @@ KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="{spec/models/user_spec.rb,spec/controllers/
 
 `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` must be subset of `KNAPSACK_PRO_TEST_FILE_PATTERN` (example default pattern for RSpec is `KNAPSACK_PRO_TEST_FILE_PATTERN="spec/**{,/*/**}/*_spec.rb"`).
 
-> __Warning:__ `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` pattern is mostly useful for debugging purpose by developers of `knapsack_pro` gem. If you want to use it then it's recommended to provide short list of slow test files with the pattern. If you use too broad list of slow test files then you may end up slowing your test suite, especially for RSpec it may result in slow generating list of test examples in your project. Too long list of test file example paths won't be accepted by Knapsack Pro API. CI providers like CircleCI may exceed server memory when running too many RSpec test examples.
+> __Warning:__ `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` pattern is mostly useful for debugging purposes by developers of `knapsack_pro` gem. If you want to use it then __it is recommended to provide a shortlist of slow test files__ with the pattern.
+>
+> If you use a too broad list of slow test files then you may end up slowing your test suite, especially for RSpec it may result in a slow generating list of test examples in your project. The long list of test file example paths won't be accepted by Knapsack Pro API due to API timeout. CI providers like CircleCI may exceed server memory when running too many RSpec test examples.
 
 ## Extra configuration for CI server
 
