@@ -103,15 +103,9 @@ describe KnapsackPro::TestFileFinder do
     context 'when KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN is not defined' do
       it do
         should eq([
-          {
-            'path' => 'spec_fake/controllers/users_controller_spec.rb',
-          },
-          {
-            'path' => 'spec_fake/models/admin_spec.rb',
-          },
-          {
-            'path' => 'spec_fake/models/user_spec.rb',
-          },
+          { 'path' => 'spec_fake/controllers/users_controller_spec.rb' },
+          { 'path' => 'spec_fake/models/admin_spec.rb' },
+          { 'path' => 'spec_fake/models/user_spec.rb' },
         ])
       end
     end
@@ -125,12 +119,8 @@ describe KnapsackPro::TestFileFinder do
 
       it do
         should eq([
-          {
-            'path' => 'spec_fake/models/admin_spec.rb',
-          },
-          {
-            'path' => 'spec_fake/models/user_spec.rb',
-          },
+          { 'path' => 'spec_fake/models/admin_spec.rb' },
+          { 'path' => 'spec_fake/models/user_spec.rb' },
         ])
       end
     end
@@ -145,18 +135,10 @@ describe KnapsackPro::TestFileFinder do
 
       it do
         expect(subject).to eq([
-          {
-            'path' => 'spec/bar_spec.rb',
-          },
-          {
-            'path' => 'spec/foo_spec.rb',
-          },
-          {
-            'path' => 'spec/time_helpers_spec.rb:10',
-          },
-          {
-            'path' => 'spec/time_helpers_spec.rb:38',
-          },
+          { 'path' => 'spec/bar_spec.rb' },
+          { 'path' => 'spec/foo_spec.rb' },
+          { 'path' => 'spec/time_helpers_spec.rb:10' },
+          { 'path' => 'spec/time_helpers_spec.rb:38' },
         ])
       end
 
@@ -165,15 +147,9 @@ describe KnapsackPro::TestFileFinder do
 
         it do
           should eq([
-            {
-              'path' => 'spec_fake/controllers/users_controller_spec.rb',
-            },
-            {
-              'path' => 'spec_fake/models/admin_spec.rb',
-            },
-            {
-              'path' => 'spec_fake/models/user_spec.rb',
-            },
+            { 'path' => 'spec_fake/controllers/users_controller_spec.rb' },
+            { 'path' => 'spec_fake/models/admin_spec.rb' },
+            { 'path' => 'spec_fake/models/user_spec.rb' },
           ])
         end
       end
