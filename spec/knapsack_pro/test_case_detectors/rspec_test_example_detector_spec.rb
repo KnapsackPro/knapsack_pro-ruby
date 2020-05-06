@@ -93,7 +93,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   describe '#test_file_example_paths' do
     subject { described_class.new.test_file_example_paths }
 
-    context 'when json report exists' do
+    context 'when JSON report exists' do
       it do
         expect(File).to receive(:exists?).with(report_path).and_return(true)
 
@@ -112,7 +112,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
       end
     end
 
-    context 'when json report does not exist' do
+    context 'when JSON report does not exist' do
       it do
         expect(File).to receive(:exists?).with(report_path).and_return(false)
 
