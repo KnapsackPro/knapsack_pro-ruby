@@ -18,16 +18,9 @@ module KnapsackPro
         ensure_report_dir_exists
         remove_old_json_report
 
-        test_file_paths =
-          if slow_test_file_pattern
-            KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
-          else
-            # read slow test files from JSON file on disk that was generated
-            # by lib/knapsack_pro/base_allocator_builder.rb
-            KnapsackPro::SlowTestFileDeterminer.read_from_json_report
-          end
+        test_file_entities = slow_test_files
 
-        if test_file_paths.empty?
+        if test_file_entities.empty?
           no_examples_json = { examples: [] }.to_json
           File.write(REPORT_PATH, no_examples_json)
           return
@@ -37,7 +30,7 @@ module KnapsackPro
           '--dry-run',
           '--out', REPORT_PATH,
           '--default-path', test_dir,
-        ] + test_file_paths.map { |t| t.fetch('path') }
+        ] + KnapsackPro::TestFilePresenter.paths(test_file_entities)
         options = RSpec::Core::ConfigurationOptions.new(cli_args)
         exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
         if exit_code != 0
@@ -56,6 +49,16 @@ module KnapsackPro
           .map { |path_with_example_id| test_file_hash_for(path_with_example_id) }
       end
 
+      def slow_test_files
+        if KnapsackPro::Config::Env.slow_test_file_pattern
+          KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+        else
+          # read slow test files from JSON file on disk that was generated
+          # by lib/knapsack_pro/base_allocator_builder.rb
+          KnapsackPro::SlowTestFileDeterminer.read_from_json_report
+        end
+      end
+
       private
 
       def adapter_class
@@ -68,10 +71,6 @@ module KnapsackPro
 
       def test_file_pattern
         KnapsackPro::TestFilePattern.call(adapter_class)
-      end
-
-      def slow_test_file_pattern
-        KnapsackPro::Config::Env.slow_test_file_pattern
       end
 
       def ensure_report_dir_exists

@@ -1,9 +1,10 @@
 describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   let(:report_dir) { 'tmp/knapsack_pro/test_case_detectors/rspec' }
   let(:report_path) { 'tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report.json' }
+  let(:rspec_test_example_detector) { described_class.new }
 
   describe '#generate_json_report' do
-    subject { described_class.new.generate_json_report }
+    subject { rspec_test_example_detector.generate_json_report }
 
     before do
       expect(FileUtils).to receive(:mkdir_p).with(report_dir)
@@ -11,48 +12,63 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
       expect(File).to receive(:exists?).with(report_path).and_return(true)
       expect(File).to receive(:delete).with(report_path)
 
-      test_file_pattern = double
-      adapter_class = KnapsackPro::Adapters::RSpecAdapter
-      expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
-
-      test_file_paths = [
-        { 'path' => 'spec/a_spec.rb' },
-        { 'path' => 'spec/b_spec.rb' },
-      ]
-      expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_file_paths)
-
-      test_dir = 'spec'
-      expect(KnapsackPro::Config::Env).to receive(:test_dir).and_return(nil)
-      expect(KnapsackPro::TestFilePattern).to receive(:test_dir).with(adapter_class).and_return(test_dir)
-
-      options = double
-      expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
-        '--format', expected_format,
-        '--dry-run',
-        '--out', report_path,
-        '--default-path', test_dir,
-        'spec/a_spec.rb', 'spec/b_spec.rb',
-      ]).and_return(options)
-
-      rspec_core_runner = double
-      expect(RSpec::Core::Runner).to receive(:new).with(options).and_return(rspec_core_runner)
-      expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_return(exit_code)
+      expect(rspec_test_example_detector).to receive(:slow_test_files).and_return(test_file_entities)
     end
 
     shared_examples 'generate_json_report runs RSpec::Core::Runner' do
-      context 'when exit code from RSpec::Core::Runner is 0' do
-        let(:exit_code) { 0 }
+      context 'when there are no slow test files' do
+        let(:test_file_entities) { [] }
+
+        before do
+          expect(File).to receive(:write).with(report_path, { examples: [] }.to_json)
+        end
 
         it do
           expect(subject).to be_nil
         end
       end
 
-      context 'when exit code from RSpec::Core::Runner is 1' do
-        let(:exit_code) { 1 }
+      context 'when slow test files exist' do
+        let(:test_file_entities) do
+          [
+            { 'path' => 'spec/a_spec.rb' },
+            { 'path' => 'spec/b_spec.rb' },
+          ]
+        end
 
-        it do
-          expect { subject }.to raise_error(RuntimeError, 'There was problem to generate test examples for test suite')
+        before do
+          test_dir = 'spec'
+          expect(KnapsackPro::Config::Env).to receive(:test_dir).and_return(nil)
+          expect(KnapsackPro::TestFilePattern).to receive(:test_dir).with(KnapsackPro::Adapters::RSpecAdapter).and_return(test_dir)
+
+          options = double
+          expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
+            '--format', expected_format,
+            '--dry-run',
+            '--out', report_path,
+            '--default-path', test_dir,
+            'spec/a_spec.rb', 'spec/b_spec.rb',
+          ]).and_return(options)
+
+          rspec_core_runner = double
+          expect(RSpec::Core::Runner).to receive(:new).with(options).and_return(rspec_core_runner)
+          expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_return(exit_code)
+        end
+
+        context 'when exit code from RSpec::Core::Runner is 0' do
+          let(:exit_code) { 0 }
+
+          it do
+            expect(subject).to be_nil
+          end
+        end
+
+        context 'when exit code from RSpec::Core::Runner is 1' do
+          let(:exit_code) { 1 }
+
+          it do
+            expect { subject }.to raise_error(RuntimeError, 'There was problem to generate test examples for test suite')
+          end
         end
       end
     end
@@ -101,6 +117,36 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
         expect(File).to receive(:exists?).with(report_path).and_return(false)
 
         expect { subject }.to raise_error(RuntimeError, 'No report found at tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report.json')
+      end
+    end
+  end
+
+  describe '#slow_test_files' do
+    subject { described_class.new.slow_test_files }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:slow_test_file_pattern).and_return(slow_test_file_pattern)
+    end
+
+    context 'when slow test file pattern is present' do
+      let(:slow_test_file_pattern) { double }
+
+      it do
+        expected_slow_test_files = double
+        expect(KnapsackPro::TestFileFinder).to receive(:slow_test_files_by_pattern).with(KnapsackPro::Adapters::RSpecAdapter).and_return(expected_slow_test_files)
+
+        expect(subject).to eq expected_slow_test_files
+      end
+    end
+
+    context 'when slow test file pattern is not present' do
+      let(:slow_test_file_pattern) { nil }
+
+      it do
+        expected_slow_test_files = double
+        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:read_from_json_report).and_return(expected_slow_test_files)
+
+        expect(subject).to eq expected_slow_test_files
       end
     end
   end
