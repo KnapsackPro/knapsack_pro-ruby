@@ -8,13 +8,14 @@ describe KnapsackPro::Client::Connection do
                     http_method: http_method,
                     request_hash: request_hash)
   end
+  let(:test_suite_token) { '3fa64859337f6e56409d49f865d13fd7' }
 
   let(:connection) { described_class.new(action) }
 
   before do
     stub_const('ENV', {
       'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
-      'KNAPSACK_PRO_TEST_SUITE_TOKEN' => '3fa64859337f6e56409d49f865d13fd7',
+      'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
     })
   end
 
@@ -37,12 +38,13 @@ describe KnapsackPro::Client::Connection do
         http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).with(
           endpoint_path,
-          "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
+          request_hash.to_json,
           {
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
           }
         ).and_return(http_response)
       end
@@ -52,7 +54,8 @@ describe KnapsackPro::Client::Connection do
         let(:code) { '400' } # it must be string code
 
         before do
-          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+          expect(logger).to receive(:debug).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
           expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
           expect(logger).to receive(:debug).with('API response:')
         end
@@ -73,7 +76,8 @@ describe KnapsackPro::Client::Connection do
         let(:code) { '200' } # it must be string code
 
         before do
-          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+          expect(KnapsackPro).to receive(:logger).exactly(5).and_return(logger)
+          expect(logger).to receive(:debug).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
           expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
           expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
           expect(logger).to receive(:debug).with('API response:')
@@ -95,7 +99,8 @@ describe KnapsackPro::Client::Connection do
         let(:code) { '200' } # it must be string code
 
         before do
-          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+          expect(logger).to receive(:debug).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
           expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
           expect(logger).to receive(:debug).with('API response:')
         end
@@ -114,22 +119,23 @@ describe KnapsackPro::Client::Connection do
       before do
         http = instance_double(Net::HTTP)
 
-        expect(Net::HTTP).to receive(:new).exactly(3).with('api.knapsackpro.test', 3000).and_return(http)
+        expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
 
-        expect(http).to receive(:use_ssl=).exactly(3).with(false)
-        expect(http).to receive(:open_timeout=).exactly(3).with(15)
-        expect(http).to receive(:read_timeout=).exactly(3).with(15)
+        expect(http).to receive(:use_ssl=).with(false)
+        expect(http).to receive(:open_timeout=).with(15)
+        expect(http).to receive(:read_timeout=).with(15)
 
         header = { 'X-Request-Id' => 'fake-uuid' }
         http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).exactly(3).with(
           endpoint_path,
-          "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
+          request_hash.to_json,
           {
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
           }
         ).and_return(http_response)
       end
@@ -140,6 +146,7 @@ describe KnapsackPro::Client::Connection do
 
         before do
           expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
+          expect(logger).to receive(:debug).exactly(3).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
           expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
           expect(logger).to receive(:debug).exactly(3).with('API response:')
         end
