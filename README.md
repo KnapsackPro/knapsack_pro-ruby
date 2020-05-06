@@ -602,7 +602,7 @@ __How it works__: You can split slow test file by test cases. Thanks to that the
 
 This is helpful when you have one or a few very slow test files that are a bottleneck for CI build speed and you don't want to manually create a few smaller test files from the slow test files. Instead, you can tell `knapsack_pro` gem to split your slow test files by test cases across parallel CI nodes.
 
-Knapsack Pro API provides recorded timing of test files from your previously recorded CI builds and `knapsack_pro` gem will use this suggestion to determine slow test files. `knapsack_pro` gem splits only slow test files by test examples. Test files that are fast won't be split by test examples because it is not needed.
+Knapsack Pro API provides recorded timing of test files from your previously recorded CI builds and `knapsack_pro` gem will use this suggestion to determine slow test files. `knapsack_pro` gem splits only slow test files by test cases. Test files that are fast won't be split by test cases because it is not needed.
 
 > __Note:__ This feature works for below test runners in Knapsack Pro Regular Mode and Queue Mode.
 
