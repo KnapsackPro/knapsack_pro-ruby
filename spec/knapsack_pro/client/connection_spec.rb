@@ -1,7 +1,7 @@
 describe KnapsackPro::Client::Connection do
   let(:endpoint_path) { '/v1/fake_endpoint' }
-  let(:http_method) { :post }
   let(:request_hash) { { fake: 'hash' } }
+  let(:http_method) { :post }
   let(:action) do
     instance_double(KnapsackPro::Client::API::Action,
                     endpoint_path: endpoint_path,
@@ -21,21 +21,26 @@ describe KnapsackPro::Client::Connection do
 
   describe '#call' do
     let(:logger) { instance_double(Logger) }
+    let(:http) { instance_double(Net::HTTP) }
+    let(:http_response) do
+      header = { 'X-Request-Id' => 'fake-uuid' }
+      instance_double(Net::HTTPOK, body: body, header: header, code: code)
+    end
 
     subject { connection.call }
 
+    before do
+      expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
+
+      expect(http).to receive(:use_ssl=).with(false)
+      expect(http).to receive(:open_timeout=).with(15)
+      expect(http).to receive(:read_timeout=).with(15)
+    end
+
     context 'when http method is POST' do
+      let(:http_method) { :post }
+
       before do
-        http = instance_double(Net::HTTP)
-
-        expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
-
-        expect(http).to receive(:use_ssl=).with(false)
-        expect(http).to receive(:open_timeout=).with(15)
-        expect(http).to receive(:read_timeout=).with(15)
-
-        header = { 'X-Request-Id' => 'fake-uuid' }
-        http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).with(
           endpoint_path,
           request_hash.to_json,
@@ -116,17 +121,9 @@ describe KnapsackPro::Client::Connection do
     end
 
     context 'when retry request for http method POST' do
+      let(:http_method) { :post }
+
       before do
-        http = instance_double(Net::HTTP)
-
-        expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
-
-        expect(http).to receive(:use_ssl=).with(false)
-        expect(http).to receive(:open_timeout=).with(15)
-        expect(http).to receive(:read_timeout=).with(15)
-
-        header = { 'X-Request-Id' => 'fake-uuid' }
-        http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).exactly(3).with(
           endpoint_path,
           request_hash.to_json,
