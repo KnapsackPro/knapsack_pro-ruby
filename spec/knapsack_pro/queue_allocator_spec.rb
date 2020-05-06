@@ -1,5 +1,6 @@
 describe KnapsackPro::QueueAllocator do
-  let(:test_files) { double }
+  let(:fast_and_slow_test_files_to_run) { double }
+  let(:fallback_mode_test_files) { double }
   let(:ci_node_total) { double }
   let(:ci_node_index) { double }
   let(:ci_node_build_id) { double }
@@ -7,7 +8,8 @@ describe KnapsackPro::QueueAllocator do
 
   let(:queue_allocator) do
     described_class.new(
-      test_files: test_files,
+      fast_and_slow_test_files_to_run: fast_and_slow_test_files_to_run,
+      fallback_mode_test_files: fallback_mode_test_files,
       ci_node_total: ci_node_total,
       ci_node_index: ci_node_index,
       ci_node_build_id: ci_node_build_id,
@@ -24,7 +26,7 @@ describe KnapsackPro::QueueAllocator do
 
     before do
       encrypted_test_files = double
-      expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(test_files).and_return(encrypted_test_files)
+      expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
 
       encrypted_branch = double
       expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
@@ -70,7 +72,7 @@ describe KnapsackPro::QueueAllocator do
         end
 
         before do
-          expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(test_files, response['test_files']).and_call_original
+          expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
         end
 
         it { should eq ['a_spec.rb', 'b_spec.rb'] }
@@ -120,7 +122,7 @@ describe KnapsackPro::QueueAllocator do
       context 'when fallback mode started' do
         before do
           test_flat_distributor = instance_double(KnapsackPro::TestFlatDistributor)
-          expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(test_files, ci_node_total).and_return(test_flat_distributor)
+          expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(fallback_mode_test_files, ci_node_total).and_return(test_flat_distributor)
           expect(test_flat_distributor).to receive(:test_files_for_node).with(ci_node_index).and_return([
             { 'path' => 'c_spec.rb' },
             { 'path' => 'd_spec.rb' },

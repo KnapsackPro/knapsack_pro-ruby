@@ -83,7 +83,8 @@ We keep this old FAQ in README to not break old links spread across the web. You
     - [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests)
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Split test files by test cases](#split-test-files-by-test-cases)
-  - [RSpec split test files by test examples (individual `it`)](#rspec-split-test-files-by-test-examples-individual-it)
+  - [RSpec split test files by test examples (by individual `it`s)](#rspec-split-test-files-by-test-examples-by-individual-its)
+  - [How to manually define a list of slow test files to be split by test cases](#how-to-manually-define-a-list-of-slow-test-files-to-be-split-by-test-cases)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
     - [KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT (test suite split based on seed)](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed)
@@ -597,32 +598,43 @@ At this moment the queue mode works for:
 
 ## Split test files by test cases
 
-> __Note:__ this is an experimental feature. It works for Regular Mode and Queue Mode. For large test suite with a few thousand test files, it may generate too many RSpec test example paths that may lead to too large JSON payload in request to Knapsack Pro API and this could trigger the API timeout.
->
-> Please give us feedback so we could improve the feature.
-> https://knapsackpro.com/contact
+__How it works__: You can split slow test file by test cases. Thanks to that the slow test file can be split across parallel CI nodes because test cases from the test file will run on different CI nodes.
 
-__How it works__: You can split slow test file by test cases. Thanks to that the test file can be split across parallel CI nodes because test cases from the test file will run on different CI nodes.
+This is helpful when you have one or a few very slow test files that are a bottleneck for CI build speed and you don't want to manually create a few smaller test files from the slow test files. Instead, you can tell `knapsack_pro` gem to split your slow test files by test cases across parallel CI nodes.
 
-This is helpful when you have one or a few very slow test files that are a bottleneck for CI build speed and you don't want to manually create a few smaller test files from the slow test files. Instead, you can tell `knapsack_pro` gem to split your test files by test cases across parallel CI nodes.
+Knapsack Pro API provides recorded timing of test files from your previously recorded CI builds and `knapsack_pro` gem will use this suggestion to determine slow test files. `knapsack_pro` gem splits only slow test files by test cases. Test files that are fast won't be split by test cases because it is not needed.
+
+> __Note:__ This feature works for below test runners in Knapsack Pro Regular Mode and Queue Mode.
 
 ### RSpec split test files by test examples (by individual `it`s)
 
-> ❗ __WARNING (known issues):__ This is an experimental feature. We detected edge cases for Queue Mode when test examples might be ignored by RSpec and won't run test. Do not use this feature for production yet. We'll appreciate your [feedback](https://knapsackpro.com/contact) how it works while you test it on a separate branch. We work on improvements.
+> ❗ __RSpec requirement:__ You need `RSpec >= 3.3.0` in order to use this feature.
 
-In order to split RSpec test files by test examples across parallel CI nodes you need to set environment variable:
+In order to split RSpec slow test files by test examples across parallel CI nodes you need to set environment variable:
 
 ```
 KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 ```
 
-Thanks to that your CI build speed can be faster. We recommend using this feature with Queue Mode to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
+Thanks to that your CI build speed can be faster. We recommend using this feature with [Queue Mode](https://youtu.be/hUEB1XDKEFY) to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
 
-Doing tests split by test examples can generate a lot of logs by `knapsack_pro` gem in Queue Mode. We recommend to set log level to:
+### How to manually define a list of slow test files to be split by test cases
+
+If you don't want to rely on a list of test files from Knapsack Pro API to determine slow test files that should be split by test cases then you can define your own list of slow test files.
 
 ```
-KNAPSACK_PRO_LOG_LEVEL=warn
+# enable split by test cases for RSpec
+KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+
+# example slow test files pattern for RSpec
+KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="{spec/models/user_spec.rb,spec/controllers/**/*_spec.rb}"
 ```
+
+`KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` must be subset of `KNAPSACK_PRO_TEST_FILE_PATTERN` (example default pattern for RSpec is `KNAPSACK_PRO_TEST_FILE_PATTERN="spec/**{,/*/**}/*_spec.rb"`).
+
+> __Warning:__ `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` pattern is mostly useful for debugging purposes by developers of `knapsack_pro` gem. If you want to use it then __it is recommended to provide a shortlist of slow test files__ with the pattern.
+>
+> If you use a too broad list of slow test files then you may end up slowing your test suite, especially for RSpec it may result in a slow generating list of test examples in your project. The long list of test file example paths won't be accepted by Knapsack Pro API due to API timeout. CI providers like CircleCI may exceed server memory when running too many RSpec test examples.
 
 ## Extra configuration for CI server
 

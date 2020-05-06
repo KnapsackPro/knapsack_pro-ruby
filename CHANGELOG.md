@@ -1,5 +1,15 @@
 # Change Log
 
+### 1.21.0
+
+* Automatically detect slow test files for RSpec and split them by test examples when `KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true`
+* Add slow test file pattern `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` to define RSpec slow test files that should be split by test examples
+* Start sending API token in header `KNAPSACK-PRO-TEST-SUITE-TOKEN` instead of a key `test_suite_token` in JSON payload.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/106
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.20.2...v1.21.0
+
 ### 1.20.2
 
 * Raise an error when running Cucumber in Queue Mode and Cucumber system process doesn't finish execution correctly (for instance Cucumber process was killed by CI server due to lack of memory)

@@ -1,167 +1,229 @@
+shared_examples 'when request got response from API' do
+  context 'when body response is JSON and API response code is 400' do
+    let(:body) { '{"errors": "value"}' }
+    let(:code) { '400' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).with('API response:')
+    end
+
+    it do
+      parsed_response = { 'errors' => 'value' }
+
+      expect(logger).to receive(:error).with(parsed_response)
+
+      expect(subject).to eq(parsed_response)
+      expect(connection.success?).to be true
+      expect(connection.errors?).to be true
+    end
+  end
+
+  context 'when body response is JSON with build_distribution_id' do
+    let(:body) { '{"build_distribution_id": "seed-uuid"}' }
+    let(:code) { '200' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).exactly(5).and_return(logger)
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
+      expect(logger).to receive(:debug).with('API response:')
+    end
+
+    it do
+      parsed_response = { 'build_distribution_id' => 'seed-uuid' }
+
+      expect(logger).to receive(:debug).with(parsed_response)
+
+      expect(subject).to eq(parsed_response)
+      expect(connection.success?).to be true
+      expect(connection.errors?).to be false
+    end
+  end
+
+  context 'when body response is empty' do
+    let(:body) { '' }
+    let(:code) { '200' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).with('API response:')
+    end
+
+    it do
+      expect(logger).to receive(:debug).with('')
+
+      expect(subject).to eq('')
+      expect(connection.success?).to be true
+      expect(connection.errors?).to be false
+    end
+  end
+end
+
+shared_examples 'when retry request' do
+  context 'when body response is JSON and API response code is 500' do
+    let(:body) { '{"error": "Internal Server Error"}' }
+    let(:code) { '500' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
+      expect(logger).to receive(:debug).exactly(3).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).exactly(3).with('API response:')
+    end
+
+    it do
+      parsed_response = { 'error' => 'Internal Server Error' }
+
+      expect(logger).to receive(:error).exactly(3).with(parsed_response)
+
+      server_error = described_class::ServerError.new(parsed_response)
+      expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
+
+      expect(logger).to receive(:warn).with("Wait 4s and retry request to Knapsack Pro API.")
+      expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
+      expect(Kernel).to receive(:sleep).with(4)
+      expect(Kernel).to receive(:sleep).with(8)
+
+      expect(subject).to eq(parsed_response)
+
+      expect(connection.success?).to be false
+      expect(connection.errors?).to be true
+    end
+  end
+end
+
 describe KnapsackPro::Client::Connection do
   let(:endpoint_path) { '/v1/fake_endpoint' }
-  let(:http_method) { :post }
   let(:request_hash) { { fake: 'hash' } }
+  let(:http_method) { :post }
   let(:action) do
     instance_double(KnapsackPro::Client::API::Action,
                     endpoint_path: endpoint_path,
                     http_method: http_method,
                     request_hash: request_hash)
   end
+  let(:test_suite_token) { '3fa64859337f6e56409d49f865d13fd7' }
 
   let(:connection) { described_class.new(action) }
 
   before do
     stub_const('ENV', {
       'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
-      'KNAPSACK_PRO_TEST_SUITE_TOKEN' => '3fa64859337f6e56409d49f865d13fd7',
+      'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
     })
   end
 
   describe '#call' do
     let(:logger) { instance_double(Logger) }
+    let(:http) { instance_double(Net::HTTP) }
+    let(:http_response) do
+      header = { 'X-Request-Id' => 'fake-uuid' }
+      instance_double(Net::HTTPOK, body: body, header: header, code: code)
+    end
 
     subject { connection.call }
 
+    before do
+      expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
+
+      expect(http).to receive(:use_ssl=).with(false)
+      expect(http).to receive(:open_timeout=).with(15)
+      expect(http).to receive(:read_timeout=).with(15)
+    end
+
     context 'when http method is POST' do
+      let(:http_method) { :post }
+
       before do
-        http = instance_double(Net::HTTP)
-
-        expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
-
-        expect(http).to receive(:use_ssl=).with(false)
-        expect(http).to receive(:open_timeout=).with(15)
-        expect(http).to receive(:read_timeout=).with(15)
-
-        header = { 'X-Request-Id' => 'fake-uuid' }
-        http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).with(
           endpoint_path,
-          "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
+          request_hash.to_json,
           {
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
           }
         ).and_return(http_response)
       end
 
-      context 'when body response is json and API response code is 400' do
-        let(:body) { '{"errors": "value"}' }
-        let(:code) { '400' } # it must be string code
+      it_behaves_like 'when request got response from API' do
+        let(:expected_http_method) { 'POST' }
+      end
+    end
 
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with('API response:')
-        end
+    context 'when http method is GET' do
+      let(:http_method) { :get }
 
-        it do
-          parsed_response = { 'errors' => 'value' }
-
-          expect(logger).to receive(:error).with(parsed_response)
-
-          expect(subject).to eq(parsed_response)
-          expect(connection.success?).to be true
-          expect(connection.errors?).to be true
-        end
+      before do
+        uri = URI.parse("http://api.knapsackpro.test:3000#{endpoint_path}")
+        uri.query = URI.encode_www_form(request_hash)
+        expect(http).to receive(:get).with(
+          uri,
+          {
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+            'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+          }
+        ).and_return(http_response)
       end
 
-      context 'when body response is json with build_distribution_id' do
-        let(:body) { '{"build_distribution_id": "seed-uuid"}' }
-        let(:code) { '200' } # it must be string code
-
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
-          expect(logger).to receive(:debug).with('API response:')
-        end
-
-        it do
-          parsed_response = { 'build_distribution_id' => 'seed-uuid' }
-
-          expect(logger).to receive(:debug).with(parsed_response)
-
-          expect(subject).to eq(parsed_response)
-          expect(connection.success?).to be true
-          expect(connection.errors?).to be false
-        end
-      end
-
-      context 'when body response is empty' do
-        let(:body) { '' }
-        let(:code) { '200' } # it must be string code
-
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with('API response:')
-        end
-
-        it do
-          expect(logger).to receive(:debug).with('')
-
-          expect(subject).to eq('')
-          expect(connection.success?).to be true
-          expect(connection.errors?).to be false
-        end
+      it_behaves_like 'when request got response from API' do
+        let(:expected_http_method) { 'GET' }
       end
     end
 
     context 'when retry request for http method POST' do
+      let(:http_method) { :post }
+
       before do
-        http = instance_double(Net::HTTP)
-
-        expect(Net::HTTP).to receive(:new).exactly(3).with('api.knapsackpro.test', 3000).and_return(http)
-
-        expect(http).to receive(:use_ssl=).exactly(3).with(false)
-        expect(http).to receive(:open_timeout=).exactly(3).with(15)
-        expect(http).to receive(:read_timeout=).exactly(3).with(15)
-
-        header = { 'X-Request-Id' => 'fake-uuid' }
-        http_response = instance_double(Net::HTTPOK, body: body, header: header, code: code)
         expect(http).to receive(:post).exactly(3).with(
           endpoint_path,
-          "{\"fake\":\"hash\",\"test_suite_token\":\"3fa64859337f6e56409d49f865d13fd7\"}",
+          request_hash.to_json,
           {
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
           }
         ).and_return(http_response)
       end
 
-      context 'when body response is json and API response code is 500' do
-        let(:body) { '{"error": "Internal Server Error"}' }
-        let(:code) { '500' } # it must be string code
+      it_behaves_like 'when retry request' do
+        let(:expected_http_method) { 'POST' }
+      end
+    end
 
-        before do
-          expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
-          expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).exactly(3).with('API response:')
-        end
+    context 'when retry request for http method GET' do
+      let(:http_method) { :get }
 
-        it do
-          parsed_response = { 'error' => 'Internal Server Error' }
+      before do
+        uri = URI.parse("http://api.knapsackpro.test:3000#{endpoint_path}")
+        uri.query = URI.encode_www_form(request_hash)
+        expect(http).to receive(:get).exactly(3).with(
+          uri,
+          {
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+            'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+          }
+        ).and_return(http_response)
+      end
 
-          expect(logger).to receive(:error).exactly(3).with(parsed_response)
-
-          server_error = described_class::ServerError.new(parsed_response)
-          expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
-
-          expect(logger).to receive(:warn).with("Wait 4s and retry request to Knapsack Pro API.")
-          expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
-          expect(Kernel).to receive(:sleep).with(4)
-          expect(Kernel).to receive(:sleep).with(8)
-
-          expect(subject).to eq(parsed_response)
-
-          expect(connection.success?).to be false
-          expect(connection.errors?).to be true
-        end
+      it_behaves_like 'when retry request' do
+        let(:expected_http_method) { 'GET' }
       end
     end
   end

@@ -8,8 +8,11 @@ describe KnapsackPro::QueueAllocatorBuilder do
     subject { allocator_builder.allocator }
 
     before do
-      test_files = double
-      expect(allocator_builder).to receive(:test_files).and_return(test_files)
+      fast_and_slow_test_files_to_run = double
+      expect(allocator_builder).to receive(:fast_and_slow_test_files_to_run).and_return(fast_and_slow_test_files_to_run)
+
+      fallback_mode_test_files = double
+      expect(allocator_builder).to receive(:fallback_mode_test_files).and_return(fallback_mode_test_files)
 
       repository_adapter = double
       expect(KnapsackPro::RepositoryAdapterInitiator).to receive(:call).and_return(repository_adapter)
@@ -22,7 +25,8 @@ describe KnapsackPro::QueueAllocatorBuilder do
       expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(ci_node_build_id)
 
       expect(KnapsackPro::QueueAllocator).to receive(:new).with(
-        test_files: test_files,
+        fast_and_slow_test_files_to_run: fast_and_slow_test_files_to_run,
+        fallback_mode_test_files: fallback_mode_test_files,
         ci_node_total: ci_node_total,
         ci_node_index: ci_node_index,
         ci_node_build_id: ci_node_build_id,

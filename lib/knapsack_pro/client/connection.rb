@@ -48,11 +48,7 @@ module KnapsackPro
       end
 
       def request_hash
-        action
-        .request_hash
-        .merge({
-          test_suite_token: test_suite_token
-        })
+        action.request_hash
       end
 
       def request_body
@@ -69,6 +65,7 @@ module KnapsackPro
           'Accept' => 'application/json',
           'KNAPSACK-PRO-CLIENT-NAME' => client_name,
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+          'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
         }
       end
 
@@ -95,19 +92,15 @@ module KnapsackPro
         !seed.nil?
       end
 
-      def post
+      def make_request(&block)
         retries ||= 0
-        uri = URI.parse(endpoint_url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = (uri.scheme == 'https')
-        http.open_timeout = TIMEOUT
-        http.read_timeout = TIMEOUT
 
-        @http_response = http.post(uri.path, request_body, json_headers)
+        @http_response = block.call
         @response_body = parse_response_body(http_response.body)
 
         request_uuid = http_response.header['X-Request-Id'] || 'N/A'
 
+        logger.debug("#{action.http_method.to_s.upcase} #{endpoint_url}")
         logger.debug("API request UUID: #{request_uuid}")
         logger.debug("Test suite split seed: #{seed}") if has_seed?
         logger.debug('API response:')
@@ -132,6 +125,31 @@ module KnapsackPro
           retry
         else
           response_body
+        end
+      end
+
+      def build_http(uri)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = (uri.scheme == 'https')
+        http.open_timeout = TIMEOUT
+        http.read_timeout = TIMEOUT
+        http
+      end
+
+      def post
+        uri = URI.parse(endpoint_url)
+        http = build_http(uri)
+        make_request do
+          http.post(uri.path, request_body, json_headers)
+        end
+      end
+
+      def get
+        uri = URI.parse(endpoint_url)
+        uri.query = URI.encode_www_form(request_hash)
+        http = build_http(uri)
+        make_request do
+          http.get(uri, json_headers)
         end
       end
     end

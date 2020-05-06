@@ -16,8 +16,11 @@ module KnapsackPro
           end
 
           RSpec::Core::RakeTask.new(task_name) do |t|
-            t.rspec_opts = "#{args} --default-path #{runner.test_dir}"
-            t.pattern = runner.test_file_paths
+            # we cannot pass runner.test_file_paths array to t.pattern
+            # because pattern does not accept test example path like spec/a_spec.rb[1:2]
+            # instead we pass test files and test example paths to t.rspec_opts
+            t.pattern = []
+            t.rspec_opts = "#{args} --default-path #{runner.test_dir} #{runner.stringify_test_file_paths}"
           end
           Rake::Task[task_name].invoke
         end

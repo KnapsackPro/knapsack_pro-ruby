@@ -3,6 +3,61 @@ describe KnapsackPro::Adapters::BaseAdapter do
     expect(described_class::TEST_DIR_PATTERN).to eq 'test/**{,/*/**}/*_test.rb'
   end
 
+  shared_examples '.slow_test_file? method' do
+    context 'when test_file_path is in slow test file paths' do
+      # add ./ before path to ensure KnapsackPro::TestFileCleaner.clean will clean it
+      let(:test_file_path) { './spec/models/user_spec.rb' }
+
+      it do
+        expect(subject).to be true
+      end
+    end
+
+    context 'when test_file_path is not in slow test file paths' do
+      let(:test_file_path) { './spec/models/article_spec.rb' }
+
+      it do
+        expect(subject).to be false
+      end
+    end
+  end
+
+  describe '.slow_test_file?' do
+    let(:adapter_class) { double }
+    let(:slow_test_files) do
+      [
+        { 'path' => 'spec/models/user_spec.rb' },
+        { 'path' => 'spec/controllers/users_spec.rb' },
+      ]
+    end
+
+    subject { described_class.slow_test_file?(adapter_class, test_file_path) }
+
+    before do
+      # reset class variable
+      described_class.instance_variable_set(:@slow_test_file_paths, nil)
+    end
+
+    context 'when slow test file pattern is present' do
+      before do
+        stub_const('ENV', {
+          'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN' => '{spec/models/*_spec.rb}',
+        })
+        expect(KnapsackPro::TestFileFinder).to receive(:slow_test_files_by_pattern).with(adapter_class).and_return(slow_test_files)
+      end
+
+      it_behaves_like '.slow_test_file? method'
+    end
+
+    context 'when slow test file pattern is not present' do
+      before do
+        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:read_from_json_report).and_return(slow_test_files)
+      end
+
+      it_behaves_like '.slow_test_file? method'
+    end
+  end
+
   describe '.bind' do
     let(:adapter) { instance_double(described_class) }
 

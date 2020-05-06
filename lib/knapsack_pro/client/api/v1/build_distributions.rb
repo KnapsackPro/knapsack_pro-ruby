@@ -18,6 +18,19 @@ module KnapsackPro
                 }
               )
             end
+
+            def last(args)
+              action_class.new(
+                endpoint_path: '/v1/build_distributions/last',
+                http_method: :get,
+                request_hash: {
+                  :commit_hash => args.fetch(:commit_hash),
+                  :branch => args.fetch(:branch),
+                  :node_total => args.fetch(:node_total),
+                  :node_index => args.fetch(:node_index),
+                }
+              )
+            end
           end
         end
       end

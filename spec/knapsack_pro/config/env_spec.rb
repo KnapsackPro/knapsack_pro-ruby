@@ -183,6 +183,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.slow_test_file_pattern' do
+    subject { described_class.slow_test_file_pattern }
+
+    context 'when ENV exists' do
+      let(:slow_test_file_pattern) { 'spec/features/*_spec.rb' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN' => slow_test_file_pattern }) }
+      it { should eq slow_test_file_pattern }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.test_file_exclude_pattern' do
     subject { described_class.test_file_exclude_pattern }
 

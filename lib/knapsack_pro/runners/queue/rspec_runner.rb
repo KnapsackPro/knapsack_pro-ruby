@@ -134,6 +134,13 @@ module KnapsackPro
           RSpec.world.example_groups.clear
           RSpec.configuration.start_time = ::RSpec::Core::Time.now
 
+          if KnapsackPro::Config::Env.rspec_split_by_test_examples?
+            # Reset example group counts to ensure scoped example ids in metadata
+            # have correct index (not increased by each subsequent run).
+            # Solves this problem: https://github.com/rspec/rspec-core/issues/2721
+            RSpec.world.instance_variable_set(:@example_group_counts_by_spec_file, Hash.new(0))
+          end
+
           # skip reset filters for old RSpec versions
           if RSpec.configuration.respond_to?(:reset_filters)
             RSpec.configuration.reset_filters
