@@ -13,6 +13,55 @@ describe KnapsackPro::TestFileFinder do
     it { should eq test_files }
   end
 
+  describe '.slow_test_files_by_pattern' do
+    let(:adapter_class) { double }
+
+    subject { described_class.slow_test_files_by_pattern(adapter_class) }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:slow_test_file_pattern).at_least(1).and_return(slow_test_file_pattern)
+    end
+
+    context 'when slow_test_file_pattern is present' do
+      let(:slow_test_file_pattern) { double }
+      let(:test_file_entities) do
+        [
+          { 'path' => 'a_spec.rb' },
+          { 'path' => 'b_spec.rb' },
+          { 'path' => 'c_spec.rb' },
+        ]
+      end
+      let(:slow_test_file_entities) do
+        [
+          { 'path' => 'b_spec.rb' },
+          { 'path' => 'c_spec.rb' },
+          { 'path' => 'd_spec.rb' },
+        ]
+      end
+
+      it do
+        test_file_pattern = double
+        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+        expect(described_class).to receive(:call).with(test_file_pattern).and_return(test_file_entities)
+
+        expect(described_class).to receive(:call).with(slow_test_file_pattern, test_file_list_enabled: false).and_return(slow_test_file_entities)
+
+        expect(subject).to eq([
+          { 'path' => 'b_spec.rb' },
+          { 'path' => 'c_spec.rb' },
+        ])
+      end
+    end
+
+    context 'when slow_test_file_pattern is not present' do
+      let(:slow_test_file_pattern) { nil }
+
+      it do
+        expect { subject }.to raise_error RuntimeError, 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN is not defined'
+      end
+    end
+  end
+
   describe '#call' do
     let(:test_file_list_enabled) { true }
     let(:test_file_pattern) { 'spec_fake/**{,/*/**}/*_spec.rb' }

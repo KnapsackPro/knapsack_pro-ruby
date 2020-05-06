@@ -7,16 +7,16 @@ module KnapsackPro
     # finds slow test files on disk based on ENV patterns
     # returns example: [{ 'path' => 'a_spec.rb' }]
     def self.slow_test_files_by_pattern(adapter_class)
-      raise 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN not defined' unless KnapsackPro::Config::Env.slow_test_file_pattern
+      raise 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN is not defined' unless KnapsackPro::Config::Env.slow_test_file_pattern
 
-      test_file_pattern = TestFilePattern.call(adapter_class)
-      test_file_paths = call(test_file_pattern)
+      test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
+      test_file_entities = call(test_file_pattern)
 
-      slow_test_file_paths = call(KnapsackPro::Config::Env.slow_test_file_pattern, test_file_list_enabled: false)
+      slow_test_file_entities = call(KnapsackPro::Config::Env.slow_test_file_pattern, test_file_list_enabled: false)
 
       # slow test files (KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN)
       # should be subset of test file pattern (KNAPSACK_PRO_TEST_FILE_PATTERN)
-      slow_test_file_paths & test_file_paths
+      slow_test_file_entities & test_file_entities
     end
 
     # Args:
@@ -25,7 +25,7 @@ module KnapsackPro
     #   subset of test_files that are present on disk and it is subset of tests matching pattern KNAPSACK_PRO_TEST_FILE_PATTERN
     #   Thanks to that we can select only slow test files that are within list of test file pattern we want to run tests for
     def self.select_test_files_that_can_be_run(adapter_class, test_files)
-      test_file_pattern = TestFilePattern.call(adapter_class)
+      test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
       test_file_paths = call(test_file_pattern)
 
       test_file_paths_existing_on_disk = KnapsackPro::TestFilePresenter.paths(test_file_paths)
