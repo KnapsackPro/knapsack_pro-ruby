@@ -4,6 +4,7 @@
 
 * Automatically detect slow test files for RSpec and split them by test examples when `KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true`
 * Add slow test file pattern `KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN` to define RSpec slow test files that should be split by test examples
+* Start sending API token in header `KNAPSACK-PRO-TEST-SUITE-TOKEN` instead of a key `test_suite_token` in JSON payload.
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/106
 
