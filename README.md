@@ -598,13 +598,13 @@ At this moment the queue mode works for:
 
 ## Split test files by test cases
 
-> __Note:__ This feature works for selected test runners in Knapsack Pro Regular Mode and Queue Mode.
-
 __How it works__: You can split slow test file by test cases. Thanks to that the slow test file can be split across parallel CI nodes because test cases from the test file will run on different CI nodes.
 
 This is helpful when you have one or a few very slow test files that are a bottleneck for CI build speed and you don't want to manually create a few smaller test files from the slow test files. Instead, you can tell `knapsack_pro` gem to split your slow test files by test cases across parallel CI nodes.
 
 Knapsack Pro API will detect slow test files from your previously recorded CI builds and `knapsack_pro` gem will use this suggestion to split only slow test files by test examples. Test files that are fast won't be split by test examples because it is not needed.
+
+> __Note:__ This feature works for below test runners in Knapsack Pro Regular Mode and Queue Mode.
 
 ### RSpec split test files by test examples (by individual `it`s)
 
