@@ -7,16 +7,17 @@ describe KnapsackPro::TestFileFinder do
 
     before do
       test_file_finder = instance_double(described_class, call: test_files)
-      expect(described_class).to receive(:new).with(test_file_pattern).and_return(test_file_finder)
+      expect(described_class).to receive(:new).with(test_file_pattern, true).and_return(test_file_finder)
     end
 
     it { should eq test_files }
   end
 
   describe '#call' do
+    let(:test_file_list_enabled) { true }
     let(:test_file_pattern) { 'spec_fake/**{,/*/**}/*_spec.rb' }
 
-    subject { described_class.new(test_file_pattern).call }
+    subject { described_class.new(test_file_pattern, test_file_list_enabled).call }
 
     context 'when KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN is not defined' do
       it do
@@ -76,6 +77,24 @@ describe KnapsackPro::TestFileFinder do
             'path' => 'spec/time_helpers_spec.rb:38',
           },
         ])
+      end
+
+      context 'when test_file_list_enabled=false' do
+        let(:test_file_list_enabled) { false }
+
+        it do
+          should eq([
+            {
+              'path' => 'spec_fake/controllers/users_controller_spec.rb',
+            },
+            {
+              'path' => 'spec_fake/models/admin_spec.rb',
+            },
+            {
+              'path' => 'spec_fake/models/user_spec.rb',
+            },
+          ])
+        end
       end
     end
   end
