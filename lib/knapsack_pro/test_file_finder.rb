@@ -20,21 +20,21 @@ module KnapsackPro
     end
 
     # Args:
-    #   test_files - it can be list of slow test files that you want to run
+    #   test_file_entities_to_run - it can be list of slow test files that you want to run
     # Return:
-    #   subset of test_files that are present on disk and it is subset of tests matching pattern KNAPSACK_PRO_TEST_FILE_PATTERN
+    #   subset of test_file_entities_to_run that are present on disk and it is subset of tests matching pattern KNAPSACK_PRO_TEST_FILE_PATTERN
     #   Thanks to that we can select only slow test files that are within list of test file pattern we want to run tests for
-    def self.select_test_files_that_can_be_run(adapter_class, test_files)
+    def self.select_test_files_that_can_be_run(adapter_class, test_file_entities_to_run)
       test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
-      test_file_paths = call(test_file_pattern)
+      test_file_entities = call(test_file_pattern)
 
-      test_file_paths_existing_on_disk = KnapsackPro::TestFilePresenter.paths(test_file_paths)
+      test_file_paths_existing_on_disk = KnapsackPro::TestFilePresenter.paths(test_file_entities)
 
       selected_test_files = []
 
-      test_files.each do |test_file|
-        if test_file_paths_existing_on_disk.include?(test_file.fetch('path'))
-          selected_test_files << test_file
+      test_file_entities_to_run.each do |test_file_entity|
+        if test_file_paths_existing_on_disk.include?(test_file_entity.fetch('path'))
+          selected_test_files << test_file_entity
         end
       end
 

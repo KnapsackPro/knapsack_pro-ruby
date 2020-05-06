@@ -62,6 +62,38 @@ describe KnapsackPro::TestFileFinder do
     end
   end
 
+  describe '.select_test_files_that_can_be_run' do
+    let(:adapter_class) { double }
+    let(:test_file_entities_to_run) do
+      [
+        { 'path' => 'a_spec.rb' },
+        { 'path' => 'b_spec.rb' },
+        { 'path' => 'not_existing_on_disk_spec.rb' },
+      ]
+    end
+    # test files existing on disk
+    let(:test_file_entities) do
+      [
+        { 'path' => 'a_spec.rb' },
+        { 'path' => 'b_spec.rb' },
+        { 'path' => 'c_spec.rb' },
+      ]
+    end
+
+    subject { described_class.select_test_files_that_can_be_run(adapter_class, test_file_entities_to_run) }
+
+    it do
+      test_file_pattern = double
+      expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+      expect(described_class).to receive(:call).with(test_file_pattern).and_return(test_file_entities)
+
+      expect(subject).to eq([
+        { 'path' => 'a_spec.rb' },
+        { 'path' => 'b_spec.rb' },
+      ])
+    end
+  end
+
   describe '#call' do
     let(:test_file_list_enabled) { true }
     let(:test_file_pattern) { 'spec_fake/**{,/*/**}/*_spec.rb' }
