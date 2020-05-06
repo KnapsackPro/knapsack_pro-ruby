@@ -1,5 +1,72 @@
+shared_examples 'when request got response from API' do
+  context 'when body response is JSON and API response code is 400' do
+    let(:body) { '{"errors": "value"}' }
+    let(:code) { '400' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).with('API response:')
+    end
+
+    it do
+      parsed_response = { 'errors' => 'value' }
+
+      expect(logger).to receive(:error).with(parsed_response)
+
+      expect(subject).to eq(parsed_response)
+      expect(connection.success?).to be true
+      expect(connection.errors?).to be true
+    end
+  end
+
+  context 'when body response is JSON with build_distribution_id' do
+    let(:body) { '{"build_distribution_id": "seed-uuid"}' }
+    let(:code) { '200' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).exactly(5).and_return(logger)
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
+      expect(logger).to receive(:debug).with('API response:')
+    end
+
+    it do
+      parsed_response = { 'build_distribution_id' => 'seed-uuid' }
+
+      expect(logger).to receive(:debug).with(parsed_response)
+
+      expect(subject).to eq(parsed_response)
+      expect(connection.success?).to be true
+      expect(connection.errors?).to be false
+    end
+  end
+
+  context 'when body response is empty' do
+    let(:body) { '' }
+    let(:code) { '200' } # it must be string code
+
+    before do
+      expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).with('API response:')
+    end
+
+    it do
+      expect(logger).to receive(:debug).with('')
+
+      expect(subject).to eq('')
+      expect(connection.success?).to be true
+      expect(connection.errors?).to be false
+    end
+  end
+end
+
 shared_examples 'when retry request' do
-  context 'when body response is json and API response code is 500' do
+  context 'when body response is JSON and API response code is 500' do
     let(:body) { '{"error": "Internal Server Error"}' }
     let(:code) { '500' } # it must be string code
 
@@ -87,69 +154,31 @@ describe KnapsackPro::Client::Connection do
         ).and_return(http_response)
       end
 
-      context 'when body response is json and API response code is 400' do
-        let(:body) { '{"errors": "value"}' }
-        let(:code) { '400' } # it must be string code
+      it_behaves_like 'when request got response from API' do
+        let(:expected_http_method) { 'POST' }
+      end
+    end
 
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-          expect(logger).to receive(:debug).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with('API response:')
-        end
+    context 'when http method is GET' do
+      let(:http_method) { :get }
 
-        it do
-          parsed_response = { 'errors' => 'value' }
-
-          expect(logger).to receive(:error).with(parsed_response)
-
-          expect(subject).to eq(parsed_response)
-          expect(connection.success?).to be true
-          expect(connection.errors?).to be true
-        end
+      before do
+        uri = URI.parse("http://api.knapsackpro.test:3000#{endpoint_path}")
+        uri.query = URI.encode_www_form(request_hash)
+        expect(http).to receive(:get).with(
+          uri,
+          {
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+            'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+          }
+        ).and_return(http_response)
       end
 
-      context 'when body response is json with build_distribution_id' do
-        let(:body) { '{"build_distribution_id": "seed-uuid"}' }
-        let(:code) { '200' } # it must be string code
-
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(5).and_return(logger)
-          expect(logger).to receive(:debug).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
-          expect(logger).to receive(:debug).with('API response:')
-        end
-
-        it do
-          parsed_response = { 'build_distribution_id' => 'seed-uuid' }
-
-          expect(logger).to receive(:debug).with(parsed_response)
-
-          expect(subject).to eq(parsed_response)
-          expect(connection.success?).to be true
-          expect(connection.errors?).to be false
-        end
-      end
-
-      context 'when body response is empty' do
-        let(:body) { '' }
-        let(:code) { '200' } # it must be string code
-
-        before do
-          expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-          expect(logger).to receive(:debug).with('POST http://api.knapsackpro.test:3000/v1/fake_endpoint')
-          expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
-          expect(logger).to receive(:debug).with('API response:')
-        end
-
-        it do
-          expect(logger).to receive(:debug).with('')
-
-          expect(subject).to eq('')
-          expect(connection.success?).to be true
-          expect(connection.errors?).to be false
-        end
+      it_behaves_like 'when request got response from API' do
+        let(:expected_http_method) { 'GET' }
       end
     end
 
