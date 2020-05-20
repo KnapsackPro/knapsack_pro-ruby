@@ -3,6 +3,13 @@
 ### 1.22.0
 
 * Increase request retry timebox from 4s to 8s to not flood Knapsack Pro API with too many requests and to give time for API server to autoscale and add additional machines to serve traffic
+* When Fallback Mode is disabled with env `KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false` then retry the request to Knapsack Pro API for 6 times instead of only 3 times.
+
+  Here is related [info why some users want to disable Fallback Mode](https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/112
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.21.0...v1.22.0
 
 ### 1.21.0
 
