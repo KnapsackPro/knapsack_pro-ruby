@@ -711,7 +711,7 @@ Read below required configuration step if you use Queue Mode and you set [`KNAPS
 
   If you use other CI server you need to manually configure your CI server to set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT=1` only during retry CI node attempt. If `KNAPSACK_PRO_CI_NODE_RETRY_COUNT > 0` then knapsack_pro won't allow starting running tests in Fallback Mode and instead will raise error so a user can manually retry CI node later when a connection to Knapsack Pro API can be established.
 
-  If you cannot set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT` only for retried CI node or it is not possible for your CI server then you can disable Fallback Mode completely `KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false`.
+  If you cannot set `KNAPSACK_PRO_CI_NODE_RETRY_COUNT` only for retried CI node or it is not possible for your CI server then you can disable Fallback Mode completely `KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false`. When Fallback Mode is disabled then knapsack_pro gem will try to connect to Knapsack Pro API 6 times instead of only 3 times to ensure there is a low chance of failing your CI node due to lost connection with the API.
 
 ### Passing arguments to rake task
 
