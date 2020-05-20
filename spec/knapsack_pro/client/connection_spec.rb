@@ -72,12 +72,13 @@ shared_examples 'when retry request' do
 
     before do
       expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
-      expect(logger).to receive(:debug).exactly(3).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
-      expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
-      expect(logger).to receive(:debug).exactly(3).with('API response:')
     end
 
     it do
+      expect(logger).to receive(:debug).exactly(3).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).exactly(3).with('API response:')
+
       parsed_response = { 'error' => 'Internal Server Error' }
 
       expect(logger).to receive(:error).exactly(3).with(parsed_response)
@@ -94,6 +95,41 @@ shared_examples 'when retry request' do
 
       expect(connection.success?).to be false
       expect(connection.errors?).to be true
+    end
+
+    context 'when Fallback Mode is disabled' do
+      before do
+        expect(KnapsackPro::Config::Env).to receive(:fallback_mode_enabled?).at_least(1).and_return(false)
+      end
+
+      it do
+        expect(logger).to receive(:debug).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:debug).exactly(6).with('API request UUID: fake-uuid')
+        expect(logger).to receive(:debug).exactly(6).with('API response:')
+
+        parsed_response = { 'error' => 'Internal Server Error' }
+
+        expect(logger).to receive(:error).exactly(6).with(parsed_response)
+
+        server_error = described_class::ServerError.new(parsed_response)
+        expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
+
+        expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("Wait 16s and retry request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("Wait 24s and retry request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("Wait 32s and retry request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("Wait 40s and retry request to Knapsack Pro API.")
+        expect(Kernel).to receive(:sleep).with(8)
+        expect(Kernel).to receive(:sleep).with(16)
+        expect(Kernel).to receive(:sleep).with(24)
+        expect(Kernel).to receive(:sleep).with(32)
+        expect(Kernel).to receive(:sleep).with(40)
+
+        expect(subject).to eq(parsed_response)
+
+        expect(connection.success?).to be false
+        expect(connection.errors?).to be true
+      end
     end
   end
 end
@@ -186,7 +222,7 @@ describe KnapsackPro::Client::Connection do
       let(:http_method) { :post }
 
       before do
-        expect(http).to receive(:post).exactly(3).with(
+        expect(http).to receive(:post).at_least(3).with(
           endpoint_path,
           request_hash.to_json,
           {
@@ -210,7 +246,7 @@ describe KnapsackPro::Client::Connection do
       before do
         uri = URI.parse("http://api.knapsackpro.test:3000#{endpoint_path}")
         uri.query = URI.encode_www_form(request_hash)
-        expect(http).to receive(:get).exactly(3).with(
+        expect(http).to receive(:get).at_least(3).with(
           uri,
           {
             'Content-Type' => 'application/json',
