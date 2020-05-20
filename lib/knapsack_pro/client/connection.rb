@@ -4,8 +4,8 @@ module KnapsackPro
       class ServerError < StandardError; end
 
       TIMEOUT = 15
-      MAX_RETRY = 3
-      REQUEST_RETRY_TIMEBOX = 4
+      MAX_RETRY = -> { KnapsackPro::Config::Env.fallback_mode_enabled? ? 3 : 6 }
+      REQUEST_RETRY_TIMEBOX = 8
 
       def initialize(action)
         @action = action
@@ -118,7 +118,7 @@ module KnapsackPro
       rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         logger.warn(e.inspect)
         retries += 1
-        if retries < MAX_RETRY
+        if retries < MAX_RETRY.call
           wait = retries * REQUEST_RETRY_TIMEBOX
           logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
           Kernel.sleep(wait)
