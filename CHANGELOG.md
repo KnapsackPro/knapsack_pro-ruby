@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.22.0
+
+* Increase request retry timebox from 4s to 8s to not flood Knapsack Pro API with too many requests and to give time for API server to autoscale and add additional machines to serve traffic
+
 ### 1.21.0
 
 * Automatically detect slow test files for RSpec and split them by test examples when `KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true`
