@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.22.1
+
+* Fix for an auto split of slow RSpec test files by test examples when using `KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true` and `parallel_tests` gem. Save the JSON reports with unique file names with the CI node index in the name to avoid accidentally overriding the files on the same disk.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/113
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.22.0...v1.22.1
+
 ### 1.22.0
 
 * Increase request retry timebox from 4s to 8s to not flood Knapsack Pro API with too many requests in a short period of time and to give time for API server to autoscale and add additional machines to serve traffic

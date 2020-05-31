@@ -1,6 +1,6 @@
 describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   let(:report_dir) { 'tmp/knapsack_pro/test_case_detectors/rspec' }
-  let(:report_path) { 'tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report.json' }
+  let(:report_path) { 'tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
   let(:rspec_test_example_detector) { described_class.new }
 
   describe '#generate_json_report' do
@@ -116,7 +116,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
       it do
         expect(File).to receive(:exists?).with(report_path).and_return(false)
 
-        expect { subject }.to raise_error(RuntimeError, 'No report found at tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report.json')
+        expect { subject }.to raise_error(RuntimeError, 'No report found at tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json')
       end
     end
   end
