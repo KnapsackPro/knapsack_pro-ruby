@@ -27,7 +27,7 @@ describe KnapsackPro::SlowTestFileDeterminer do
   end
 
   describe '.save_to_json_report', :clear_tmp do
-    let(:json_report_path) { 'tmp/knapsack_pro/slow_test_file_determiner/slow_test_files.json' }
+    let(:json_report_path) { 'tmp/knapsack_pro/slow_test_file_determiner/slow_test_files_node_0.json' }
     let(:test_files) do
       [
         { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
