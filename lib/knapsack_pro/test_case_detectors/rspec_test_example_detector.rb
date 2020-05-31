@@ -2,7 +2,6 @@ module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
       REPORT_DIR = 'tmp/knapsack_pro/test_case_detectors/rspec'
-      REPORT_PATH = "#{REPORT_DIR}/rspec_dry_run_json_report.json"
 
       def generate_json_report
         require 'rspec/core'
@@ -22,13 +21,13 @@ module KnapsackPro
 
         if test_file_entities.empty?
           no_examples_json = { examples: [] }.to_json
-          File.write(REPORT_PATH, no_examples_json)
+          File.write(report_path, no_examples_json)
           return
         end
 
         cli_args = cli_format + [
           '--dry-run',
-          '--out', REPORT_PATH,
+          '--out', report_path,
           '--default-path', test_dir,
         ] + KnapsackPro::TestFilePresenter.paths(test_file_entities)
         options = RSpec::Core::ConfigurationOptions.new(cli_args)
@@ -39,9 +38,9 @@ module KnapsackPro
       end
 
       def test_file_example_paths
-        raise "No report found at #{REPORT_PATH}" unless File.exists?(REPORT_PATH)
+        raise "No report found at #{report_path}" unless File.exists?(report_path)
 
-        json_report = File.read(REPORT_PATH)
+        json_report = File.read(report_path)
         hash_report = JSON.parse(json_report)
         hash_report
           .fetch('examples')
@@ -61,6 +60,10 @@ module KnapsackPro
 
       private
 
+      def report_path
+        "#{REPORT_DIR}/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+      end
+
       def adapter_class
         KnapsackPro::Adapters::RSpecAdapter
       end
@@ -78,7 +81,7 @@ module KnapsackPro
       end
 
       def remove_old_json_report
-        File.delete(REPORT_PATH) if File.exists?(REPORT_PATH)
+        File.delete(report_path) if File.exists?(report_path)
       end
 
       def test_file_hash_for(test_file_path)
