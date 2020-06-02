@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.22.2
+
+* Log when next retry request to Knapsack Pro API happens before starting Fallback Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/114
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.22.1...v1.22.2
+
 ### 1.22.1
 
 * Fix for an auto split of slow RSpec test files by test examples when using `KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true` and `parallel_tests` gem. Save the JSON reports with unique file names with the CI node index in the name to avoid accidentally overriding the files on the same disk.
