@@ -1,5 +1,13 @@
 # Change Log
 
+### 1.22.3
+
+* Support for non-delimited formatting params of RSpec like `-fMyCustomFormatter`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/115
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.22.2...v1.22.3
+
 ### 1.22.2
 
 * Log when next retry request to Knapsack Pro API happens before starting Fallback Mode
