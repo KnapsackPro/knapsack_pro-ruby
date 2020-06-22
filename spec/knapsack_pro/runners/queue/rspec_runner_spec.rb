@@ -104,6 +104,31 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           subject
         end
       end
+
+      context 'when format param is provided without a delimiter' do
+        let(:args) { '-fMyCustomFormatter' }
+
+        it 'uses provided format param instead of default formatter progress' do
+          expected_exitstatus = 0
+          expected_accumulator = {
+            status: :completed,
+            exitstatus: expected_exitstatus
+          }
+          accumulator = {
+            status: :next,
+            runner: runner,
+            can_initialize_queue: true,
+            args: ['-fMyCustomFormatter', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            exitstatus: 0,
+            all_test_file_paths: [],
+          }
+          expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
+
+          expect(Kernel).to receive(:exit).with(expected_exitstatus)
+
+          subject
+        end
+      end
     end
 
     context 'when args not provided' do
