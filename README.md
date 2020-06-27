@@ -1639,6 +1639,9 @@ jobs:
         KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
         KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
         KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+        # if you use Knapsack Pro Queue Mode you must set below env variable
+        # to be able to retry CI build and run previously recorded tests
+        KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
       run: |
         # run tests in Knapsack Pro Regular Mode
         bundle exec rake knapsack_pro:rspec
