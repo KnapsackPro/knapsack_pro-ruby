@@ -22,7 +22,14 @@ describe KnapsackPro::Config::CI::GithubActions do
   describe '#node_build_id' do
     subject { described_class.new.node_build_id }
 
-    it { should be nil }
+    context 'when environment exists' do
+      let(:env) { { 'GITHUB_RUN_ID' => 2706 } }
+      it { should eql 2706 }
+    end
+
+    context "when environment doesn't exist" do
+      it { should be nil }
+    end
   end
 
   describe '#commit_hash' do
