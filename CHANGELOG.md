@@ -10,6 +10,8 @@
 
     If you use Github Actions and Knapsack Pro Queue Mode then you must set in Github Actions environment variable: `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`. Thanks to that when you retry CI build then tests will run based on previously recorded tests. This solves problem mentioned in the [PR](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/116).
 
+    __Migration path for other users__ - just update `knapsack_pro` gem. Nothing to change in your code :)
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v1.22.3...v2.0.0
 
 ### 1.22.3
