@@ -12,7 +12,8 @@ module KnapsackPro
         end
 
         def node_build_id
-          # not provided
+          # A unique number for each run within a repository. This number does not change if you re-run the workflow run.
+          ENV['GITHUB_RUN_ID']
         end
 
         def commit_hash
