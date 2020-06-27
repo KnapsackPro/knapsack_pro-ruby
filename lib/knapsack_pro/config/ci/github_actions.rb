@@ -1,4 +1,4 @@
-# https://help.github.com/en/articles/virtual-environments-for-github-actions#environment-variables
+# https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables
 module KnapsackPro
   module Config
     module CI
