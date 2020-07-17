@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.1.0
+
+* Add `KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX` to customize prefix for generating test examples report when using RSpec split by test examples
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/118
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.0.0...v2.1.0
+
 ### 2.0.0
 
 * Add support for CI build ID for Github Actions

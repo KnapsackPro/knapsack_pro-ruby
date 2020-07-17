@@ -658,6 +658,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.rspec_test_example_detector_prefix' do
+    subject { described_class.rspec_test_example_detector_prefix }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX' => '' }) }
+      it { should eq '' }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should eq 'bundle exec' }
+    end
+  end
+
   describe '.test_suite_token' do
     subject { described_class.test_suite_token }
 
