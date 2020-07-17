@@ -627,7 +627,7 @@ If you will see error like:
 Don't know how to build task 'knapsack_pro:rspec_test_example_detector' (See the list of available tasks with `rake --tasks`)
 ```
 
-It probably means bundler can't find the rake task. You can try remove default prefix `bundle exec` used by knapsack_pro gem by setting `KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX=""`.
+It probably means bundler can't find the rake task. You can try to remove the default prefix `bundle exec` used by knapsack_pro gem by setting `KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX=""`.
 
 ### How to manually define a list of slow test files to be split by test cases
 
