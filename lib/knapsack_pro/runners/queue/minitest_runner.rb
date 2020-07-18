@@ -89,9 +89,9 @@ module KnapsackPro
           end
 
           # duplicate args because Minitest modifies args
-          result = Minitest.run(args.dup)
+          result = ::Minitest.run(args.dup)
 
-          Minitest::Runnable.reset
+          ::Minitest::Runnable.reset
 
           result
         end

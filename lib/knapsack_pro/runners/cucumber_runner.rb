@@ -15,7 +15,7 @@ module KnapsackPro
             Rake::Task[task_name].clear
           end
 
-          Cucumber::Rake::Task.new(task_name) do |t|
+          ::Cucumber::Rake::Task.new(task_name) do |t|
             t.cucumber_opts = "#{args} --require #{runner.test_dir} -- #{runner.stringify_test_file_paths}"
           end
           Rake::Task[task_name].invoke

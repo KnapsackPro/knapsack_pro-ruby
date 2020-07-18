@@ -16,7 +16,7 @@ module KnapsackPro
               File.expand_path(f)
             end
 
-          exit Test::Unit::AutoRunner.run(
+          exit ::Test::Unit::AutoRunner.run(
             true,
             runner.test_dir,
             cli_args

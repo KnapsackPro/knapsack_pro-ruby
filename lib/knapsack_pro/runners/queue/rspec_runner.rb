@@ -79,8 +79,8 @@ module KnapsackPro
 
             log_rspec_command(args, test_file_paths, :subset_queue)
 
-            options = RSpec::Core::ConfigurationOptions.new(cli_args)
-            exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
+            options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
+            exit_code = ::RSpec::Core::Runner.new(options).run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
 
             rspec_clear_examples
@@ -124,26 +124,26 @@ module KnapsackPro
         #
         # Keep formatters and report to accumulate info about failed/pending tests
         def self.rspec_clear_examples
-          if RSpec::ExampleGroups.respond_to?(:remove_all_constants)
-            RSpec::ExampleGroups.remove_all_constants
+          if ::RSpec::ExampleGroups.respond_to?(:remove_all_constants)
+            ::RSpec::ExampleGroups.remove_all_constants
           else
-            RSpec::ExampleGroups.constants.each do |constant|
-              RSpec::ExampleGroups.__send__(:remove_const, constant)
+            ::RSpec::ExampleGroups.constants.each do |constant|
+              ::RSpec::ExampleGroups.__send__(:remove_const, constant)
             end
           end
-          RSpec.world.example_groups.clear
-          RSpec.configuration.start_time = ::RSpec::Core::Time.now
+          ::RSpec.world.example_groups.clear
+          ::RSpec.configuration.start_time = ::RSpec::Core::Time.now
 
           if KnapsackPro::Config::Env.rspec_split_by_test_examples?
             # Reset example group counts to ensure scoped example ids in metadata
             # have correct index (not increased by each subsequent run).
             # Solves this problem: https://github.com/rspec/rspec-core/issues/2721
-            RSpec.world.instance_variable_set(:@example_group_counts_by_spec_file, Hash.new(0))
+            ::RSpec.world.instance_variable_set(:@example_group_counts_by_spec_file, Hash.new(0))
           end
 
           # skip reset filters for old RSpec versions
-          if RSpec.configuration.respond_to?(:reset_filters)
-            RSpec.configuration.reset_filters
+          if ::RSpec.configuration.respond_to?(:reset_filters)
+            ::RSpec.configuration.reset_filters
           end
         end
       end

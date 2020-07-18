@@ -42,7 +42,7 @@ module KnapsackPro
       end
 
       def bind_time_tracker
-        Test::Unit::TestSuite.send(:prepend, BindTimeTrackerTestUnitPlugin)
+        ::Test::Unit::TestSuite.send(:prepend, BindTimeTrackerTestUnitPlugin)
 
         add_post_run_callback do
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
@@ -63,7 +63,7 @@ module KnapsackPro
       private
 
       def add_post_run_callback(&block)
-        Test::Unit.at_exit do
+        ::Test::Unit.at_exit do
           block.call
         end
       end

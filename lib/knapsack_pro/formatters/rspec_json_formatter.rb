@@ -3,8 +3,8 @@ RSpec::Support.require_rspec_core('formatters/json_formatter')
 # based on https://github.com/rspec/rspec-core/blob/master/lib/rspec/core/formatters/json_formatter.rb
 module KnapsackPro
   module Formatters
-    class RSpecJsonFormatter < RSpec::Core::Formatters::JsonFormatter
-      RSpec::Core::Formatters.register self
+    class RSpecJsonFormatter < ::RSpec::Core::Formatters::JsonFormatter
+      ::RSpec::Core::Formatters.register self
 
       private
 

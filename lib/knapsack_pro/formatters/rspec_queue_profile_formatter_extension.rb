@@ -5,7 +5,7 @@ module KnapsackPro
     module RSpecQueueProfileFormatterExtension
       def self.print_summary
         return unless KnapsackPro::Config::Env.modify_default_rspec_formatters?
-        RSpec::Core::Formatters::ProfileFormatter.print_profile_summary
+        ::RSpec::Core::Formatters::ProfileFormatter.print_profile_summary
       end
 
       def initialize(output)
