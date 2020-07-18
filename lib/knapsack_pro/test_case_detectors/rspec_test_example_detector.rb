@@ -7,7 +7,7 @@ module KnapsackPro
         require 'rspec/core'
 
         cli_format =
-          if Gem::Version.new(RSpec::Core::Version::STRING) < Gem::Version.new('3.6.0')
+          if Gem::Version.new(::RSpec::Core::Version::STRING) < Gem::Version.new('3.6.0')
             require_relative '../formatters/rspec_json_formatter'
             ['--format', KnapsackPro::Formatters::RSpecJsonFormatter.to_s]
           else
@@ -30,8 +30,8 @@ module KnapsackPro
           '--out', report_path,
           '--default-path', test_dir,
         ] + KnapsackPro::TestFilePresenter.paths(test_file_entities)
-        options = RSpec::Core::ConfigurationOptions.new(cli_args)
-        exit_code = RSpec::Core::Runner.new(options).run($stderr, $stdout)
+        options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
+        exit_code = ::RSpec::Core::Runner.new(options).run($stderr, $stdout)
         if exit_code != 0
           raise 'There was problem to generate test examples for test suite'
         end
