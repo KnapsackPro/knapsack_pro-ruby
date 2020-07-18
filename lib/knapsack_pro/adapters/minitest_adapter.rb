@@ -85,10 +85,10 @@ module KnapsackPro
       private
 
       def add_post_run_callback(&block)
-        if Minitest.respond_to?(:after_run)
-          Minitest.after_run { block.call }
+        if ::Minitest.respond_to?(:after_run)
+          ::Minitest.after_run { block.call }
         else
-          Minitest::Unit.after_tests { block.call }
+          ::Minitest::Unit.after_tests { block.call }
         end
       end
     end
