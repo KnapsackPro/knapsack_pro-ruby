@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.1.1
+
+* Explicitly call root test runner class to avoid a confusing error when test runner gem is not loaded
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/120
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.1.0...v2.1.1
+
 ### 2.1.0
 
 * Add `KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX` to customize prefix for generating test examples report when using RSpec split by test examples
