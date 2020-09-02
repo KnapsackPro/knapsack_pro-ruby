@@ -10,18 +10,30 @@ describe KnapsackPro::Hooks::Queue do
       it { should be_nil }
     end
 
-    context 'when callback is set' do
+    context 'when callback is set multiple times' do
       let(:queue_id) { double }
 
       before do
-        expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
+        expect(KnapsackPro::Config::Env).to receive(:queue_id).twice.and_return(queue_id)
+
+        $expected_called_blocks = []
 
         described_class.before_queue do |q_id|
-          [:fake_value, q_id]
+          $expected_called_blocks << [:block_1_called, q_id]
+        end
+        described_class.before_queue do |q_id|
+          $expected_called_blocks << [:block_2_called, q_id]
         end
       end
 
-      it { should eq [:fake_value, queue_id] }
+      it 'each block is called' do
+        subject
+
+        expect($expected_called_blocks).to eq([
+          [:block_1_called, queue_id],
+          [:block_2_called, queue_id],
+        ])
+      end
     end
   end
 
