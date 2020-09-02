@@ -2737,6 +2737,8 @@ end
 
 #### What hooks are supported in Queue Mode?
 
+Note: Each hook type can be defined multiple times. For instance, if you define `KnapsackPro::Hooks::Queue.before_queue` twice then both block of code will be called when running your tests.
+
 * RSpec in knapsack_pro Queue Mode supports hooks:
 
 ```ruby

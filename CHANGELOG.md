@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.2.0
+
+* Allow defining Queue Mode hooks multiple times (`KnapsackPro::Hooks::Queue.before_queue`, `KnapsackPro::Hooks::Queue.after_subset_queue`, `KnapsackPro::Hooks::Queue.after_queue`)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/122
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.1.1...v2.2.0
+
 ### 2.1.1
 
 * Explicitly call root test runner class to avoid a confusing error when test runner gem is not loaded
