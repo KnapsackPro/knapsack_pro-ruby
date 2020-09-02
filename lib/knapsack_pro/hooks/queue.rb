@@ -4,7 +4,7 @@ module KnapsackPro
       class << self
         attr_reader :before_queue_store,
           :after_subset_queue,
-          :after_queue
+          :after_queue_store
 
         def reset_before_queue
           @before_queue_store = nil
@@ -15,7 +15,7 @@ module KnapsackPro
         end
 
         def reset_after_queue
-          @after_queue = nil
+          @after_queue_store = nil
         end
 
         def before_queue(&block)
@@ -28,7 +28,8 @@ module KnapsackPro
         end
 
         def after_queue(&block)
-          @after_queue ||= block
+          @after_queue_store ||= []
+          @after_queue_store << block
         end
 
         def call_before_queue
@@ -49,10 +50,12 @@ module KnapsackPro
         end
 
         def call_after_queue
-          return unless after_queue
-          after_queue.call(
-            KnapsackPro::Config::Env.queue_id
-          )
+          return unless after_queue_store
+          after_queue_store.each do |block|
+            block.call(
+              KnapsackPro::Config::Env.queue_id
+            )
+          end
         end
       end
     end
