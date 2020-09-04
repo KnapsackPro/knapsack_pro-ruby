@@ -15,7 +15,7 @@ module KnapsackPro
           # then break to stop looking further.
           # If we won't find a valid test file path then the last found path will be used as full_test_path
           # For instance if test file contains only shared examples then it's not possible to properly detect test file path
-          # so the wrong path can be returned like:
+          # so the wrong path can be used like:
           # /Users/artur/.rvm/gems/ruby-2.6.5/gems/shared_should-0.10.0/lib/shared_should/shared_context.rb
           if full_test_path.include?(@@parent_of_test_dir)
             found_valid_test_file_path = true
