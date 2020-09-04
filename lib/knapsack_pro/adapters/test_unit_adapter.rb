@@ -6,6 +6,7 @@ module KnapsackPro
 
       def self.test_path(obj)
         full_test_path = nil
+        found_valid_test_file_path = false
 
         obj.tests.each do |test_obj|
           method = test_obj.method_name
@@ -16,7 +17,15 @@ module KnapsackPro
           # For instance if test file contains only shared examples then it's not possible to properly detect test file path
           # so the wrong path can be returned like:
           # /Users/artur/.rvm/gems/ruby-2.6.5/gems/shared_should-0.10.0/lib/shared_should/shared_context.rb
-          break if full_test_path.include?(@@parent_of_test_dir)
+          if full_test_path.include?(@@parent_of_test_dir)
+            found_valid_test_file_path = true
+            break
+          end
+        end
+
+        unless found_valid_test_file_path
+          KnapsackPro.logger.warn('cannot detect a valid test file path. Probably the test file contains only shared examples. Please add test cases to your test file. Read more at https://github.com/KnapsackPro/knapsack_pro-ruby/pull/123')
+          KnapsackPro.logger.warn("See test file for #{obj.inspect}")
         end
 
         parent_of_test_dir_regexp = Regexp.new("^#{@@parent_of_test_dir}")
