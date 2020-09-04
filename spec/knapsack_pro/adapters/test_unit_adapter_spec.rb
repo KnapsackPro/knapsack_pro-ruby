@@ -10,8 +10,7 @@ describe KnapsackPro::Adapters::TestUnitAdapter do
 
     before do
       parent_of_test_dir = File.expand_path('../../../', File.dirname(__FILE__))
-      parent_of_test_dir_regexp = Regexp.new("^#{parent_of_test_dir}")
-      described_class.class_variable_set(:@@parent_of_test_dir, parent_of_test_dir_regexp)
+      described_class.class_variable_set(:@@parent_of_test_dir, parent_of_test_dir)
     end
 
     context 'when regular test' do
