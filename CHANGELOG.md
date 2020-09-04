@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.2.1
+
+* Improve detection of test file path in test-unit runner for test files with shared examples
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/123
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.2.0...v2.2.1
+
 ### 2.2.0
 
 * Allow defining Queue Mode hooks multiple times (`KnapsackPro::Hooks::Queue.before_queue`, `KnapsackPro::Hooks::Queue.after_subset_queue`, `KnapsackPro::Hooks::Queue.after_queue`)

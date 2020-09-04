@@ -5,9 +5,29 @@ module KnapsackPro
       @@parent_of_test_dir = nil
 
       def self.test_path(obj)
-        first_test = obj.tests.first
-        method = first_test.method_name
-        full_test_path = first_test.method(method).source_location.first
+        full_test_path = nil
+        found_valid_test_file_path = false
+
+        obj.tests.each do |test_obj|
+          method = test_obj.method_name
+          full_test_path = test_obj.method(method).source_location.first
+          # if we find a test file path that is a valid test file path within test suite directory
+          # then break to stop looking further.
+          # If we won't find a valid test file path then the last found path will be used as full_test_path
+          # For instance if test file contains only shared examples then it's not possible to properly detect test file path
+          # so the wrong path can be used like:
+          # /Users/artur/.rvm/gems/ruby-2.6.5/gems/shared_should-0.10.0/lib/shared_should/shared_context.rb
+          if full_test_path.include?(@@parent_of_test_dir)
+            found_valid_test_file_path = true
+            break
+          end
+        end
+
+        unless found_valid_test_file_path
+          KnapsackPro.logger.warn('cannot detect a valid test file path. Probably the test file contains only shared examples. Please add test cases to your test file. Read more at https://github.com/KnapsackPro/knapsack_pro-ruby/pull/123')
+          KnapsackPro.logger.warn("See test file for #{obj.inspect}")
+        end
+
         parent_of_test_dir_regexp = Regexp.new("^#{@@parent_of_test_dir}")
         test_path = full_test_path.gsub(parent_of_test_dir_regexp, '.')
         # test_path will look like ./test/dir/unit_test.rb
