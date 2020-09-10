@@ -1,5 +1,15 @@
 # Change Log
 
+### 2.3.0
+
+* When you use Regular Mode then try 6 attempts to connect to the API instead of 3 attempts
+
+    Add `KNAPSACK_PRO_MAX_REQUEST_RETRIES` environment variable to let user define their own number of request retries to the API. It is useful to set it to `0` for [forked repos](https://knapsackpro.com/faq/question/how-to-make-knapsack_pro-works-for-forked-repositories-of-my-project) when you want to relay on Fallback Mode.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/124
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.2.1...v2.3.0
+
 ### 2.2.1
 
 * Improve detection of test file path in test-unit runner for test files with shared examples

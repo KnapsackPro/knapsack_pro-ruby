@@ -36,6 +36,13 @@ module KnapsackPro
           ).to_i
         end
 
+        def max_request_retries
+          number = ENV['KNAPSACK_PRO_MAX_REQUEST_RETRIES']
+          if number
+            number.to_i
+          end
+        end
+
         def commit_hash
           ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
             ci_env_for(:commit_hash)
@@ -81,6 +88,10 @@ module KnapsackPro
 
         def recording_enabled?
           recording_enabled == 'true'
+        end
+
+        def regular_mode?
+          recording_enabled?
         end
 
         def queue_recording_enabled

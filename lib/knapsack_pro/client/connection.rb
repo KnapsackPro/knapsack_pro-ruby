@@ -4,7 +4,6 @@ module KnapsackPro
       class ServerError < StandardError; end
 
       TIMEOUT = 15
-      MAX_RETRY = -> { KnapsackPro::Config::Env.fallback_mode_enabled? ? 3 : 6 }
       REQUEST_RETRY_TIMEBOX = 8
 
       def initialize(action)
@@ -118,7 +117,7 @@ module KnapsackPro
       rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         logger.warn(e.inspect)
         retries += 1
-        if retries < MAX_RETRY.call
+        if retries < max_request_retries
           wait = retries * REQUEST_RETRY_TIMEBOX
           logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
           print_every = 2 # seconds
@@ -155,6 +154,22 @@ module KnapsackPro
         make_request do
           http.get(uri, json_headers)
         end
+      end
+
+      def max_request_retries
+        # when user defined max request retries
+        return KnapsackPro::Config::Env.max_request_retries if KnapsackPro::Config::Env.max_request_retries
+
+        # when Fallback Mode is disabled then try more attempts to connect to the API
+        return 6 unless KnapsackPro::Config::Env.fallback_mode_enabled?
+
+        # when Regular Mode then try more attempts to connect to the API
+        # if only one CI node starts Fallback Mode instead of all then we can't guarantee all test files will be run
+        # https://github.com/KnapsackPro/knapsack_pro-ruby/pull/124
+        return 6 if KnapsackPro::Config::Env.regular_mode?
+
+        # default number of attempts
+        3
       end
     end
   end

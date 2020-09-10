@@ -100,6 +100,19 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.max_request_retries' do
+    subject { described_class.max_request_retries }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_MAX_REQUEST_RETRIES' => '2' }) }
+      it { should eq 2 }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.commit_hash' do
     subject { described_class.commit_hash }
 
@@ -264,6 +277,25 @@ describe KnapsackPro::Config::Env do
 
     context "when ENV doesn't exist" do
       it { should be_nil }
+    end
+  end
+
+
+  describe '.regular_mode?' do
+    subject { described_class.regular_mode? }
+
+    before do
+      expect(described_class).to receive(:recording_enabled?).and_return(recording_enabled)
+    end
+
+    context 'when recording is enabled' do
+      let(:recording_enabled) { true }
+      it { should be true }
+    end
+
+    context 'when recording is not enabled' do
+      let(:recording_enabled) { false }
+      it { should be false }
     end
   end
 
