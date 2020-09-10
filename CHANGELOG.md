@@ -1,12 +1,12 @@
 # Change Log
 
-### 2.2.2
+### 2.3.0
 
 * When you use Regular Mode then try 6 attempts to connect to the API instead of 3 attempts
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/124
 
-https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.2.1...v2.2.2
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.2.1...v2.3.0
 
 ### 2.2.1
 
