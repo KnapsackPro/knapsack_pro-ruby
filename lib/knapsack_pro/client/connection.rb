@@ -157,6 +157,9 @@ module KnapsackPro
       end
 
       def max_request_retries
+        # when user defined max request retries
+        return KnapsackPro::Config::Env.max_request_retries if KnapsackPro::Config::Env.max_request_retries
+
         # when Fallback Mode is disabled then try more attempts to connect to the API
         return 6 unless KnapsackPro::Config::Env.fallback_mode_enabled?
 
