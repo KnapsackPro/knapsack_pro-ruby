@@ -161,7 +161,8 @@ module KnapsackPro
         return 6 unless KnapsackPro::Config::Env.fallback_mode_enabled?
 
         # when Regular Mode then try more attempts to connect to the API
-        # because if only one CI node starts Fallback Mode instead of all then we can't guarantee all test files will be run
+        # if only one CI node starts Fallback Mode instead of all then we can't guarantee all test files will be run
+        # https://github.com/KnapsackPro/knapsack_pro-ruby/pull/124
         return 6 if KnapsackPro::Config::Env.regular_mode?
 
         # default number of attempts
