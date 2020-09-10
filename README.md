@@ -2472,12 +2472,13 @@ Below example is for rspec. You can change `$KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
 if [ "$KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC" = "" ]; then
   KNAPSACK_PRO_ENDPOINT=https://api-disabled-for-fork.knapsackpro.com \
     KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=disabled-for-fork \
+    KNAPSACK_PRO_MAX_REQUEST_RETRIES=0 \
     bundle exec rake knapsack_pro:rspec # use Regular Mode here always
 else
     # Regular Mode
     bundle exec rake knapsack_pro:rspec
 
-    # You can use Queue Mode instead of Regular Mode if you like
+    # or you can use Queue Mode instead of Regular Mode if you like
     # bundle exec rake knapsack_pro:queue:rspec
 fi
 ```
