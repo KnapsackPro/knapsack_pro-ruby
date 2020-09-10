@@ -267,6 +267,25 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+
+  describe '.regular_mode?' do
+    subject { described_class.regular_mode? }
+
+    before do
+      expect(described_class).to receive(:recording_enabled?).and_return(recording_enabled)
+    end
+
+    context 'when recording is enabled' do
+      let(:recording_enabled) { true }
+      it { should be true }
+    end
+
+    context 'when recording is not enabled' do
+      let(:recording_enabled) { false }
+      it { should be false }
+    end
+  end
+
   describe '.recording_enabled?' do
     subject { described_class.recording_enabled? }
 
