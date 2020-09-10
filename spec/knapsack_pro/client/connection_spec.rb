@@ -164,6 +164,63 @@ shared_examples 'when retry request' do
         expect(connection.errors?).to be true
       end
     end
+
+    context 'when Regular Mode' do
+      before do
+        expect(KnapsackPro::Config::Env).to receive(:regular_mode?).at_least(1).and_return(true)
+      end
+
+      it do
+        expect(logger).to receive(:debug).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:debug).exactly(6).with('API request UUID: fake-uuid')
+        expect(logger).to receive(:debug).exactly(6).with('API response:')
+
+        parsed_response = { 'error' => 'Internal Server Error' }
+
+        expect(logger).to receive(:error).exactly(6).with(parsed_response)
+
+        server_error = described_class::ServerError.new(parsed_response)
+        expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
+
+        expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("Next request in 8s...")
+        expect(logger).to receive(:warn).with("Next request in 6s...")
+        expect(logger).to receive(:warn).with("Next request in 4s...")
+        expect(logger).to receive(:warn).with("Next request in 2s...")
+
+        expect(logger).to receive(:warn).with("Wait 16s and retry request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("Next request in 16s...")
+        expect(logger).to receive(:warn).with("Next request in 14s...")
+        expect(logger).to receive(:warn).with("Next request in 12s...")
+        expect(logger).to receive(:warn).with("Next request in 10s...")
+        expect(logger).to receive(:warn).with("Next request in 8s...")
+        expect(logger).to receive(:warn).with("Next request in 6s...")
+        expect(logger).to receive(:warn).with("Next request in 4s...")
+        expect(logger).to receive(:warn).with("Next request in 2s...")
+
+        expect(logger).to receive(:warn).with("Wait 24s and retry request to Knapsack Pro API.")
+        12.times do |i|
+          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        end
+
+        expect(logger).to receive(:warn).with("Wait 32s and retry request to Knapsack Pro API.")
+        16.times do |i|
+          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        end
+
+        expect(logger).to receive(:warn).with("Wait 40s and retry request to Knapsack Pro API.")
+        20.times do |i|
+          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        end
+
+        expect(Kernel).to receive(:sleep).exactly(60).with(2)
+
+        expect(subject).to eq(parsed_response)
+
+        expect(connection.success?).to be false
+        expect(connection.errors?).to be true
+      end
+    end
   end
 end
 
