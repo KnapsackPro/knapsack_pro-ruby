@@ -100,6 +100,19 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.max_request_retries' do
+    subject { described_class.max_request_retries }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_MAX_REQUEST_RETRIES' => '2' }) }
+      it { should eq 2 }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.commit_hash' do
     subject { described_class.commit_hash }
 
