@@ -2320,7 +2320,7 @@ There are a few ways to reproduce tests executed on CI node in your development 
 
 ##### for knapsack_pro regular mode
 
-knapsack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds till it switchs to fallback behavior (Fallback Mode) and it will split test files across CI nodes based on popular test directory names. When knapsack_pro starts Fallback Mode then you will see a warning in the output.
+knapsack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds till it switches to fallback behavior (Fallback Mode) and it will split test files across CI nodes based on popular test directory names. When knapsack_pro starts Fallback Mode then you will see a warning in the output.
 
 Note there is an unlikely scenario when some of the CI nodes may start in Fallback Mode but others don't and then it could happen that some of test files might be skipped. You should [read this to learn more](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/124) and decide if you like to use Fallback Mode when running tests with knapsack_pro Regular Mode.
 
@@ -2330,7 +2330,7 @@ If your CI provider allows to retry only one of parallel CI nodes then please [r
 
 knapsack_pro gem will retry requests to Knapsack Pro API multiple times every few seconds till it switches to fallback behavior (Fallback Mode) and it will split test files across CI nodes based on popular test directory names.
 
-Note that if one of the CI nodes will lose connection to Knapsack Pro API but other not then you may see that some of the test files will be executed on multiple CI nodes. **Fallback Mode guarantees each of the test files is run at least once across CI nodes when you use knapsack_pro in Queue Mode.** Thanks to that we know if the whole test suite is green or not. When knapsack_pro starts Fallback Mode then you will see a warning in the output.
+Note that if one of the CI nodes loses connection to Knapsack Pro API but others don't, then some of the test files may be executed on multiple CI nodes. **Fallback Mode guarantees each of the test files is run at least once across CI nodes when you use knapsack_pro in Queue Mode.** Thanks to that we know if the whole test suite is green or not. When knapsack_pro starts Fallback Mode then you will see a warning in the output.
 
 If your CI provider allows to retry only one of parallel CI nodes then please [read about this edge case as well](#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode).
 
