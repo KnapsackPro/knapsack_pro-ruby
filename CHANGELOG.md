@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.4.0
+
+* Update list of non encryptable branches
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/125
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.3.0...v2.4.0
+
 ### 2.3.0
 
 * When you use Regular Mode then try 6 attempts to connect to the API instead of 3 attempts
