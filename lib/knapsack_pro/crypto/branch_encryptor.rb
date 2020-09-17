@@ -1,7 +1,21 @@
 module KnapsackPro
   module Crypto
     class BranchEncryptor
-      NON_ENCRYPTABLE_BRANCHES = %w(develop development dev master staging)
+      NON_ENCRYPTABLE_BRANCHES = [
+        'master',
+        'main',
+        'develop',
+        'development',
+        'dev',
+        'staging',
+        # GitHub Actions has branch names starting with refs/heads/
+        'refs/heads/master',
+        'refs/heads/main',
+        'refs/heads/develop',
+        'refs/heads/development',
+        'refs/heads/dev',
+        'refs/heads/staging',
+      ]
 
       def self.call(branch)
         if KnapsackPro::Config::Env.branch_encrypted?
