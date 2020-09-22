@@ -3258,6 +3258,8 @@ $ gem build knapsack_pro.gemspec
 $ gem push knapsack_pro-X.X.X.gem
 ```
 
+Update latest gem version in `TestSuiteClientVersionChecker` for Knapsack Pro API repository.
+
 ## Mentions
 
 List of articles where people mentioned Knapsack Pro:
