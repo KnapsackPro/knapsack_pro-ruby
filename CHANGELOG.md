@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.5.0
+
+* Add production branch to non encryptable branches names
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/126
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.4.0...v2.5.0
+
 ### 2.4.0
 
 * Update list of non encryptable branches
