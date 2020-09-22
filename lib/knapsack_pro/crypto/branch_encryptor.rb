@@ -8,6 +8,7 @@ module KnapsackPro
         'development',
         'dev',
         'staging',
+        'production',
         # GitHub Actions has branch names starting with refs/heads/
         'refs/heads/master',
         'refs/heads/main',
@@ -15,6 +16,7 @@ module KnapsackPro
         'refs/heads/development',
         'refs/heads/dev',
         'refs/heads/staging',
+        'refs/heads/production',
       ]
 
       def self.call(branch)
