@@ -88,20 +88,18 @@ shared_examples 'when retry request' do
       expect(logger).to receive(:warn).exactly(3).with('Request failed due to:')
       expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
 
-      expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
-      expect(logger).to receive(:warn).with("Next request in 8s...")
-      expect(logger).to receive(:warn).with("Next request in 6s...")
-      expect(logger).to receive(:warn).with("Next request in 4s...")
-      expect(logger).to receive(:warn).with("Next request in 2s...")
-      expect(logger).to receive(:warn).with("Wait 16s and retry request to Knapsack Pro API.")
-      expect(logger).to receive(:warn).with("Next request in 16s...")
-      expect(logger).to receive(:warn).with("Next request in 14s...")
-      expect(logger).to receive(:warn).with("Next request in 12s...")
-      expect(logger).to receive(:warn).with("Next request in 10s...")
-      expect(logger).to receive(:warn).with("Next request in 8s...")
-      expect(logger).to receive(:warn).with("Next request in 6s...")
-      expect(logger).to receive(:warn).with("Next request in 4s...")
-      expect(logger).to receive(:warn).with("Next request in 2s...")
+      expect(logger).to receive(:warn).with("Wait for 8s before retrying the request to Knapsack Pro API.")
+      expect(logger).to receive(:warn).with("6s left before retry...")
+      expect(logger).to receive(:warn).with("4s left before retry...")
+      expect(logger).to receive(:warn).with("2s left before retry...")
+      expect(logger).to receive(:warn).with("Wait for 16s before retrying the request to Knapsack Pro API.")
+      expect(logger).to receive(:warn).with("14s left before retry...")
+      expect(logger).to receive(:warn).with("12s left before retry...")
+      expect(logger).to receive(:warn).with("10s left before retry...")
+      expect(logger).to receive(:warn).with("8s left before retry...")
+      expect(logger).to receive(:warn).with("6s left before retry...")
+      expect(logger).to receive(:warn).with("4s left before retry...")
+      expect(logger).to receive(:warn).with("2s left before retry...")
       expect(Kernel).to receive(:sleep).exactly(12).with(2)
 
       expect(subject).to eq(parsed_response)
@@ -129,25 +127,23 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:warn).exactly(4).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(4).with(server_error.inspect)
 
-        expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("Next request in 8s...")
-        expect(logger).to receive(:warn).with("Next request in 6s...")
-        expect(logger).to receive(:warn).with("Next request in 4s...")
-        expect(logger).to receive(:warn).with("Next request in 2s...")
+        expect(logger).to receive(:warn).with("Wait for 8s before retrying the request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("6s left before retry...")
+        expect(logger).to receive(:warn).with("4s left before retry...")
+        expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait 16s and retry request to Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("Next request in 16s...")
-        expect(logger).to receive(:warn).with("Next request in 14s...")
-        expect(logger).to receive(:warn).with("Next request in 12s...")
-        expect(logger).to receive(:warn).with("Next request in 10s...")
-        expect(logger).to receive(:warn).with("Next request in 8s...")
-        expect(logger).to receive(:warn).with("Next request in 6s...")
-        expect(logger).to receive(:warn).with("Next request in 4s...")
-        expect(logger).to receive(:warn).with("Next request in 2s...")
+        expect(logger).to receive(:warn).with("Wait for 16s before retrying the request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("14s left before retry...")
+        expect(logger).to receive(:warn).with("12s left before retry...")
+        expect(logger).to receive(:warn).with("10s left before retry...")
+        expect(logger).to receive(:warn).with("8s left before retry...")
+        expect(logger).to receive(:warn).with("6s left before retry...")
+        expect(logger).to receive(:warn).with("4s left before retry...")
+        expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait 24s and retry request to Knapsack Pro API.")
-        12.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 24s before retrying the request to Knapsack Pro API.")
+        11.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
         expect(Kernel).to receive(:sleep).exactly(4+8+12).with(2)
@@ -178,35 +174,33 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:warn).exactly(6).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
 
-        expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("Next request in 8s...")
-        expect(logger).to receive(:warn).with("Next request in 6s...")
-        expect(logger).to receive(:warn).with("Next request in 4s...")
-        expect(logger).to receive(:warn).with("Next request in 2s...")
+        expect(logger).to receive(:warn).with("Wait for 8s before retrying the request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("6s left before retry...")
+        expect(logger).to receive(:warn).with("4s left before retry...")
+        expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait 16s and retry request to Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("Next request in 16s...")
-        expect(logger).to receive(:warn).with("Next request in 14s...")
-        expect(logger).to receive(:warn).with("Next request in 12s...")
-        expect(logger).to receive(:warn).with("Next request in 10s...")
-        expect(logger).to receive(:warn).with("Next request in 8s...")
-        expect(logger).to receive(:warn).with("Next request in 6s...")
-        expect(logger).to receive(:warn).with("Next request in 4s...")
-        expect(logger).to receive(:warn).with("Next request in 2s...")
+        expect(logger).to receive(:warn).with("Wait for 16s before retrying the request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("14s left before retry...")
+        expect(logger).to receive(:warn).with("12s left before retry...")
+        expect(logger).to receive(:warn).with("10s left before retry...")
+        expect(logger).to receive(:warn).with("8s left before retry...")
+        expect(logger).to receive(:warn).with("6s left before retry...")
+        expect(logger).to receive(:warn).with("4s left before retry...")
+        expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait 24s and retry request to Knapsack Pro API.")
-        12.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 24s before retrying the request to Knapsack Pro API.")
+        11.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
-        expect(logger).to receive(:warn).with("Wait 32s and retry request to Knapsack Pro API.")
-        16.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 32s before retrying the request to Knapsack Pro API.")
+        15.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
-        expect(logger).to receive(:warn).with("Wait 40s and retry request to Knapsack Pro API.")
-        20.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 40s before retrying the request to Knapsack Pro API.")
+        19.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
         expect(Kernel).to receive(:sleep).exactly(60).with(2)
@@ -237,35 +231,33 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:warn).exactly(6).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
 
-        expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("Next request in 8s...")
-        expect(logger).to receive(:warn).with("Next request in 6s...")
-        expect(logger).to receive(:warn).with("Next request in 4s...")
-        expect(logger).to receive(:warn).with("Next request in 2s...")
+        expect(logger).to receive(:warn).with("Wait for 8s before retrying the request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("6s left before retry...")
+        expect(logger).to receive(:warn).with("4s left before retry...")
+        expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait 16s and retry request to Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("Next request in 16s...")
-        expect(logger).to receive(:warn).with("Next request in 14s...")
-        expect(logger).to receive(:warn).with("Next request in 12s...")
-        expect(logger).to receive(:warn).with("Next request in 10s...")
-        expect(logger).to receive(:warn).with("Next request in 8s...")
-        expect(logger).to receive(:warn).with("Next request in 6s...")
-        expect(logger).to receive(:warn).with("Next request in 4s...")
-        expect(logger).to receive(:warn).with("Next request in 2s...")
+        expect(logger).to receive(:warn).with("Wait for 16s before retrying the request to Knapsack Pro API.")
+        expect(logger).to receive(:warn).with("14s left before retry...")
+        expect(logger).to receive(:warn).with("12s left before retry...")
+        expect(logger).to receive(:warn).with("10s left before retry...")
+        expect(logger).to receive(:warn).with("8s left before retry...")
+        expect(logger).to receive(:warn).with("6s left before retry...")
+        expect(logger).to receive(:warn).with("4s left before retry...")
+        expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait 24s and retry request to Knapsack Pro API.")
-        12.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 24s before retrying the request to Knapsack Pro API.")
+        11.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
-        expect(logger).to receive(:warn).with("Wait 32s and retry request to Knapsack Pro API.")
-        16.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 32s before retrying the request to Knapsack Pro API.")
+        15.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
-        expect(logger).to receive(:warn).with("Wait 40s and retry request to Knapsack Pro API.")
-        20.times do |i|
-          expect(logger).to receive(:warn).with("Next request in #{(i+1)*2}s...")
+        expect(logger).to receive(:warn).with("Wait for 40s before retrying the request to Knapsack Pro API.")
+        19.times do |i|
+          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
         end
 
         expect(Kernel).to receive(:sleep).exactly(60).with(2)
