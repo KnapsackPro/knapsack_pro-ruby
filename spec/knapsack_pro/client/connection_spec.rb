@@ -84,6 +84,8 @@ shared_examples 'when retry request' do
       expect(logger).to receive(:error).exactly(3).with(parsed_response)
 
       server_error = described_class::ServerError.new(parsed_response)
+      expect(logger).to receive(:warn).exactly(3).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:warn).exactly(3).with('Request failed due to:')
       expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
 
       expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
@@ -123,6 +125,8 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:error).exactly(4).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
+        expect(logger).to receive(:warn).exactly(4).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(4).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(4).with(server_error.inspect)
 
         expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
@@ -170,6 +174,8 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:error).exactly(6).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
+        expect(logger).to receive(:warn).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(6).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
 
         expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
@@ -227,6 +233,8 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:error).exactly(6).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
+        expect(logger).to receive(:warn).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(6).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
 
         expect(logger).to receive(:warn).with("Wait 8s and retry request to Knapsack Pro API.")
