@@ -115,14 +115,19 @@ module KnapsackPro
 
         response_body
       rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
+        logger.warn("#{action.http_method.to_s.upcase} #{endpoint_url}")
+        logger.warn('Request failed due to:')
         logger.warn(e.inspect)
         retries += 1
         if retries < max_request_retries
           wait = retries * REQUEST_RETRY_TIMEBOX
-          logger.warn("Wait #{wait}s and retry request to Knapsack Pro API.")
           print_every = 2 # seconds
           (wait / print_every).ceil.times do |i|
-            logger.warn("Next request in #{wait - i * print_every}s...")
+            if i == 0
+              logger.warn("Wait for #{wait}s before retrying the request to Knapsack Pro API.")
+            else
+              logger.warn("#{wait - i * print_every}s left before retry...")
+            end
             Kernel.sleep(print_every)
           end
           retry

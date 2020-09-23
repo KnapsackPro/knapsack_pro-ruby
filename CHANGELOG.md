@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.6.0
+
+* Improve logger to show failed requests URL and when retry will happen
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/127
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.5.0...v2.6.0
+
 ### 2.5.0
 
 * Add production branch to non encryptable branches names
