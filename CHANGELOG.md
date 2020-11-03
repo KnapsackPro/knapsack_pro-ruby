@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.7.0
+
+* Add support for env var KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE
+    
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/129
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.6.0...v2.7.0
+
 ### 2.6.0
 
 * Improve logger to show failed requests URL and when retry will happen
