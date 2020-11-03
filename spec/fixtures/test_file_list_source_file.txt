@@ -1,6 +1,7 @@
-./spec/test1.rb,
+./spec/test1.rb
 spec/test2.rb[1]
-./spec/test3.rb[1:2:3:4],
+./spec/test3.rb[1:2:3:4]
 ./spec/test4.rb:4
-./spec/test4.rb:5,
+./spec/test4.rb:5
+
 
