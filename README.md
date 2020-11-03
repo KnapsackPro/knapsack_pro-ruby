@@ -3097,6 +3097,7 @@ Note `KNAPSACK_PRO_TEST_FILE_LIST` must be a list of test files comma separated.
 Similarly, you can also provide a source file containing the test files that you would like to run. For example:
 `KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE=spec/fixtures/test_file_list_source_file.txt`  
 And the content of the source file can be any of the format below:
+
 ```
 ./spec/test1_spec.rb
 spec/test2_spec.rb[1]
@@ -3104,9 +3105,11 @@ spec/test2_spec.rb[1]
 ./spec/test4_spec.rb:4
 ./spec/test4_spec.rb:5
 ```
+
 > Note that each of the line must be ending with `\n` the new line.
 
 Note when you set `KNAPSACK_PRO_TEST_FILE_LIST` or `KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE` then below environment variables are ignored:
+
 * `KNAPSACK_PRO_TEST_FILE_PATTERN`
 * `KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN`
 
