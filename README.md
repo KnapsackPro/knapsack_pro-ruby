@@ -3098,11 +3098,11 @@ Similarly, you can also provide a source file containing the test files that you
 `KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE=spec/fixtures/test_file_list_source_file.txt`  
 And the content of the source file can be any of the format below:
 ```
-./spec/test1.rb
-spec/test2.rb[1]
-./spec/test3.rb[1:2:3:4]
-./spec/test4.rb:4
-./spec/test4.rb:5
+./spec/test1_spec.rb
+spec/test2_spec.rb[1]
+./spec/test3_spec.rb[1:2:3:4]
+./spec/test4_spec.rb:4
+./spec/test4_spec.rb:5
 ```
 > Note that each of the line must be ending with `\n` the new line.
 

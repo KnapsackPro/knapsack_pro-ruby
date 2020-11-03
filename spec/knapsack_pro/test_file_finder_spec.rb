@@ -164,11 +164,11 @@ describe KnapsackPro::TestFileFinder do
 
       it do
         expect(subject).to eq([
-          { 'path' => 'spec/test1.rb' },
-          { 'path' => 'spec/test2.rb[1]' },
-          { 'path' => 'spec/test3.rb[1:2:3:4]' },
-          { 'path' => 'spec/test4.rb:4' },
-          { 'path' => 'spec/test4.rb:5' },
+          { 'path' => 'spec/test1_spec.rb' },
+          { 'path' => 'spec/test2_spec.rb[1]' },
+          { 'path' => 'spec/test3_spec.rb[1:2:3:4]' },
+          { 'path' => 'spec/test4_spec.rb:4' },
+          { 'path' => 'spec/test4_spec.rb:5' },
         ])
       end
 
