@@ -156,7 +156,7 @@ describe KnapsackPro::TestFileFinder do
     end
 
     context 'when KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE is defined' do
-      let(:test_file_list_source_file) { 'spec_fake/fake_test' }
+      let(:test_file_list_source_file) { 'spec/fixtures/test_file_list_source_file.txt' }
 
       before do
         stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE' => test_file_list_source_file })
@@ -168,6 +168,7 @@ describe KnapsackPro::TestFileFinder do
           { 'path' => 'spec/test2.rb[1]' },
           { 'path' => 'spec/test3.rb[1:2:3:4]' },
           { 'path' => 'spec/test4.rb:4' },
+          { 'path' => 'spec/test4.rb:5' },
         ])
       end
 

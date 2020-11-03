@@ -238,6 +238,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.test_file_list_source_file' do
+    subject { described_class.test_file_list_source_file }
+
+    context 'when ENV exists' do
+      let(:test_file_list_source_file) { 'spec/fixtures/test_file_list_source_file.txt' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE' => test_file_list_source_file }) }
+      it { should eq test_file_list_source_file }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
   describe '.test_dir' do
     subject { described_class.test_dir }
 

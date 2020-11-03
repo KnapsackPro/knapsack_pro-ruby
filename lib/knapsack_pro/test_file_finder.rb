@@ -64,7 +64,7 @@ module KnapsackPro
       end
 
       if test_file_list_enabled && KnapsackPro::Config::Env.test_file_list_source_file
-        return File.read(ENV['KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE']).split(/\n/)
+        return File.read(KnapsackPro::Config::Env.test_file_list_source_file).split(/\n/)
       end
 
       test_file_paths = Dir.glob(test_file_pattern).uniq
