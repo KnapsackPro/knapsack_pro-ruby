@@ -171,7 +171,6 @@ describe KnapsackPro::TestFileFinder do
           { 'path' => 'spec/test4_spec.rb:5' },
         ])
       end
-
     end
   end
 end
