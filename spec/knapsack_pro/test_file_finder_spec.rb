@@ -154,5 +154,23 @@ describe KnapsackPro::TestFileFinder do
         end
       end
     end
+
+    context 'when KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE is defined' do
+      let(:test_file_list_source_file) { 'spec/fixtures/test_file_list_source_file.txt' }
+
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE' => test_file_list_source_file })
+      end
+
+      it do
+        expect(subject).to eq([
+          { 'path' => 'spec/test1_spec.rb' },
+          { 'path' => 'spec/test2_spec.rb[1]' },
+          { 'path' => 'spec/test3_spec.rb[1:2:3:4]' },
+          { 'path' => 'spec/test4_spec.rb:4' },
+          { 'path' => 'spec/test4_spec.rb:5' },
+        ])
+      end
+    end
   end
 end

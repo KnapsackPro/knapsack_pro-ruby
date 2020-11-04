@@ -74,6 +74,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_FILE_LIST']
         end
 
+        def test_file_list_source_file
+          ENV['KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE']
+        end  
+
         def test_dir
           ENV['KNAPSACK_PRO_TEST_DIR']
         end
