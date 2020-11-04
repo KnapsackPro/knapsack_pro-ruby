@@ -2,7 +2,7 @@
 
 ### 2.7.0
 
-* Add support for env var `KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE` to allow accepting file containing test files to run.
+* Add support for env var `KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE` to allow accepting file containing test files to run
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/129
 
