@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.8.0
+
+* More actionable error message when RSpec split by examples is not working due to RSpec dry-run failure
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/130
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.7.0...v2.8.0
+
 ### 2.7.0
 
 * Add support for env var `KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE` to allow accepting file containing test files to run
