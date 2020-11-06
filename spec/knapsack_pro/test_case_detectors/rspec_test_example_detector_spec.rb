@@ -67,7 +67,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           let(:exit_code) { 1 }
 
           it do
-            expect { subject }.to raise_error(RuntimeError, expected_exception_message)
+            expect { subject }.to raise_error(RuntimeError, 'There was a problem while generating test examples for the test suite. Please read actionable error message above.')
           end
         end
       end
@@ -75,14 +75,12 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
     context 'when RSpec >= 3.6.0' do
       let(:expected_format) { 'json' }
-      let(:expected_exception_message) { 'There was a problem while generating test examples for the test suite using the RSpec dry-run flag. To reproduce the error triggered by the RSpec, please try to run this command (this way, you can find out what is causing the error): bundle exec rspec --format json --dry-run --out tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json --default-path spec spec/a_spec.rb spec/b_spec.rb' }
 
       it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
     end
 
     context 'when RSpec < 3.6.0' do
       let(:expected_format) { 'KnapsackPro::Formatters::RSpecJsonFormatter' }
-      let(:expected_exception_message) { 'There was a problem while generating test examples for the test suite using the RSpec dry-run flag. To reproduce the error triggered by the RSpec, please try to run this command (this way, you can find out what is causing the error): bundle exec rspec --format KnapsackPro::Formatters::RSpecJsonFormatter --dry-run --out tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json --default-path spec spec/a_spec.rb spec/b_spec.rb' }
 
       before do
         stub_const('RSpec::Core::Version::STRING', '3.5.0')
