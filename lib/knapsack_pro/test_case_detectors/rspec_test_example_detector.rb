@@ -38,11 +38,11 @@ module KnapsackPro
           ] + cli_args).join(' ')
 
           KnapsackPro.logger.error('-'*10 + ' START of actionable error message ' + '-'*50)
-          KnapsackPro.logger.error('There was a problem while generating test examples for the test suite using the RSpec dry-run flag. To reproduce the error triggered by the RSpec, please try to run below command (this way, you can find out what is causing the error):')
+          KnapsackPro.logger.error('There was a problem while generating test examples for the slow test files using the RSpec dry-run flag. To reproduce the error triggered by the RSpec, please try to run below command (this way, you can find out what is causing the error):')
           KnapsackPro.logger.error(debug_cmd)
           KnapsackPro.logger.error('-'*10 + ' END of actionable error message ' + '-'*50)
 
-          raise 'There was a problem while generating test examples for the test suite. Please read actionable error message above.'
+          raise 'There was a problem while generating test examples for the slow test files. Please read actionable error message above.'
         end
       end
 

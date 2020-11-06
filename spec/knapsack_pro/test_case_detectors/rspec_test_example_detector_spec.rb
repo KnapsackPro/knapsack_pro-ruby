@@ -67,7 +67,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           let(:exit_code) { 1 }
 
           it do
-            expect { subject }.to raise_error(RuntimeError, 'There was a problem while generating test examples for the test suite. Please read actionable error message above.')
+            expect { subject }.to raise_error(RuntimeError, 'There was a problem while generating test examples for the slow test files. Please read actionable error message above.')
           end
         end
       end
