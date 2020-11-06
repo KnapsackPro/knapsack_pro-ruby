@@ -36,6 +36,8 @@ module KnapsackPro
           debug_cmd = ([
             'bundle exec rspec',
           ] + cli_args).join(' ')
+          KnapsackPro.logger.error('-'*100)
+          KnapsackPro.logger.error('Please read an exception message below:')
           raise "There was a problem while generating test examples for the test suite using the RSpec dry-run flag. To reproduce the error triggered by the RSpec, please try to run this command (this way, you can find out what is causing the error): #{debug_cmd}"
         end
       end
