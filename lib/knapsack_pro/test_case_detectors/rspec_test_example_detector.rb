@@ -33,7 +33,10 @@ module KnapsackPro
         options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
         exit_code = ::RSpec::Core::Runner.new(options).run($stderr, $stdout)
         if exit_code != 0
-          raise 'There was problem to generate test examples for test suite'
+          debug_cmd = ([
+            'bundle exec rspec',
+          ] + cli_args).join(' ')
+          raise "There was a problem while generating test examples for the test suite. To reproduce the error triggered by RSpec please try to run this command. (this way, you can find out what is causing the error): #{debug_cmd}"
         end
       end
 
