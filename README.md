@@ -50,7 +50,7 @@ We keep this old FAQ in README to not break old links spread across the web. You
 
 # Requirements
 
-`>= Ruby 2.0.0`
+`>= Ruby 2.1.0`
 
 # Table of Contents
 
