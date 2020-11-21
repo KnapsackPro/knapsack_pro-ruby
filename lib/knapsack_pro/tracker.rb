@@ -90,11 +90,7 @@ module KnapsackPro
     end
 
     def now_without_mock_time
-      if defined?(Timecop)
-        Time.now_without_mock_time
-      else
-        Time.raw_now
-      end
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
   end
 end

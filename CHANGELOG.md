@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.9.0
+
+* Use `Process.clock_gettime` to measure track execution time
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/132
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.8.0...v2.9.0
+
 ### 2.8.0
 
 * More actionable error message when RSpec split by examples is not working due to RSpec dry-run failure
