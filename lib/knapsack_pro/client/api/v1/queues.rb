@@ -8,6 +8,7 @@ module KnapsackPro
               request_hash = {
                 :fixed_queue_split => KnapsackPro::Config::Env.fixed_queue_split,
                 :can_initialize_queue => args.fetch(:can_initialize_queue),
+                :attempt_connect_to_queue => args.fetch(:attempt_connect_to_queue),
                 :commit_hash => args.fetch(:commit_hash),
                 :branch => args.fetch(:branch),
                 :node_total => args.fetch(:node_total),
@@ -15,7 +16,7 @@ module KnapsackPro
                 :node_build_id => KnapsackPro::Config::Env.ci_node_build_id,
               }
 
-              if request_hash[:can_initialize_queue]
+              if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
                 request_hash.merge!({
                   :test_files => args.fetch(:test_files)
                 })

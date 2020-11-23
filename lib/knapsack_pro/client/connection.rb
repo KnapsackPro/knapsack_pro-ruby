@@ -25,6 +25,11 @@ module KnapsackPro
         !!(response_body && (response_body['errors'] || response_body['error']))
       end
 
+      def error_code
+        return unless response_body
+        response_body['error_code']
+      end
+
       def server_error?
         status = http_response.code.to_i
         status >= 500 && status < 600

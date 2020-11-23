@@ -11,9 +11,16 @@ module KnapsackPro
 
     def test_file_paths(can_initialize_queue, executed_test_files)
       return [] if @fallback_activated
-      action = build_action(can_initialize_queue)
+      action = build_action(can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
+
+      if can_initialize_queue && connection.success? && connection.error_code == 'attempt_connect_to_queue_failed'
+        action = build_action(can_initialize_queue, attempt_connect_to_queue: false)
+        connection = KnapsackPro::Client::Connection.new(action)
+        response = connection.call
+      end
+
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
@@ -52,9 +59,10 @@ module KnapsackPro
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
-    def build_action(can_initialize_queue)
+    def build_action(can_initialize_queue, attempt_connect_to_queue:)
       KnapsackPro::Client::API::V1::Queues.queue(
         can_initialize_queue: can_initialize_queue,
+        attempt_connect_to_queue: attempt_connect_to_queue,
         commit_hash: repository_adapter.commit_hash,
         branch: encrypted_branch,
         node_total: ci_node_total,
