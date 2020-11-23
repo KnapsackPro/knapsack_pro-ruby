@@ -25,9 +25,9 @@ module KnapsackPro
         !!(response_body && (response_body['errors'] || response_body['error']))
       end
 
-      def error_code
+      def api_code
         return unless response_body
-        response_body['error_code']
+        response_body['code']
       end
 
       def server_error?

@@ -3,6 +3,8 @@ module KnapsackPro
     module API
       module V1
         class Queues < Base
+          CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED = 'ATTEMPT_CONNECT_TO_QUEUE_FAILED'
+
           class << self
             def queue(args)
               request_hash = {

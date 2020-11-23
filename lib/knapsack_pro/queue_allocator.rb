@@ -15,7 +15,7 @@ module KnapsackPro
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
-      if can_initialize_queue && connection.success? && connection.error_code == 'attempt_connect_to_queue_failed'
+      if can_initialize_queue && connection.success? && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
         action = build_action(can_initialize_queue, attempt_connect_to_queue: false)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
