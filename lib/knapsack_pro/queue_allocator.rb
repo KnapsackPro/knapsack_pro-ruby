@@ -15,7 +15,9 @@ module KnapsackPro
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
+      # when attempt to connect to existing queue on API side failed because queue does not exist yet
       if can_initialize_queue && connection.success? && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
+        # make attempt to initalize a new queue on API side
         action = build_action(can_initialize_queue, attempt_connect_to_queue: false)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
