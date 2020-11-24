@@ -2,7 +2,7 @@ module KnapsackPro
   class QueueAllocator
     def initialize(args)
       @lazy_fast_and_slow_test_files_to_run = args.fetch(:lazy_fast_and_slow_test_files_to_run)
-      @fallback_mode_test_files = args.fetch(:fallback_mode_test_files)
+      @lazy_fallback_mode_test_files = args.fetch(:lazy_fallback_mode_test_files)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
@@ -47,7 +47,7 @@ module KnapsackPro
     private
 
     attr_reader :lazy_fast_and_slow_test_files_to_run,
-      :fallback_mode_test_files,
+      :lazy_fallback_mode_test_files,
       :ci_node_total,
       :ci_node_index,
       :ci_node_build_id,
@@ -97,7 +97,7 @@ module KnapsackPro
     end
 
     def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(fallback_mode_test_files, ci_node_total)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(lazy_fallback_mode_test_files.call, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
       KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end
