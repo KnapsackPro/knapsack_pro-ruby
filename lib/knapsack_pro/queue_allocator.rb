@@ -1,7 +1,7 @@
 module KnapsackPro
   class QueueAllocator
     def initialize(args)
-      @fast_and_slow_test_files_to_run = args.fetch(:fast_and_slow_test_files_to_run)
+      @lazy_fast_and_slow_test_files_to_run = args.fetch(:lazy_fast_and_slow_test_files_to_run)
       @fallback_mode_test_files = args.fetch(:fallback_mode_test_files)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
@@ -46,15 +46,21 @@ module KnapsackPro
 
     private
 
-    attr_reader :fast_and_slow_test_files_to_run,
+    attr_reader :lazy_fast_and_slow_test_files_to_run,
       :fallback_mode_test_files,
       :ci_node_total,
       :ci_node_index,
       :ci_node_build_id,
       :repository_adapter
 
+    # This method might be slow because reads test files from disk.
+    # This method can be very slow (a few seconds or more) when you use RSpec split by test examples feature because RSpec needs to generate JSON report with test examples ids
+    def lazy_loaded_fast_and_slow_test_files_to_run
+      @lazy_loaded_fast_and_slow_test_files_to_run ||= lazy_fast_and_slow_test_files_to_run.call
+    end
+
     def encrypted_test_files
-      KnapsackPro::Crypto::Encryptor.call(fast_and_slow_test_files_to_run)
+      KnapsackPro::Crypto::Encryptor.call(lazy_loaded_fast_and_slow_test_files_to_run)
     end
 
     def encrypted_branch
@@ -62,6 +68,12 @@ module KnapsackPro
     end
 
     def build_action(can_initialize_queue, attempt_connect_to_queue:)
+      # read test files from disk only when needed because it can be slow operation
+      test_files =
+        if can_initialize_queue && !attempt_connect_to_queue
+          encrypted_test_files
+        end
+
       KnapsackPro::Client::API::V1::Queues.queue(
         can_initialize_queue: can_initialize_queue,
         attempt_connect_to_queue: attempt_connect_to_queue,
@@ -70,13 +82,18 @@ module KnapsackPro
         node_total: ci_node_total,
         node_index: ci_node_index,
         node_build_id: ci_node_build_id,
-        test_files: encrypted_test_files,
+        test_files: test_files,
       )
     end
 
     def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(fast_and_slow_test_files_to_run, response['test_files'])
-      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+      # when encryption is disabled we can avoid calling slow method lazy_loaded_fast_and_slow_test_files_to_run
+      if KnapsackPro::Config::Env.test_files_encrypted?
+        decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files'])
+        KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+      else
+        KnapsackPro::TestFilePresenter.paths(response['test_files'])
+      end
     end
 
     def fallback_test_files(executed_test_files)

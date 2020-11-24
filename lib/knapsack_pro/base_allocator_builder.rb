@@ -63,6 +63,10 @@ module KnapsackPro
       end
     end
 
+    def lazy_fast_and_slow_test_files_to_run
+      lambda { fast_and_slow_test_files_to_run }
+    end
+
     private
 
     attr_reader :adapter_class
