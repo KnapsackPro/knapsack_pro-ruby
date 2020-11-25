@@ -1,6 +1,8 @@
 describe KnapsackPro::QueueAllocator do
-  let(:fast_and_slow_test_files_to_run) { double }
-  let(:fallback_mode_test_files) { double }
+  let(:lazy_loaded_fast_and_slow_test_files_to_run) { double }
+  let(:lazy_fast_and_slow_test_files_to_run) { double(call: lazy_loaded_fast_and_slow_test_files_to_run) }
+  let(:lazy_loaded_fallback_mode_test_files) { double }
+  let(:lazy_fallback_mode_test_files) { double(call: lazy_loaded_fallback_mode_test_files) }
   let(:ci_node_total) { double }
   let(:ci_node_index) { double }
   let(:ci_node_build_id) { double }
@@ -8,8 +10,8 @@ describe KnapsackPro::QueueAllocator do
 
   let(:queue_allocator) do
     described_class.new(
-      fast_and_slow_test_files_to_run: fast_and_slow_test_files_to_run,
-      fallback_mode_test_files: fallback_mode_test_files,
+      lazy_fast_and_slow_test_files_to_run: lazy_fast_and_slow_test_files_to_run,
+      lazy_fallback_mode_test_files: lazy_fallback_mode_test_files,
       ci_node_total: ci_node_total,
       ci_node_index: ci_node_index,
       ci_node_build_id: ci_node_build_id,
@@ -18,36 +20,241 @@ describe KnapsackPro::QueueAllocator do
   end
 
   describe '#test_file_paths' do
-    let(:can_initialize_queue) { double }
     let(:executed_test_files) { [] }
     let(:response) { double }
+    let(:api_code) { nil }
 
     subject { queue_allocator.test_file_paths(can_initialize_queue, executed_test_files) }
 
-    before do
-      encrypted_test_files = double
-      expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
+    context 'when can_initialize_queue=true' do
+      let(:can_initialize_queue) { true }
 
-      encrypted_branch = double
-      expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+      before do
+        encrypted_branch = double
+        expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
 
-      action = double
-      expect(KnapsackPro::Client::API::V1::Queues).to receive(:queue).with(
-        can_initialize_queue: can_initialize_queue,
-        commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        node_build_id: ci_node_build_id,
-        test_files: encrypted_test_files,
-      ).and_return(action)
+        action = double
+        expect(KnapsackPro::Client::API::V1::Queues).to receive(:queue).with(
+          can_initialize_queue: can_initialize_queue,
+          attempt_connect_to_queue: true, # when can_initialize_queue=true then expect attempt_connect_to_queue=true
+          commit_hash: repository_adapter.commit_hash,
+          branch: encrypted_branch,
+          node_total: ci_node_total,
+          node_index: ci_node_index,
+          node_build_id: ci_node_build_id,
+          test_files: nil, # when attempt_connect_to_queue=true then expect test_files is nil to make fast request to API
+        ).and_return(action)
 
-      connection = instance_double(KnapsackPro::Client::Connection,
-                                   call: response,
-                                   success?: success?,
-                                   errors?: errors?)
-      expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
+        connection = instance_double(KnapsackPro::Client::Connection,
+                                     call: response,
+                                     success?: success?,
+                                     errors?: errors?,
+                                     api_code: api_code)
+        expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
+      end
+
+      context 'when successful request to API' do
+        let(:success?) { true }
+
+        context 'when response has errors' do
+          let(:errors?) { true }
+
+          it do
+            expect { subject }.to raise_error(ArgumentError)
+          end
+        end
+
+        context 'when response has no errors' do
+          let(:errors?) { false }
+
+          context 'when response returns test files (successful attempt to connect to queue already existing on the API side)' do
+            let(:test_files) do
+              [
+                { 'path' => 'a_spec.rb' },
+                { 'path' => 'b_spec.rb' },
+              ]
+            end
+            let(:response) do
+              { 'test_files' => test_files }
+            end
+
+            context 'when test files encryption is enabled' do
+              before do
+                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
+                expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files']).and_return(test_files)
+              end
+
+              it { should eq ['a_spec.rb', 'b_spec.rb'] }
+            end
+
+            context 'when test files encryption is disabled' do
+              before do
+                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
+              end
+
+              it { should eq ['a_spec.rb', 'b_spec.rb'] }
+            end
+          end
+
+          context 'when response has code=ATTEMPT_CONNECT_TO_QUEUE_FAILED' do
+            let(:response) do
+              { 'code' => 'ATTEMPT_CONNECT_TO_QUEUE_FAILED' }
+            end
+            let(:api_code) { 'ATTEMPT_CONNECT_TO_QUEUE_FAILED' }
+
+            before do
+              encrypted_branch = double
+              expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
+              encrypted_test_files = double
+              expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
+
+              # 2nd request is no more an attempt to connect to queue.
+              # We want to try to initalize a new queue so we will also send list of test files from disk.
+              action = double
+              expect(KnapsackPro::Client::API::V1::Queues).to receive(:queue).with(
+                can_initialize_queue: can_initialize_queue,
+                attempt_connect_to_queue: false,
+                commit_hash: repository_adapter.commit_hash,
+                branch: encrypted_branch,
+                node_total: ci_node_total,
+                node_index: ci_node_index,
+                node_build_id: ci_node_build_id,
+                test_files: encrypted_test_files,
+              ).and_return(action)
+
+              connection = instance_double(KnapsackPro::Client::Connection,
+                                           call: response2,
+                                           success?: response2_success?,
+                                           errors?: response2_errors?,
+                                           api_code: nil)
+              expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
+            end
+
+
+            context 'when response has errors' do
+              let(:response2_errors?) { true }
+              let(:response2_success?) { true }
+              let(:response2) { nil }
+
+              it do
+                expect { subject }.to raise_error(ArgumentError)
+              end
+            end
+
+            context 'when response has no errors' do
+              let(:response2_errors?) { false }
+              let(:response2_success?) { true }
+
+              context 'when response returns test files (successful attempt to connect to queue already existing on the API side)' do
+                let(:test_files) do
+                  [
+                    { 'path' => 'a_spec.rb' },
+                    { 'path' => 'b_spec.rb' },
+                  ]
+                end
+                let(:response2) do
+                  { 'test_files' => test_files }
+                end
+
+                context 'when test files encryption is enabled' do
+                  before do
+                    expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
+                    expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response2['test_files']).and_return(test_files)
+                  end
+
+                  it { should eq ['a_spec.rb', 'b_spec.rb'] }
+                end
+
+                context 'when test files encryption is disabled' do
+                  before do
+                    expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
+                  end
+
+                  it { should eq ['a_spec.rb', 'b_spec.rb'] }
+                end
+              end
+            end
+          end
+        end
+      end
     end
+
+    context 'when can_initialize_queue=false' do
+      let(:can_initialize_queue) { false }
+      let(:api_code) { nil }
+
+      before do
+        encrypted_branch = double
+        expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
+        action = double
+        expect(KnapsackPro::Client::API::V1::Queues).to receive(:queue).with(
+          can_initialize_queue: can_initialize_queue,
+          attempt_connect_to_queue: false, # when can_initialize_queue=false then expect attempt_connect_to_queue=false
+          commit_hash: repository_adapter.commit_hash,
+          branch: encrypted_branch,
+          node_total: ci_node_total,
+          node_index: ci_node_index,
+          node_build_id: ci_node_build_id,
+          test_files: nil, # when can_initialize_queue=false then expect test_files is nil to make fast request to API
+        ).and_return(action)
+
+        connection = instance_double(KnapsackPro::Client::Connection,
+                                     call: response,
+                                     success?: success?,
+                                     errors?: errors?,
+                                     api_code: api_code)
+        expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
+      end
+
+      context 'when successful request to API' do
+        let(:success?) { true }
+
+        context 'when response has errors' do
+          let(:errors?) { true }
+
+          it do
+            expect { subject }.to raise_error(ArgumentError)
+          end
+        end
+
+        context 'when response has no errors' do
+          let(:errors?) { false }
+
+          context 'when response returns test files (successful attempt to connect to queue already existing on the API side)' do
+            let(:test_files) do
+              [
+                { 'path' => 'a_spec.rb' },
+                { 'path' => 'b_spec.rb' },
+              ]
+            end
+            let(:response) do
+              { 'test_files' => test_files }
+            end
+
+            context 'when test files encryption is enabled' do
+              before do
+                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
+                expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files']).and_return(test_files)
+              end
+
+              it { should eq ['a_spec.rb', 'b_spec.rb'] }
+            end
+
+            context 'when test files encryption is disabled' do
+              before do
+                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
+              end
+
+              it { should eq ['a_spec.rb', 'b_spec.rb'] }
+            end
+          end
+        end
+      end
+    end
+
+    #--------------------------- old to remove
 
     context 'when successful request to API' do
       let(:success?) { true }
@@ -56,26 +263,39 @@ describe KnapsackPro::QueueAllocator do
         let(:errors?) { true }
 
         it do
-          expect { subject }.to raise_error(ArgumentError)
+          subject
+          #expect { subject }.to raise_error(ArgumentError)
         end
       end
 
-      context 'when response has no errors' do
+      context 'when response has no errors (response returns test files)' do
         let(:errors?) { false }
+        let(:test_files) do
+          [
+            { 'path' => 'a_spec.rb' },
+            { 'path' => 'b_spec.rb' },
+          ]
+        end
         let(:response) do
-          {
-            'test_files' => [
-              { 'path' => 'a_spec.rb' },
-              { 'path' => 'b_spec.rb' },
-            ]
-          }
+          { 'test_files' => test_files }
         end
 
-        before do
-          expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
+        context 'when test files encryption is enabled' do
+          before do
+            expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
+            expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files']).and_return(test_files)
+          end
+
+          it { should eq ['a_spec.rb', 'b_spec.rb'] }
         end
 
-        it { should eq ['a_spec.rb', 'b_spec.rb'] }
+        context 'when test files encryption is disabled' do
+          before do
+            expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
+          end
+
+          it { should eq ['a_spec.rb', 'b_spec.rb'] }
+        end
       end
     end
 
