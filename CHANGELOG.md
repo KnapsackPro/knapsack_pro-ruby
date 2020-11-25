@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.10.0
+
+* Add support for an attempt to connect to existing Queue on API side to reduce slow requests number
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/133
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.9.0...v2.10.0
+
 ### 2.9.0
 
 * Use `Process.clock_gettime` to measure track execution time

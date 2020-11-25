@@ -1,8 +1,8 @@
 module KnapsackPro
   class QueueAllocator
     def initialize(args)
-      @fast_and_slow_test_files_to_run = args.fetch(:fast_and_slow_test_files_to_run)
-      @fallback_mode_test_files = args.fetch(:fallback_mode_test_files)
+      @lazy_fast_and_slow_test_files_to_run = args.fetch(:lazy_fast_and_slow_test_files_to_run)
+      @lazy_fallback_mode_test_files = args.fetch(:lazy_fallback_mode_test_files)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
@@ -11,9 +11,18 @@ module KnapsackPro
 
     def test_file_paths(can_initialize_queue, executed_test_files)
       return [] if @fallback_activated
-      action = build_action(can_initialize_queue)
+      action = build_action(can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
+
+      # when attempt to connect to existing queue on API side failed because queue does not exist yet
+      if can_initialize_queue && connection.success? && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
+        # make attempt to initalize a new queue on API side
+        action = build_action(can_initialize_queue, attempt_connect_to_queue: false)
+        connection = KnapsackPro::Client::Connection.new(action)
+        response = connection.call
+      end
+
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
@@ -37,40 +46,58 @@ module KnapsackPro
 
     private
 
-    attr_reader :fast_and_slow_test_files_to_run,
-      :fallback_mode_test_files,
+    attr_reader :lazy_fast_and_slow_test_files_to_run,
+      :lazy_fallback_mode_test_files,
       :ci_node_total,
       :ci_node_index,
       :ci_node_build_id,
       :repository_adapter
 
+    # This method might be slow because it reads test files from disk.
+    # This method can be very slow (a few seconds or more) when you use RSpec split by test examples feature because RSpec needs to generate JSON report with test examples ids
+    def lazy_loaded_fast_and_slow_test_files_to_run
+      @lazy_loaded_fast_and_slow_test_files_to_run ||= lazy_fast_and_slow_test_files_to_run.call
+    end
+
     def encrypted_test_files
-      KnapsackPro::Crypto::Encryptor.call(fast_and_slow_test_files_to_run)
+      KnapsackPro::Crypto::Encryptor.call(lazy_loaded_fast_and_slow_test_files_to_run)
     end
 
     def encrypted_branch
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
-    def build_action(can_initialize_queue)
+    def build_action(can_initialize_queue, attempt_connect_to_queue:)
+      # read test files from disk only when needed because it can be slow operation
+      test_files =
+        if can_initialize_queue && !attempt_connect_to_queue
+          encrypted_test_files
+        end
+
       KnapsackPro::Client::API::V1::Queues.queue(
         can_initialize_queue: can_initialize_queue,
+        attempt_connect_to_queue: attempt_connect_to_queue,
         commit_hash: repository_adapter.commit_hash,
         branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
         node_build_id: ci_node_build_id,
-        test_files: encrypted_test_files,
+        test_files: test_files,
       )
     end
 
     def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(fast_and_slow_test_files_to_run, response['test_files'])
-      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+      # when encryption is disabled we can avoid calling slow method lazy_loaded_fast_and_slow_test_files_to_run
+      if KnapsackPro::Config::Env.test_files_encrypted?
+        decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files'])
+        KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+      else
+        KnapsackPro::TestFilePresenter.paths(response['test_files'])
+      end
     end
 
     def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(fallback_mode_test_files, ci_node_total)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(lazy_fallback_mode_test_files.call, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
       KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end
