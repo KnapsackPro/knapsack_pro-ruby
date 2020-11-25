@@ -210,7 +210,6 @@ describe KnapsackPro::QueueAllocator do
 
               context 'when 2nd response has no errors' do
                 let(:response2_errors?) { false }
-                let(:response2_success?) { true }
 
                 context 'when 2nd response returns test files (successful attempt to connect to queue already existing on the API side)' do
                   let(:test_files) do
