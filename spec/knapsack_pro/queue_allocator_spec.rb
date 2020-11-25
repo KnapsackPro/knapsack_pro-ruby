@@ -26,6 +26,71 @@ describe KnapsackPro::QueueAllocator do
 
     subject { queue_allocator.test_file_paths(can_initialize_queue, executed_test_files) }
 
+    shared_examples_for 'when connection to API failed (fallback mode)' do
+      context 'when fallback mode is disabled' do
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:fallback_mode_enabled?).and_return(false)
+        end
+
+        it do
+          expect { subject }.to raise_error(RuntimeError, 'Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode')
+        end
+      end
+
+      context 'when CI node retry count > 0' do
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:ci_node_retry_count).and_return(1)
+        end
+
+        context 'when fixed_queue_split=true' do
+          before do
+            expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(true)
+          end
+
+          it do
+            expect { subject }.to raise_error(RuntimeError, 'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode')
+          end
+        end
+
+        context 'when fixed_queue_split=false' do
+          before do
+            expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(false)
+          end
+
+          it do
+            expect { subject }.to raise_error(RuntimeError, 'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode Please ensure you have set KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true to allow Knapsack Pro API remember the recorded CI node tests so when you retry failed tests on the CI node then the same set of tests will be executed. See more https://github.com/KnapsackPro/knapsack_pro-ruby#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node')
+          end
+        end
+      end
+
+      context 'when fallback mode started' do
+        before do
+          test_flat_distributor = instance_double(KnapsackPro::TestFlatDistributor)
+          expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(lazy_loaded_fallback_mode_test_files, ci_node_total).and_return(test_flat_distributor)
+          expect(test_flat_distributor).to receive(:test_files_for_node).with(ci_node_index).and_return([
+            { 'path' => 'c_spec.rb' },
+            { 'path' => 'd_spec.rb' },
+          ])
+        end
+
+        context 'when no test files were executed yet' do
+          let(:executed_test_files) { [] }
+
+          it 'enables fallback mode and returns fallback test files' do
+            expect(subject).to eq ['c_spec.rb', 'd_spec.rb']
+          end
+        end
+
+        context 'when test files were already executed' do
+          let(:executed_test_files) { ['c_spec.rb', 'additional_executed_spec.rb'] }
+
+          it 'enables fallback mode and returns fallback test files' do
+            expect(subject).to eq ['d_spec.rb']
+          end
+        end
+      end
+    end
+
     context 'when can_initialize_queue=true' do
       let(:can_initialize_queue) { true }
 
@@ -175,8 +240,23 @@ describe KnapsackPro::QueueAllocator do
                 end
               end
             end
+
+            context 'when not successful request to API' do
+              let(:response2_success?) { false }
+              let(:response2_errors?) { false }
+              let(:response2) { nil }
+
+              it_behaves_like 'when connection to API failed (fallback mode)'
+            end
           end
         end
+      end
+
+      context 'when not successful request to API' do
+        let(:success?) { false }
+        let(:errors?) { false }
+
+        it_behaves_like 'when connection to API failed (fallback mode)'
       end
     end
 
@@ -252,118 +332,12 @@ describe KnapsackPro::QueueAllocator do
           end
         end
       end
-    end
 
-    #--------------------------- old to remove
-
-    context 'when successful request to API' do
-      let(:success?) { true }
-
-      context 'when response has errors' do
-        let(:errors?) { true }
-
-        it do
-          subject
-          #expect { subject }.to raise_error(ArgumentError)
-        end
-      end
-
-      context 'when response has no errors (response returns test files)' do
+      context 'when not successful request to API' do
+        let(:success?) { false }
         let(:errors?) { false }
-        let(:test_files) do
-          [
-            { 'path' => 'a_spec.rb' },
-            { 'path' => 'b_spec.rb' },
-          ]
-        end
-        let(:response) do
-          { 'test_files' => test_files }
-        end
 
-        context 'when test files encryption is enabled' do
-          before do
-            expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
-            expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files']).and_return(test_files)
-          end
-
-          it { should eq ['a_spec.rb', 'b_spec.rb'] }
-        end
-
-        context 'when test files encryption is disabled' do
-          before do
-            expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
-          end
-
-          it { should eq ['a_spec.rb', 'b_spec.rb'] }
-        end
-      end
-    end
-
-    context 'when not successful request to API' do
-      let(:success?) { false }
-      let(:errors?) { false }
-
-      context 'when fallback mode is disabled' do
-        before do
-          expect(KnapsackPro::Config::Env).to receive(:fallback_mode_enabled?).and_return(false)
-        end
-
-        it do
-          expect { subject }.to raise_error(RuntimeError, 'Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode')
-        end
-      end
-
-      context 'when CI node retry count > 0' do
-        before do
-          expect(KnapsackPro::Config::Env).to receive(:ci_node_retry_count).and_return(1)
-        end
-
-        context 'when fixed_queue_split=true' do
-          before do
-            expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(true)
-          end
-
-          it do
-            expect { subject }.to raise_error(RuntimeError, 'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode')
-          end
-        end
-
-        context 'when fixed_queue_split=false' do
-          before do
-            expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(false)
-          end
-
-          it do
-            expect { subject }.to raise_error(RuntimeError, 'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://github.com/KnapsackPro/knapsack_pro-ruby#required-ci-configuration-if-you-use-retry-single-failed-ci-node-feature-on-your-ci-server-when-knapsack_pro_fixed_queue_splittrue-in-queue-mode-or-knapsack_pro_fixed_test_suite_splittrue-in-regular-mode Please ensure you have set KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true to allow Knapsack Pro API remember the recorded CI node tests so when you retry failed tests on the CI node then the same set of tests will be executed. See more https://github.com/KnapsackPro/knapsack_pro-ruby#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node')
-          end
-        end
-      end
-
-      context 'when fallback mode started' do
-        before do
-          test_flat_distributor = instance_double(KnapsackPro::TestFlatDistributor)
-          expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(fallback_mode_test_files, ci_node_total).and_return(test_flat_distributor)
-          expect(test_flat_distributor).to receive(:test_files_for_node).with(ci_node_index).and_return([
-            { 'path' => 'c_spec.rb' },
-            { 'path' => 'd_spec.rb' },
-          ])
-        end
-
-        context 'when no test files were executed yet' do
-          let(:executed_test_files) { [] }
-
-          it 'enables fallback mode and returns fallback test files' do
-            expect(subject).to eq ['c_spec.rb', 'd_spec.rb']
-          end
-        end
-
-        context 'when test files were already executed' do
-          let(:executed_test_files) { ['c_spec.rb', 'additional_executed_spec.rb'] }
-
-          it 'enables fallback mode and returns fallback test files' do
-            expect(subject).to eq ['d_spec.rb']
-          end
-        end
+        it_behaves_like 'when connection to API failed (fallback mode)'
       end
     end
   end
