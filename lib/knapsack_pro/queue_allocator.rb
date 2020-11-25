@@ -1,8 +1,8 @@
 module KnapsackPro
   class QueueAllocator
     def initialize(args)
-      @lazy_fast_and_slow_test_files_to_run = args.fetch(:lazy_fast_and_slow_test_files_to_run)
-      @lazy_fallback_mode_test_files = args.fetch(:lazy_fallback_mode_test_files)
+      @fast_and_slow_test_files_to_run = args.fetch(:fast_and_slow_test_files_to_run)
+      @fallback_mode_test_files = args.fetch(:fallback_mode_test_files)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
@@ -46,21 +46,15 @@ module KnapsackPro
 
     private
 
-    attr_reader :lazy_fast_and_slow_test_files_to_run,
-      :lazy_fallback_mode_test_files,
+    attr_reader :fast_and_slow_test_files_to_run,
+      :fallback_mode_test_files,
       :ci_node_total,
       :ci_node_index,
       :ci_node_build_id,
       :repository_adapter
 
-    # This method might be slow because it reads test files from disk.
-    # This method can be very slow (a few seconds or more) when you use RSpec split by test examples feature because RSpec needs to generate JSON report with test examples ids
-    def lazy_loaded_fast_and_slow_test_files_to_run
-      @lazy_loaded_fast_and_slow_test_files_to_run ||= lazy_fast_and_slow_test_files_to_run.call
-    end
-
     def encrypted_test_files
-      KnapsackPro::Crypto::Encryptor.call(lazy_loaded_fast_and_slow_test_files_to_run)
+      KnapsackPro::Crypto::Encryptor.call(fast_and_slow_test_files_to_run)
     end
 
     def encrypted_branch
@@ -87,17 +81,12 @@ module KnapsackPro
     end
 
     def prepare_test_files(response)
-      # when encryption is disabled we can avoid calling slow method lazy_loaded_fast_and_slow_test_files_to_run
-      if KnapsackPro::Config::Env.test_files_encrypted?
-        decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files'])
-        KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
-      else
-        KnapsackPro::TestFilePresenter.paths(response['test_files'])
-      end
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(fast_and_slow_test_files_to_run, response['test_files'])
+      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
     def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(lazy_fallback_mode_test_files.call, ci_node_total)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(fallback_mode_test_files, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
       KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end

@@ -1,8 +1,6 @@
 describe KnapsackPro::QueueAllocator do
-  let(:lazy_loaded_fast_and_slow_test_files_to_run) { double }
-  let(:lazy_fast_and_slow_test_files_to_run) { double(call: lazy_loaded_fast_and_slow_test_files_to_run) }
-  let(:lazy_loaded_fallback_mode_test_files) { double }
-  let(:lazy_fallback_mode_test_files) { double(call: lazy_loaded_fallback_mode_test_files) }
+  let(:fast_and_slow_test_files_to_run) { double }
+  let(:fallback_mode_test_files) { double }
   let(:ci_node_total) { double }
   let(:ci_node_index) { double }
   let(:ci_node_build_id) { double }
@@ -10,8 +8,8 @@ describe KnapsackPro::QueueAllocator do
 
   let(:queue_allocator) do
     described_class.new(
-      lazy_fast_and_slow_test_files_to_run: lazy_fast_and_slow_test_files_to_run,
-      lazy_fallback_mode_test_files: lazy_fallback_mode_test_files,
+      fast_and_slow_test_files_to_run: fast_and_slow_test_files_to_run,
+      fallback_mode_test_files: fallback_mode_test_files,
       ci_node_total: ci_node_total,
       ci_node_index: ci_node_index,
       ci_node_build_id: ci_node_build_id,
@@ -66,7 +64,7 @@ describe KnapsackPro::QueueAllocator do
       context 'when fallback mode started' do
         before do
           test_flat_distributor = instance_double(KnapsackPro::TestFlatDistributor)
-          expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(lazy_loaded_fallback_mode_test_files, ci_node_total).and_return(test_flat_distributor)
+          expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(fallback_mode_test_files, ci_node_total).and_return(test_flat_distributor)
           expect(test_flat_distributor).to receive(:test_files_for_node).with(ci_node_index).and_return([
             { 'path' => 'c_spec.rb' },
             { 'path' => 'd_spec.rb' },
@@ -133,32 +131,20 @@ describe KnapsackPro::QueueAllocator do
           let(:errors?) { false }
 
           context 'when response returns test files (successful attempt to connect to queue already existing on the API side)' do
-            let(:test_files) do
-              [
-                { 'path' => 'a_spec.rb' },
-                { 'path' => 'b_spec.rb' },
-              ]
-            end
             let(:response) do
-              { 'test_files' => test_files }
+              {
+                'test_files' => [
+                  { 'path' => 'a_spec.rb' },
+                  { 'path' => 'b_spec.rb' },
+                ]
+              }
             end
 
-            context 'when test files encryption is enabled' do
-              before do
-                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
-                expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files']).and_return(test_files)
-              end
-
-              it { should eq ['a_spec.rb', 'b_spec.rb'] }
+            before do
+              expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
             end
 
-            context 'when test files encryption is disabled' do
-              before do
-                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
-              end
-
-              it { should eq ['a_spec.rb', 'b_spec.rb'] }
-            end
+            it { should eq ['a_spec.rb', 'b_spec.rb'] }
           end
 
           context 'when response has code=ATTEMPT_CONNECT_TO_QUEUE_FAILED' do
@@ -172,7 +158,7 @@ describe KnapsackPro::QueueAllocator do
               expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
 
               encrypted_test_files = double
-              expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
+              expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
 
               # 2nd request is no more an attempt to connect to queue.
               # We want to try to initalize a new queue so we will also send list of test files from disk.
@@ -212,32 +198,20 @@ describe KnapsackPro::QueueAllocator do
                 let(:response2_errors?) { false }
 
                 context 'when 2nd response returns test files (successful attempt to connect to queue already existing on the API side)' do
-                  let(:test_files) do
-                    [
-                      { 'path' => 'a_spec.rb' },
-                      { 'path' => 'b_spec.rb' },
-                    ]
-                  end
                   let(:response2) do
-                    { 'test_files' => test_files }
+                    {
+                      'test_files' => [
+                        { 'path' => 'a_spec.rb' },
+                        { 'path' => 'b_spec.rb' },
+                      ]
+                    }
                   end
 
-                  context 'when test files encryption is enabled' do
-                    before do
-                      expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
-                      expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response2['test_files']).and_return(test_files)
-                    end
-
-                    it { should eq ['a_spec.rb', 'b_spec.rb'] }
+                  before do
+                    expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response2['test_files']).and_call_original
                   end
 
-                  context 'when test files encryption is disabled' do
-                    before do
-                      expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
-                    end
-
-                    it { should eq ['a_spec.rb', 'b_spec.rb'] }
-                  end
+                  it { should eq ['a_spec.rb', 'b_spec.rb'] }
                 end
               end
             end
@@ -304,32 +278,20 @@ describe KnapsackPro::QueueAllocator do
           let(:errors?) { false }
 
           context 'when response returns test files (successful attempt to connect to queue already existing on the API side)' do
-            let(:test_files) do
-              [
-                { 'path' => 'a_spec.rb' },
-                { 'path' => 'b_spec.rb' },
-              ]
-            end
             let(:response) do
-              { 'test_files' => test_files }
+              {
+                'test_files' => [
+                  { 'path' => 'a_spec.rb' },
+                  { 'path' => 'b_spec.rb' },
+                ]
+              }
             end
 
-            context 'when test files encryption is enabled' do
-              before do
-                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(true)
-                expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(lazy_loaded_fast_and_slow_test_files_to_run, response['test_files']).and_return(test_files)
-              end
-
-              it { should eq ['a_spec.rb', 'b_spec.rb'] }
+            before do
+              expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
             end
 
-            context 'when test files encryption is disabled' do
-              before do
-                expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(false)
-              end
-
-              it { should eq ['a_spec.rb', 'b_spec.rb'] }
-            end
+            it { should eq ['a_spec.rb', 'b_spec.rb'] }
           end
         end
       end
