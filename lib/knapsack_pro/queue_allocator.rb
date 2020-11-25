@@ -53,7 +53,7 @@ module KnapsackPro
       :ci_node_build_id,
       :repository_adapter
 
-    # This method might be slow because reads test files from disk.
+    # This method might be slow because it reads test files from disk.
     # This method can be very slow (a few seconds or more) when you use RSpec split by test examples feature because RSpec needs to generate JSON report with test examples ids
     def lazy_loaded_fast_and_slow_test_files_to_run
       @lazy_loaded_fast_and_slow_test_files_to_run ||= lazy_fast_and_slow_test_files_to_run.call
