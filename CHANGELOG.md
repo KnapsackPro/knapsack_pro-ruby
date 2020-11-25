@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.10.1
+
+* Fix RSpec split by test examples feature broken by lazy generating of JSON report with test example ids
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/135
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.10.0...v2.10.1
+
 ### 2.10.0
 
 * Add support for an attempt to connect to existing Queue on API side to reduce slow requests number
