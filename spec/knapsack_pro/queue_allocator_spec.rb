@@ -197,7 +197,7 @@ describe KnapsackPro::QueueAllocator do
             end
 
 
-            context 'when response has errors' do
+            context 'when 2nd response has errors' do
               let(:response2_errors?) { true }
               let(:response2_success?) { true }
               let(:response2) { nil }
@@ -207,11 +207,11 @@ describe KnapsackPro::QueueAllocator do
               end
             end
 
-            context 'when response has no errors' do
+            context 'when 2nd response has no errors' do
               let(:response2_errors?) { false }
               let(:response2_success?) { true }
 
-              context 'when response returns test files (successful attempt to connect to queue already existing on the API side)' do
+              context 'when 2nd response returns test files (successful attempt to connect to queue already existing on the API side)' do
                 let(:test_files) do
                   [
                     { 'path' => 'a_spec.rb' },
@@ -241,7 +241,7 @@ describe KnapsackPro::QueueAllocator do
               end
             end
 
-            context 'when not successful request to API' do
+            context 'when not successful 2nd request to API' do
               let(:response2_success?) { false }
               let(:response2_errors?) { false }
               let(:response2) { nil }
