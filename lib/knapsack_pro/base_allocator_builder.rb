@@ -28,10 +28,6 @@ module KnapsackPro
       all_test_files_to_run
     end
 
-    def lazy_fallback_mode_test_files
-      lambda { fallback_mode_test_files }
-    end
-
     # detect test files present on the disk that should be run
     # this may include some fast test files + slow test files split by test cases
     def fast_and_slow_test_files_to_run
@@ -65,10 +61,6 @@ module KnapsackPro
       else
         test_files_to_run
       end
-    end
-
-    def lazy_fast_and_slow_test_files_to_run
-      lambda { fast_and_slow_test_files_to_run }
     end
 
     private
