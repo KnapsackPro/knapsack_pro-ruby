@@ -78,7 +78,7 @@ module KnapsackPro
       end
 
       def dump_failures(notification)
-        return if notification.failure_notifications.empty?
+        return if notification.failure_notifications.nil? || notification.failure_notifications.empty?
         self.class.most_recent_failures_summary = notification.fully_formatted_failed_examples
       end
 
