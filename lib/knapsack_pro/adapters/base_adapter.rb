@@ -3,6 +3,8 @@ module KnapsackPro
     class BaseAdapter
       # Just example, please overwrite constant in subclass
       TEST_DIR_PATTERN = 'test/**{,/*/**}/*_test.rb'
+      TMP_KNAPSACK_PRO_DIR = 'tmp/knapsack_pro'
+      ADAPTER_BIND_METHOD_CALLED_FILE = "#{TMP_KNAPSACK_PRO_DIR}/adapter_bind_method_called.txt"
 
       def self.slow_test_file?(adapter_class, test_file_path)
         @slow_test_file_paths ||=
@@ -26,7 +28,21 @@ module KnapsackPro
         adapter
       end
 
+      def self.verify_bind_method_called
+        ::Kernel.at_exit do
+          if File.exists?(ADAPTER_BIND_METHOD_CALLED_FILE)
+            File.delete(ADAPTER_BIND_METHOD_CALLED_FILE)
+          else
+            KnapsackPro.logger.error('-'*10 + ' Configuration error ' + '-'*50)
+            raise "You forgot to call #{self}.bind method for your test runner to record test files time execution. Please follow installation guide to configure your project properly https://docs.knapsackpro.com/knapsack_pro-ruby/guide/"
+          end
+        end
+      end
+
       def bind
+        FileUtils.mkdir_p(TMP_KNAPSACK_PRO_DIR)
+        File.write(ADAPTER_BIND_METHOD_CALLED_FILE, nil)
+
         if KnapsackPro::Config::Env.recording_enabled?
           KnapsackPro.logger.debug('Test suite time execution recording enabled.')
           bind_time_tracker
