@@ -53,6 +53,8 @@ module KnapsackPro
 
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
+              KnapsackPro::Adapters::RSpecAdapter.verify_bind_method_called
+
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
               KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
