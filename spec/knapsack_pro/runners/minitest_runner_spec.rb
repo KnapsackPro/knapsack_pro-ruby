@@ -14,6 +14,10 @@ describe KnapsackPro::Runners::MinitestRunner do
     end
 
     context 'when test files were returned by Knapsack Pro API' do
+      before do
+        expect(KnapsackPro::Adapters::MinitestAdapter).to receive(:verify_bind_method_called)
+      end
+
       it 'runs tests' do
         test_file_paths = ['test_fake/a_test.rb', 'test_fake/b_test.rb']
         runner = instance_double(described_class,

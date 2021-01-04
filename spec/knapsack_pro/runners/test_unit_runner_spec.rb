@@ -16,6 +16,8 @@ describe KnapsackPro::Runners::TestUnitRunner do
 
     context 'when test files were returned by Knapsack Pro API' do
       it 'runs tests' do
+        expect(KnapsackPro::Adapters::TestUnitAdapter).to receive(:verify_bind_method_called)
+
         test_file_paths = ['test-unit_fake/a_test.rb', 'test-unit_fake/b_test.rb']
         runner = instance_double(described_class,
                                  test_dir: 'test-unit_fake',

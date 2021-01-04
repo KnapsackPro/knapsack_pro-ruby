@@ -5,9 +5,12 @@ module KnapsackPro
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_test_unit
         ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
 
-        runner = new(KnapsackPro::Adapters::TestUnitAdapter)
+        adapter_class = KnapsackPro::Adapters::TestUnitAdapter
+        runner = new(adapter_class)
 
         if runner.test_files_to_execute_exist?
+          adapter_class.verify_bind_method_called
+
           require 'test/unit'
 
           cli_args =

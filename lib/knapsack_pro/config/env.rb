@@ -8,6 +8,7 @@ module KnapsackPro
         'info'  => ::Logger::INFO,
         'debug' => ::Logger::DEBUG,
       }
+      TMP_DIR = 'tmp/knapsack_pro'
 
       class << self
         def ci_node_total

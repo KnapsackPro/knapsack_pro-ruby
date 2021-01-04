@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.11.0
+
+* Verify test runner adapter bind method is called to track test files time execution and ensure `tmp/knapsack_pro` directory is not removed accidentally
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/137
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.10.1...v2.11.0
+
 ### 2.10.1
 
 * Fix RSpec split by test examples feature broken by lazy generating of JSON report with test example ids

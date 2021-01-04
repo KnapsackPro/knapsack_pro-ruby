@@ -1,7 +1,7 @@
 module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
-      REPORT_DIR = 'tmp/knapsack_pro/test_case_detectors/rspec'
+      REPORT_DIR = "#{KnapsackPro::Config::Env::TMP_DIR}/test_case_detectors/rspec"
 
       def generate_json_report
         require 'rspec/core'

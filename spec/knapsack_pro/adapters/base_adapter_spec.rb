@@ -22,6 +22,27 @@ describe KnapsackPro::Adapters::BaseAdapter do
     end
   end
 
+  describe '.adapter_bind_method_called_file' do
+    subject { described_class.adapter_bind_method_called_file }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_index).and_return(ci_node_index)
+    end
+
+    context 'when CI node index 0' do
+      let(:ci_node_index) { 0 }
+
+      it { expect(subject).to eq 'tmp/knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt' }
+
+    end
+
+    context 'when CI node index 1' do
+      let(:ci_node_index) { 1 }
+
+      it { expect(subject).to eq 'tmp/knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_1.txt' }
+    end
+  end
+
   describe '.slow_test_file?' do
     let(:adapter_class) { double }
     let(:slow_test_files) do
@@ -71,11 +92,41 @@ describe KnapsackPro::Adapters::BaseAdapter do
     it { should eql adapter }
   end
 
+  describe '.verify_bind_method_called' do
+    subject { described_class.verify_bind_method_called }
+
+    before do
+      expect(::Kernel).to receive(:at_exit).and_yield
+      expect(File).to receive(:exists?).with('tmp/knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt').and_return(adapter_bind_method_called_file_exists)
+    end
+
+    context 'when adapter bind method called' do
+      let(:adapter_bind_method_called_file_exists) { true }
+
+      it do
+        expect(File).to receive(:delete).with('tmp/knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt')
+        subject
+      end
+    end
+
+    context 'when adapter bind method was not call' do
+      let(:adapter_bind_method_called_file_exists) { false }
+
+      it do
+        expect(Kernel).to receive(:exit).with(1)
+        subject
+      end
+    end
+  end
+
   describe '#bind' do
     let(:recording_enabled?) { false }
     let(:queue_recording_enabled?) { false }
 
     before do
+      expect(FileUtils).to receive(:mkdir_p).with('tmp/knapsack_pro')
+      expect(File).to receive(:write).with('tmp/knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt', nil)
+
       expect(KnapsackPro::Config::Env).to receive(:recording_enabled?).and_return(recording_enabled?)
       expect(KnapsackPro::Config::Env).to receive(:queue_recording_enabled?).and_return(queue_recording_enabled?)
     end

@@ -249,6 +249,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:all_test_file_paths) { ['a_spec.rb'] }
 
         it do
+          expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called)
+
           expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
           expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
 
