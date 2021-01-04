@@ -1,7 +1,7 @@
 module KnapsackPro
   class SlowTestFileDeterminer
     TIME_THRESHOLD_PER_CI_NODE = 0.7 # 70%
-    REPORT_DIR = 'tmp/knapsack_pro/slow_test_file_determiner'
+    REPORT_DIR = "#{KnapsackPro::Config::Env::TMP_DIR}/slow_test_file_determiner"
 
     # test_files: { 'path' => 'a_spec.rb', 'time_execution' => 0.0 }
     # time_execution: of build distribution (total time of CI build run)
