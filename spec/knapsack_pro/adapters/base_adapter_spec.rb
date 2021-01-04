@@ -71,6 +71,32 @@ describe KnapsackPro::Adapters::BaseAdapter do
     it { should eql adapter }
   end
 
+  describe '.verify_bind_method_called' do
+    subject { described_class.verify_bind_method_called }
+
+    before do
+      expect(::Kernel).to receive(:at_exit).and_yield
+      expect(File).to receive(:exists?).with('tmp/knapsack_pro/adapter_bind_method_called.txt').and_return(adapter_bind_method_called_file_exists)
+    end
+
+    context 'when adapter bind method called' do
+      let(:adapter_bind_method_called_file_exists) { true }
+
+      it do
+        expect(File).to receive(:delete).with('tmp/knapsack_pro/adapter_bind_method_called.txt')
+        subject
+      end
+    end
+
+    context 'when adapter bind method was not call' do
+      let(:adapter_bind_method_called_file_exists) { false }
+
+      it do
+        expect { subject }.to raise_error('There is an error in your project configuration. Please read the above error message.')
+      end
+    end
+  end
+
   describe '#bind' do
     let(:recording_enabled?) { false }
     let(:queue_recording_enabled?) { false }
