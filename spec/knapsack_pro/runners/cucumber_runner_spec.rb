@@ -34,6 +34,8 @@ describe KnapsackPro::Runners::CucumberRunner do
       let(:task) { double }
 
       before do
+        expect(KnapsackPro::Adapters::CucumberAdapter).to receive(:verify_bind_method_called)
+
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:cucumber_run').at_least(1).and_return(task)
 
         t = double
