@@ -168,7 +168,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
       let(:test_file_paths) { [] }
 
       context 'when all_test_file_paths exist' do
-        let(:all_test_file_paths) { ['a_spec.rb'] }
+        let(:all_test_file_paths) { ['features/a.feature'] }
 
         it 'returns exit code 0' do
           expect(KnapsackPro::Adapters::CucumberAdapter).to receive(:verify_bind_method_called)
