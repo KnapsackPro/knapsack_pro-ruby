@@ -3,7 +3,10 @@ module KnapsackPro
     class BaseAdapter
       # Just example, please overwrite constant in subclass
       TEST_DIR_PATTERN = 'test/**{,/*/**}/*_test.rb'
-      ADAPTER_BIND_METHOD_CALLED_FILE = "#{KnapsackPro::Config::Env::TMP_DIR}/adapter_bind_method_called.txt"
+
+      def self.adapter_bind_method_called_file
+        "#{KnapsackPro::Config::Env::TMP_DIR}/adapter_bind_method_called_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
+      end
 
       def self.slow_test_file?(adapter_class, test_file_path)
         @slow_test_file_paths ||=
@@ -29,8 +32,8 @@ module KnapsackPro
 
       def self.verify_bind_method_called
         ::Kernel.at_exit do
-          if File.exists?(ADAPTER_BIND_METHOD_CALLED_FILE)
-            File.delete(ADAPTER_BIND_METHOD_CALLED_FILE)
+          if File.exists?(adapter_bind_method_called_file)
+            File.delete(adapter_bind_method_called_file)
           else
             puts "\n\n"
             KnapsackPro.logger.error('-'*10 + ' Configuration error ' + '-'*50)
@@ -43,7 +46,7 @@ module KnapsackPro
 
       def bind
         FileUtils.mkdir_p(KnapsackPro::Config::Env::TMP_DIR)
-        File.write(ADAPTER_BIND_METHOD_CALLED_FILE, nil)
+        File.write(self.class.adapter_bind_method_called_file, nil)
 
         if KnapsackPro::Config::Env.recording_enabled?
           KnapsackPro.logger.debug('Test suite time execution recording enabled.')
