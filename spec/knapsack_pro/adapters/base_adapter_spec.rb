@@ -76,6 +76,9 @@ describe KnapsackPro::Adapters::BaseAdapter do
     let(:queue_recording_enabled?) { false }
 
     before do
+      expect(FileUtils).to receive(:mkdir_p).with('tmp/knapsack_pro')
+      expect(File).to receive(:write).with('tmp/knapsack_pro/adapter_bind_method_called.txt', nil)
+
       expect(KnapsackPro::Config::Env).to receive(:recording_enabled?).and_return(recording_enabled?)
       expect(KnapsackPro::Config::Env).to receive(:queue_recording_enabled?).and_return(queue_recording_enabled?)
     end
