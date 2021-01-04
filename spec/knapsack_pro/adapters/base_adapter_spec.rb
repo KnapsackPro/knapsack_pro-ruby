@@ -92,7 +92,8 @@ describe KnapsackPro::Adapters::BaseAdapter do
       let(:adapter_bind_method_called_file_exists) { false }
 
       it do
-        expect { subject }.to raise_error('There is an error in your project configuration. Please read the above error message.')
+        expect(Kernel).to receive(:exit).with(1)
+        subject
       end
     end
   end
