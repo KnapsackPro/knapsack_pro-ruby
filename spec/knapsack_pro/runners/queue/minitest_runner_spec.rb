@@ -159,14 +159,34 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
     context "when test files don't exist" do
       let(:test_file_paths) { [] }
 
-      it 'returns exit code 0' do
-        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-        expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+      context 'when all_test_file_paths exist' do
+        let(:all_test_file_paths) { ['a_test.rb'] }
 
-        expect(subject).to eq({
-          status: :completed,
-          exitstatus: exitstatus,
-        })
+        it 'returns exit code 0' do
+          expect(KnapsackPro::Adapters::MinitestAdapter).to receive(:verify_bind_method_called)
+
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+
+          expect(subject).to eq({
+            status: :completed,
+            exitstatus: exitstatus,
+          })
+        end
+      end
+
+      context "when all_test_file_paths don't exist" do
+        let(:all_test_file_paths) { [] }
+
+        it 'returns exit code 0' do
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+
+          expect(subject).to eq({
+            status: :completed,
+            exitstatus: exitstatus,
+          })
+        end
       end
     end
   end
