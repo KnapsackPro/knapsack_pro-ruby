@@ -5,7 +5,8 @@ module KnapsackPro
       TEST_DIR_PATTERN = 'test/**{,/*/**}/*_test.rb'
 
       def self.adapter_bind_method_called_file
-        "#{KnapsackPro::Config::Env::TMP_DIR}/adapter_bind_method_called_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
+        adapter_name = self.to_s.gsub('::', '-')
+        "#{KnapsackPro::Config::Env::TMP_DIR}/#{adapter_name}-bind_method_called_for_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
       end
 
       def self.slow_test_file?(adapter_class, test_file_path)
