@@ -39,6 +39,10 @@ module KnapsackPro
           )
 
           if test_file_paths.empty?
+            unless all_test_file_paths.empty?
+              KnapsackPro::Adapters::CucumberAdapter.verify_bind_method_called
+            end
+
             KnapsackPro::Hooks::Queue.call_after_queue
 
             KnapsackPro::Report.save_node_queue_to_api
