@@ -2,7 +2,7 @@
 
 ### 2.11.0
 
-* Verify test runner adapter bind method is called to track test files time execution and ensure tmp/knapsack_pro directory is not removed accidentally
+* Verify test runner adapter bind method is called to track test files time execution and ensure `tmp/knapsack_pro` directory is not removed accidentally
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/137
 
