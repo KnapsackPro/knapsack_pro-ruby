@@ -3,8 +3,7 @@ module KnapsackPro
     class BaseAdapter
       # Just example, please overwrite constant in subclass
       TEST_DIR_PATTERN = 'test/**{,/*/**}/*_test.rb'
-      TMP_KNAPSACK_PRO_DIR = 'tmp/knapsack_pro'
-      ADAPTER_BIND_METHOD_CALLED_FILE = "#{TMP_KNAPSACK_PRO_DIR}/adapter_bind_method_called.txt"
+      ADAPTER_BIND_METHOD_CALLED_FILE = "#{KnapsackPro::Config::Env::TMP_DIR}/adapter_bind_method_called.txt"
 
       def self.slow_test_file?(adapter_class, test_file_path)
         @slow_test_file_paths ||=
@@ -42,7 +41,7 @@ module KnapsackPro
       end
 
       def bind
-        FileUtils.mkdir_p(TMP_KNAPSACK_PRO_DIR)
+        FileUtils.mkdir_p(KnapsackPro::Config::Env::TMP_DIR)
         File.write(ADAPTER_BIND_METHOD_CALLED_FILE, nil)
 
         if KnapsackPro::Config::Env.recording_enabled?
