@@ -26,6 +26,8 @@ describe KnapsackPro::Runners::SpinachRunner do
       end
 
       before do
+        expect(KnapsackPro::Adapters::SpinachAdapter).to receive(:verify_bind_method_called)
+
         expect(Kernel).to receive(:system).with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature')
       end
 
