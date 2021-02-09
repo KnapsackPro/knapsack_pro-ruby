@@ -857,6 +857,7 @@ Note: there are a few branch names that won't be encrypted because we use them a
 * dev
 * master
 * staging
+* [see full list of encryption excluded branch names](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/crypto/branch_encryptor.rb#L4)
 
 #### How to debug branch names?
 
