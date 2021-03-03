@@ -72,8 +72,9 @@ We keep this old FAQ in README to not break old links spread across the web. You
     - [Set API key token](#set-api-key-token)
     - [Set knapsack_pro command to execute tests](#set-knapsack_pro-command-to-execute-tests)
   - [Repository adapter (How to set up 3 of 3)](#repository-adapter-how-to-set-up-3-of-3)
-    - [When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
-    - [When should you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
+    - [When you do NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-do-not-set-global-variable-knapsack_pro_repository_adapter-default)
+    - [When should you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (when CI provider is not supported and you use git)](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-when-ci-provider-is-not-supported-and-you-use-git)
+    - [When you don't use git](#when-you-dont-use-git)
 - [Queue Mode](#queue-mode)
   - [How does queue mode work?](#how-does-queue-mode-work)
   - [How to use queue mode?](#how-to-use-queue-mode)
@@ -442,7 +443,7 @@ __Tip 2:__ If you use one of unsupported CI providers ([here is list of supporte
 
 ### Repository adapter (How to set up 3 of 3)
 
-#### When you NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)
+#### When you do NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)
 
 By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` variable has no value so knapsack_pro will try to get info about branch name and commit hash from [supported CI](#supported-ci-providers) (CI providers have branch, commit, project directory stored as environment variables). In case when you use other CI provider like Jenkins then please set below variables on your own.
 
@@ -452,11 +453,19 @@ By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` variable has no value so knapsack_p
 
 You can also use git as repository adapter to determine branch and commit hash, please see below section.
 
-#### When should you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (required when CI provider is not supported)
+#### When should you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (when CI provider is not supported and you use git)
 
 `KNAPSACK_PRO_REPOSITORY_ADAPTER` - When it has the value `git`, your local version of git on CI server will be used to get the branch name and commit hash. You also need to set `KNAPSACK_PRO_PROJECT_DIR` with the project directory path.
 
 `KNAPSACK_PRO_PROJECT_DIR` - Path to the project on the CI node, for instance `/home/ubuntu/my-app-repository`. It should be the top-level directory of your repository.
+
+#### When you don't use git
+
+If your CI provider does not expose commit hash and branch name through environment variables, then `knapsack_pro` gem does not know these values.
+You can manually set the values of the current commit hash and branch name in the environment variables:
+
+* `KNAPSACK_PRO_COMMIT_HASH` - commit hash.
+* `KNAPSACK_PRO_BRANCH` - branch name.
 
 ## Queue Mode
 
