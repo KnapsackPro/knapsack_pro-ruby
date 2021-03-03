@@ -461,8 +461,8 @@ You can also use git as repository adapter to determine branch and commit hash, 
 
 #### When you don't use git
 
-If your CI provider does not expose commit hash and branch name as environment variable then `knapsack_pro` gem does not know what is commit hash and branch name.
-You can manually set below values as environment variables:
+If your CI provider does not expose commit hash and branch name through environment variables, then `knapsack_pro` gem does not know these values.
+You can manually set the values of the current commit hash and branch name in the environment variables:
 
 * `KNAPSACK_PRO_COMMIT_HASH` - commit hash.
 * `KNAPSACK_PRO_BRANCH` - branch name.
