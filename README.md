@@ -72,7 +72,7 @@ We keep this old FAQ in README to not break old links spread across the web. You
     - [Set API key token](#set-api-key-token)
     - [Set knapsack_pro command to execute tests](#set-knapsack_pro-command-to-execute-tests)
   - [Repository adapter (How to set up 3 of 3)](#repository-adapter-how-to-set-up-3-of-3)
-    - [When you do NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)](#when-you-do-not-set-global-variable-knapsack_pro_repository_adapter-default)
+    - [By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` environment variable is undefined](#by-default-knapsack_pro_repository_adapter-environment-variable-is-undefined)
     - [When should you set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER=git` (when CI provider is not supported and you use git)](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-when-ci-provider-is-not-supported-and-you-use-git)
     - [When you don't use git](#when-you-dont-use-git)
 - [Queue Mode](#queue-mode)
@@ -443,7 +443,7 @@ __Tip 2:__ If you use one of unsupported CI providers ([here is list of supporte
 
 ### Repository adapter (How to set up 3 of 3)
 
-#### When you do NOT set global variable `KNAPSACK_PRO_REPOSITORY_ADAPTER` (default)
+#### By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` environment variable is undefined
 
 By default `KNAPSACK_PRO_REPOSITORY_ADAPTER` variable has no value so knapsack_pro will try to get info about branch name and commit hash from [supported CI](#supported-ci-providers) (CI providers have branch, commit, project directory stored as environment variables). In case when you use other CI provider like Jenkins then please set below variables on your own.
 
