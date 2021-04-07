@@ -85,7 +85,6 @@ We keep this old FAQ in README to not break old links spread across the web. You
   - [Supported test runners in queue mode](#supported-test-runners-in-queue-mode)
 - [Split test files by test cases](#split-test-files-by-test-cases)
   - [RSpec split test files by test examples (by individual `it`s)](#rspec-split-test-files-by-test-examples-by-individual-its)
-    - [Why I see error: Don't know how to build task 'knapsack_pro:rspec_test_example_detector'?](#why-i-see-error-dont-know-how-to-build-task-knapsack_prorspec_test_example_detector)
   - [How to manually define a list of slow test files to be split by test cases](#how-to-manually-define-a-list-of-slow-test-files-to-be-split-by-test-cases)
 - [Extra configuration for CI server](#extra-configuration-for-ci-server)
   - [Info about ENV variables](#info-about-env-variables)
@@ -618,6 +617,8 @@ Knapsack Pro API provides recorded timing of test files from your previously rec
 
 ### RSpec split test files by test examples (by individual `it`s)
 
+Read more about [this feature](https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it) and [common problems here](https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#common-problems).
+
 > ❗ __RSpec requirement:__ You need `RSpec >= 3.3.0` in order to use this feature.
 
 In order to split RSpec slow test files by test examples across parallel CI nodes you need to set environment variable:
@@ -627,16 +628,6 @@ KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 ```
 
 Thanks to that your CI build speed can be faster. We recommend using this feature with [Queue Mode](https://youtu.be/hUEB1XDKEFY) to ensure parallel CI nodes finish work at a similar time which gives you the shortest CI build time.
-
-#### Why I see error: Don't know how to build task 'knapsack_pro:rspec_test_example_detector'?
-
-If you will see error like:
-
-```
-Don't know how to build task 'knapsack_pro:rspec_test_example_detector' (See the list of available tasks with `rake --tasks`)
-```
-
-It probably means bundler can't find the rake task. You can try to remove the default prefix `bundle exec` used by knapsack_pro gem by setting `KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX=""`.
 
 ### How to manually define a list of slow test files to be split by test cases
 
