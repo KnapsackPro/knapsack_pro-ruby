@@ -156,6 +156,11 @@ module KnapsackPro
         end
 
         def self.has_tag_option?(cli_args)
+          # use start_with? because user can define tag option in a few ways:
+          # -t mytag
+          # -tmytag
+          # --tag mytag
+          # --tag=mytag
           cli_args.any? { |arg| arg.start_with?('-t') || arg.start_with?('--tag') }
         end
 
