@@ -129,6 +129,36 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           subject
         end
       end
+
+      context 'when RSpec split by test examples feature is enabled' do
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(true)
+        end
+
+        context 'when tag option is provided' do
+          let(:args) { '--tag example-value' }
+
+          it do
+            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature/)
+          end
+        end
+
+        context 'when tag option is provided as -t' do
+          let(:args) { '-t example-value' }
+
+          it do
+            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature/)
+          end
+        end
+
+        context 'when tag option is provided without delimiter' do
+          let(:args) { '-texample-value' }
+
+          it do
+            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature/)
+          end
+        end
+      end
     end
 
     context 'when args not provided' do
