@@ -1601,12 +1601,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Set N number of parallel jobs you want to run tests on.
-        # Use higher number if you have slow tests to split them on more parallel jobs.
-        # Remember to update ci_node_index below to 0..N-1
+        # [n] - where the n is a number of parallel jobs you want to run your tests on.
+        # Use a higher number if you have slow tests to split them between more parallel jobs.
+        # Remember to update the value of the `ci_node_index` below to (0..n-1).
         ci_node_total: [2]
-        # set N-1 indexes for parallel jobs
-        # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+        # Indexes for parallel jobs (starting from zero).
+        # E.g. use [0, 1] for 2 parallel jobs, [0, 1, 2] for 3 parallel jobs, etc.
         ci_node_index: [0, 1]
 
     steps:
