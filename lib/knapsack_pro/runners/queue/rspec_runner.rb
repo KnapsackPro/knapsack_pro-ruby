@@ -21,13 +21,11 @@ module KnapsackPro
             raise error_message
           end
 
-          # if user didn't provide the format then use explicitly default progress formatter
-          # in order to avoid KnapsackPro::Formatters::RSpecQueueSummaryFormatter being the only default formatter
-          unless has_format_option?(cli_args)
-            cli_args += ['--format', 'progress']
-          end
+          # when format option is not defined by user then use progress formatter to show tests execution progress
+          cli_args += ['--format', 'progress'] unless has_format_option?(cli_args)
 
           cli_args += [
+            # shows summary of all tests executed in Queue Mode at the very end
             '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
             '--default-path', runner.test_dir,
           ]
