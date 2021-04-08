@@ -14,6 +14,14 @@ module KnapsackPro
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
           cli_args = (args || '').split
+
+          if KnapsackPro::Config::Env.rspec_split_by_test_examples? &&
+              cli_args.any? { |arg| arg.start_with?('-t') || arg.start_with?('--tag') }
+            error_message = 'It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
+            KnapsackPro.logger.error(error_message)
+            raise error_message
+          end
+
           # if user didn't provide the format then use explicitly default progress formatter
           # in order to avoid KnapsackPro::Formatters::RSpecQueueSummaryFormatter being the only default formatter
           if !cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format') }
