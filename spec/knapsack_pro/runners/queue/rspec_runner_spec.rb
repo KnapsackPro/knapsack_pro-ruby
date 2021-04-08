@@ -135,7 +135,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(true)
         end
 
-        context 'when tag option is provided' do
+        context 'when tag option is provided as --tag' do
           let(:args) { '--tag example-value' }
 
           it do
