@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.12.0
+
+* Do not allow to use the RSpec tag option at the same time with RSpec split by test examples feature
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/139
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.11.0...v2.12.0
+
 ### 2.11.0
 
 * Verify test runner adapter bind method is called to track test files time execution and ensure `tmp/knapsack_pro` directory is not removed accidentally
