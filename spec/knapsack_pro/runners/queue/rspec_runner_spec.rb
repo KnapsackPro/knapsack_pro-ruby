@@ -30,7 +30,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     end
 
     context 'when args provided' do
-      context 'when format param is not provided' do
+      context 'when format option is not provided' do
         let(:args) { '--example-arg example-value' }
 
         it 'uses default formatter progress' do
@@ -55,10 +55,10 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when format param is provided as --format' do
+      context 'when format option is provided as --format' do
         let(:args) { '--format documentation' }
 
-        it 'uses provided format param instead of default formatter progress' do
+        it 'uses provided format option instead of default formatter progress' do
           expected_exitstatus = 0
           expected_accumulator = {
             status: :completed,
@@ -80,10 +80,10 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when format param is provided as -f' do
+      context 'when format option is provided as -f' do
         let(:args) { '-f d' }
 
-        it 'uses provided format param instead of default formatter progress' do
+        it 'uses provided format option instead of default formatter progress' do
           expected_exitstatus = 0
           expected_accumulator = {
             status: :completed,
@@ -105,10 +105,10 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when format param is provided without a delimiter' do
+      context 'when format option is provided without a delimiter' do
         let(:args) { '-fMyCustomFormatter' }
 
-        it 'uses provided format param instead of default formatter progress' do
+        it 'uses provided format option instead of default formatter progress' do
           expected_exitstatus = 0
           expected_accumulator = {
             status: :completed,
