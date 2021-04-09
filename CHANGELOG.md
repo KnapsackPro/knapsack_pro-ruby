@@ -1,10 +1,18 @@
 # Change Log
 
-### 2.12.0
+### 2.13.0
 
 * Do not allow to use the RSpec tag option at the same time with RSpec split by test examples feature
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/139
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.12.0...v2.13.0
+
+### 2.12.0
+
+* Use 0 seconds as a default test file time execution instead of 0.1s because Knapsack Pro API already accepts 0 seconds value
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/140
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.11.0...v2.12.0
 
