@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.12.0
+
+* Use 0 seconds as a default test file time execution instead of 0.1s because Knapsack Pro API already accepts 0 seconds value
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/140
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.11.0...v2.12.0
+
 ### 2.11.0
 
 * Verify test runner adapter bind method is called to track test files time execution and ensure `tmp/knapsack_pro` directory is not removed accidentally

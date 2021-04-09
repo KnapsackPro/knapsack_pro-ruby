@@ -2065,20 +2065,7 @@ If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build
 
 ##### Why all test files have 0.1s time execution for my CI build in user dashboard?
 
-If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build metrics` for your API token and you open CI build for your last git commit you should see there info about collected time execution data from all CI nodes. If you see all test files have 0.1s time execution then please ensure:
-
-* you should not clean up `tmp` directory in your tests (for instance in RSpec hooks like `before` or `after`) so knapsack_pro can publish measured time execution data to Knapsack Pro API server. knapsack_pro Queue Mode saves temporary files with collected time execution data in `your_rails_project/tmp/knapsack_pro/queue/`.
-* please ensure you have in your `rails_helper.rb` or `spec_helper.rb` line that allows to measure tests:
-
-```ruby
-require 'knapsack_pro'
-
-# CUSTOM_CONFIG_GOES_HERE
-
-KnapsackPro::Adapters::RSpecAdapter.bind
-```
-
-The 0.1s is a default time execution used when test file is an empty file or its content are all pending tests.
+https://knapsackpro.com/faq/question/why-all-test-files-have-01s-time-execution-for-my-ci-build-in-user-dashboard
 
 ##### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
 
