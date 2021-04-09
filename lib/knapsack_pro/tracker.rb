@@ -4,7 +4,7 @@ module KnapsackPro
 
     # when test file is pending, empty with no tests or has syntax error then assume time execution
     # to better allocate it in Queue Mode for future CI build runs
-    DEFAULT_TEST_FILE_TIME = 0.1 # seconds
+    DEFAULT_TEST_FILE_TIME = 0.0 # seconds
 
     attr_reader :global_time_since_beginning, :global_time, :test_files_with_time
     attr_writer :current_test_path
