@@ -1830,149 +1830,27 @@ https://knapsackpro.com/faq/question/why-green-test-suite-for-cucumber-299-tests
 
 ##### Why when I use Queue Mode for RSpec then my tests fail?
 
-knapsack_pro Queue Mode uses `RSpec::Core::Runner` feature that allows [running specs multiple times with different runner options in the same process](https://relishapp.com/rspec/rspec-core/docs/running-specs-multiple-times-with-different-runner-options-in-the-same-process).
-Thanks to that we can run subset of test suite pulled from Knapsack Pro API work queue. This allows dynamic allocation of your tests across CI nodes without reloading whole Ruby/Rails application for each run of test suite subset.
-
-If you have custom things that are not common in how typical RSpec spec looks like then the RSpec feature won't be able to handle it between test suite subset runs.
-In that case you need to resolve failed tests in a way that allows RSpec to run the tests. Feel free to [ask me for help](https://knapsackpro.com/contact).
-
-You can learn more about [recent RSpec team changes](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/42) that was backported into knapsack_pro.
-
-To solve failing tests in Queue Mode you can check:
-
-* you use full namespacing. If you see error like `NameError: uninitialized constant MyModule::ModelName` then in some cases a top-level constant would be matched if the code hadn't been loaded for the scoped constant. Try to use full namespacing `::SomeModule::MyModule::ModelName` etc.
-* you can try to use binary version of knapsack_pro instead of running it via rake task. This helps if your rake tasks mess up with tests and make knapsack_pro Queue Mode fail. [See example](#why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail):
-
-    ```bash
-    # Knapsack Pro Queue Mode run via binary
-    bundle exec knapsack_pro queue:rspec "--profile 10 --format progress"
-    ```
-
-* You can check below questions for common reasons of failing tests in Queue Mode
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-then-my-tests-fail
 
 ##### Why when I use Queue Mode for RSpec then FactoryBot/FactoryGirl tests fail?
 
-You can use [knapsack_pro binary](#knapsack-pro-binary) instead of rake task version to solve problem:
-
-```bash
-# knapsack_pro binary for Queue Mode
-$ bundle exec knapsack_pro queue:rspec
-```
-
-Other solution is to check if your factories for FactoryBot/FactoryGirl use the same methods as Rake DSL and remove problematic part of the code.
-
-The use of implicit association `task` can cause a problem.
-
-```ruby
-# won't work in knapsack_pro Queue Mode
-FactoryBot.define do
-  factory :assignment do
-    task
-  end
-end
-```
-
-Workaround is to replace `task` with explicit association:
-
-```ruby
-# this will work in knapsack_pro Queue Mode
-FactoryBot.define do
-  factory :assignment do
-    association :task
-  end
-end
-```
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-then-factorybotfactorygirl-tests-fail
 
 ##### Why when I use Queue Mode for RSpec then my rake tasks are run twice?
 
-Why rake tasks are being ran twice in Queue Mode? If you have tests for your rake task then you want to ensure you clear the rake task before loading it inside of test file.
-In Queue Mode the  rake task could be already loaded and loading it again in test file may result in running the task twice.
-
-```ruby
-before do
-  # Clear rake task from memory if it was already loaded.
-  # This ensures rake task is loaded only once in knapsack_pro Queue Mode.
-  Rake::Task[task_name].clear if Rake::Task.task_defined?(task_name)
-
-  # loaad rake task only once here
-  Rake.application.rake_require("tasks/dummy")
-  Rake::Task.define_task(:environment)
-end
-```
-
-Here is the full [example how to test rake task along with dummy rake task](https://github.com/KnapsackPro/rails-app-with-knapsack_pro/commit/9f068e900deb3554bd72633e8d61c1cc7f740306) from our example rails project.
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-then-my-rake-tasks-are-run-twice
 
 ##### Why when I use Queue Mode for RSpec then I see error `superclass mismatch for class`?
 
-You may see error like:
-
-```
-TypeError:
-  superclass mismatch for class BatchClass
-```
-
-when you have 2 test files like this one:
-
-```ruby
-# spec/a_spec.rb
-class BaseBatchClass
-end
-
-module Mock
-  module FakeModels
-    class BatchClass < BaseBatchClass
-      def args
-      end
-    end
-  end
-end
-
-describe 'A test of something' do
-  it do
-  end
-end
-```
-
-```ruby
-# spec/b_spec.rb
-class DifferentBaseBatchClass
-end
-
-module Mock
-  module FakeModels
-    # Note the base class is different here!
-    class BatchClass < DifferentBaseBatchClass
-      def args
-      end
-    end
-  end
-end
-
-describe 'B test of something' do
-  it do
-  end
-end
-```
-
-Instead of mocking like shown above you could use [RSpec stub_const](https://relishapp.com/rspec/rspec-mocks/docs/mutating-constants) to solve error `superclass mismatch for class BatchClass`.
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-then-i-see-error-superclass-mismatch-for-class
 
 ##### Why when I use Queue Mode for RSpec then `.rspec` config is ignored?
 
-The `.rspec` config file is ignored in Queue Mode because knapsack_pro has to pass explicitly arguments to `RSpec::Core::Runner` underhood. You can set your arguments from `.rspec` file in an inline way.
-
-```
-bundle exec rake "knapsack_pro:queue:rspec[--format documentation --require rails_helper]"
-```
-
-See [passing arguments to RSpec](#passing-arguments-to-rspec).
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-then-rspec-config-is-ignored
 
 ##### Why I don't see collected time execution data for my build in user dashboard?
 
-If you go to [user dashboard](https://knapsackpro.com/dashboard) and open `Build metrics` for your API token and you open build for your last git commit you should see there info about collected time execution data from all CI nodes. If you don't see collected time execution data for CI nodes then please ensure:
-
-* you have `Knapsack::Adapters::RspecAdapter.bind` in your `rails_helper.rb` or `spec_helper.rb`
-* you explicitly set `RAILS_ENV=test` on your CI nodes (for instance you use Docker then please set `RAILS_ENV`)
-* knapsack_pro Queue Mode saves temporary files with collected time execution data in `your_rails_project/tmp/knapsack_pro/queue/`. Please ensure you don't clean `tmp` directory in your tests so knapsack_pro can publish time execution data to Knapsack Pro API server.
+https://knapsackpro.com/faq/question/why-i-dont-see-collected-time-execution-data-for-my-build-in-user-dashboard
 
 ##### Why all test files have 0.1s time execution for my CI build in user dashboard?
 
@@ -1980,153 +1858,43 @@ https://knapsackpro.com/faq/question/why-all-test-files-have-01s-time-execution-
 
 ##### Why when I use Queue Mode for RSpec and test fails then I see multiple times info about failed test in RSpec result?
 
-The problem may happen when you use old knapsack_pro `< 0.33.0` or if you use custom rspec formatter, or when you set flag [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests).
-
-When you use Queue Mode then knapsack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
-This means RSpec will remember failed tests so far and it will present them at the end of each executed test subset if flag `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false`.
-You can see the list of all failed test files at the end of knapsack_pro queue mode command.
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-and-test-fails-then-i-see-multiple-times-info-about-failed-test-in-rspec-result
 
 ##### Why when I use Queue Mode for RSpec then I see multiple times the same pending tests?
 
-The problem may happen when you use old knapsack_pro `< 0.33.0` or if you use custom rspec formatter, or when you set flag [KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false](#knapsack_pro_modify_default_rspec_formatters-hide-duplicated-summary-of-pending-and-failed-tests).
-
-When you use Queue Mode then knapsack_pro does multiple requests to Knapsack Pro API and fetches a few test files to execute.
-This means RSpec will remember pending tests so far and it will present them at the end of each executed test subset if flag `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS=false`.
-You can see the list of all pending test files at the end of knapsack_pro queue mode command.
+https://knapsackpro.com/faq/question/why-when-i-use-queue-mode-for-rspec-then-i-see-multiple-times-the-same-pending-tests
 
 ##### Does in Queue Mode the RSpec is initialized many times that causes Rails load over and over again?
 
-No. In Queue Mode the RSpec configuration is updated every time when knapsack_pro gem gets a new set of test files from the Knapsack Pro API and it looks in knapsack_pro output like RSpec was loaded many times but in fact, it loads your project environment only once.
+https://knapsackpro.com/faq/question/does-in-queue-mode-the-rspec-is-initialized-many-times-that-causes-rails-load-over-and-over-again
 
 ##### Why my tests are executed twice in queue mode? Why CI node runs whole test suite again?
 
-This may happen when you use not supported CI provider by knapsack_pro. It's because of missing value of CI build ID. You can set unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` for each CI build. The problem with test suite run again happens when one of your CI node started work later when all other CI nodes already executed whole test suite.
-The slow CI node that started work late will initialize a new queue hence the tests executed twice.
-
-To solve this problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID` as mentioned above or you can set `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`.
-Please [read this](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
+https://knapsackpro.com/faq/question/why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again
 
 ##### How to fix capybara-screenshot fail with `SystemStackError: stack level too deep` when using Queue Mode for RSpec?
 
-Please use fixed version of capybara-screenshot.
-
-```ruby
-# Gemfile
-group :test do
-  gem 'capybara-screenshot', github: 'mattheworiordan/capybara-screenshot', branch: 'master'
-end
-```
-
-Here is [fix PR](https://github.com/mattheworiordan/capybara-screenshot/pull/205) to official capybara-screenshot repository and the explanation of the problem.
+https://knapsackpro.com/faq/question/how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec
 
 ##### Parallel tests Cucumber and RSpec with Cucumber failures exit CI node early leaving fewer CI nodes to finish RSpec Queue.
 
-If you run tests in 2 steps like:
-
-* Step 1. `bundle exec rake knapsack_pro:cucumber` (regular mode)
-* Step 2. `bundle exec rake knapsack_pro:queue:rspec` (queue mode)
-
-and your CI provider is configured to fail fast when one of the steps fails then in the case when the first step with Cucumber fails on one of CI nodes then the second step with RSpec in Queue Mode won't start on the CI node that failed fast.
-
-It means the other CI nodes that will run the second step for RSpec in Queue Mode will consume the whole RSpec Queue so your whole CI build will take more than typical CI build when all Cucumber tests are green.
-
-You should configure your CI provider to not fail fast the Cucumber step.
-
-CI providers tips:
-
-* If you use CircleCI 2.0 you can use `when=always` flag. Read more [here](https://discuss.circleci.com/t/parallel-tests-cuc-rspec-w-failures-exit-early-leaving-less-workers-to-finish/18081).
+https://knapsackpro.com/faq/question/parallel-tests-cucumber-and-rspec-with-cucumber-failures-exit-ci-node-early-leaving-fewer-ci-nodes-to-finish-rspec-queue
 
 ##### Why when I reran the same build (same commit hash, etc) on Codeship then no tests would get executed in Queue Mode?
 
-Codeship uses the same build ID ([`CI_BUILD_NUMBER`](https://documentation.codeship.com/basic/builds-and-configuration/set-environment-variables/#default-environment-variables)) if you re-run a build, so Codeship is not giving enough information to knapsack_pro gem that this is an independent build. Knapsack Pro API assumes you already ran tests for that build ID hence no tests were executed for reran CI build.
-
-To fix problem you can set `KNAPSACK_PRO_CI_NODE_BUILD_ID=missing-build-id` as empty string.
-This way knapsack_pro won’t use build ID provided by Codeship and each build will be treated as a unique. This should be good enough solution for most users.
-
-There is one edge case with that solution. Please note that the knapsack_pro gem doesn't have a CI build ID in order to generate a queue for each particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
-
-To avoid this you should specify a unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
+https://knapsackpro.com/faq/question/why-when-i-reran-the-same-build-same-commit-hash-etc-on-codeship-then-no-tests-would-get-executed-in-queue-mode
 
 ##### Why knapsack_pro hangs / freezes / is stale i.e. for Codeship in Queue Mode?
 
-Some users with larger projects notice that in Queue Mode knapsack_pro ruby process hangs, for instance for CodeShip CI users.
-
-It happens due too big RSpec log output in Queue Mode. To produce less logs on output you can change log level to `KNAPSACK_PRO_LOG_LEVEL=warn`.
-
-Learn more about [log levels](#how-can-i-change-log-level).
+https://knapsackpro.com/faq/question/why-knapsack_pro-hangs--freezes--is-stale-ie-for-codeship-in-queue-mode
 
 ##### How to find seed in RSpec output when I use Queue Mode for RSpec?
 
-In output for RSpec in knapsack_pro Queue Mode you may see message:
-
-> INFO -- : [knapsack_pro] To retry in development the subset of tests fetched from API queue please run below command on your machine. If you use --order random then remember to add proper --seed 123 that you will find at the end of rspec command.
->
-> INFO -- : [knapsack_pro] bundle exec rspec --default-path spec "spec/a_spec.rb" "spec/b_spec.rb"
-
-The seed number is used by RSpec only when you tell it, you need to provide argument `--order random`:
-
-```bash
-bundle exec rake "knapsack_pro:queue:rspec[--order random]"
-```
-
-then in RSpec output you will see something like:
-
-```
-Randomized with seed 11055
-```
-
-You can use the seed number to run tests in development:
-
-```bash
-bundle exec rspec --seed 11055 --default-path spec "spec/a_spec.rb" "spec/b_spec.rb"
-```
-
-If you don't use RSpec argument `--order random` then you don't need to provide `--seed` number when you want to reproduce tests in development.
+https://knapsackpro.com/faq/question/how-to-find-seed-in-rspec-output-when-i-use-queue-mode-for-rspec
 
 ##### How to configure puffing-billy gem with Knapsack Pro Queue Mode?
 
-If you use [puffing-billy](https://github.com/oesmith/puffing-billy) gem you may notice [puffing-billy may crash](https://github.com/oesmith/puffing-billy/issues/253). It happen due to the way how knapsack_pro in Queue Mode uses `RSpec::Core::Runner` ([see](#why-when-i-use-queue-mode-for-rspec-then-my-tests-fail)).
-
-Here is a patch for puffing-billy to make it work in knapsack_pro Queue Mode:
-
-```ruby
-# rails_helper.rb or spec_helper.rb
-
-# A patch to `puffing-billy`'s proxy so that it doesn't try to stop
-# eventmachine's reactor if it's not running.
-module BillyProxyPatch
-  def stop
-    return unless EM.reactor_running?
-    super
-  end
-end
-Billy::Proxy.prepend(BillyProxyPatch)
-
-# A patch to `puffing-billy` to start EM if it has been stopped
-Billy.module_eval do
-  def self.proxy
-    if @billy_proxy.nil? || !(EventMachine.reactor_running? && EventMachine.reactor_thread.alive?)
-      proxy = Billy::Proxy.new
-      proxy.start
-      @billy_proxy = proxy
-    else
-      @billy_proxy
-    end
-  end
-end
-
-if ENV["KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC"]
-  KnapsackPro::Hooks::Queue.before_queue do
-    # executes before Queue Mode starts work
-    Billy.proxy.start
-  end
-
-  KnapsackPro::Hooks::Queue.after_queue do
-    # executes after Queue Mode finishes work
-    Billy.proxy.stop
-  end
-end
-```
+https://knapsackpro.com/faq/question/how-to-configure-puffing-billy-gem-with-knapsack-pro-queue-mode
 
 ### General questions
 
