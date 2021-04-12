@@ -154,34 +154,16 @@ We keep this old FAQ in README to not break old links spread across the web. You
       - [How to configure puffing-billy gem with Knapsack Pro Queue Mode?](#how-to-configure-puffing-billy-gem-with-knapsack-pro-queue-mode)
   - [General questions](#general-questions)
     - [How to run tests for particular CI node in your development environment](#how-to-run-tests-for-particular-ci-node-in-your-development-environment)
-      - [for knapsack_pro regular mode](#for-knapsack_pro-regular-mode)
-      - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode)
     - [What happens when Knapsack Pro API is not available/not reachable temporarily?](#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily)
-      - [for knapsack_pro regular mode](#for-knapsack_pro-regular-mode-1)
-      - [for knapsack_pro queue mode](#for-knapsack_pro-queue-mode-1)
     - [How can I change log level?](#how-can-i-change-log-level)
     - [How to write knapsack_pro logs to a file?](#how-to-write-knapsack_pro-logs-to-a-file)
-      - [set directory where to write log file (option 1 - recommended)](#set-directory-where-to-write-log-file-option-1---recommended)
-      - [set custom logger config (option 2)](#set-custom-logger-config-option-2)
-      - [How to preserve logs on my CI after CI build completed?](#how-to-preserve-logs-on-my-ci-after-ci-build-completed)
     - [How to split tests based on test level instead of test file level?](#how-to-split-tests-based-on-test-level-instead-of-test-file-level)
-      - [A. Create multiple small test files](#a-create-multiple-small-test-files)
-      - [B. Use tags to mark set of tests in particular test file](#b-use-tags-to-mark-set-of-tests-in-particular-test-file)
     - [How to make knapsack_pro works for forked repositories of my project?](#how-to-make-knapsack_pro-works-for-forked-repositories-of-my-project)
     - [How to use junit formatter?](#how-to-use-junit-formatter)
-      - [How to use junit formatter with knapsack_pro regular mode?](#how-to-use-junit-formatter-with-knapsack_pro-regular-mode)
-      - [How to use junit formatter with knapsack_pro queue mode?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode)
-        - [How to use junit formatter with knapsack_pro queue mode when CI nodes use common local drive?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
-        - [Why `tmp/rspec_final_results.xml` is corrupted when I use junit formatter with knapsack_pro queue mode?](#why-tmprspec_final_resultsxml-is-corrupted-when-i-use-junit-formatter-with-knapsack_pro-queue-mode)
-        - [How to use junit formatter with knapsack_pro queue mode in Cucumber?](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode-in-cucumber)
     - [How to use JSON formatter for RSpec?](#how-to-use-json-formatter-for-rspec)
-      - [How to use RSpec JSON formatter with knapsack_pro Queue Mode?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode)
-        - [How to use RSpec JSON formatter with knapsack_pro Queue Mode when CI nodes use common local drive?](#how-to-use-rspec-json-formatter-with-knapsack_pro-queue-mode-when-ci-nodes-use-common-local-drive)
     - [How many API keys I need?](#how-many-api-keys-i-need)
     - [What is optimal order of test commands?](#what-is-optimal-order-of-test-commands)
     - [How to set `before(:suite)` and `after(:suite)` RSpec hooks in Queue Mode (Percy.io example)?](#how-to-set-beforesuite-and-aftersuite-rspec-hooks-in-queue-mode-percyio-example)
-      - [percy-capybara gem version < 4 (old)](#percy-capybara-gem-version--4-old)
-      - [percy-capybara gem version >= 4](#percy-capybara-gem-version--4)
     - [How to call `before(:suite)` and `after(:suite)` RSpec hooks only once in Queue Mode?](#how-to-call-beforesuite-and-aftersuite-rspec-hooks-only-once-in-queue-mode)
     - [What hooks are supported in Queue Mode?](#what-hooks-are-supported-in-queue-mode)
     - [How to run knapsack_pro with parallel_tests gem?](#how-to-run-knapsack_pro-with-parallel_tests-gem)
@@ -517,7 +499,7 @@ __Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.__
 
 If you use the capybara-screenshot gem then please [follow this step](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec).
 
-If you use the rspec_junit_formatter gem then please [follow this step](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode).
+If you use the rspec_junit_formatter gem then please [follow this step](https://knapsackpro.com/faq/question/how-to-use-junit-formatter#how-to-use-junit-formatter-with-knapsack_pro-queue-mode).
 
 If your test suite is very long and the RSpec output is too long for your CI node then you can set log level `KNAPSACK_PRO_LOG_LEVEL=info` to don't show debug messages in RSpec output. [Read more about log level](#how-can-i-change-log-level).
 
@@ -583,7 +565,7 @@ There might be some cached test suite splits for git commits you have run in pas
     [knapsack_pro] {"queue_name"=>"retry-dead-ci-node:queue-id", "test_files"=>[{"path"=>"spec/foo_spec.rb", "time_execution"=>1.23}]}
     ```
 
-  * To [reproduce tests executed on CI node](#for-knapsack_pro-queue-mode) in development environment please see FAQ.
+  * To [reproduce tests executed on CI node](https://knapsackpro.com/faq/question/how-to-run-tests-for-particular-ci-node-in-your-development-environment#for-knapsack_pro-queue-mode) in development environment please see FAQ.
 
 #### KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS (hide duplicated summary of pending and failed tests)
 
@@ -952,7 +934,7 @@ Please remember to add additional containers for your project in CircleCI settin
 
 If you use knapsack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
 
-Here you can read how to configure [junit formatter](#how-to-use-junit-formatter-with-knapsack_pro-queue-mode). Step for CircleCI is to copy the xml report to `$CIRCLE_TEST_REPORTS` directory. Below is full config for your `spec_helper.rb`:
+Here you can read how to configure [junit formatter](https://knapsackpro.com/faq/question/how-to-use-junit-formatter#how-to-use-junit-formatter-with-knapsack_pro-queue-mode). Step for CircleCI is to copy the xml report to `$CIRCLE_TEST_REPORTS` directory. Below is full config for your `spec_helper.rb`:
 
 ```ruby
 # spec_helper.rb or rails_helper.rb
