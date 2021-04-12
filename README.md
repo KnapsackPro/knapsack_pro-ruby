@@ -2018,25 +2018,15 @@ https://knapsackpro.com/faq/question/how-to-stop-running-tests-on-the-first-fail
 
 #### What data is sent to your servers?
 
-The knapsack_pro gem sends branch name, commit hash, CI total node number, CI index node number, the test file paths like `spec/models/user_spec.rb` and the time execution of each test file path as a float.
-
-Here is the [full specification of the API](http://docs.knapsackpro.com/api/v1/) used by knapsack_pro gem.
+https://knapsackpro.com/faq/question/what-data-is-sent-to-your-servers
 
 #### How is that data secured?
 
-The test file paths and/or branch names can be [encrypted](#test-file-names-encryption) on your CI node with a salt and later send to knapsackpro.com API.
-You generate the salt locally and __only you__ can decrypt the test file paths or branch names with the salt. Here you can [see how the data are encrypted](lib/knapsack_pro/crypto/digestor.rb).
-
-Connection with knapsackpro.com server is via https.
-
-Regarding payments we use the BraintreePayments.com and they store credit cards and your private information.
+https://knapsackpro.com/faq/question/how-is-that-data-secured
 
 #### Who has access to the data?
 
-I’m the only admin so I can preview data in case you need help with debugging some problem etc. I’m not able to decrypt them without knowing the salt.
-
-When you sign in to your user dashboard then you can preview data for recent CI builds. If the test file paths are encrypted then you only see hashes for test file paths.
-You need to [decrypt](#how-to-debug-test-file-names) them locally on your machine to find out what each test file hash is.
+https://knapsackpro.com/faq/question/who-has-access-to-the-data
 
 ## Gem tests
 
