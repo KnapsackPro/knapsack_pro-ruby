@@ -1796,124 +1796,35 @@ RUN bundle install
 
 #### Why I see API error commit_hash parameter is required?
 
-    ERROR -- : [knapsack_pro] {"errors"=>[{"commit_hash"=>["parameter is required"]}]}
-
-When Knapsack Pro API returns error like above the problem is because you use CI provider not supported by knapsack_pro which means
-knapsack_pro gem cannot determine the git commit hash and branch name. To fix this problem you can do:
-
-* if you have git installed on CI node then you can use it to determine git commit hash and branch name. [See this](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported)
-* if you have no git installed on CI node then you should manually set `KNAPSACK_PRO_BRANCH` and `KNAPSACK_PRO_COMMIT_HASH`. For instance this might be useful when you use Jenkins. [See this](#when-you-not-set-global-variable-knapsack_pro_repository_adapter-default)
+https://knapsackpro.com/faq/question/why-i-see-api-error-commit_hash-parameter-is-required
 
 #### Why I see `LoadError: cannot load such file -- spec_helper`?
 
-When your tests fails with:
-
-    LoadError: cannot load such file -- spec_helper
-
-then problem might be related to the fact you specified complex `KNAPSACK_PRO_TEST_FILE_PATTERN` and knapsack_pro gem cannot detect correct main test directory with spec_helper. You should set `KNAPSACK_PRO_TEST_DIR=spec`. Please [read also example](#how-can-i-run-tests-from-multiple-directories).
+https://knapsackpro.com/faq/question/why-i-see-loaderror-cannot-load-such-file----spec_helper
 
 #### Why my CI build fails when I use Test::Unit even when all tests passed?
 
-Please ensure you are actually using only Test::Unit runner. You may use some hybrid of Test::Unit and Minitest. Ensure you are not loading Minitest.
+https://knapsackpro.com/faq/question/why-my-ci-build-fails-when-i-use-testunit-even-when-all-tests-passed
 
 #### Why I see HEAD as branch name in user dashboard for Build metrics for my API token?
 
-knapsack_pro detects your branch name from environment variables of [supported CI providers](#supported-ci-providers). Sometimes the CI provider may expose the `HEAD` instead of branch name (for instance for pull request merge commits).
-
-The same can happen for CI provider not supported by default by knapsack_pro when you use [KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported) to use local git installed on CI node to detect the branch name and git commit.
-
-knapsack_pro uses git command `git -C /home/user/project_dir rev-parse --abbrev-ref HEAD` to detect branch name. See [source of knapsack_pro](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/repository_adapters/git_adapter.rb). In most of cases it's good way to detect branch name. But if your CI provider during CI build checkouts to specific git commit then git cannot provide the name of the branch. In such scenario you would see `HEAD` as your branch name. It is good enough situation and knapsack_pro will work correctly. The benefit of knowing exactly the branch name allows KnapsackPro API to better track history of test files timing changes across branches in order to better do split of test suite. The difference should be rather very small so it's not a problem that you have `HEAD` as branch name.
-
-If you would like to see exact branch name instead of `HEAD` in your `build metrics` history in [user dashboard](https://knapsackpro.com/dashboard) then you can explicitly provide the branch name with `KNAPSACK_PRO_BRANCH` for each CI build.
+https://knapsackpro.com/faq/question/why-i-see-head-as-branch-name-in-user-dashboard-for-build-metrics-for-my-api-token
 
 #### Why Capybara feature tests randomly fail when using CI parallelisation?
 
-It can happen that when you use CI parallelisation then your CI machine is overloaded and some of Capybara feature specs may randomly fail when tested website loaded slowly.
-
-You can try to increase default Capybara max wait time from 2 seconds to something bigger like 5 seconds to ensure the Capybara will wait longer till the website is loaded before marking test as failed.
-
-```ruby
-# spec/rails_helper.rb
-Capybara.default_max_wait_time = 5 # in seconds
-```
-
-For instance, this tip might be helpful for Heroku CI users who use Heroku dynos with lower performance.
+https://knapsackpro.com/faq/question/why-capybara-feature-tests-randomly-fail-when-using-ci-parallelisation
 
 #### Why knapsack_pro freezes / hangs my CI (for instance Travis)?
 
-[Freeze error can occur for example on Travis CI](https://docs.travis-ci.com/user/common-build-problems/#ruby-tests-frozen-and-cancelled-after-10-minute-log-silence).
-The `timecop` gem can result in sporadic freezing due to issues with ordering calls of `Timecop.return`, `Timecop.freeze`, and `Timecop.travel`. For instance, if using RSpec, ensure to have a `Timecop.return` configured to run after all examples:
-
-```ruby
-# in, e.g. spec/spec_helper.rb
-RSpec.configure do |c|
-  c.after(:all) do
-    Timecop.return
-  end
-end
-```
+https://knapsackpro.com/faq/question/why-knapsack_pro-freezes--hangs-my-ci-for-instance-travis
 
 #### Why tests hitting external API fail?
 
-If you use knapsack_pro and you have tests that do real HTTP requests to external API you need to ensure your tests can be run across parallel CI nodes.
-
-Let's say you have tests that do requests to Stripe API or any other API. Before running each test you want to make sure Stripe Sandbox is clean up so you have removed all fake subscriptions and customers from Stripe Sandbox.
-
-```ruby
-# RSpec hook
-before(:each) do
-  Stripe::Subscription.all.each { |sub| sub.delete }
-  Stripe::Customer.all.each { |customer| customer.delete }
-end
-```
-
-But this will cause a problem when 2 different test files will run on 2 different CI nodes at the same time and this hook will be called. You will remove subscriptions and customers while another parallel test was running. Simply speaking you have tests that are written in a way that you can't run them in parallel.
-
-To fix that you can think of:
-* using [VCR](https://github.com/vcr/vcr) gem to record HTTP requests and then instead of doing real HTTP requests just reply recorded requests.
-* maybe you could write your tests in a way when you generate some fake customers or subscriptions with fake id and each test has different customer id so there will be no conflict when 2 tests are run at the same time.
+https://knapsackpro.com/faq/question/why-tests-hitting-external-api-fail
 
 #### Why green test suite for Cucumber 2.99 tests always fails with `invalid option: --require`?
 
-If you use old Cucumber version 2.99 and `cucumber-rails` gem you could notice bug that knapsack_pro for Cucumber fails with `1` exit status. Error you may see:
-
-```
-invalid option: --require
-
-minitest options:
-    -h, --help                       Display this help.
-        --no-plugins                 Bypass minitest plugin auto-loading (or set $MT_NO_PLUGINS).
-    -s, --seed SEED                  Sets random seed. Also via env. Eg: SEED=n rake
-    -v, --verbose                    Verbose. Show progress processing files.
-    -n, --name PATTERN               Filter run on /regexp/ or string.
-        --exclude PATTERN            Exclude /regexp/ or string from run.
-
-Known extensions: rails, pride
-    -w, --warnings                   Run with Ruby warnings enabled
-    -e, --environment ENV            Run tests in the ENV environment
-    -b, --backtrace                  Show the complete backtrace
-    -d, --defer-output               Output test failures and errors after the test run
-    -f, --fail-fast                  Abort test run on first failure or error
-    -c, --[no-]color                 Enable color in the output
-    -p, --pride                      Pride. Show your testing pride!
-
-# exit status is 1 - which means failed tests
-> echo $?
-1
-```
-
-The root problem is that Rails add `minitest` gem and it is started when `cucumber/rails` is loaded. It should not be. You can fix it by adding below in file `features/support/env.rb`:
-
-```ruby
-# features/support/env.rb
-require 'cucumber/rails'
-
-# this must be after we require cucumber/rails
-require 'multi_test'
-MultiTest.disable_autorun
-```
-
-The solution comes from: [cucumber/multi_test](https://github.com/cucumber/multi_test/pull/2#issuecomment-21863459)
+https://knapsackpro.com/faq/question/why-green-test-suite-for-cucumber-299-tests-always-fails-with-invalid-option---require
 
 #### Queue Mode problems
 
