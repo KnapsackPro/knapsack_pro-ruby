@@ -291,12 +291,12 @@ KnapsackPro.logger = Logger.new(STDOUT)
 KnapsackPro.logger.level = Logger::DEBUG
 ```
 
-Debug is default log level and it is recommended. [Read more](#how-can-i-change-log-level).
+Debug is default log level and it is recommended. [Read more](https://knapsackpro.com/faq/question/how-can-i-change-log-level).
 
 Note your own logger is configured in `spec_helper.rb` or `rails_helper.rb` and it will start working when those files will be loaded.
 It means the very first request to Knapsack Pro API will be log to `STDOUT` using logger built into knapsack_pro instead of your custom logger.
 
-If you want to change log level globally than just for your custom log level, please [see this](#how-can-i-change-log-level).
+If you want to change log level globally than just for your custom log level, please [see this](https://knapsackpro.com/faq/question/how-can-i-change-log-level).
 
 ### Setup your CI server (How to set up 2 of 3)
 
