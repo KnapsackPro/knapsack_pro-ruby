@@ -42,7 +42,7 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
 
 ## FAQ
 
-Up to date [FAQ for knapsack_pro gem can be found here](https://knapsackpro.com/faq/knapsack_pro_client/knapsack_pro_ruby).
+[FAQ for knapsack_pro gem can be found here](https://knapsackpro.com/faq/knapsack_pro_client/knapsack_pro_ruby).
 
 # Requirements
 
