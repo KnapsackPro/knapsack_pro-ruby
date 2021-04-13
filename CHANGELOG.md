@@ -1,10 +1,18 @@
 # Change Log
 
-### 2.13.0
+### 2.14.0
 
 * Do not allow to use the RSpec tag option at the same time with RSpec split by test examples feature
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/139
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.13.0...v2.14.0
+
+### 2.13.0
+
+* Update FAQ links in `knapsack_pro` warnings and remove FAQ from readme
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/142
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.12.0...v2.13.0
 
