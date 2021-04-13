@@ -354,7 +354,7 @@ KNAPSACK_PRO_TEST_FILE_PATTERN="directory_with_features/**{,/*/**}/*.feature" KN
 
 __Tip:__ If you use one of the supported CI providers then instead of the above steps you should [take a look at this](#supported-ci-providers).
 
-__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-required-when-ci-provider-is-not-supported).
+__Tip 2:__ If you use one of unsupported CI providers ([here is list of supported CI providers](#supported-ci-providers)) then you should [set KNAPSACK_PRO_REPOSITORY_ADAPTER=git](#when-should-you-set-global-variable-knapsack_pro_repository_adaptergit-when-ci-provider-is-not-supported-and-you-use-git).
 
 ### Repository adapter (How to set up 3 of 3)
 
@@ -431,11 +431,11 @@ The second CI build should have optimal test suite split with faster tests distr
 
 __Please ensure you have explicitly set `RAILS_ENV=test` on your CI nodes.__
 
-If you use the capybara-screenshot gem then please [follow this step](#how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec).
+If you use the capybara-screenshot gem then please [follow this step](https://knapsackpro.com/faq/question/how-to-fix-capybara-screenshot-fail-with-systemstackerror-stack-level-too-deep-when-using-queue-mode-for-rspec).
 
 If you use the rspec_junit_formatter gem then please [follow this step](https://knapsackpro.com/faq/question/how-to-use-junit-formatter#how-to-use-junit-formatter-with-knapsack_pro-queue-mode).
 
-If your test suite is very long and the RSpec output is too long for your CI node then you can set log level `KNAPSACK_PRO_LOG_LEVEL=info` to don't show debug messages in RSpec output. [Read more about log level](#how-can-i-change-log-level).
+If your test suite is very long and the RSpec output is too long for your CI node then you can set log level `KNAPSACK_PRO_LOG_LEVEL=info` to don't show debug messages in RSpec output. [Read more about log level](https://knapsackpro.com/faq/question/how-can-i-change-log-level).
 
 ### Additional info about queue mode
 
@@ -1477,7 +1477,7 @@ Remember to set environment variables in Jenkins configuration with your API tok
 Here is [list of environment variables per test runner](#set-api-key-token).
 
 Above example shows how to run cucumber tests in regular mode and later the rspec tests in queue mode to autobalance build.
-If you are going to relay on rspec to autobalance build when cucumber tests were not perfectly distributed you should be aware about [possible edge case if your rspec test suite is very short](#why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again).
+If you are going to relay on rspec to autobalance build when cucumber tests were not perfectly distributed you should be aware about [possible edge case if your rspec test suite is very short](https://knapsackpro.com/faq/question/why-my-tests-are-executed-twice-in-queue-mode-why-ci-node-runs-whole-test-suite-again).
 
 #### Info for GitHub Actions users
 
