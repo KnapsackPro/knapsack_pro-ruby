@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.13.0
+
+* Update FAQ links in `knapsack_pro` warnings and remove FAQ from readme
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/142
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.12.0...v2.13.0
+
 ### 2.12.0
 
 * Use 0 seconds as a default test file time execution instead of 0.1s because Knapsack Pro API already accepts 0 seconds value
