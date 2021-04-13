@@ -26,7 +26,7 @@ module KnapsackPro
         KnapsackPro.logger.error(message)
         raise message
       else
-        KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. Read more about fallback mode at https://github.com/KnapsackPro/knapsack_pro-ruby#what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily")
+        KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. Read more about fallback mode at https://knapsackpro.com/faq/question/what-happens-when-knapsack-pro-api-is-not-availablenot-reachable-temporarily")
         fallback_test_files
       end
     end
