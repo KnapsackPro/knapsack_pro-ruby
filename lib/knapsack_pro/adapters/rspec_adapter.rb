@@ -21,7 +21,7 @@ module KnapsackPro
 
       def bind_time_tracker
         ::RSpec.configure do |config|
-          config.prepend_before(:context) do |c|
+          config.prepend_before(:context) do
             KnapsackPro.tracker.start_timer
           end
 
