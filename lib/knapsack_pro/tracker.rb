@@ -67,7 +67,7 @@ module KnapsackPro
     def set_defaults
       @global_time = 0
       @test_files_with_time = {}
-      @test_path = nil
+      @current_test_path = nil
     end
 
     def update_global_time(execution_time)
