@@ -21,6 +21,10 @@ module KnapsackPro
 
       def bind_time_tracker
         ::RSpec.configure do |config|
+          config.prepend_before(:context) do |c|
+            KnapsackPro.tracker.start_timer
+          end
+
           config.around(:each) do |example|
             current_example_group =
               if ::RSpec.respond_to?(:current_example)
@@ -38,10 +42,10 @@ module KnapsackPro
                 current_test_path
               end
 
-            KnapsackPro.tracker.start_timer
-
             example.run
+          end
 
+          config.append_after(:context) do
             KnapsackPro.tracker.stop_timer
           end
 
