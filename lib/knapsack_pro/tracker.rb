@@ -24,14 +24,18 @@ module KnapsackPro
 
     def stop_timer
       execution_time = @start_time ? now_without_mock_time.to_f - @start_time : 0.0
-      update_global_time(execution_time)
-      update_test_file_time(execution_time)
+
+      if current_test_path
+        update_global_time(execution_time)
+        update_test_file_time(execution_time)
+        @current_test_path = nil
+      end
+
       execution_time
     end
 
     def current_test_path
-      raise("current_test_path needs to be set by Knapsack Pro Adapter's bind method") unless @current_test_path
-      KnapsackPro::TestFileCleaner.clean(@current_test_path)
+      KnapsackPro::TestFileCleaner.clean(@current_test_path) if @current_test_path
     end
 
     def set_prerun_tests(test_file_paths)
