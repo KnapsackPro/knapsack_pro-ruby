@@ -86,7 +86,9 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         end
 
         it 'records time for current test path' do
+          expect(config).to receive(:prepend_before).with(:context).and_yield
           expect(config).to receive(:around).with(:each).and_yield(example)
+          expect(config).to receive(:append_after).with(:context).and_yield
           expect(config).to receive(:after).with(:suite).and_yield
           expect(::RSpec).to receive(:configure).and_yield(config)
 
@@ -94,12 +96,12 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
 
           allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-          expect(tracker).to receive(:current_test_path=).with(test_path)
-          expect(tracker).to receive(:start_timer)
+          expect(tracker).to receive(:start_timer).ordered
+          expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
           expect(example).to receive(:run)
 
-          expect(tracker).to receive(:stop_timer)
+          expect(tracker).to receive(:stop_timer).ordered
 
           expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
@@ -124,7 +126,9 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           it 'records time for example.id' do
             expect(example).to receive(:id).and_return(test_example_path)
 
+            expect(config).to receive(:prepend_before).with(:context).and_yield
             expect(config).to receive(:around).with(:each).and_yield(example)
+            expect(config).to receive(:append_after).with(:context).and_yield
             expect(config).to receive(:after).with(:suite).and_yield
             expect(::RSpec).to receive(:configure).and_yield(config)
 
@@ -132,12 +136,12 @@ describe KnapsackPro::Adapters::RSpecAdapter do
             expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
 
             allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-            expect(tracker).to receive(:current_test_path=).with(test_example_path)
-            expect(tracker).to receive(:start_timer)
+            expect(tracker).to receive(:start_timer).ordered
+            expect(tracker).to receive(:current_test_path=).with(test_example_path).ordered
 
             expect(example).to receive(:run)
 
-            expect(tracker).to receive(:stop_timer)
+            expect(tracker).to receive(:stop_timer).ordered
 
             expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
             expect(KnapsackPro).to receive(:logger).and_return(logger)
@@ -153,7 +157,9 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           end
 
           it 'records time for current test path' do
+            expect(config).to receive(:prepend_before).with(:context).and_yield
             expect(config).to receive(:around).with(:each).and_yield(example)
+            expect(config).to receive(:append_after).with(:context).and_yield
             expect(config).to receive(:after).with(:suite).and_yield
             expect(::RSpec).to receive(:configure).and_yield(config)
 
@@ -161,12 +167,12 @@ describe KnapsackPro::Adapters::RSpecAdapter do
             expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
 
             allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-            expect(tracker).to receive(:current_test_path=).with(test_path)
-            expect(tracker).to receive(:start_timer)
+            expect(tracker).to receive(:start_timer).ordered
+            expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
             expect(example).to receive(:run)
 
-            expect(tracker).to receive(:stop_timer)
+            expect(tracker).to receive(:stop_timer).ordered
 
             expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
             expect(KnapsackPro).to receive(:logger).and_return(logger)

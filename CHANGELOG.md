@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.14.0
+
+* Track time spend in RSpec context hook
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/143
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.13.0...v2.14.0
+
 ### 2.13.0
 
 * Update FAQ links in `knapsack_pro` warnings and remove FAQ from readme
