@@ -2,7 +2,7 @@
 
 ### 2.14.0
 
-* Do not allow to use the RSpec tag option at the same time with RSpec split by test examples feature
+* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/139
 
