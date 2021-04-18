@@ -139,7 +139,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           let(:args) { '--tag example-value' }
 
           it do
-            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature/)
+            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature/)
           end
         end
 
@@ -147,7 +147,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           let(:args) { '-t example-value' }
 
           it do
-            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature/)
+            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature/)
           end
         end
 
@@ -155,7 +155,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           let(:args) { '-texample-value' }
 
           it do
-            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature/)
+            expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature/)
           end
         end
       end

@@ -16,7 +16,7 @@ module KnapsackPro
           cli_args = (args || '').split
 
           if KnapsackPro::Config::Env.rspec_split_by_test_examples? && has_tag_option?(cli_args)
-            error_message = 'It is not allowed to use the RSpec tag option at the same time with RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
+            error_message = 'It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
             KnapsackPro.logger.error(error_message)
             raise error_message
           end
