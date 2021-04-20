@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.15.0
+
+* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/139
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.14.0...v2.15.0
+
 ### 2.14.0
 
 * Track time spend in RSpec context hook

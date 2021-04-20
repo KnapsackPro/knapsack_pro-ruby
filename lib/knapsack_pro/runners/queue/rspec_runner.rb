@@ -14,12 +14,18 @@ module KnapsackPro
           runner = new(KnapsackPro::Adapters::RSpecAdapter)
 
           cli_args = (args || '').split
-          # if user didn't provide the format then use explicitly default progress formatter
-          # in order to avoid KnapsackPro::Formatters::RSpecQueueSummaryFormatter being the only default formatter
-          if !cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format')}
-            cli_args += ['--format', 'progress']
+
+          if KnapsackPro::Config::Env.rspec_split_by_test_examples? && has_tag_option?(cli_args)
+            error_message = 'It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
+            KnapsackPro.logger.error(error_message)
+            raise error_message
           end
+
+          # when format option is not defined by user then use progress formatter to show tests execution progress
+          cli_args += ['--format', 'progress'] unless has_format_option?(cli_args)
+
           cli_args += [
+            # shows summary of all tests executed in Queue Mode at the very end
             '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
             '--default-path', runner.test_dir,
           ]
@@ -147,6 +153,19 @@ module KnapsackPro
           if ::RSpec.configuration.respond_to?(:reset_filters)
             ::RSpec.configuration.reset_filters
           end
+        end
+
+        def self.has_tag_option?(cli_args)
+          # use start_with? because user can define tag option in a few ways:
+          # -t mytag
+          # -tmytag
+          # --tag mytag
+          # --tag=mytag
+          cli_args.any? { |arg| arg.start_with?('-t') || arg.start_with?('--tag') }
+        end
+
+        def self.has_format_option?(cli_args)
+          cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format') }
         end
       end
     end
