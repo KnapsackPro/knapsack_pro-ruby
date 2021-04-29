@@ -877,7 +877,7 @@ Ensure you have in CircleCI config yml
     destination: test-results
 ```
 
-You can find a full CircleCI yml config example in [the article](https://docs.knapsackpro.com/2021/rspec-testing-parallel-jobs-with-circleci-and-junit-xml-report).
+You can find a complete CircleCI YML config example in [the article](https://docs.knapsackpro.com/2021/rspec-testing-parallel-jobs-with-circleci-and-junit-xml-report).
 
 #### Info for Travis users
 
