@@ -830,7 +830,7 @@ Please remember to add additional containers for your project in CircleCI settin
 
 ##### CircleCI and knapsack_pro Queue Mode
 
-If you use knapsack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
+If you use knapsack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/2.0/collect-test-data/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
 
 Here you can read how to configure [junit formatter](https://knapsackpro.com/faq/question/how-to-use-junit-formatter#how-to-use-junit-formatter-with-knapsack_pro-queue-mode). Step for CircleCI is to copy the xml report to `$CIRCLE_TEST_REPORTS` directory. Below is full config for your `spec_helper.rb`:
 
