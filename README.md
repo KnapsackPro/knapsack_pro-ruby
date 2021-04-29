@@ -793,43 +793,7 @@ $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names[not
 
 If you are using circleci.com you can omit `KNAPSACK_PRO_CI_NODE_TOTAL` and `KNAPSACK_PRO_CI_NODE_INDEX`. Knapsack Pro will use `CIRCLE_NODE_TOTAL` and `CIRCLE_NODE_INDEX` provided by CircleCI.
 
-Here is an example for test configuration in your `circleci.yml` file.
-
-```yaml
-# CircleCI 1.0
-
-machine:
-  environment:
-    # Tokens should be set in CircleCI settings to avoid expose tokens in build logs
-    # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: rspec-token
-    # KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER: cucumber-token
-    # KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: minitest-token
-    # KNAPSACK_PRO_TEST_SUITE_TOKEN_TEST_UNIT: test-unit-token
-    # KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH: spinach-token
-test:
-  override:
-    # Step for RSpec
-    - bundle exec rake knapsack_pro:rspec:
-        parallel: true # Caution: there are 8 spaces indentation!
-
-    # Step for Cucumber
-    - bundle exec rake knapsack_pro:cucumber:
-        parallel: true # Caution: there are 8 spaces indentation!
-
-    # Step for Minitest
-    - bundle exec rake knapsack_pro:minitest:
-        parallel: true # Caution: there are 8 spaces indentation!
-
-    # Step for test-unit
-    - bundle exec rake knapsack_pro:test_unit:
-        parallel: true # Caution: there are 8 spaces indentation!
-
-    # Step for Spinach
-    - bundle exec rake knapsack_pro:spinach:
-        parallel: true # Caution: there are 8 spaces indentation!
-```
-
-Here is another example for CircleCI 2.0 platform.
+Here is an example for test configuration in your `.circleci/config.yml` file.
 
 ```yaml
 # CircleCI 2.0
@@ -866,7 +830,7 @@ Please remember to add additional containers for your project in CircleCI settin
 
 ##### CircleCI and knapsack_pro Queue Mode
 
-If you use knapsack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/1.0/test-metadata/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
+If you use knapsack_pro Queue Mode with CircleCI you may want to [collect metadata](https://circleci.com/docs/2.0/collect-test-data/#metadata-collection-in-custom-test-steps) like junit xml report about your RSpec test suite.
 
 Here you can read how to configure [junit formatter](https://knapsackpro.com/faq/question/how-to-use-junit-formatter#how-to-use-junit-formatter-with-knapsack_pro-queue-mode). Step for CircleCI is to copy the xml report to `$CIRCLE_TEST_REPORTS` directory. Below is full config for your `spec_helper.rb`:
 
@@ -912,6 +876,8 @@ Ensure you have in CircleCI config yml
     path: /tmp/test-results
     destination: test-results
 ```
+
+You can find a complete CircleCI YML config example in [the article](https://docs.knapsackpro.com/2021/rspec-testing-parallel-jobs-with-circleci-and-junit-xml-report).
 
 #### Info for Travis users
 
