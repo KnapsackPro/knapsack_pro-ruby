@@ -47,8 +47,6 @@ module KnapsackPro
               end
 
             example.run
-
-            KnapsackPro.tracker.stop_timer
           end
 
           config.append_after(:context) do
