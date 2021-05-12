@@ -27,7 +27,7 @@ module KnapsackPro
     end
 
     def stop_timer
-      execution_time = @start_time ? now_without_mock_time.to_f - @start_time : 0.0
+      execution_time = @start_time.nil? ? 0.0 : now_without_mock_time.to_f - @start_time
 
       if @current_test_path
         update_global_time(execution_time)
