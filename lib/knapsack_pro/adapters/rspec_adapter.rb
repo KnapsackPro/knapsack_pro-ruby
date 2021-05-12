@@ -26,6 +26,10 @@ module KnapsackPro
           end
 
           config.around(:each) do |example|
+            # stop timer to update time for previously executed test example
+            # this way we can count time for after(:context) hooks that are executed after(:each) hook
+            KnapsackPro.tracker.stop_timer
+
             current_example_group =
               if ::RSpec.respond_to?(:current_example)
                 ::RSpec.current_example.metadata[:example_group]
@@ -43,9 +47,13 @@ module KnapsackPro
               end
 
             example.run
+
+            KnapsackPro.tracker.stop_timer
           end
 
           config.append_after(:context) do
+            # after :context hook is executed only once.
+            # We need it to count time for the very last executed test example
             KnapsackPro.tracker.stop_timer
           end
 
