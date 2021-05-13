@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.16.0
+
+* Improve test time execution tracking for RSpec
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/145
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.15.0...v2.16.0
+
 ### 2.15.0
 
 * Do not allow to use the RSpec tag option together with the RSpec split by test examples feature
