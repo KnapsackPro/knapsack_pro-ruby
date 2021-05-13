@@ -12,7 +12,9 @@ describe KnapsackPro::Tracker do
     subject { tracker.current_test_path }
 
     context 'when current_test_path not set' do
-      it { expect(subject).to be_nil }
+      it do
+        expect { subject }.to raise_error("current_test_path needs to be set by Knapsack Pro Adapter's bind method")
+      end
     end
 
     context 'when current_test_path set' do
@@ -56,9 +58,6 @@ describe KnapsackPro::Tracker do
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
       it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to be_within(delta).of(0.1) }
       it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be_within(delta).of(0.2) }
-      it 'resets current_test_path after time is measured' do
-        expect(tracker.current_test_path).to be_nil
-      end
       it_behaves_like '#to_a'
     end
 
@@ -84,9 +83,6 @@ describe KnapsackPro::Tracker do
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
       it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to be_within(delta).of(0) }
       it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be_within(delta).of(0) }
-      it 'resets current_test_path after time is measured' do
-        expect(tracker.current_test_path).to be_nil
-      end
       it_behaves_like '#to_a'
     end
 
@@ -99,10 +95,12 @@ describe KnapsackPro::Tracker do
         end
       end
 
-      it { expect(tracker.global_time).to eq 0 }
+      it { expect(tracker.global_time).to be > 0 }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
       it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to eq 0 }
-      it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to eq 0 }
+      it '2nd spec (b_spec.rb) has recorded time because start_time was set during first call of stop_timer for the first spec (a_spec.rb)' do
+        expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be > 0
+      end
       it_behaves_like '#to_a'
     end
   end
