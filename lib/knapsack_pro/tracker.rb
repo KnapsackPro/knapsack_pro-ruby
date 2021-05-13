@@ -22,7 +22,7 @@ module KnapsackPro
       @start_time ||= now_without_mock_time.to_f
     end
 
-    def reset_start_timer
+    def reset_timer
       @start_time = now_without_mock_time.to_f
     end
 
@@ -32,7 +32,7 @@ module KnapsackPro
       if @current_test_path
         update_global_time(execution_time)
         update_test_file_time(execution_time)
-        reset_start_timer
+        reset_timer
       end
 
       execution_time
