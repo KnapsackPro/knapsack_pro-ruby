@@ -50,7 +50,7 @@ module KnapsackPro
           end
 
           config.append_after(:context) do
-            # after :context hook is run one time only, after all of the examples in a group
+            # after(:context) hook is run one time only, after all of the examples in a group
             # stop timer to count time for the very last executed test example
             KnapsackPro.tracker.stop_timer
           end
