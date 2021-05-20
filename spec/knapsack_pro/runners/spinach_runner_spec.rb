@@ -24,11 +24,14 @@ describe KnapsackPro::Runners::SpinachRunner do
                         stringify_test_file_paths: stringify_test_file_paths,
                         test_files_to_execute_exist?: true)
       end
+      let(:child_status) { double }
 
       before do
         expect(KnapsackPro::Adapters::SpinachAdapter).to receive(:verify_bind_method_called)
 
         expect(Kernel).to receive(:system).with('KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature')
+
+        allow(described_class).to receive(:child_status).and_return(child_status)
       end
 
       after { subject }
@@ -37,7 +40,7 @@ describe KnapsackPro::Runners::SpinachRunner do
         let(:exitstatus) { 0 }
 
         before do
-          expect($?).to receive(:exitstatus).and_return(exitstatus)
+          expect(child_status).to receive(:exitstatus).and_return(exitstatus)
         end
 
         it do
@@ -49,7 +52,7 @@ describe KnapsackPro::Runners::SpinachRunner do
         let(:exitstatus) { 1 }
 
         before do
-          expect($?).to receive(:exitstatus).twice.and_return(exitstatus)
+          expect(child_status).to receive(:exitstatus).twice.and_return(exitstatus)
         end
 
         it do
