@@ -1,6 +1,4 @@
-#require 'test/unit'
-
-xdescribe KnapsackPro::Runners::TestUnitRunner do
+describe KnapsackPro::Runners::TestUnitRunner do
   subject { described_class.new(KnapsackPro::Adapters::TestUnitAdapter) }
 
   it { should be_kind_of KnapsackPro::Runners::BaseRunner }
@@ -27,7 +25,7 @@ xdescribe KnapsackPro::Runners::TestUnitRunner do
         .with(KnapsackPro::Adapters::TestUnitAdapter).and_return(runner)
 
         auto_runner_exit_code = 0
-        expect(Test::Unit::AutoRunner).to receive(:run) do |flag, test_dir, cli_args|
+        expect(described_class).to receive(:test_unit_autorunner_run) do |flag, test_dir, cli_args|
           expect(flag).to be true
           expect(test_dir).to eq 'test-unit_fake'
           expect(cli_args.size).to eq 4

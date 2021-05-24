@@ -11,20 +11,31 @@ module KnapsackPro
         if runner.test_files_to_execute_exist?
           adapter_class.verify_bind_method_called
 
-          require 'test/unit'
-
           cli_args =
             (args || '').split +
             runner.test_file_paths.map do |f|
               File.expand_path(f)
             end
 
-          exit ::Test::Unit::AutoRunner.run(
+          exit test_unit_autorunner_run(
             true,
             runner.test_dir,
             cli_args
           )
         end
+      end
+
+      private
+
+      # https://www.rubydoc.info/github/test-unit/test-unit/Test/Unit/AutoRunner#run-class_method
+      def self.test_unit_autorunner_run(force_standalone, default_dir, argv)
+        require 'test/unit'
+
+        ::Test::Unit::AutoRunner.run(
+          force_standalone,
+          default_dir,
+          argv
+        )
       end
     end
   end
