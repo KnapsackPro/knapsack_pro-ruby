@@ -1,6 +1,13 @@
-#require 'test/unit/testcase'
+# fake class to make tests pass and to avoid require 'test/unit/testcase' to not break RSpec
+# https://www.rubydoc.info/gems/test-unit/3.4.1/Test/Unit/TestSuite
+module Test
+  module Unit
+    class TestSuite
+    end
+  end
+end
 
-xdescribe KnapsackPro::Adapters::TestUnitAdapter do
+describe KnapsackPro::Adapters::TestUnitAdapter do
   it do
     expect(described_class::TEST_DIR_PATTERN).to eq 'test/**{,/*/**}/*_test.rb'
   end
