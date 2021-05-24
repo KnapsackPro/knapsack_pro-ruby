@@ -15,20 +15,20 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
 
     it { should_not be_nil }
     its(:size) { should eq 40 }
-    it { should eq circle_sha1 } if ENV['CIRCLE_SHA1']
+    it { should eq circle_sha1 } if ENV['CIRCLECI']
   end
 
   describe '#branch' do
     subject { described_class.new.branch }
 
     it { should_not be_nil }
-    it { should eq circle_branch } if ENV['CIRCLE_BRANCH']
+    it { should eq circle_branch } if ENV['CIRCLECI']
   end
 
   describe '#branches' do
     subject { described_class.new.branches }
 
     it { expect(subject.include?('master')).to be true }
-    it { expect(subject.include?(circle_branch)).to be true } if ENV['CIRCLE_BRANCH']
+    it { expect(subject.include?(circle_branch)).to be true } if ENV['CIRCLECI']
   end
 end
