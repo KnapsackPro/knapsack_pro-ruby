@@ -75,9 +75,9 @@ describe KnapsackPro::Config::CI::Circle do
   describe '#project_dir' do
     subject { described_class.new.project_dir }
 
-    context 'when environment exists' do
-      let(:env) { { 'CIRCLE_PROJECT_REPONAME' => 'knapsack_pro-ruby' } }
-      it { should eql '/home/ubuntu/knapsack_pro-ruby' }
+    context 'when CIRCLE_WORKING_DIRECTORY environment variable exists' do
+      let(:env) { { 'CIRCLE_WORKING_DIRECTORY' => '~/knapsack_pro-ruby' } }
+      it { should eql '~/knapsack_pro-ruby' }
     end
 
     context "when environment doesn't exist" do
