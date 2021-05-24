@@ -23,6 +23,9 @@ module KnapsackPro
         end
 
         def project_dir
+          working_dir = ENV['CIRCLE_WORKING_DIRECTORY']
+          return working_dir if working_dir
+
           project_repo_name = ENV['CIRCLE_PROJECT_REPONAME']
           "/home/ubuntu/#{project_repo_name}" if project_repo_name
         end
