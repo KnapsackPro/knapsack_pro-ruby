@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.17.0
+
+* Use Ruby 3 in development and add small improvements
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/147
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.16.0...v2.17.0
+
 ### 2.16.0
 
 * Improve test time execution tracking for RSpec
