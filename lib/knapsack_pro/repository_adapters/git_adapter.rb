@@ -18,12 +18,7 @@ module KnapsackPro
 
       def working_dir
         dir = KnapsackPro::Config::Env.project_dir
-
-        if dir.to_s.include?('~')
-          File.expand_path(dir)
-        else
-          dir
-        end
+        File.expand_path(dir)
       end
     end
   end
