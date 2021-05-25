@@ -23,8 +23,7 @@ module KnapsackPro
         end
 
         def project_dir
-          working_dir = ENV['CIRCLE_WORKING_DIRECTORY']
-          return working_dir if working_dir
+          ENV['CIRCLE_WORKING_DIRECTORY']
         end
       end
     end
