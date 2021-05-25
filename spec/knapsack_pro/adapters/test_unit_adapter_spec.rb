@@ -1,4 +1,11 @@
-require 'test/unit/testcase'
+# fake class to make tests pass and to avoid require 'test/unit/testcase' to not break RSpec
+# https://www.rubydoc.info/gems/test-unit/3.4.1/Test/Unit/TestSuite
+module Test
+  module Unit
+    class TestSuite
+    end
+  end
+end
 
 describe KnapsackPro::Adapters::TestUnitAdapter do
   it do

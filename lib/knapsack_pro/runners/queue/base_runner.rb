@@ -29,6 +29,10 @@ module KnapsackPro
 
         attr_reader :allocator_builder,
           :allocator
+
+        def self.child_status
+          $?
+        end
       end
     end
   end

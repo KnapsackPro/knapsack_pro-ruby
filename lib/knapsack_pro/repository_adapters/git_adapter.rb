@@ -17,7 +17,8 @@ module KnapsackPro
       private
 
       def working_dir
-        KnapsackPro::Config::Env.project_dir
+        dir = KnapsackPro::Config::Env.project_dir
+        File.expand_path(dir)
       end
     end
   end

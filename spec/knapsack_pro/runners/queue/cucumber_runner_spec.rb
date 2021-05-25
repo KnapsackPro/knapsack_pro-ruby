@@ -100,6 +100,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
 
     context 'when test files exist' do
       let(:test_file_paths) { ['features/a.feature', 'features/b.feature'] }
+      let(:child_status) { double }
 
       before do
         subset_queue_id = 'fake-subset-queue-id'
@@ -117,8 +118,9 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
 
         expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
 
-        expect($?).to receive(:exited?).and_return(process_exited)
-        allow($?).to receive(:exitstatus).and_return(exitstatus)
+        allow(described_class).to receive(:child_status).and_return(child_status)
+        expect(child_status).to receive(:exited?).and_return(process_exited)
+        allow(child_status).to receive(:exitstatus).and_return(exitstatus)
       end
 
       context 'when system process finished its work (exited)' do
