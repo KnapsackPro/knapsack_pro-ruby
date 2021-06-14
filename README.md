@@ -838,7 +838,7 @@ Here you can read how to configure [junit formatter](https://knapsackpro.com/faq
 # spec_helper.rb or rails_helper.rb
 
 # TODO This must be the same path as value for rspec --out argument
-# Note the path should not contain sign ~, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
+# Note the path should not contain ~ char, for instance path ~/project/tmp/rspec.xml may not work. Please use full path instead.
 TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
 # move results to FINAL_RSPEC_XML_REPORT so the results won't accumulate with duplicated xml tags in TMP_RSPEC_XML_REPORT
 FINAL_RSPEC_XML_REPORT = 'tmp/rspec_final_results.xml'
