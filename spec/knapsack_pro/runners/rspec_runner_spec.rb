@@ -44,7 +44,7 @@ describe KnapsackPro::Runners::RSpecRunner do
         expect(t).to receive(:pattern=).with([])
       end
 
-      context 'when task already exists' do
+      context 'when rake task already exists' do
         before do
           expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(true)
           expect(task).to receive(:clear)
@@ -57,7 +57,7 @@ describe KnapsackPro::Runners::RSpecRunner do
         end
       end
 
-      context "when task doesn't exist" do
+      context "when rake task doesn't exist" do
         before do
           expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(false)
           expect(task).not_to receive(:clear)
