@@ -12,6 +12,62 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     it_behaves_like 'adapter'
   end
 
+  describe '.has_tag_option?' do
+    subject { described_class.has_tag_option?(cli_args) }
+
+    context 'when tag option is provided as -t' do
+      let(:cli_args) { ['-t', 'mytag'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when tag option is provided as --tag' do
+      let(:cli_args) { ['--tag', 'mytag'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when tag option is provided without delimiter' do
+      let(:cli_args) { ['-tmytag'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when tag option is not provided' do
+      let(:cli_args) { ['--fake', 'value'] }
+
+      it { expect(subject).to be false }
+    end
+  end
+
+  describe '.has_format_option?' do
+    subject { described_class.has_format_option?(cli_args) }
+
+    context 'when format option is provided as -f' do
+      let(:cli_args) { ['-f', 'documentation'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when format option is provided as --format' do
+      let(:cli_args) { ['--format', 'documentation'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when format option is provided without delimiter' do
+      let(:cli_args) { ['-fd'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when format option is not provided' do
+      let(:cli_args) { ['--fake', 'value'] }
+
+      it { expect(subject).to be false }
+    end
+  end
+
   describe '.test_path' do
     let(:current_example_metadata) do
       {
