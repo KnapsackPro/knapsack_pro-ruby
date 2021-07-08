@@ -12,6 +12,104 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     it_behaves_like 'adapter'
   end
 
+  describe '.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!' do
+    let(:cli_args) { double }
+
+    subject { described_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args) }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(rspec_split_by_test_examples_enabled)
+    end
+
+    context 'when RSpec split by test examples enabled' do
+      let(:rspec_split_by_test_examples_enabled) { true }
+
+      before do
+        expect(described_class).to receive(:has_tag_option?).with(cli_args).and_return(has_tag_option)
+      end
+
+      context 'when RSpec tag option is provided' do
+        let(:has_tag_option) { true }
+
+        it do
+          expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature/)
+        end
+      end
+
+      context 'when RSpec tag option is not provided' do
+        let(:has_tag_option) { false }
+
+        it 'does nothing' do
+          expect(subject).to be_nil
+        end
+      end
+    end
+
+    context 'when RSpec split by test examples disabled' do
+      let(:rspec_split_by_test_examples_enabled) { false }
+
+      it 'does nothing' do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
+  describe '.has_tag_option?' do
+    subject { described_class.has_tag_option?(cli_args) }
+
+    context 'when tag option is provided as -t' do
+      let(:cli_args) { ['-t', 'mytag'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when tag option is provided as --tag' do
+      let(:cli_args) { ['--tag', 'mytag'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when tag option is provided without delimiter' do
+      let(:cli_args) { ['-tmytag'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when tag option is not provided' do
+      let(:cli_args) { ['--fake', 'value'] }
+
+      it { expect(subject).to be false }
+    end
+  end
+
+  describe '.has_format_option?' do
+    subject { described_class.has_format_option?(cli_args) }
+
+    context 'when format option is provided as -f' do
+      let(:cli_args) { ['-f', 'documentation'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when format option is provided as --format' do
+      let(:cli_args) { ['--format', 'documentation'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when format option is provided without delimiter' do
+      let(:cli_args) { ['-fd'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when format option is not provided' do
+      let(:cli_args) { ['--fake', 'value'] }
+
+      it { expect(subject).to be false }
+    end
+  end
+
   describe '.test_path' do
     let(:current_example_metadata) do
       {

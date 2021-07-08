@@ -11,18 +11,14 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-          runner = new(KnapsackPro::Adapters::RSpecAdapter)
+          adapter_class = KnapsackPro::Adapters::RSpecAdapter
+          runner = new(adapter_class)
 
           cli_args = (args || '').split
-
-          if KnapsackPro::Config::Env.rspec_split_by_test_examples? && has_tag_option?(cli_args)
-            error_message = 'It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
-            KnapsackPro.logger.error(error_message)
-            raise error_message
-          end
+          adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
           # when format option is not defined by user then use progress formatter to show tests execution progress
-          cli_args += ['--format', 'progress'] unless has_format_option?(cli_args)
+          cli_args += ['--format', 'progress'] unless adapter_class.has_format_option?(cli_args)
 
           cli_args += [
             # shows summary of all tests executed in Queue Mode at the very end
@@ -153,19 +149,6 @@ module KnapsackPro
           if ::RSpec.configuration.respond_to?(:reset_filters)
             ::RSpec.configuration.reset_filters
           end
-        end
-
-        def self.has_tag_option?(cli_args)
-          # use start_with? because user can define tag option in a few ways:
-          # -t mytag
-          # -tmytag
-          # --tag mytag
-          # --tag=mytag
-          cli_args.any? { |arg| arg.start_with?('-t') || arg.start_with?('--tag') }
-        end
-
-        def self.has_format_option?(cli_args)
-          cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format') }
         end
       end
     end

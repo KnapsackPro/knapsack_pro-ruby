@@ -34,7 +34,8 @@ describe KnapsackPro::Runners::RSpecRunner do
       let(:task) { double }
 
       before do
-        expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called)
+        expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called).ordered
+        expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!).with(['--profile', '--color']).ordered
 
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:rspec_run').at_least(1).and_return(task)
 
@@ -44,7 +45,7 @@ describe KnapsackPro::Runners::RSpecRunner do
         expect(t).to receive(:pattern=).with([])
       end
 
-      context 'when task already exists' do
+      context 'when rake task already exists' do
         before do
           expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(true)
           expect(task).to receive(:clear)
@@ -57,7 +58,7 @@ describe KnapsackPro::Runners::RSpecRunner do
         end
       end
 
-      context "when task doesn't exist" do
+      context "when rake task doesn't exist" do
         before do
           expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(false)
           expect(task).not_to receive(:clear)

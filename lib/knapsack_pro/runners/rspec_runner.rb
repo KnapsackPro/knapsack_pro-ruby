@@ -11,6 +11,9 @@ module KnapsackPro
         if runner.test_files_to_execute_exist?
           adapter_class.verify_bind_method_called
 
+          cli_args = (args || '').split
+          adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+
           require 'rspec/core/rake_task'
 
           task_name = 'knapsack_pro:rspec_run'
