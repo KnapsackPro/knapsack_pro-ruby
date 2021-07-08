@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.18.0
+
+* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature in knapsack_pro gem in Regular Mode 
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/148
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.17.0...v2.18.0
+
 ### 2.17.0
 
 * Use Ruby 3 in development and add small improvements
