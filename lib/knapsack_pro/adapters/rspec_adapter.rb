@@ -3,6 +3,27 @@ module KnapsackPro
     class RSpecAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
 
+      def self.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+        if KnapsackPro::Config::Env.rspec_split_by_test_examples? && has_tag_option?(cli_args)
+          error_message = 'It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
+          KnapsackPro.logger.error(error_message)
+          raise error_message
+        end
+      end
+
+      def self.has_tag_option?(cli_args)
+        # use start_with? because user can define tag option in a few ways:
+        # -t mytag
+        # -tmytag
+        # --tag mytag
+        # --tag=mytag
+        cli_args.any? { |arg| arg.start_with?('-t') || arg.start_with?('--tag') }
+      end
+
+      def self.has_format_option?(cli_args)
+        cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format') }
+      end
+
       def self.test_path(example_group)
         if defined?(::Turnip) && ::Turnip::VERSION.to_i < 2
           unless example_group[:turnip]
