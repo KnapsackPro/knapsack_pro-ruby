@@ -12,6 +12,48 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     it_behaves_like 'adapter'
   end
 
+  describe '.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!' do
+    let(:cli_args) { double }
+
+    subject { described_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args) }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(rspec_split_by_test_examples_enabled)
+    end
+
+    context 'when RSpec split by test examples enabled' do
+      let(:rspec_split_by_test_examples_enabled) { true }
+
+      before do
+        expect(described_class).to receive(:has_tag_option?).with(cli_args).and_return(has_tag_option)
+      end
+
+      context 'when RSpec tag option is provided' do
+        let(:has_tag_option) { true }
+
+        it do
+          expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature/)
+        end
+      end
+
+      context 'when RSpec tag option is not provided' do
+        let(:has_tag_option) { false }
+
+        it 'does nothing' do
+          expect(subject).to be_nil
+        end
+      end
+    end
+
+    context 'when RSpec split by test examples disabled' do
+      let(:rspec_split_by_test_examples_enabled) { false }
+
+      it 'does nothing' do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
   describe '.has_tag_option?' do
     subject { described_class.has_tag_option?(cli_args) }
 
