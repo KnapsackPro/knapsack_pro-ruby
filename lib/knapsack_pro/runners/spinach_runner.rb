@@ -5,6 +5,7 @@ module KnapsackPro
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_spinach
 
         adapter_class = KnapsackPro::Adapters::SpinachAdapter
+        KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
         runner = new(adapter_class)
 
         if runner.test_files_to_execute_exist?

@@ -12,6 +12,7 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
           adapter_class = KnapsackPro::Adapters::RSpecAdapter
+          KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
           runner = new(adapter_class)
 
           cli_args = (args || '').split

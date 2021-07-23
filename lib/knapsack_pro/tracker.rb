@@ -91,7 +91,8 @@ module KnapsackPro
     end
 
     def prerun_tests_report_path
-      report_name = "prerun_tests_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+      raise 'Test runner adapter not set. Report a bug to the Knapsack Pro support.' unless KnapsackPro::Config::Env.test_runner_adapter
+      report_name = "prerun_tests_#{KnapsackPro::Config::Env.test_runner_adapter}_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
       File.join(tracker_dir_path, report_name)
     end
 

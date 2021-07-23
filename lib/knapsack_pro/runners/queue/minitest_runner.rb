@@ -9,7 +9,9 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-          runner = new(KnapsackPro::Adapters::MinitestAdapter)
+          adapter_class = KnapsackPro::Adapters::MinitestAdapter
+          KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
+          runner = new(adapter_class)
 
           # Add test_dir to load path to make work:
           #   require 'test_helper'
