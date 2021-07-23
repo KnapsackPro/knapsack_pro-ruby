@@ -440,13 +440,13 @@ If your test suite is very long and the RSpec output is too long for your CI nod
 ### Additional info about queue mode
 
 * You should use a separate API token for queue mode than for regular mode to avoid problems with test suite split (especially in case you would like to go back to regular mode).
-There might be some cached test suite splits for git commits you have run in past for API token you used in queue mode because of the [flag `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true` for regular mode which is default](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed).
+There might be some cached test suite splits for git commits you have run in past for API token you used in queue mode because of the [flag `KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true` for regular mode which is default](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed).
 
 * If you are not using one of the [supported CI providers](#supported-ci-providers) then please note that the knapsack_pro gem doesn't have a CI build ID in order to generate a queue for each particular CI build. This may result in two different CI builds taking tests from the same queue when CI builds are running at the same time against the same git commit.
 
   To avoid this you should specify a unique `KNAPSACK_PRO_CI_NODE_BUILD_ID` environment variable for each CI build. This mean that each CI node that is part of particular CI build should have the same value for `KNAPSACK_PRO_CI_NODE_BUILD_ID`.
 
-* Note that in the Queue Mode by default you cannot retry the failed CI node with exactly the same subset of tests that were run on the CI node in the first place. It's possible in regular mode ([read more](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed)). If you want to have similar behavior in Queue Mode you need to explicitly [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
+* Note that in the Queue Mode by default you cannot retry the failed CI node with exactly the same subset of tests that were run on the CI node in the first place. It's possible in regular mode ([read more](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed)). If you want to have similar behavior in Queue Mode you need to explicitly [enable it](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node).
 
   By default the Queue Mode works this way:
 
@@ -626,7 +626,7 @@ This is only for maintainer of knapsack_pro gem. Not for the end users.
 
 ### Required CI configuration if you use retry single failed CI node feature on your CI server when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true (in Queue Mode) or KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true (in Regular Mode)
 
-Read below required configuration step if you use Queue Mode and you set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node) or you use Regular Mode which has by default [`KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true`](#knapsack_pro_fixed_test_suite_splite-test-suite-split-based-on-seed).
+Read below required configuration step if you use Queue Mode and you set [`KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true`](#knapsack_pro_fixed_queue_split-remember-queue-split-on-retry-ci-node) or you use Regular Mode which has by default [`KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true`](#knapsack_pro_fixed_test_suite_split-test-suite-split-based-on-seed).
 
 * __IMPORTANT:__ If you use __the feature to retry only a single failed CI node__ on your CI server (for instance you use Buildkite and you use [auto-retry](https://buildkite.com/docs/pipelines/command-step#retry-attributes) for the failed job) then you need to be aware of [a race condition that could happen](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/100). knapsack_pro should not allow running tests in Fallback Mode in the case when the failed CI node was retried to prevent running the wrong set of tests.
 
