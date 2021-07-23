@@ -10,6 +10,8 @@ module KnapsackPro
         if runner.test_files_to_execute_exist?
           adapter_class.verify_bind_method_called
 
+          KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
+
           cmd = %Q[KNAPSACK_PRO_RECORDING_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=#{ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']} bundle exec spinach #{args} --features_path #{runner.test_dir} -- #{runner.stringify_test_file_paths}]
 
           Kernel.system(cmd)

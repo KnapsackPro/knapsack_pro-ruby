@@ -11,6 +11,8 @@ module KnapsackPro
         if runner.test_files_to_execute_exist?
           adapter_class.verify_bind_method_called
 
+          KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
+
           cli_args =
             (args || '').split +
             runner.test_file_paths.map do |f|
