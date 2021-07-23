@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.18.2
+
+* Track all test files assigned to a CI node in Regular Mode including pending test files in order to retry proper set of tests on the retried CI node
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/152
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.18.1...v2.18.2
+
 ### 2.18.1
 
 * Ensure RSpec is loaded to check its version for RSpec split by test examples feature
