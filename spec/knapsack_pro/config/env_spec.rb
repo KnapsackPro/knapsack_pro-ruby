@@ -950,4 +950,29 @@ describe KnapsackPro::Config::Env do
       it { should be_nil }
     end
   end
+
+  describe '.test_runner_adapter' do
+    subject { described_class.test_runner_adapter }
+
+    context 'when ENV exists' do
+      let(:test_runner_adapter) { 'RSpecAdapter' }
+      before { stub_const('ENV', { 'KNAPSACK_PRO_TEST_RUNNER_ADAPTER' => test_runner_adapter }) }
+      it { should eql 'RSpecAdapter' }
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be_nil }
+    end
+  end
+
+  describe '.set_test_runner_adapter' do
+    let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
+
+    subject { described_class.set_test_runner_adapter(adapter_class) }
+
+    it 'sets test runner adapter' do
+      subject
+      expect(described_class.test_runner_adapter).to eql 'RSpecAdapter'
+    end
+  end
 end
