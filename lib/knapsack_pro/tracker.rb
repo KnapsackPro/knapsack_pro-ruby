@@ -66,6 +66,7 @@ module KnapsackPro
     def to_a
       # When the test files are not loaded in the memory then load them from the disk.
       # Useful for the Regular Mode when the memory is not shared between tracker instances.
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g. RSpec)
       load_prerun_tests unless prerun_tests_loaded
 
       test_files = []
