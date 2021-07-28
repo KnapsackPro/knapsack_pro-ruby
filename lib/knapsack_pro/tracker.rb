@@ -20,7 +20,7 @@ module KnapsackPro
 
       # Remove report only when the reset! method is called explicitly.
       # The report should be persisted on the disk so that multiple tracker instances can share the report state.
-      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g. RSpec) in Regular Mode.
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec) in Regular Mode.
       File.delete(prerun_tests_report_path) if File.exists?(prerun_tests_report_path)
     end
 
@@ -69,7 +69,7 @@ module KnapsackPro
     def to_a
       # When the test files are not loaded in the memory then load them from the disk.
       # Useful for the Regular Mode when the memory is not shared between tracker instances.
-      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g. RSpec)
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec)
       load_prerun_tests unless prerun_tests_loaded
 
       test_files = []
@@ -116,7 +116,7 @@ module KnapsackPro
     def load_prerun_tests
       read_prerun_tests_report.each do |test_file_path, hash|
         # Load only test files that were not measured. For example,
-        # track test files assigned to CI node but never executed by test runner (e.g. pending RSpec spec files).
+        # track test files assigned to CI node but never executed by test runner (e.g., pending RSpec spec files).
         next if @test_files_with_time.key?(test_file_path)
 
         @test_files_with_time[test_file_path] = {
