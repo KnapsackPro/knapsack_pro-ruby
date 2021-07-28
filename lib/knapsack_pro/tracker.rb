@@ -115,8 +115,8 @@ module KnapsackPro
 
     def load_prerun_tests
       read_prerun_tests_report.each do |test_file_path, hash|
-        # load only test files that were not measured yet
-        # track test files assigned to CI node but never executed by test runner (e.g. pending RSpec spec files)
+        # Load only test files that were not measured. For example,
+        # track test files assigned to CI node but never executed by test runner (e.g. pending RSpec spec files).
         next if @test_files_with_time.key?(test_file_path)
 
         @test_files_with_time[test_file_path] = {
