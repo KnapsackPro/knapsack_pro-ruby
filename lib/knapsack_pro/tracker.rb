@@ -17,7 +17,11 @@ module KnapsackPro
 
     def reset!
       set_defaults
-      set_default_prerun_tests
+
+      # Remove report only when the reset! method is called explicitly.
+      # The report should be persisted on the disk so that multiple tracker instances can share the report state.
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g. RSpec) in Regular Mode.
+      File.delete(prerun_tests_report_path) if File.exists?(prerun_tests_report_path)
     end
 
     def start_timer
@@ -103,10 +107,6 @@ module KnapsackPro
       File.open(prerun_tests_report_path, 'w+') do |f|
         f.write(report_json)
       end
-    end
-
-    def set_default_prerun_tests
-      save_prerun_tests_report({})
     end
 
     def read_prerun_tests_report
