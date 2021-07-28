@@ -11,7 +11,6 @@ module KnapsackPro
 
     def initialize
       @global_time_since_beginning = 0
-      @prerun_tests_loaded = false
       FileUtils.mkdir_p(tracker_dir_path)
       set_defaults
     end
@@ -85,6 +84,7 @@ module KnapsackPro
       @global_time = 0
       @test_files_with_time = {}
       @current_test_path = nil
+      @prerun_tests_loaded = false
     end
 
     def tracker_dir_path
