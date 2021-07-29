@@ -257,6 +257,14 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_LOG_DIR']
         end
 
+        def test_runner_adapter
+          ENV['KNAPSACK_PRO_TEST_RUNNER_ADAPTER']
+        end
+
+        def set_test_runner_adapter(adapter_class)
+          ENV['KNAPSACK_PRO_TEST_RUNNER_ADAPTER'] = adapter_class.to_s.split('::').last
+        end
+
         private
 
         def required_env(env_name)

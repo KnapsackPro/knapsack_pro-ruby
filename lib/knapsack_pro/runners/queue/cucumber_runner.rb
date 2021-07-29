@@ -9,7 +9,9 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-          runner = new(KnapsackPro::Adapters::CucumberAdapter)
+          adapter_class = KnapsackPro::Adapters::CucumberAdapter
+          KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
+          runner = new(adapter_class)
 
           accumulator = {
             status: :next,

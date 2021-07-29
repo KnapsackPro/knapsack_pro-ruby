@@ -19,6 +19,8 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_RECORDING_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
 
+      expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::MinitestAdapter)
+
       expect(described_class).to receive(:new).with(KnapsackPro::Adapters::MinitestAdapter).and_return(runner)
 
       expect($LOAD_PATH).to receive(:unshift).with(test_dir)

@@ -6,6 +6,7 @@ module KnapsackPro
         ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
 
         adapter_class = KnapsackPro::Adapters::RSpecAdapter
+        KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
         runner = new(adapter_class)
 
         if runner.test_files_to_execute_exist?
@@ -13,6 +14,8 @@ module KnapsackPro
 
           cli_args = (args || '').split
           adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+
+          KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
 
           require 'rspec/core/rake_task'
 

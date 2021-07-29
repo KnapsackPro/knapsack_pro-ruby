@@ -6,16 +6,22 @@ module KnapsackPro
     # to better allocate it in Queue Mode for future CI build runs
     DEFAULT_TEST_FILE_TIME = 0.0 # seconds
 
-    attr_reader :global_time_since_beginning, :global_time, :test_files_with_time
+    attr_reader :global_time_since_beginning, :global_time, :test_files_with_time, :prerun_tests_loaded
     attr_writer :current_test_path
 
     def initialize
       @global_time_since_beginning = 0
+      FileUtils.mkdir_p(tracker_dir_path)
       set_defaults
     end
 
     def reset!
       set_defaults
+
+      # Remove report only when the reset! method is called explicitly.
+      # The report should be persisted on the disk so that multiple tracker instances can share the report state.
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec) in Regular Mode.
+      File.delete(prerun_tests_report_path) if File.exists?(prerun_tests_report_path)
     end
 
     def start_timer
@@ -54,9 +60,18 @@ module KnapsackPro
           measured_time: false,
         }
       end
+
+      save_prerun_tests_report(@test_files_with_time)
+
+      @prerun_tests_loaded = true
     end
 
     def to_a
+      # When the test files are not loaded in the memory then load them from the disk.
+      # Useful for the Regular Mode when the memory is not shared between tracker instances.
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec)
+      load_prerun_tests unless prerun_tests_loaded
+
       test_files = []
       @test_files_with_time.each do |path, hash|
         test_files << {
@@ -73,6 +88,44 @@ module KnapsackPro
       @global_time = 0
       @test_files_with_time = {}
       @current_test_path = nil
+      @prerun_tests_loaded = false
+    end
+
+    def tracker_dir_path
+      "#{KnapsackPro::Config::Env::TMP_DIR}/tracker"
+    end
+
+    def prerun_tests_report_path
+      raise 'Test runner adapter not set. Report a bug to the Knapsack Pro support.' unless KnapsackPro::Config::Env.test_runner_adapter
+      report_name = "prerun_tests_#{KnapsackPro::Config::Env.test_runner_adapter}_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+      File.join(tracker_dir_path, report_name)
+    end
+
+    def save_prerun_tests_report(hash)
+      report_json = JSON.pretty_generate(hash)
+
+      File.open(prerun_tests_report_path, 'w+') do |f|
+        f.write(report_json)
+      end
+    end
+
+    def read_prerun_tests_report
+      JSON.parse(File.read(prerun_tests_report_path))
+    end
+
+    def load_prerun_tests
+      read_prerun_tests_report.each do |test_file_path, hash|
+        # Load only test files that were not measured. For example,
+        # track test files assigned to CI node but never executed by test runner (e.g., pending RSpec spec files).
+        next if @test_files_with_time.key?(test_file_path)
+
+        @test_files_with_time[test_file_path] = {
+          time_execution: hash.fetch('time_execution'),
+          measured_time: hash.fetch('measured_time'),
+        }
+      end
+
+      @prerun_tests_loaded = true
     end
 
     def update_global_time(execution_time)

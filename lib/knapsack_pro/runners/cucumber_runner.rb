@@ -6,10 +6,13 @@ module KnapsackPro
         ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
 
         adapter_class = KnapsackPro::Adapters::CucumberAdapter
+        KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
         runner = new(adapter_class)
 
         if runner.test_files_to_execute_exist?
           adapter_class.verify_bind_method_called
+
+          KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
 
           require 'cucumber/rake/task'
 

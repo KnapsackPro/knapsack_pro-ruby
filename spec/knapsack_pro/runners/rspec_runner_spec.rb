@@ -18,16 +18,20 @@ describe KnapsackPro::Runners::RSpecRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_rspec)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_RECORDING_ENABLED', 'true')
 
+      expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::RSpecAdapter)
+
       expect(described_class).to receive(:new)
       .with(KnapsackPro::Adapters::RSpecAdapter).and_return(runner)
     end
 
     context 'when test files were returned by Knapsack Pro API' do
       let(:test_dir) { 'fake-test-dir' }
-      let(:stringify_test_file_paths) { "spec/a_spec.rb spec/b_spec.rb[1:1]" }
+      let(:test_file_paths) { ['spec/a_spec.rb', 'spec/b_spec.rb[1:1]'] }
+      let(:stringify_test_file_paths) { test_file_paths.join(' ') }
       let(:runner) do
         instance_double(described_class,
                         test_dir: test_dir,
+                        test_file_paths: test_file_paths,
                         stringify_test_file_paths: stringify_test_file_paths,
                         test_files_to_execute_exist?: true)
       end
@@ -36,6 +40,10 @@ describe KnapsackPro::Runners::RSpecRunner do
       before do
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called).ordered
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!).with(['--profile', '--color']).ordered
+
+        tracker = instance_double(KnapsackPro::Tracker)
+        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+        expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:rspec_run').at_least(1).and_return(task)
 

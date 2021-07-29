@@ -26,6 +26,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_RECORDING_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
 
+      expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::RSpecAdapter)
+
       expect(described_class).to receive(:new).with(KnapsackPro::Adapters::RSpecAdapter).and_return(runner)
     end
 
