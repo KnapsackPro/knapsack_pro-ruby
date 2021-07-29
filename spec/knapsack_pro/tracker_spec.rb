@@ -164,12 +164,15 @@ describe KnapsackPro::Tracker do
     end
 
     before do
+      expect(tracker.prerun_tests_loaded).to be true
+
       tracker.current_test_path = test_file_path
       tracker.start_timer
       sleep 0.1
       tracker.stop_timer
+
       expect(tracker.global_time).not_to eql 0
-      expect(tracker.prerun_tests_loaded).to be true
+
       tracker.reset!
     end
 
