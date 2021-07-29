@@ -1,10 +1,17 @@
 shared_examples 'default trakcer attributes' do
   it { expect(tracker.global_time).to eql 0 }
   it { expect(tracker.test_files_with_time).to eql({}) }
+  it { expect(tracker.prerun_tests_loaded).to be false }
 end
 
 describe KnapsackPro::Tracker do
+  let(:adapter) { 'RSpecAdapter' }
   let(:tracker) { described_class.send(:new) }
+
+  before do
+    allow(KnapsackPro::Config::Env).to receive(:test_runner_adapter).and_return(adapter)
+    allow(KnapsackPro::Config::Env).to receive(:ci_node_index).and_return(0)
+  end
 
   it_behaves_like 'default trakcer attributes'
 
@@ -34,6 +41,10 @@ describe KnapsackPro::Tracker do
     let(:test_paths) { ['a_spec.rb', 'b_spec.rb'] }
     let(:delta) { 0.02 }
 
+    before do
+      tracker.set_prerun_tests(test_paths)
+    end
+
     shared_examples '#to_a' do
       subject { tracker.to_a }
 
@@ -55,13 +66,14 @@ describe KnapsackPro::Tracker do
       end
 
       it { expect(tracker.global_time).to be_within(delta).of(0.3) }
+      it { expect(tracker.prerun_tests_loaded).to be true }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
       it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to be_within(delta).of(0.1) }
       it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be_within(delta).of(0.2) }
       it_behaves_like '#to_a'
     end
 
-    context "with Timecop - Timecop shouldn't have impact on measured test time" do
+    context "with Timecop - Timecop shouldn't have impact on the measured test time" do
       let(:now) { Time.now }
 
       before do
@@ -80,6 +92,7 @@ describe KnapsackPro::Tracker do
 
       it { expect(tracker.global_time).to be > 0 }
       it { expect(tracker.global_time).to be_within(delta).of(0) }
+      it { expect(tracker.prerun_tests_loaded).to be true }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
       it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to be_within(delta).of(0) }
       it { expect(tracker.test_files_with_time['b_spec.rb'][:time_execution]).to be_within(delta).of(0) }
@@ -96,6 +109,7 @@ describe KnapsackPro::Tracker do
       end
 
       it { expect(tracker.global_time).to be > 0 }
+      it { expect(tracker.prerun_tests_loaded).to be true }
       it { expect(tracker.test_files_with_time.keys.size).to eql 2 }
       it { expect(tracker.test_files_with_time['a_spec.rb'][:time_execution]).to eq 0 }
       it '2nd spec (b_spec.rb) should have recorded time execution - because start_time was set during first call of stop_timer for the first spec (a_spec.rb)' do
@@ -106,12 +120,19 @@ describe KnapsackPro::Tracker do
   end
 
   describe '#reset!' do
+    let(:test_file_path) { 'a_spec.rb' }
+
     before do
-      tracker.current_test_path = 'a_spec.rb'
+      tracker.set_prerun_tests([test_file_path])
+    end
+
+    before do
+      tracker.current_test_path = test_file_path
       tracker.start_timer
       sleep 0.1
       tracker.stop_timer
       expect(tracker.global_time).not_to eql 0
+      expect(tracker.prerun_tests_loaded).to be true
       tracker.reset!
     end
 
@@ -119,6 +140,10 @@ describe KnapsackPro::Tracker do
 
     it "global time since beginning won't be reset" do
       expect(tracker.global_time_since_beginning).to be >= 0.1
+    end
+
+    it 'resets prerun_tests_loaded to false' do
+      expect(tracker.prerun_tests_loaded).to be false
     end
   end
 end
