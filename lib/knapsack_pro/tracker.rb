@@ -124,6 +124,8 @@ module KnapsackPro
           measured_time: hash.fetch('measured_time'),
         }
       end
+
+      @prerun_tests_loaded = true
     end
 
     def update_global_time(execution_time)

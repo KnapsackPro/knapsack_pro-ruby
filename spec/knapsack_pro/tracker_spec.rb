@@ -117,6 +117,43 @@ describe KnapsackPro::Tracker do
       end
       it_behaves_like '#to_a'
     end
+
+    context 'when a new tracker instance is created' do
+      let(:non_pending_test_paths) { ['a_spec.rb', 'b_spec.rb'] }
+      let(:test_paths) { non_pending_test_paths + ['pending_spec.rb'] }
+
+      before do
+        # measure tests only for non pending tests
+        non_pending_test_paths.each_with_index do |test_path, index|
+          tracker.current_test_path = test_path
+          tracker.start_timer
+          sleep index.to_f / 10 + 0.1
+          tracker.stop_timer
+        end
+      end
+
+      it '2nd tracker instance loads prerun tests from the disk' do
+        expect(tracker.prerun_tests_loaded).to be true
+        expect(tracker.to_a.size).to eq 3
+        expect(tracker.to_a[0][:path]).to eq 'a_spec.rb'
+        expect(tracker.to_a[0][:time_execution]).to be >= 0
+        expect(tracker.to_a[1][:path]).to eq 'b_spec.rb'
+        expect(tracker.to_a[1][:time_execution]).to be >= 0
+        expect(tracker.to_a[2][:path]).to eq 'pending_spec.rb'
+        expect(tracker.to_a[2][:time_execution]).to eq 0
+
+        tracker2 = described_class.send(:new)
+        expect(tracker2.prerun_tests_loaded).to be false
+        expect(tracker2.to_a.size).to eq 3
+        expect(tracker2.to_a[0][:path]).to eq 'a_spec.rb'
+        expect(tracker2.to_a[0][:time_execution]).to be >= 0
+        expect(tracker2.to_a[1][:path]).to eq 'b_spec.rb'
+        expect(tracker2.to_a[1][:time_execution]).to be >= 0
+        expect(tracker2.to_a[2][:path]).to eq 'pending_spec.rb'
+        expect(tracker2.to_a[2][:time_execution]).to eq 0
+        expect(tracker2.prerun_tests_loaded).to be true
+      end
+    end
   end
 
   describe '#reset!' do
