@@ -18,16 +18,20 @@ describe KnapsackPro::Runners::CucumberRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_cucumber)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_RECORDING_ENABLED', 'true')
 
+      expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::CucumberAdapter)
+
       expect(described_class).to receive(:new)
       .with(KnapsackPro::Adapters::CucumberAdapter).and_return(runner)
     end
 
     context 'when test files were returned by Knapsack Pro API' do
       let(:test_dir) { 'fake-test-dir' }
-      let(:stringify_test_file_paths) { 'features/fake1.scenario features/fake2.scenario' }
+      let(:test_file_paths) { ['features/fake1.scenario', 'features/fake2.scenario'] }
+      let(:stringify_test_file_paths) { test_file_paths.join(' ') }
       let(:runner) do
         instance_double(described_class,
                         test_dir: test_dir,
+                        test_file_paths: test_file_paths,
                         stringify_test_file_paths: stringify_test_file_paths,
                         test_files_to_execute_exist?: true)
       end
@@ -35,6 +39,10 @@ describe KnapsackPro::Runners::CucumberRunner do
 
       before do
         expect(KnapsackPro::Adapters::CucumberAdapter).to receive(:verify_bind_method_called)
+
+        tracker = instance_double(KnapsackPro::Tracker)
+        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+        expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:cucumber_run').at_least(1).and_return(task)
 
