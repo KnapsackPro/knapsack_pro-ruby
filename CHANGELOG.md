@@ -1,5 +1,14 @@
 # Change Log
 
+### 3.0.0
+
+* __(breaking change)__ Remove support for RSpec 2.x. This change was already done by accident in [the pull request](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/143) when we added RSpec `context` hook available only for RSpec 3.x.
+* Use RSpec `example` from RSpec `each` hook instead of global `RSpec.current_example`. It allows running tests with async-rspec gem.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/153
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.18.2...v3.0.0
+
 ### 2.18.2
 
 * Track all test files assigned to a CI node in Regular Mode including pending test files in order to retry proper set of tests on the retried CI node
