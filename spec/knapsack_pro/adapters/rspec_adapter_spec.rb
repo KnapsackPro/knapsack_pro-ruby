@@ -111,7 +111,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
   end
 
   describe '.test_path' do
-    let(:current_example_metadata) do
+    let(:example_group) do
       {
         file_path: '1_shared_example.rb',
         parent_example_group: {
@@ -122,14 +122,19 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         }
       }
     end
+    let(:current_example) do
+      OpenStruct.new(metadata: {
+        example_group: example_group
+      })
+    end
 
-    subject { described_class.test_path(current_example_metadata) }
+    subject { described_class.test_path(current_example) }
 
     it { should eql 'a_spec.rb' }
 
     context 'with turnip features' do
       describe 'when the turnip version is less than 2' do
-        let(:current_example_metadata) do
+        let(:example_group) do
           {
             file_path: "./spec/features/logging_in.feature",
             turnip: true,
@@ -145,7 +150,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       end
 
       describe 'when turnip is version 2 or greater' do
-        let(:current_example_metadata) do
+        let(:example_group) do
           {
             file_path: "gems/turnip-2.0.0/lib/turnip/rspec.rb",
             turnip: true,
@@ -170,13 +175,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:logger) { instance_double(Logger) }
       let(:global_time) { 'Global time: 01m 05s' }
       let(:test_path) { 'spec/a_spec.rb' }
-      let(:example) { double }
-      let(:example_group) { double }
-      let(:current_example) do
-        OpenStruct.new(metadata: {
-          example_group: example_group
-        })
-      end
+      let(:current_example) { double }
 
       context 'when rspec split by test examples is disabled' do
         before do
@@ -189,19 +188,18 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           allow(KnapsackPro).to receive(:tracker).and_return(tracker)
           expect(tracker).to receive(:start_timer).ordered
 
-          expect(config).to receive(:around).with(:each).and_yield(example)
+          expect(config).to receive(:around).with(:each).and_yield(current_example)
           expect(config).to receive(:append_after).with(:context).and_yield
           expect(config).to receive(:after).with(:suite).and_yield
           expect(::RSpec).to receive(:configure).and_yield(config)
 
           expect(tracker).to receive(:stop_timer).ordered
 
-          expect(::RSpec).to receive(:current_example).twice.and_return(current_example)
-          expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
+          expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
 
           expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
-          expect(example).to receive(:run)
+          expect(current_example).to receive(:run)
 
           expect(tracker).to receive(:stop_timer).ordered
 
@@ -226,26 +224,25 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           end
 
           it 'records time for example.id' do
-            expect(example).to receive(:id).and_return(test_example_path)
+            expect(current_example).to receive(:id).and_return(test_example_path)
 
             expect(config).to receive(:prepend_before).with(:context).and_yield
 
             allow(KnapsackPro).to receive(:tracker).and_return(tracker)
             expect(tracker).to receive(:start_timer).ordered
 
-            expect(config).to receive(:around).with(:each).and_yield(example)
+            expect(config).to receive(:around).with(:each).and_yield(current_example)
             expect(config).to receive(:append_after).with(:context).and_yield
             expect(config).to receive(:after).with(:suite).and_yield
             expect(::RSpec).to receive(:configure).and_yield(config)
 
             expect(tracker).to receive(:stop_timer).ordered
 
-            expect(::RSpec).to receive(:current_example).twice.and_return(current_example)
-            expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
+            expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
 
             expect(tracker).to receive(:current_test_path=).with(test_example_path).ordered
 
-            expect(example).to receive(:run)
+            expect(current_example).to receive(:run)
 
             expect(tracker).to receive(:stop_timer).ordered
 
@@ -268,19 +265,18 @@ describe KnapsackPro::Adapters::RSpecAdapter do
             allow(KnapsackPro).to receive(:tracker).and_return(tracker)
             expect(tracker).to receive(:start_timer).ordered
 
-            expect(config).to receive(:around).with(:each).and_yield(example)
+            expect(config).to receive(:around).with(:each).and_yield(current_example)
             expect(config).to receive(:append_after).with(:context).and_yield
             expect(config).to receive(:after).with(:suite).and_yield
             expect(::RSpec).to receive(:configure).and_yield(config)
 
-            expect(::RSpec).to receive(:current_example).twice.and_return(current_example)
-            expect(described_class).to receive(:test_path).with(example_group).and_return(test_path)
+            expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
 
             expect(tracker).to receive(:stop_timer).ordered
 
             expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
-            expect(example).to receive(:run)
+            expect(current_example).to receive(:run)
 
             expect(tracker).to receive(:stop_timer).ordered
 

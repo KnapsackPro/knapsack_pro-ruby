@@ -24,8 +24,10 @@ module KnapsackPro
         cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format') }
       end
 
-      def self.test_path(example_group)
-        if defined?(::Turnip) && ::Turnip::VERSION.to_i < 2
+      def self.test_path(example)
+        example_group = example.metadata[:example_group]
+
+        if defined?(::Turnip) && Gem::Version.new(::Turnip::VERSION) < Gem::Version.new('2.0.0')
           unless example_group[:turnip]
             until example_group[:parent_example_group].nil?
               example_group = example_group[:parent_example_group]
@@ -51,14 +53,7 @@ module KnapsackPro
             # this way we count time spend in runtime for the previous test example after around(:each) is already done
             KnapsackPro.tracker.stop_timer
 
-            current_example_group =
-              if ::RSpec.respond_to?(:current_example)
-                ::RSpec.current_example.metadata[:example_group]
-              else
-                example.metadata
-              end
-
-            current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(current_example_group)
+            current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(example)
 
             KnapsackPro.tracker.current_test_path =
               if KnapsackPro::Config::Env.rspec_split_by_test_examples? && KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(RSpecAdapter, current_test_path)
