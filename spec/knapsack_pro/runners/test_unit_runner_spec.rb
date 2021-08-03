@@ -13,10 +13,15 @@ describe KnapsackPro::Runners::TestUnitRunner do
     end
 
     context 'when test files were returned by Knapsack Pro API' do
+      let(:test_file_paths) { ['test-unit_fake/a_test.rb', 'test-unit_fake/b_test.rb'] }
+
       it 'runs tests' do
         expect(KnapsackPro::Adapters::TestUnitAdapter).to receive(:verify_bind_method_called)
 
-        test_file_paths = ['test-unit_fake/a_test.rb', 'test-unit_fake/b_test.rb']
+        tracker = instance_double(KnapsackPro::Tracker)
+        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+        expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
+
         runner = instance_double(described_class,
                                  test_dir: 'test-unit_fake',
                                  test_file_paths: test_file_paths,

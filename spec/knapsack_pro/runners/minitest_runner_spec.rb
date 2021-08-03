@@ -14,12 +14,17 @@ describe KnapsackPro::Runners::MinitestRunner do
     end
 
     context 'when test files were returned by Knapsack Pro API' do
+      let(:test_file_paths) { ['test_fake/a_test.rb', 'test_fake/b_test.rb'] }
+
       before do
         expect(KnapsackPro::Adapters::MinitestAdapter).to receive(:verify_bind_method_called)
+
+        tracker = instance_double(KnapsackPro::Tracker)
+        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+        expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
       end
 
       it 'runs tests' do
-        test_file_paths = ['test_fake/a_test.rb', 'test_fake/b_test.rb']
         runner = instance_double(described_class,
                                  test_dir: 'test',
                                  test_file_paths: test_file_paths,
