@@ -1,12 +1,15 @@
 describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
-  let(:report_dir) { 'tmp/knapsack_pro/test_case_detectors/rspec' }
-  let(:report_path) { 'tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
+  let(:temp_directory_path) { "#{KnapsackPro.root}/.knapsack_pro" }
+  let(:report_dir) { "#{KnapsackPro.root}/.knapsack_pro/test_case_detectors/rspec" }
+  let(:report_path) { "#{KnapsackPro.root}/.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json" }
   let(:rspec_test_example_detector) { described_class.new }
 
   describe '#generate_json_report' do
     subject { rspec_test_example_detector.generate_json_report }
 
     before do
+      allow(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).and_return(temp_directory_path)
+
       expect(FileUtils).to receive(:mkdir_p).with(report_dir)
 
       expect(File).to receive(:exists?).with(report_path).and_return(true)
@@ -93,6 +96,10 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   describe '#test_file_example_paths' do
     subject { described_class.new.test_file_example_paths }
 
+    before do
+      allow(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).and_return(temp_directory_path)
+    end
+
     context 'when JSON report exists' do
       it do
         expect(File).to receive(:exists?).with(report_path).and_return(true)
@@ -116,7 +123,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
       it do
         expect(File).to receive(:exists?).with(report_path).and_return(false)
 
-        expect { subject }.to raise_error(RuntimeError, 'No report found at tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json')
+        expect { subject }.to raise_error(RuntimeError, "No report found at #{KnapsackPro.root}/.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json")
       end
     end
   end

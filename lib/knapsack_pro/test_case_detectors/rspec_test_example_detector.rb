@@ -1,8 +1,6 @@
 module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
-      REPORT_DIR = "#{KnapsackPro::Config::Env::TMP_DIR}/test_case_detectors/rspec"
-
       def generate_json_report
         require 'rspec/core'
 
@@ -69,8 +67,12 @@ module KnapsackPro
 
       private
 
+      def report_dir
+        "#{KnapsackPro::Config::TempFiles.temp_directory_path}/test_case_detectors/rspec"
+      end
+
       def report_path
-        "#{REPORT_DIR}/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+        "#{report_dir}/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
       end
 
       def adapter_class
@@ -86,7 +88,7 @@ module KnapsackPro
       end
 
       def ensure_report_dir_exists
-        FileUtils.mkdir_p(REPORT_DIR)
+        FileUtils.mkdir_p(report_dir)
       end
 
       def remove_old_json_report
