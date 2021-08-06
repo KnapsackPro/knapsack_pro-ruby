@@ -80,7 +80,7 @@ module KnapsackPro
 
     def self.queue_path
       queue_id = KnapsackPro::Config::Env.queue_id
-      "#{KnapsackPro::Config::Env::TMP_DIR}/queue/#{queue_id}"
+      "#{KnapsackPro::Config::TempFiles.temp_directory_path}/queue/#{queue_id}"
     end
   end
 end
