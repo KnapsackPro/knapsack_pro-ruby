@@ -33,7 +33,6 @@ describe KnapsackPro::Adapters::BaseAdapter do
       let(:ci_node_index) { 0 }
 
       it { expect(subject).to eq '.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt' }
-
     end
 
     context 'when CI node index 1' do
