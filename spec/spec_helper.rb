@@ -36,7 +36,8 @@ RSpec.configure do |config|
   config.after(:each) do
     if RSpec.current_example.metadata[:clear_tmp]
       FileUtils.rm_r(File.join(KnapsackPro.root, 'tmp'))
-      FileUtils.rm_r(File.join(KnapsackPro.root, '.knapsack_pro'))
+      tmp_dir = File.join(KnapsackPro.root, '.knapsack_pro')
+      FileUtils.rm_r(tmp_dir) if File.exists?(tmp_dir)
     end
   end
 end
