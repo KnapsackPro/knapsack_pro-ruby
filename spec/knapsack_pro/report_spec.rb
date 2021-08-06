@@ -56,7 +56,7 @@ describe KnapsackPro::Report do
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
-        expect(Dir).to receive(:glob).with("#{KnapsackPro.root}/.knapsack_pro/queue/fake-queue-id/*.json").and_return([
+        expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([
           json_test_file_a_path,
           json_test_file_b_path
         ])
@@ -89,7 +89,7 @@ describe KnapsackPro::Report do
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
-        expect(Dir).to receive(:glob).with("#{KnapsackPro.root}/.knapsack_pro/queue/fake-queue-id/*.json").and_return([
+        expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([
           json_test_file_a_path,
           json_test_file_b_path
         ])
@@ -121,7 +121,7 @@ describe KnapsackPro::Report do
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
-        expect(Dir).to receive(:glob).with("#{KnapsackPro.root}/.knapsack_pro/queue/fake-queue-id/*.json").and_return([])
+        expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([])
       end
 
       it 'logs warning about reasons why no test files were executed on this CI node' do
