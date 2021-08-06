@@ -92,7 +92,7 @@ module KnapsackPro
     end
 
     def tracker_dir_path
-      "#{KnapsackPro::Config::Env::TMP_DIR}/tracker"
+      "#{KnapsackPro::Config::TempFiles.temp_directory_path}/tracker"
     end
 
     def prerun_tests_report_path
