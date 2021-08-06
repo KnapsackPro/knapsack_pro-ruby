@@ -1,11 +1,11 @@
 describe KnapsackPro::Config::TempFiles, :clear_tmp do
   describe '.temp_directory_path' do
-    let(:gitignore_file_path) { "#{KnapsackPro.root}/.knapsack_pro/.gitignore" }
+    let(:gitignore_file_path) { '.knapsack_pro/.gitignore' }
 
     subject { described_class.temp_directory_path }
 
     it 'returns temporary directory path' do
-      expect(subject).to eq "#{KnapsackPro.root}/.knapsack_pro"
+      expect(subject).to eq '.knapsack_pro'
     end
 
     it 'creates .gitignore file' do

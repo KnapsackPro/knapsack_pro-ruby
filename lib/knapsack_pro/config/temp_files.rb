@@ -14,8 +14,9 @@ module KnapsackPro
         end
       end
 
+      # relative to the directory where you run knapsack_pro gem (user's project)
       def temp_directory_path
-        File.join(KnapsackPro.root, '.knapsack_pro')
+        '.knapsack_pro'
       end
 
       private
