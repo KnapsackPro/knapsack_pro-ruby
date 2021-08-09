@@ -120,11 +120,13 @@ describe KnapsackPro::Adapters::BaseAdapter do
   end
 
   describe '#bind' do
+    let(:temp_directory_path) { '.knapsack_pro' }
     let(:recording_enabled?) { false }
     let(:queue_recording_enabled?) { false }
 
     before do
-      expect(FileUtils).to receive(:mkdir_p).with('.knapsack_pro')
+      allow(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).and_return(temp_directory_path)
+      expect(FileUtils).to receive(:mkdir_p).with(temp_directory_path)
       expect(File).to receive(:write).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt', nil)
 
       expect(KnapsackPro::Config::Env).to receive(:recording_enabled?).and_return(recording_enabled?)
