@@ -92,11 +92,13 @@ describe KnapsackPro::Adapters::BaseAdapter do
   end
 
   describe '.verify_bind_method_called' do
+    let(:temp_directory_path) { '.knapsack_pro' }
+
     subject { described_class.verify_bind_method_called }
 
     before do
       expect(::Kernel).to receive(:at_exit).and_yield
-      allow(File).to receive(:exists?) # allow exists? call from KnapsackPro::Config::TempFiles.temp_directory_path method
+      allow(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).and_return(temp_directory_path)
       expect(File).to receive(:exists?).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt').and_return(adapter_bind_method_called_file_exists)
     end
 
