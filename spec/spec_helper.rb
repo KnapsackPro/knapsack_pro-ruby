@@ -16,6 +16,8 @@ require 'knapsack_pro'
 
 Dir["#{KnapsackPro.root}/spec/{support,fixtures}/**/*.rb"].each { |f| require f }
 
+KNAPSACK_PRO_TMP_DIR = File.join(KnapsackPro.root, '.knapsack_pro')
+
 RSpec.configure do |config|
   config.order = :random
   config.mock_with :rspec do |mocks|
@@ -29,16 +31,14 @@ RSpec.configure do |config|
 
   config.before(:each) do
     if RSpec.current_example.metadata[:clear_tmp]
-      tmp_dir = File.join(KnapsackPro.root, '.knapsack_pro')
-      FileUtils.rm_r(tmp_dir) if File.exists?(tmp_dir)
-      FileUtils.mkdir_p(tmp_dir)
+      FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exists?(KNAPSACK_PRO_TMP_DIR)
+      FileUtils.mkdir_p(KNAPSACK_PRO_TMP_DIR)
     end
   end
 
   config.after(:each) do
     if RSpec.current_example.metadata[:clear_tmp]
-      tmp_dir = File.join(KnapsackPro.root, '.knapsack_pro')
-      FileUtils.rm_r(tmp_dir) if File.exists?(tmp_dir)
+      FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exists?(KNAPSACK_PRO_TMP_DIR)
     end
   end
 end
