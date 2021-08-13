@@ -31,14 +31,14 @@ RSpec.configure do |config|
 
   config.before(:each) do
     if RSpec.current_example.metadata[:clear_tmp]
-      FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exists?(KNAPSACK_PRO_TMP_DIR)
+      FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exist?(KNAPSACK_PRO_TMP_DIR)
       FileUtils.mkdir_p(KNAPSACK_PRO_TMP_DIR)
     end
   end
 
   config.after(:each) do
     if RSpec.current_example.metadata[:clear_tmp]
-      FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exists?(KNAPSACK_PRO_TMP_DIR)
+      FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exist?(KNAPSACK_PRO_TMP_DIR)
     end
   end
 end

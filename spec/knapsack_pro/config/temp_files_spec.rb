@@ -9,9 +9,9 @@ describe KnapsackPro::Config::TempFiles, :clear_tmp do
     end
 
     it 'creates .gitignore file' do
-      expect(File.exists?(gitignore_file_path)).to be false
+      expect(File.exist?(gitignore_file_path)).to be false
       subject
-      expect(File.exists?(gitignore_file_path)).to be true
+      expect(File.exist?(gitignore_file_path)).to be true
     end
 
     it '.gitignore file has content' do

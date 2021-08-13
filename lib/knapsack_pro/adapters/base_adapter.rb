@@ -33,7 +33,7 @@ module KnapsackPro
 
       def self.verify_bind_method_called
         ::Kernel.at_exit do
-          if File.exists?(adapter_bind_method_called_file)
+          if File.exist?(adapter_bind_method_called_file)
             File.delete(adapter_bind_method_called_file)
           else
             puts "\n\n"

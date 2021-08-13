@@ -45,7 +45,7 @@ module KnapsackPro
       end
 
       def test_file_example_paths
-        raise "No report found at #{report_path}" unless File.exists?(report_path)
+        raise "No report found at #{report_path}" unless File.exist?(report_path)
 
         json_report = File.read(report_path)
         hash_report = JSON.parse(json_report)
@@ -92,7 +92,7 @@ module KnapsackPro
       end
 
       def remove_old_json_report
-        File.delete(report_path) if File.exists?(report_path)
+        File.delete(report_path) if File.exist?(report_path)
       end
 
       def test_file_hash_for(test_file_path)

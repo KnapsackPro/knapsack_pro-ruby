@@ -8,7 +8,7 @@ module KnapsackPro
       end
 
       def ensure_temp_directory_exists
-        unless File.exists?(gitignore_file_path)
+        unless File.exist?(gitignore_file_path)
           create_temp_directory
           create_gitignore_file
         end
