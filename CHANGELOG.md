@@ -2,7 +2,7 @@
 
 ### 3.1.0
 
-* Use `.knapsack_pro` directory for temporary files instead of the `tmp` folder in the user project folder
+* Use `.knapsack_pro` directory for temporary files instead of the `tmp` directory in the user's project directory
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/155
 
