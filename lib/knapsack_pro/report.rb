@@ -5,7 +5,7 @@ module KnapsackPro
 
       if test_files.empty?
         KnapsackPro.logger.warn("No test files were executed on this CI node.")
-        KnapsackPro.logger.debug("When you use knapsack_pro Regular Mode, the reason for no tests executing might be a very narrow tests list. Most likely, you run only tests with a specified tag, and the number of test files with the tag was lower than the number of parallel CI nodes.")
+        KnapsackPro.logger.debug("When you use knapsack_pro Regular Mode, the reason for no tests executing might be a very narrow tests list. Most likely, you run only tests with a specified tag, and there were fewer test files with the tag than parallel CI nodes.")
       end
 
       create_build_subset(test_files)
