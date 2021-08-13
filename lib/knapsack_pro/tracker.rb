@@ -110,7 +110,7 @@ module KnapsackPro
     end
 
     def read_prerun_tests_report
-      raise "Report #{prerun_tests_report_path} doest not exist on the disk. Most likely, it was removed accidentally. Please report the bug to the support team." unless File.exist?(prerun_tests_report_path)
+      raise "Report #{prerun_tests_report_path} doest not exist on the disk. Most likely, it was removed accidentally. Please report the bug to the Knapsack Pro support team at https://knapsackpro.com/contact" unless File.exist?(prerun_tests_report_path)
       JSON.parse(File.read(prerun_tests_report_path))
     end
 
