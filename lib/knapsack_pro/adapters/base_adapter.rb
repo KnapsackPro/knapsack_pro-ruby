@@ -39,7 +39,7 @@ module KnapsackPro
             puts "\n\n"
             KnapsackPro.logger.error('-'*10 + ' Configuration error ' + '-'*50)
             KnapsackPro.logger.error("You forgot to call #{self}.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly https://docs.knapsackpro.com/knapsack_pro-ruby/guide/")
-            KnapsackPro.logger.error("If you already have #{self}.bind method added and you still see this error then one of your tests must had to delete .knapsack_pro directory from the disk accidentally. Please ensure you do not remove .knapsack_pro directory: https://knapsackpro.com/faq/question/why-all-test-files-have-01s-time-execution-for-my-ci-build-in-user-dashboard")
+            KnapsackPro.logger.error("If you already have #{self}.bind method added and you still see this error then one of your tests must have deleted the .knapsack_pro directory from the disk accidentally. Please ensure you do not remove the .knapsack_pro directory: https://knapsackpro.com/faq/question/why-all-test-files-have-01s-time-execution-for-my-ci-build-in-user-dashboard")
             Kernel.exit(1)
           end
         end
