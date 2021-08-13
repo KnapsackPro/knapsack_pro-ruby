@@ -16,7 +16,7 @@ describe KnapsackPro::Config::TempFiles, :clear_tmp do
 
     it '.gitignore file has content' do
       subject
-      expect(File.read(gitignore_file_path)).to include '# This directory is used by knapsack_pro gem for temporary files during tests runtime'
+      expect(File.read(gitignore_file_path)).to include '# This directory is used by knapsack_pro gem for storing temporary files during tests runtime'
     end
   end
 end

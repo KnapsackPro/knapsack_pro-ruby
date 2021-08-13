@@ -30,7 +30,7 @@ module KnapsackPro
       end
 
       def gitignore_file_content
-        "# This directory is used by knapsack_pro gem for temporary files during tests runtime.\n" <<
+        "# This directory is used by knapsack_pro gem for storing temporary files during tests runtime.\n" <<
         "# Ignore all files, and do not commit this directory into your repository.\n" <<
         "# Learn more at https://knapsackpro.com\n" <<
         "*"
