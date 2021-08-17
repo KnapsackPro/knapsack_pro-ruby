@@ -1,7 +1,7 @@
 describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   let(:temp_directory_path) { '.knapsack_pro' }
-  let(:report_dir) { ".knapsack_pro/test_case_detectors/rspec" }
-  let(:report_path) { ".knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json" }
+  let(:report_dir) { '.knapsack_pro/test_case_detectors/rspec' }
+  let(:report_path) { '.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
   let(:rspec_test_example_detector) { described_class.new }
 
   describe '#generate_json_report' do
