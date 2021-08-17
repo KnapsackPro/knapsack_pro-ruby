@@ -8,6 +8,7 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
+.knapsack_pro
 
 ## Specific to RubyMotion:
 .dat*
