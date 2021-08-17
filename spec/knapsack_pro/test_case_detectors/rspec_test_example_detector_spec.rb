@@ -1,5 +1,4 @@
 describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
-  let(:temp_directory_path) { '.knapsack_pro' }
   let(:report_dir) { '.knapsack_pro/test_case_detectors/rspec' }
   let(:report_path) { '.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
   let(:rspec_test_example_detector) { described_class.new }
@@ -8,7 +7,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
     subject { rspec_test_example_detector.generate_json_report }
 
     before do
-      allow(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).and_return(temp_directory_path)
+      expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
 
       expect(FileUtils).to receive(:mkdir_p).with(report_dir)
 
@@ -95,10 +94,6 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
   describe '#test_file_example_paths' do
     subject { described_class.new.test_file_example_paths }
-
-    before do
-      allow(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).and_return(temp_directory_path)
-    end
 
     context 'when JSON report exists' do
       it do
