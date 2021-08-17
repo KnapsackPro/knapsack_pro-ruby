@@ -98,7 +98,6 @@ describe KnapsackPro::Adapters::BaseAdapter do
 
     before do
       expect(::Kernel).to receive(:at_exit).and_yield
-      expect(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).at_least(1).and_return(temp_directory_path)
       expect(File).to receive(:exist?).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt').and_return(adapter_bind_method_called_file_exists)
     end
 
@@ -127,8 +126,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
     let(:queue_recording_enabled?) { false }
 
     before do
-      expect(KnapsackPro::Config::TempFiles).to receive(:temp_directory_path).at_least(1).and_return(temp_directory_path)
-      expect(FileUtils).to receive(:mkdir_p).with(temp_directory_path)
+      expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
       expect(File).to receive(:write).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt', nil)
 
       expect(KnapsackPro::Config::Env).to receive(:recording_enabled?).and_return(recording_enabled?)
