@@ -6,14 +6,14 @@ module KnapsackPro
 
       def self.ensure_temp_directory_exists!
         unless File.exist?(gitignore_file_path)
-          create_temp_directory
-          create_gitignore_file
+          create_temp_directory!
+          create_gitignore_file!
         end
       end
 
       private
 
-      def self.create_temp_directory
+      def self.create_temp_directory!
         FileUtils.mkdir_p(TEMP_DIRECTORY_PATH)
       end
 
@@ -28,7 +28,7 @@ module KnapsackPro
         "*"
       end
 
-      def self.create_gitignore_file
+      def self.create_gitignore_file!
         File.open(gitignore_file_path, 'w+') do |f|
           f.write(gitignore_file_content)
         end
