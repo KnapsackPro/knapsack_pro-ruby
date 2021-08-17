@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.1.0
+
+* Use `.knapsack_pro` directory for temporary files instead of the `tmp` directory in the user's project directory
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/155
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.0.0...v3.1.0
+
 ### 3.0.0
 
 * __(breaking change)__ Remove support for RSpec 2.x. This change was already done by accident in [the pull request](https://github.com/KnapsackPro/knapsack_pro-ruby/pull/143) when we added the RSpec `context` hook, which is available only since RSpec 3.x.

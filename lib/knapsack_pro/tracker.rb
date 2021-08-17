@@ -11,6 +11,7 @@ module KnapsackPro
 
     def initialize
       @global_time_since_beginning = 0
+      KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(tracker_dir_path)
       set_defaults
     end
@@ -21,7 +22,7 @@ module KnapsackPro
       # Remove report only when the reset! method is called explicitly.
       # The report should be persisted on the disk so that multiple tracker instances can share the report state.
       # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec) in Regular Mode.
-      File.delete(prerun_tests_report_path) if File.exists?(prerun_tests_report_path)
+      File.delete(prerun_tests_report_path) if File.exist?(prerun_tests_report_path)
     end
 
     def start_timer
@@ -92,7 +93,7 @@ module KnapsackPro
     end
 
     def tracker_dir_path
-      "#{KnapsackPro::Config::Env::TMP_DIR}/tracker"
+      "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/tracker"
     end
 
     def prerun_tests_report_path
@@ -110,6 +111,7 @@ module KnapsackPro
     end
 
     def read_prerun_tests_report
+      raise "Report #{prerun_tests_report_path} doest not exist on the disk. Most likely, it was removed accidentally. Please report the bug to the Knapsack Pro support team at https://knapsackpro.com/contact" unless File.exist?(prerun_tests_report_path)
       JSON.parse(File.read(prerun_tests_report_path))
     end
 

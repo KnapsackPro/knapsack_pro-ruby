@@ -25,6 +25,8 @@ describe KnapsackPro::Report do
       subset_queue_id = 'fake-subset-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
 
+      expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
+
       queue_id = 'fake-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:queue_id).twice.and_return(queue_id)
     end
@@ -34,7 +36,7 @@ describe KnapsackPro::Report do
 
       expect(
         JSON.parse(
-          File.read('tmp/knapsack_pro/queue/fake-queue-id/fake-subset-queue-id.json')
+          File.read('.knapsack_pro/queue/fake-queue-id/fake-subset-queue-id.json')
         )
       ).to eq([
         { 'path' => fake_path }
@@ -56,7 +58,7 @@ describe KnapsackPro::Report do
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
-        expect(Dir).to receive(:glob).with('tmp/knapsack_pro/queue/fake-queue-id/*.json').and_return([
+        expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([
           json_test_file_a_path,
           json_test_file_b_path
         ])
@@ -89,7 +91,7 @@ describe KnapsackPro::Report do
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
-        expect(Dir).to receive(:glob).with('tmp/knapsack_pro/queue/fake-queue-id/*.json').and_return([
+        expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([
           json_test_file_a_path,
           json_test_file_b_path
         ])
@@ -102,9 +104,9 @@ describe KnapsackPro::Report do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
         expect(logger).to receive(:warn).with('2 test files were executed on this CI node but the recorded time was lost due to:')
-        expect(logger).to receive(:warn).with('1. Probably you have a code (i.e. RSpec hooks) that clears tmp directory in your project. Please ensure you do not remove the content of tmp/knapsack_pro/queue/ directory between tests run.')
-        expect(logger).to receive(:warn).with('2. Another reason might be that you forgot to add Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/')
-        expect(logger).to receive(:warn).with('3. All your tests are empty test files, are pending tests or have syntax error and could not be executed hence no measured time execution by knapsack_pro.')
+        expect(logger).to receive(:warn).with('1. Please ensure you do not remove the contents of the .knapsack_pro directory between tests run.')
+        expect(logger).to receive(:warn).with("2. Ensure you've added Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/")
+        expect(logger).to receive(:warn).with('3. Another potential reason for this warning is that all your tests are empty test files, pending tests, or they have syntax errors, and the time execution was not recorded for them.')
 
         expect(described_class).to receive(:create_build_subset).with(
           json_test_file_a + json_test_file_b
@@ -121,15 +123,14 @@ describe KnapsackPro::Report do
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
-        expect(Dir).to receive(:glob).with('tmp/knapsack_pro/queue/fake-queue-id/*.json').and_return([])
+        expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([])
       end
 
       it 'logs warning about reasons why no test files were executed on this CI node' do
         logger = instance_double(Logger)
-        expect(KnapsackPro).to receive(:logger).exactly(3).and_return(logger)
+        expect(KnapsackPro).to receive(:logger).exactly(2).and_return(logger)
         expect(logger).to receive(:warn).with('No test files were executed on this CI node.')
-        expect(logger).to receive(:debug).with('When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.')
-        expect(logger).to receive(:debug).with("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what tests should be executed here.")
+        expect(logger).to receive(:debug).with('This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
 
         expect(described_class).to receive(:create_build_subset).with([])
 

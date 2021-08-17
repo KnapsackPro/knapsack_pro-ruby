@@ -5,7 +5,7 @@ module KnapsackPro
 
       if test_files.empty?
         KnapsackPro.logger.warn("No test files were executed on this CI node.")
-        KnapsackPro.logger.debug("When you use knapsack_pro regular mode then probably reason might be very narrowed tests list - you run only tests with specified tag and there are fewer test files with the tag than node total number.")
+        KnapsackPro.logger.debug("When you use knapsack_pro Regular Mode, the reason for no tests executing might be a very narrow tests list. Most likely, you run only tests with a specified tag, and there were fewer test files with the tag than parallel CI nodes.")
       end
 
       create_build_subset(test_files)
@@ -16,6 +16,7 @@ module KnapsackPro
 
       subset_queue_id = KnapsackPro::Config::Env.subset_queue_id
 
+      KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(queue_path)
 
       subset_queue_file_name = "#{subset_queue_id}.json"
@@ -36,8 +37,7 @@ module KnapsackPro
 
       if test_files.empty?
         KnapsackPro.logger.warn("No test files were executed on this CI node.")
-        KnapsackPro.logger.debug("When you use knapsack_pro queue mode then probably reason might be that CI node was started after the test files from the queue were already executed by other CI nodes. That is why this CI node has no test files to execute.")
-        KnapsackPro.logger.debug("Another reason might be when your CI node failed in a way that prevented knapsack_pro to save time execution data to Knapsack Pro API and you have just tried to retry failed CI node but instead you got no test files to execute. In that case knapsack_pro don't know what tests should be executed here.")
+        KnapsackPro.logger.debug("This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.")
       end
 
       measured_test_files = test_files
@@ -46,9 +46,9 @@ module KnapsackPro
 
       if test_files.size > 0 && measured_test_files.size == 0
         KnapsackPro.logger.warn("#{test_files.size} test files were executed on this CI node but the recorded time was lost due to:")
-        KnapsackPro.logger.warn("1. Probably you have a code (i.e. RSpec hooks) that clears tmp directory in your project. Please ensure you do not remove the content of tmp/knapsack_pro/queue/ directory between tests run.")
-        KnapsackPro.logger.warn("2. Another reason might be that you forgot to add Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/")
-        KnapsackPro.logger.warn("3. All your tests are empty test files, are pending tests or have syntax error and could not be executed hence no measured time execution by knapsack_pro.")
+        KnapsackPro.logger.warn("1. Please ensure you do not remove the contents of the .knapsack_pro directory between tests run.")
+        KnapsackPro.logger.warn("2. Ensure you've added Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/")
+        KnapsackPro.logger.warn("3. Another potential reason for this warning is that all your tests are empty test files, pending tests, or they have syntax errors, and the time execution was not recorded for them.")
       end
 
       create_build_subset(test_files)
@@ -79,8 +79,7 @@ module KnapsackPro
     private
 
     def self.queue_path
-      queue_id = KnapsackPro::Config::Env.queue_id
-      "#{KnapsackPro::Config::Env::TMP_DIR}/queue/#{queue_id}"
+      "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/queue/#{KnapsackPro::Config::Env.queue_id}"
     end
   end
 end

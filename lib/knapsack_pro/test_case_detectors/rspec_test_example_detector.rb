@@ -1,8 +1,6 @@
 module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
-      REPORT_DIR = "#{KnapsackPro::Config::Env::TMP_DIR}/test_case_detectors/rspec"
-
       def generate_json_report
         require 'rspec/core'
 
@@ -47,7 +45,7 @@ module KnapsackPro
       end
 
       def test_file_example_paths
-        raise "No report found at #{report_path}" unless File.exists?(report_path)
+        raise "No report found at #{report_path}" unless File.exist?(report_path)
 
         json_report = File.read(report_path)
         hash_report = JSON.parse(json_report)
@@ -69,8 +67,12 @@ module KnapsackPro
 
       private
 
+      def report_dir
+        "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/test_case_detectors/rspec"
+      end
+
       def report_path
-        "#{REPORT_DIR}/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+        "#{report_dir}/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
       end
 
       def adapter_class
@@ -86,11 +88,12 @@ module KnapsackPro
       end
 
       def ensure_report_dir_exists
-        FileUtils.mkdir_p(REPORT_DIR)
+        KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
+        FileUtils.mkdir_p(report_dir)
       end
 
       def remove_old_json_report
-        File.delete(report_path) if File.exists?(report_path)
+        File.delete(report_path) if File.exist?(report_path)
       end
 
       def test_file_hash_for(test_file_path)

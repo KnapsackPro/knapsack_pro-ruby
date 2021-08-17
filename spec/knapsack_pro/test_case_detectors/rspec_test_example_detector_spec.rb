@@ -1,15 +1,17 @@
 describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
-  let(:report_dir) { 'tmp/knapsack_pro/test_case_detectors/rspec' }
-  let(:report_path) { 'tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
+  let(:report_dir) { '.knapsack_pro/test_case_detectors/rspec' }
+  let(:report_path) { '.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
   let(:rspec_test_example_detector) { described_class.new }
 
   describe '#generate_json_report' do
     subject { rspec_test_example_detector.generate_json_report }
 
     before do
+      expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
+
       expect(FileUtils).to receive(:mkdir_p).with(report_dir)
 
-      expect(File).to receive(:exists?).with(report_path).and_return(true)
+      expect(File).to receive(:exist?).with(report_path).and_return(true)
       expect(File).to receive(:delete).with(report_path)
 
       expect(rspec_test_example_detector).to receive(:slow_test_files).and_return(test_file_entities)
@@ -95,7 +97,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
     context 'when JSON report exists' do
       it do
-        expect(File).to receive(:exists?).with(report_path).and_return(true)
+        expect(File).to receive(:exist?).with(report_path).and_return(true)
 
         json_file = {
           'examples' => [
@@ -114,9 +116,9 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
     context 'when JSON report does not exist' do
       it do
-        expect(File).to receive(:exists?).with(report_path).and_return(false)
+        expect(File).to receive(:exist?).with(report_path).and_return(false)
 
-        expect { subject }.to raise_error(RuntimeError, 'No report found at tmp/knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json')
+        expect { subject }.to raise_error(RuntimeError, "No report found at .knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json")
       end
     end
   end
