@@ -13,9 +13,7 @@ describe KnapsackPro::Config::TempFiles, :clear_tmp do
     subject { described_class.ensure_temp_directory_exists! }
 
     it 'creates .gitignore file' do
-      expect(File.exist?(gitignore_file_path)).to be false
-      subject
-      expect(File.exist?(gitignore_file_path)).to be true
+      expect { subject }.to change { File.exist?(gitignore_file_path) }.from(false).to(true)
     end
 
     it '.gitignore file has correct content to ignore all files in temporary directory' do
