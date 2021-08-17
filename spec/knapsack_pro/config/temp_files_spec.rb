@@ -1,4 +1,4 @@
-describe KnapsackPro::Config::TempFiles, :clear_tmp do
+describe KnapsackPro::Config::TempFiles do
   describe 'TEMP_DIRECTORY_PATH' do
     subject { described_class::TEMP_DIRECTORY_PATH }
 
@@ -7,7 +7,7 @@ describe KnapsackPro::Config::TempFiles, :clear_tmp do
     end
   end
 
-  describe '.ensure_temp_directory_exists!' do
+  describe '.ensure_temp_directory_exists!', :clear_tmp do
     let(:gitignore_file_path) { '.knapsack_pro/.gitignore' }
 
     subject { described_class.ensure_temp_directory_exists! }
