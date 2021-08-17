@@ -68,7 +68,7 @@ module KnapsackPro
       private
 
       def report_dir
-        "#{KnapsackPro::Config::TempFiles.temp_directory_path}/test_case_detectors/rspec"
+        "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/test_case_detectors/rspec"
       end
 
       def report_path
@@ -88,6 +88,7 @@ module KnapsackPro
       end
 
       def ensure_report_dir_exists
+        KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
         FileUtils.mkdir_p(report_dir)
       end
 

@@ -6,7 +6,7 @@ module KnapsackPro
 
       def self.adapter_bind_method_called_file
         adapter_name = self.to_s.gsub('::', '-')
-        "#{KnapsackPro::Config::TempFiles.temp_directory_path}/#{adapter_name}-bind_method_called_for_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
+        "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/#{adapter_name}-bind_method_called_for_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
       end
 
       def self.slow_test_file?(adapter_class, test_file_path)
@@ -46,7 +46,7 @@ module KnapsackPro
       end
 
       def bind
-        FileUtils.mkdir_p(KnapsackPro::Config::TempFiles.temp_directory_path)
+        KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
         File.write(self.class.adapter_bind_method_called_file, nil)
 
         if KnapsackPro::Config::Env.recording_enabled?

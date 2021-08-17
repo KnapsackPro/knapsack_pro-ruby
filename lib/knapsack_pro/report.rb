@@ -16,6 +16,7 @@ module KnapsackPro
 
       subset_queue_id = KnapsackPro::Config::Env.subset_queue_id
 
+      KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(queue_path)
 
       subset_queue_file_name = "#{subset_queue_id}.json"
@@ -78,8 +79,7 @@ module KnapsackPro
     private
 
     def self.queue_path
-      queue_id = KnapsackPro::Config::Env.queue_id
-      "#{KnapsackPro::Config::TempFiles.temp_directory_path}/queue/#{queue_id}"
+      "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/queue/#{KnapsackPro::Config::Env.queue_id}"
     end
   end
 end

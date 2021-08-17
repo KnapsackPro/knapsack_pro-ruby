@@ -11,6 +11,7 @@ module KnapsackPro
 
     def initialize
       @global_time_since_beginning = 0
+      KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(tracker_dir_path)
       set_defaults
     end
@@ -92,7 +93,7 @@ module KnapsackPro
     end
 
     def tracker_dir_path
-      "#{KnapsackPro::Config::TempFiles.temp_directory_path}/tracker"
+      "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/tracker"
     end
 
     def prerun_tests_report_path

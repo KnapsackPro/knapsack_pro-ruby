@@ -13,6 +13,7 @@ module KnapsackPro
     end
 
     def self.save_to_json_report(test_files)
+      KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(report_dir)
       File.write(report_path, test_files.to_json)
     end
@@ -30,7 +31,7 @@ module KnapsackPro
     end
 
     def self.report_dir
-      "#{KnapsackPro::Config::TempFiles.temp_directory_path}/slow_test_file_determiner"
+      "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/slow_test_file_determiner"
     end
   end
 end
