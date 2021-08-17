@@ -25,6 +25,8 @@ describe KnapsackPro::Report do
       subset_queue_id = 'fake-subset-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
 
+      expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
+
       queue_id = 'fake-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:queue_id).twice.and_return(queue_id)
     end
