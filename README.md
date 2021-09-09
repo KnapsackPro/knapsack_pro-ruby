@@ -1714,6 +1714,11 @@ $ gem push knapsack_pro-X.X.X.gem
 
 Update the latest available gem version in `TestSuiteClientVersionChecker` for the Knapsack Pro API repository.
 
+Update knapsack_pro gem version in:
+
+* https://github.com/KnapsackPro/rails-app-with-knapsack_pro
+* our private Knapsack Pro API repository
+
 ## Mentions
 
 List of articles where people mentioned Knapsack Pro:
