@@ -110,9 +110,9 @@ module KnapsackPro
         def self.log_rspec_command(cli_args, test_file_paths, type)
           case type
           when :subset_queue
-            KnapsackPro.logger.info("To retry in development the subset of tests fetched from API queue please run below command on your machine. If you use --order random then remember to add proper --seed 123 that you will find at the end of rspec command.")
+            KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine. (If you use the `-- order random` option, remember to add correct `--seed 123` that you can find at the end of the RSpec output.)")
           when :end_of_queue
-            KnapsackPro.logger.info("To retry in development the tests for this CI node please run below command on your machine. It will run all tests in a single run. If you need to reproduce a particular subset of tests fetched from API queue then above after each request to Knapsack Pro API you will find example rspec command.")
+            KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
           end
 
           stringify_cli_args = cli_args.join(' ')
