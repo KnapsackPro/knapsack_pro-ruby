@@ -42,6 +42,7 @@ module KnapsackPro
           Kernel.exit(accumulator[:exitstatus])
         end
 
+        @@i = 0
         def self.run_tests(accumulator)
           runner = accumulator.fetch(:runner)
           can_initialize_queue = accumulator.fetch(:can_initialize_queue)
@@ -49,10 +50,26 @@ module KnapsackPro
           exitstatus = accumulator.fetch(:exitstatus)
           all_test_file_paths = accumulator.fetch(:all_test_file_paths)
 
-          test_file_paths = runner.test_file_paths(
-            can_initialize_queue: can_initialize_queue,
-            executed_test_files: all_test_file_paths
-          )
+          #test_file_paths = runner.test_file_paths(
+            #can_initialize_queue: can_initialize_queue,
+            #executed_test_files: all_test_file_paths
+          #)
+
+          @@i += 1
+          test_file_paths =
+            case @@i
+            when 1
+              [
+                "spec/controllers/articles_controller_spec.rb[1:1:1]",
+                "spec/controllers/articles_controller_spec.rb[1:1:2]"
+              ]
+            when 2
+              [
+                "spec/controllers/articles_controller_spec.rb[1:2:1]",
+              ]
+            else
+              []
+            end
 
           if test_file_paths.empty?
             unless all_test_file_paths.empty?
