@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.1.1
+
+* Rephrase log outputs in the Queue Mode RSpec runner
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/160
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.1.0...v3.1.1
+
 ### 3.1.0
 
 * Use `.knapsack_pro` directory for temporary files instead of the `tmp` directory in the user's project directory
