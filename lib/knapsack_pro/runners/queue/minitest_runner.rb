@@ -32,7 +32,15 @@ module KnapsackPro
             accumulator = run_tests(accumulator)
           end
 
+          puts '+'*100
+          puts "Ensure we return exit code: #{accumulator[:exitstatus]}"
+          puts '+'*100
+
           Kernel.exit(accumulator[:exitstatus])
+
+          puts '+'*100
+          puts "Kernel.exit called"
+          puts '+'*100
         end
 
         def self.run_tests(accumulator)
