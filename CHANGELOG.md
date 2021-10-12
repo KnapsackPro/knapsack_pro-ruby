@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.1.3
+
+* Run Fallback Mode when `Errno::ECONNRESET` exception happens
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/164
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.1.2...v3.1.3
+
 ### 3.1.2
 
 * Fix bug when test files have no recorded time execution then they should not be detected as slow test files for RSpec split by test examples feature
