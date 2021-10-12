@@ -119,7 +119,7 @@ module KnapsackPro
         end
 
         response_body
-      rescue ServerError, Errno::ECONNREFUSED, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
+      rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         logger.warn("#{action.http_method.to_s.upcase} #{endpoint_url}")
         logger.warn('Request failed due to:')
         logger.warn(e.inspect)
