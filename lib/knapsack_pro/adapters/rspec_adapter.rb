@@ -101,6 +101,11 @@ module KnapsackPro
     # In case someone is doing switch from knapsack gem to the knapsack_pro gem
     # and didn't notice the class name changed
     class RspecAdapter < RSpecAdapter
+      def self.bind
+        error_message = 'You have attempted to call KnapsackPro::Adapters::RspecAdapter.bind. Please switch to using the new class name: KnapsackPro::Adapters::RSpecAdapter. See https://docs.knapsackpro.com/knapsack_pro-ruby/guide for up-to-date configuration instructions.'
+        KnapsackPro.logger.error(error_message)
+        raise error_message
+      end
     end
   end
 end
