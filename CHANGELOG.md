@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.2.0
+
+* Add an error message to `KnapsackPro::Adapters::RspecAdapter#bind`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/165
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.1.3...v3.2.0
+
 ### 3.1.3
 
 * Run Fallback Mode when `Errno::ECONNRESET` exception happens
