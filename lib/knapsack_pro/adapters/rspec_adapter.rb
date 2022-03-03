@@ -62,6 +62,10 @@ module KnapsackPro
                 current_test_path
               end
 
+            if example.metadata[:focus] && KnapsackPro::Adapters::RSpecAdapter.rspec_configuration.filter.rules[:focus]
+              raise "We detected a test file path #{current_test_path} with a test using metadata `:focus` tag. Using the `:focus` tag should be a temporary change in the development environment when you only want to run tests with the `:focus` tag. In the CI environment, it is not recommended to use `:focus` tag because this can lead to skipping test cases. Especially it can lead to skipping random test file paths without `:focus` tag in the Knapsack Pro Queue Mode when the test files are loaded after the test file with `:focus` tag. Please remove `:focus` tags from your test files and commit the change and push to the repository. RSpec provides aliases `fit`, `fdescribe` and `fcontext` as a shorthand for `it`, `describe` and `context` with `:focus` metadata, making it easy to temporarily focus an example or group by prefixing an `f`. Please remove all occurrences of it or use an alternative solution: https://knapsackpro.com/faq/question/why-is-rspec-skipping-some-of-the-tests#if-you-have-too-many-test-files-with-focus-tag-and-you-dont-want-to-remove-the-tag-manually"
+            end
+
             example.run
           end
 
@@ -94,6 +98,14 @@ module KnapsackPro
             end
           end
         end
+      end
+
+      private
+
+      # Hide RSpec configuration so that we could mock it in the spec.
+      # Mocking existing RSpec configuration could impact test's runtime.
+      def self.rspec_configuration
+        ::RSpec.configuration
       end
     end
 

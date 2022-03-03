@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.2.1
+
+* Raise exception when using `:focus` tag to avoid skipping RSpec tests
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/167
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.2.0...v3.2.1
+
 ### 3.2.0
 
 * Add an error message to `KnapsackPro::Adapters::RspecAdapter#bind`

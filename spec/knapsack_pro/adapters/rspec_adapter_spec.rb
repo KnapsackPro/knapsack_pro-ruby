@@ -175,7 +175,35 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:logger) { instance_double(Logger) }
       let(:global_time) { 'Global time: 01m 05s' }
       let(:test_path) { 'spec/a_spec.rb' }
-      let(:current_example) { double }
+      let(:current_example) { double(metadata: {}) }
+
+      context "when the example's metadata has :focus tag AND RSpec inclusion rule includes :focus" do
+        let(:current_example) { double(metadata: { focus: true }) }
+
+        it do
+          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(false)
+
+          expect(config).to receive(:prepend_before).with(:context).and_yield
+
+          allow(KnapsackPro).to receive(:tracker).and_return(tracker)
+          expect(tracker).to receive(:start_timer).ordered
+
+          expect(config).to receive(:around).with(:each).and_yield(current_example)
+          expect(::RSpec).to receive(:configure).and_yield(config)
+
+          expect(tracker).to receive(:stop_timer).ordered
+
+          expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
+
+          expect(tracker).to receive(:current_test_path=).with(test_path).ordered
+
+          expect(described_class).to receive_message_chain(:rspec_configuration, :filter, :rules, :[]).with(:focus).and_return(true)
+
+          expect {
+            subject.bind_time_tracker
+          }.to raise_error /We detected a test file path spec\/a_spec\.rb with a test using metadata `:focus` tag/
+        end
+      end
 
       context 'when rspec split by test examples is disabled' do
         before do
