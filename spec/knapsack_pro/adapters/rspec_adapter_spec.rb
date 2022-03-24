@@ -201,7 +201,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
           expect {
             subject.bind_time_tracker
-          }.to raise_error /We detected a test file path spec\/a_spec\.rb with a test using metadata `:focus` tag/
+          }.to raise_error /We detected a test file path spec\/a_spec\.rb with a test using the metadata `:focus` tag/
         end
       end
 
