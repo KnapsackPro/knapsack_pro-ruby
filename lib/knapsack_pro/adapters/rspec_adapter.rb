@@ -62,6 +62,10 @@ module KnapsackPro
                 current_test_path
               end
 
+            if example.metadata[:focus] && KnapsackPro::Adapters::RSpecAdapter.rspec_configuration.filter.rules[:focus]
+              raise "We detected a test file path #{current_test_path} with a test using the metadata `:focus` tag. RSpec might not run some tests in the Queue Mode (causing random tests skipping problem). Please remove the `:focus` tag from your codebase. See more: https://knapsackpro.com/faq/question/rspec-is-not-running-some-tests"
+            end
+
             example.run
           end
 
@@ -94,6 +98,14 @@ module KnapsackPro
             end
           end
         end
+      end
+
+      private
+
+      # Hide RSpec configuration so that we could mock it in the spec.
+      # Mocking existing RSpec configuration could impact test's runtime.
+      def self.rspec_configuration
+        ::RSpec.configuration
       end
     end
 
