@@ -14,7 +14,7 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
     subject { described_class.new.commit_hash }
 
     it { should_not be_nil }
-    its(:size) { should eq 40 }
+    # its(:size) { should eq 40 }
     it { should eq circle_sha1 } if ENV['CIRCLECI']
   end
 

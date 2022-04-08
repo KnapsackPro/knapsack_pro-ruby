@@ -1,4 +1,4 @@
-require 'rspec/its'
+# require 'rspec/its'
 require 'spinach'
 
 require 'timecop'
@@ -9,8 +9,11 @@ require 'webmock/rspec'
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   config.hook_into :webmock # or :fakeweb
-  config.ignore_hosts('codeclimate.com')
+  config.ignore_hosts('codeclimate.com', 'analytics-api.buildkite.com')
 end
+
+require "rspec/buildkite/analytics"
+RSpec::Buildkite::Analytics.configure(token: ENV["TEST_ANALYTICS_TOKEN"])
 
 require 'knapsack_pro'
 
