@@ -72,4 +72,15 @@ describe 'Request API /v1/build_distributions/subset' do
       expect(connection.success?).to be false
     end
   end
+
+  context 'not real tests' do
+    it 'flaky' do
+      expect(rand(2)).to be_even
+    end
+
+    it 'sleepy' do
+      sleep 3
+      expect(true).to be true
+    end
+  end
 end
