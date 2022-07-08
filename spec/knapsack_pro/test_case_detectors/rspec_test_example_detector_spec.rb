@@ -11,7 +11,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       expect(FileUtils).to receive(:mkdir_p).with(report_dir)
 
-      expect(File).to receive(:exist?).with(report_path).and_return(true)
+      expect(File).to receive(:exist?).at_least(1).with(report_path).and_return(true)
       expect(File).to receive(:delete).with(report_path)
 
       expect(rspec_test_example_detector).to receive(:slow_test_files).and_return(test_file_entities)
@@ -67,6 +67,13 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
         context 'when exit code from RSpec::Core::Runner is 1' do
           let(:exit_code) { 1 }
+
+          before do
+            json_file = %{
+            {"version":"3.11.0","messages":["An error occurred while loading ./spec/a_spec.rb"],"examples":[],"summary":{"duration":3.6e-05,"example_count":0,"failure_count":0,"pending_count":0,"errors_outside_of_examples_count":1},"summary_line":"0 examples, 0 failures, 1 error occurred outside of examples"}
+            }.strip
+            expect(File).to receive(:read).with(report_path).and_return(json_file)
+          end
 
           it do
             expect { subject }.to raise_error(RuntimeError, 'There was a problem while generating test examples for the slow test files. Please read actionable error message above.')

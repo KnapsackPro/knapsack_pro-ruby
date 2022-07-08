@@ -36,8 +36,16 @@ module KnapsackPro
           ] + cli_args).join(' ')
 
           KnapsackPro.logger.error('-'*10 + ' START of actionable error message ' + '-'*50)
-          KnapsackPro.logger.error('There was a problem while generating test examples for the slow test files using the RSpec dry-run flag. To reproduce the error triggered by the RSpec, please try to run below command (this way, you can find out what is causing the error):')
+          KnapsackPro.logger.error('RSpec (with a dry-run option) had a problem generating the report with test examples for the slow test files. Here is what you can do:')
+
+          KnapsackPro.logger.error("a)  Please look for an error message from the RSpec in the output above or below. If you don't see anything, that is fine. Sometimes RSpec does not produce any errors in the output.")
+
+          KnapsackPro.logger.error("b) Check if RSpec generated the report file #{report_path}. If the report exists, it may contain an error message. Here is a preview of the report file:")
+          KnapsackPro.logger.error(report_content || 'N/A')
+
+          KnapsackPro.logger.error('c) To reproduce the error manually, please run the following RSpec command. This way, you can find out what is causing the error. Please ensure you run the command in the same environment where the error occurred. For instance, if the error happens on the CI server, you should run the command in the CI environment:')
           KnapsackPro.logger.error(debug_cmd)
+
           KnapsackPro.logger.error('-'*10 + ' END of actionable error message ' + '-'*50)
 
           raise 'There was a problem while generating test examples for the slow test files. Please read actionable error message above.'
@@ -73,6 +81,10 @@ module KnapsackPro
 
       def report_path
         "#{report_dir}/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+      end
+
+      def report_content
+        File.read(report_path) if File.exist?(report_path)
       end
 
       def adapter_class
