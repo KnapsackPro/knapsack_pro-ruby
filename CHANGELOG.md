@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.3.0
+
+* Show a JSON report file content when RSpec fails during a dry run 
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/172
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.2.1...v3.3.0
+
 ### 3.2.1
 
 * Raise exception when using `:focus` tag to avoid skipping RSpec tests
