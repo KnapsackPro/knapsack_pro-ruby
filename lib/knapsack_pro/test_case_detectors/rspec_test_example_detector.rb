@@ -48,7 +48,7 @@ module KnapsackPro
 
           KnapsackPro.logger.error('-'*10 + ' END of actionable error message ' + '-'*50)
 
-          raise 'There was a problem while generating test examples for the slow test files. Please read actionable error message above.'
+          raise 'There was a problem while generating test examples for the slow test files. Please read the actionable error message above.'
         end
       end
 
