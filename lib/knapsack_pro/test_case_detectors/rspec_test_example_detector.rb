@@ -38,7 +38,7 @@ module KnapsackPro
           KnapsackPro.logger.error('-'*10 + ' START of actionable error message ' + '-'*50)
           KnapsackPro.logger.error('RSpec (with a dry-run option) had a problem generating the report with test examples for the slow test files. Here is what you can do:')
 
-          KnapsackPro.logger.error("a)  Please look for an error message from the RSpec in the output above or below. If you don't see anything, that is fine. Sometimes RSpec does not produce any errors in the output.")
+          KnapsackPro.logger.error("a) Please look for an error message from RSpec in the output above or below. If you don't see anything, that is fine. Sometimes RSpec does not produce any errors in the output.")
 
           KnapsackPro.logger.error("b) Check if RSpec generated the report file #{report_path}. If the report exists, it may contain an error message. Here is a preview of the report file:")
           KnapsackPro.logger.error(report_content || 'N/A')
