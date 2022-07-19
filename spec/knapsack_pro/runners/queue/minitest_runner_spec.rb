@@ -100,7 +100,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
     end
 
     context 'when test files exist' do
-      let(:test_file_paths) { ['a_test.rb', 'b_test.rb'] }
+      let(:test_file_paths) { ['a_test.rb', 'b_test.rb', 'fake_path_test.rb'] }
 
       before do
         subset_queue_id = 'fake-subset-queue-id'
@@ -114,8 +114,12 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
         # .minitest_run
+        expect(File).to receive(:exist?).with('./a_test.rb').and_return(true)
+        expect(File).to receive(:exist?).with('./b_test.rb').and_return(true)
+        expect(File).to receive(:exist?).with('./fake_path_test.rb').and_return(false)
         expect(described_class).to receive(:require).with('./a_test.rb')
         expect(described_class).to receive(:require).with('./b_test.rb')
+        expect(described_class).to_not receive(:require).with('./fake_path_test.rb')
 
         expect(Minitest).to receive(:run).with(args).and_return(is_tests_green)
 

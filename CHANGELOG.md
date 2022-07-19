@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.3.1
+
+* Skip loading a test file path for Minitest in Queue Mode when it does not exist on the disk
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/174
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.3.0...v3.3.1
+
 ### 3.3.0
 
 * Show a JSON report file content when RSpec fails during a dry run 
