@@ -91,7 +91,13 @@ module KnapsackPro
 
         def self.minitest_run(runner, test_file_paths, args)
           test_file_paths.each do |test_file_path|
-            require "./#{test_file_path}"
+            relative_test_file_path = "./#{test_file_path}"
+
+            if File.exist?(relative_test_file_path)
+              require relative_test_file_path
+            else
+              KnapsackPro.logger.warn("Skip loading the #{relative_test_file_path} test file path because it does not exist on the disk. Most likely, the test file path should not be loaded. The test file path could have been recorded during the previous CI build when the knapsack_pro gem could not attribute the execution time of a test to a correct test file path. For instance, you have shared examples in your test suite, and the knapsack_pro gem could not correctly determine for which test file path they were executed. In such a case, the test file path should not be loaded because the actual test cases will be executed by loading a correct test file path. You can ignore this warning.")
+            end
           end
 
           # duplicate args because Minitest modifies args
