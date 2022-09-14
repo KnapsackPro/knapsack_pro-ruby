@@ -746,7 +746,7 @@ You need to add environment variable `KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true` to
 If you need to check what is the encryption hash for particular test file you can check that with the rake task:
 
 ```bash
-KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
+KNAPSACK_PRO_SALT=xxx bundle exec rake "knapsack_pro:encrypted_test_file_names[rspec]"
 ```
 
 You can pass the name of test runner like `rspec`, `minitest`, `test_unit`, `cucumber`, `spinach` as argument to rake task.
@@ -773,7 +773,7 @@ If you need to check what is the encryption hash for particular branch then use 
 $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names
 
 # show hash for branch provided as argument to rake task
-$ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names[not-encrypted-branch-name]
+$ KNAPSACK_PRO_SALT=xxx bundle exec rake "knapsack_pro:encrypted_branch_names[not-encrypted-branch-name]"
 ```
 
 ### Supported CI providers
