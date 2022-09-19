@@ -97,7 +97,6 @@ The knapsack_pro has also [queue mode](#queue-mode) to get an optimal test suite
   - [Test file names encryption](#test-file-names-encryption)
     - [How to enable test file names encryption?](#how-to-enable-test-file-names-encryption)
     - [How to debug test file names?](#how-to-debug-test-file-names)
-      - [Preview encrypted RSpec test example paths?](#preview-encrypted-rspec-test-example-paths)
     - [How to enable branch names encryption?](#how-to-enable-branch-names-encryption)
     - [How to debug branch names?](#how-to-debug-branch-names)
   - [Supported CI providers](#supported-ci-providers)
@@ -719,72 +718,61 @@ This is optional way of using knapsack_pro when you don't want to add it to `Gem
 
 ### Test file names encryption
 
-knapsack_pro gem collects information about you test file names and time execution. Those data are stored on KnapsackPro.com server.
-If your test file names or branch names are sensitive data then you can encrypt the names before sending them to KnapsackPro.com API.
+The knapsack_pro gem collects information about your test file names, branch names, and execution times. The data are stored on the KnapsackPro.com server.
+If your test file names or branch names are considered sensitive data, then you can encrypt the data before sending it to the KnapsackPro.com API.
 
-By default, encryption is disabled because knapsack_pro can use your test files names to prepare better test suite split when the time execution data are not yet collected on KnapsackPro.com server.
-When you will enable test file names encryption then your first test suite split may be less optimal than it could be.
+Encryption is disabled by default because the knapsack_pro gem uses your test file names to prepare a better test suite split when the execution time data are not collected on the KnapsackPro.com server yet.
+When you enable the encryption, then your first test suite split may not be optimal.
 
-Each test file name is generated with `Digest::SHA2.hexdigest` method and 64 chars salt.
+Each test file name is generated with the `Digest::SHA2.hexdigest` method and 64 chars salt.
 
-Before you enable test file encryption please ensure you are using fresh API key. You should not use the same API key for encrypted and non encrypted test suite.
-You can generate API key for your test suite in [your dashboard](https://knapsackpro.com).
+Before you enable encryption, please ensure you are using a fresh API token. Do not use the same API token for the encrypted and non-encrypted test suite. You can generate an API token for your test suite in the [user dashboard](https://knapsackpro.com/dashboard).
 
-Next step is to generate salt which will be used to encrypt test files or branch names.
+The next step is to generate a salt to encrypt test files or branch names with it.
 
 ```bash
 bundle exec rake knapsack_pro:salt
 ```
 
-Add to your CI server generated environment variable `KNAPSACK_PRO_SALT`.
+Add the salt to your CI server as the `KNAPSACK_PRO_SALT` environment variable.
 
 #### How to enable test file names encryption?
 
-You need to add environment variable `KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true` to your CI server.
+You need to add the `KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true` environment variable to your CI server.
 
 #### How to debug test file names?
 
-If you need to check what is the encryption hash for particular test file you can check that with the rake task:
+If you need to check what is the hash value for a particular test file you can check that with the rake task:
 
 ```bash
-KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
+KNAPSACK_PRO_SALT=xxx bundle exec rake "knapsack_pro:encrypted_test_file_names[rspec]"
 ```
 
-You can pass the name of test runner like `rspec`, `minitest`, `test_unit`, `cucumber`, `spinach` as argument to rake task.
-
-##### Preview encrypted RSpec test example paths?
-
-If you split RSpec tests by test examples (by individual `it`) you can preview encrypted test example paths this way:
-
-```bash
-KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true \
-KNAPSACK_PRO_SALT=xxx \
-bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
-```
+You can pass the name of a test runner like `rspec`, `minitest`, `test_unit`, `cucumber`, `spinach` as an argument to the rake task.
 
 #### How to enable branch names encryption?
 
-You need to add environment variable `KNAPSACK_PRO_BRANCH_ENCRYPTED=true` to your CI server.
+You need to add the `KNAPSACK_PRO_BRANCH_ENCRYPTED=true` environment variable to your CI server.
 
-Note: there are a few branch names that won't be encrypted because we use them as fallback branches on Knapsack Pro API side to determine time execution for test files during split for newly created branches.
+Note a few branch names won't be encrypted because we use them as fallback branches on the Knapsack Pro API side to determine time execution for test files during split for newly created branches.
 
 * develop
 * development
 * dev
 * master
 * staging
-* [see full list of encryption excluded branch names](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/crypto/branch_encryptor.rb#L4)
+* [see the full list of excluded branch names from encryption](https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/lib/knapsack_pro/crypto/branch_encryptor.rb#L4)
 
 #### How to debug branch names?
 
-If you need to check what is the encryption hash for particular branch then use the rake task:
+If you need to check what is the hash for a particular branch, then use the rake task:
 
 ```bash
 # show all local branches and respective hashes
 $ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names
 
-# show hash for branch provided as argument to rake task
-$ KNAPSACK_PRO_SALT=xxx bundle exec rake knapsack_pro:encrypted_branch_names[not-encrypted-branch-name]
+# show the hash for a branch name passed as an argument to the rake task
+$ KNAPSACK_PRO_SALT=xxx bundle exec rake "knapsack_pro:encrypted_branch_names[not-encrypted-branch-name]"
 ```
 
 ### Supported CI providers
