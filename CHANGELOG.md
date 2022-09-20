@@ -1,5 +1,15 @@
 # Change Log
 
+### 3.4.0
+
+* Update documentation and code because the encryption feature does not work with the RSpec split by examples feature
+
+    Update docs: https://github.com/KnapsackPro/knapsack_pro-ruby/pull/176
+
+    Update code: https://github.com/KnapsackPro/knapsack_pro-ruby/pull/177
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.3.1...v3.4.0
+
 ### 3.3.1
 
 * Skip loading a test file path for Minitest in Queue Mode when it does not exist on the disk
