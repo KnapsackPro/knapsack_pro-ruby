@@ -19,15 +19,8 @@ namespace :knapsack_pro do
                       raise('Provide adapter name like rspec, minitest, test_unit, cucumber, spinach')
                     end
 
-    test_files =
-      if adapter_class == KnapsackPro::Adapters::RSpecAdapter && KnapsackPro::Config::Env.rspec_split_by_test_examples?
-        detector = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new
-        detector.generate_json_report
-        detector.test_file_example_paths
-      else
-        test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
-        KnapsackPro::TestFileFinder.call(test_file_pattern)
-      end
+    test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
+    test_files = KnapsackPro::TestFileFinder.call(test_file_pattern)
 
     test_file_names = []
     test_files.each do |t|
