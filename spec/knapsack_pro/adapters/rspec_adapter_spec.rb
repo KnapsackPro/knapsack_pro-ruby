@@ -110,6 +110,58 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
+  describe '.order_option' do
+    subject { described_class.order_option(cli_args) }
+
+    context "when order is 'defined'" do
+      let(:cli_args) { ['--order', 'defined'] }
+
+      it { expect(subject).to eq 'defined' }
+    end
+
+    context "when order is 'recently-modified'" do
+      let(:cli_args) { ['--order', 'recently-modified'] }
+
+      it { expect(subject).to eq 'recently-modified' }
+    end
+
+    context "when order is 'rand'" do
+      let(:cli_args) { ['--order', 'rand'] }
+
+      it { expect(subject).to eq 'rand' }
+
+      context 'with the seed' do
+        let(:cli_args) { ['--order', 'rand:123456'] }
+
+        it { expect(subject).to eq 'rand:123456' }
+      end
+    end
+
+    context "when order is 'random'" do
+      let(:cli_args) { ['--order', 'random'] }
+
+      it { expect(subject).to eq 'random' }
+
+      context 'with the seed' do
+        let(:cli_args) { ['--order', 'random:123456'] }
+
+        it { expect(subject).to eq 'random:123456' }
+      end
+    end
+
+    context 'when some custom order is specified' do
+      let(:cli_args) { ['--order', 'some-custom-order'] }
+
+      it { expect(subject).to eq 'some-custom-order' }
+    end
+
+    context "when the seed is given with the --seed command" do
+      let(:cli_args) { ['--seed', '123456'] }
+
+      it { expect(subject).to eq 'rand:123456' }
+    end
+  end
+
   describe '.test_path' do
     let(:example_group) do
       {

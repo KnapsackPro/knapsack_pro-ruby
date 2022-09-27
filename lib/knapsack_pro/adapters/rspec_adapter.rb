@@ -12,16 +12,15 @@ module KnapsackPro
       end
 
       def self.has_tag_option?(cli_args)
-        # use start_with? because user can define tag option in a few ways:
-        # -t mytag
-        # -tmytag
-        # --tag mytag
-        # --tag=mytag
-        cli_args.any? { |arg| arg.start_with?('-t') || arg.start_with?('--tag') }
+        !!parsed_options(cli_args)&.[](:inclusion_filter)
       end
 
       def self.has_format_option?(cli_args)
-        cli_args.any? { |arg| arg.start_with?('-f') || arg.start_with?('--format') }
+        !!parsed_options(cli_args)&.[](:formatters)
+      end
+
+      def self.order_option(cli_args)
+        parsed_options(cli_args)&.[](:order)
       end
 
       def self.test_path(example)
@@ -106,6 +105,12 @@ module KnapsackPro
       # Mocking existing RSpec configuration could impact test's runtime.
       def self.rspec_configuration
         ::RSpec.configuration
+      end
+
+      def self.parsed_options(cli_args)
+        ::RSpec::Core::Parser.parse(cli_args)
+      rescue SystemExit
+        nil
       end
     end
 
