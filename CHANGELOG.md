@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.4.1
+
+* Improve the RSpec Queue Mode runner log output (add seed)
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/178
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.4.0...v3.4.1
+
 ### 3.4.0
 
 * Update documentation and code because the encryption feature does not work with the RSpec split by examples feature

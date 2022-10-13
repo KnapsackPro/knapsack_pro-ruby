@@ -177,7 +177,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
   describe '.run_tests' do
     let(:runner) { instance_double(described_class) }
     let(:can_initialize_queue) { double(:can_initialize_queue) }
-    let(:args) { ['--example-arg', 'example-value', '--default-path', 'fake-test-dir'] }
+    let(:args) { ['--no-color', '--default-path', 'fake-test-dir'] }
     let(:exitstatus) { double }
     let(:all_test_file_paths) { [] }
     let(:accumulator) do
@@ -198,6 +198,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
     context 'when test files exist' do
       let(:test_file_paths) { ['a_spec.rb', 'b_spec.rb'] }
+      let(:logger) { double }
+      let(:rspec_seed) { 7771 }
 
       before do
         subset_queue_id = 'fake-subset-queue-id'
@@ -212,7 +214,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         options = double
         expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
-          '--example-arg', 'example-value',
+          '--no-color',
           '--default-path', 'fake-test-dir',
           'a_spec.rb', 'b_spec.rb',
         ]).and_return(options)
@@ -226,6 +228,16 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 
         expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+
+        configuration = double
+        expect(rspec_core_runner).to receive(:configuration).twice.and_return(configuration)
+        expect(configuration).to receive(:seed_used?).and_return(true)
+        expect(configuration).to receive(:seed).and_return(rspec_seed)
+
+        expect(KnapsackPro).to receive(:logger).twice.and_return(logger)
+        expect(logger).to receive(:info)
+          .with("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+        expect(logger).to receive(:info).with(/#{args.join(' ')} --seed #{rspec_seed}/)
       end
 
       context 'when exit code is zero' do
@@ -264,8 +276,13 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
       context 'when all_test_file_paths exist' do
         let(:all_test_file_paths) { ['a_spec.rb'] }
+        let(:logger) { double }
 
-        it do
+        before do
+          described_class.class_variable_set(:@@used_seed, used_seed)
+
+          expect(KnapsackPro).to receive(:logger).twice.and_return(logger)
+
           expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called)
 
           expect(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_summary)
@@ -274,10 +291,33 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
 
-          expect(subject).to eq({
-            status: :completed,
-            exitstatus: exitstatus,
-          })
+          expect(logger).to receive(:info)
+            .with('To retry all the tests assigned to this CI node, please run the following command on your machine:')
+          expect(logger).to receive(:info).with(logged_rspec_command_matcher)
+        end
+
+        context 'when @@used_seed has been set' do
+          let(:used_seed) { '8333' }
+          let(:logged_rspec_command_matcher) { /#{args.join(' ')} --seed #{used_seed} \"a_spec.rb"/ }
+
+          it do
+            expect(subject).to eq({
+              status: :completed,
+              exitstatus: exitstatus,
+            })
+          end
+        end
+
+        context 'when @@used_seed has not been set' do
+          let(:used_seed) { nil }
+          let(:logged_rspec_command_matcher) { /#{args.join(' ')} \"a_spec.rb"/ }
+
+          it do
+            expect(subject).to eq({
+              status: :completed,
+              exitstatus: exitstatus,
+            })
+          end
         end
       end
 
@@ -287,6 +327,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         it do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+          expect(KnapsackPro).to_not receive(:logger)
 
           expect(subject).to eq({
             status: :completed,
