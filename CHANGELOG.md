@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.4.2
+
+* Fix: Load `rspec/core` in Regular Mode when using RSpec split by test examples feature
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/181
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.4.1...v3.4.2
+
 ### 3.4.1
 
 * Improve the RSpec Queue Mode runner log output (add seed)
