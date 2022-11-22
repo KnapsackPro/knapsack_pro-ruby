@@ -9,8 +9,19 @@ module KnapsackPro
     end
 
     def test_file_paths
-      connection = KnapsackPro::Client::Connection.new(build_action)
+      action = build_action(attempt_to_read_from_cache: true)
+      connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
+
+      # when an attempt to read from the cache on the API side was canceled
+      # because the test suite split was not cached yet
+      if connection.success? && connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::CODE_ATTEMPT_TO_READ_FROM_CACHE_CANCELED
+        # make an attempt to initalize a new test suite split on the API side
+        action = build_action(attempt_to_read_from_cache: false)
+        connection = KnapsackPro::Client::Connection.new(action)
+        response = connection.call
+      end
+
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
@@ -47,13 +58,19 @@ module KnapsackPro
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
-    def build_action
+    def build_action(attempt_to_read_from_cache:)
+      test_files =
+        unless attempt_to_read_from_cache
+          encrypted_test_files
+        end
+
       KnapsackPro::Client::API::V1::BuildDistributions.subset(
+        attempt_to_read_from_cache: attempt_to_read_from_cache,
         commit_hash: repository_adapter.commit_hash,
         branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
-        test_files: encrypted_test_files,
+        test_files: test_files,
       )
     end
 

@@ -62,7 +62,6 @@ module KnapsackPro
     end
 
     def build_action(can_initialize_queue, attempt_connect_to_queue:)
-      # read test files from disk only when needed because it can be slow operation
       test_files =
         if can_initialize_queue && !attempt_connect_to_queue
           encrypted_test_files

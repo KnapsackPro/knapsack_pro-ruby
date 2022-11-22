@@ -5,12 +5,18 @@ http_interactions:
     uri: http://api.knapsackpro.test:3000/v1/build_distributions/subset
     body:
       encoding: UTF-8
-      string: '{"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","test_files":[{"path":"a_spec.rb"},{"path":"b_spec.rb"}],"test_suite_token":"fake"}'
+      string: '{"fixed_test_suite_split":true,"attempt_to_read_from_cache":true,"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","ci_build_id":"missing-build-id"}'
     headers:
       Content-Type:
       - application/json
       Accept:
       - application/json
+      Knapsack-Pro-Client-Name:
+      - knapsack_pro-ruby
+      Knapsack-Pro-Client-Version:
+      - 3.4.2
+      Knapsack-Pro-Test-Suite-Token:
+      - fake
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       User-Agent:
@@ -18,33 +24,35 @@ http_interactions:
   response:
     status:
       code: 403
-      message: 'Forbidden '
+      message: Forbidden
     headers:
       X-Frame-Options:
       - SAMEORIGIN
       X-Xss-Protection:
-      - 1; mode=block
+      - '0'
       X-Content-Type-Options:
       - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
       Content-Type:
       - application/json; charset=utf-8
       Cache-Control:
       - no-cache
       X-Request-Id:
-      - 6d40fe71-7fad-449a-812f-9773429777ce
+      - d0fc0868-1521-4351-b1aa-730649b01ecb
       X-Runtime:
-      - '0.054890'
-      Server:
-      - WEBrick/1.3.1 (Ruby/2.2.2/2015-04-13)
-      Date:
-      - Fri, 31 Jul 2015 16:09:00 GMT
-      Content-Length:
-      - '39'
-      Connection:
-      - Keep-Alive
+      - '0.038631'
+      Server-Timing:
+      - sql.active_record;dur=7.25, start_processing.action_controller;dur=0.00, instantiation.active_record;dur=0.01,
+        halted_callback.action_controller;dur=0.00, process_action.action_controller;dur=8.93
+      Transfer-Encoding:
+      - chunked
     body:
       encoding: UTF-8
       string: '{"errors":["invalid test suite token"]}'
-    http_version: 
-  recorded_at: Fri, 31 Jul 2015 16:09:00 GMT
-recorded_with: VCR 2.9.3
+  recorded_at: Tue, 22 Nov 2022 23:50:57 GMT
+recorded_with: VCR 6.1.0

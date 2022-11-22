@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.6.0
+
+* Add an attempt to read from the cache for Regular Mode API
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/182
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.5.0...v3.6.0
+
 ### 3.5.0
 
 * Add the `KnapsackPro::Hooks::Queue.before_subset_queue` hook in Queue Mode

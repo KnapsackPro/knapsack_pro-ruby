@@ -147,10 +147,7 @@ describe KnapsackPro::QueueAllocator do
             it { should eq ['a_spec.rb', 'b_spec.rb'] }
           end
 
-          context 'when response has code=ATTEMPT_CONNECT_TO_QUEUE_FAILED' do
-            let(:response) do
-              { 'code' => 'ATTEMPT_CONNECT_TO_QUEUE_FAILED' }
-            end
+          context 'when the response has the API code=ATTEMPT_CONNECT_TO_QUEUE_FAILED' do
             let(:api_code) { 'ATTEMPT_CONNECT_TO_QUEUE_FAILED' }
 
             before do
@@ -197,7 +194,7 @@ describe KnapsackPro::QueueAllocator do
               context 'when 2nd response has no errors' do
                 let(:response2_errors?) { false }
 
-                context 'when 2nd response returns test files (successful attempt to connect to queue already existing on the API side)' do
+                context 'when 2nd response returns test files (successfully initialized a new queue or connected to an existing queue on the API side)' do
                   let(:response2) do
                     {
                       'test_files' => [
