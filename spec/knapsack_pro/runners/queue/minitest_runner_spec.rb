@@ -125,6 +125,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
         expect(Minitest::Runnable).to receive(:reset)
 
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
 
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 

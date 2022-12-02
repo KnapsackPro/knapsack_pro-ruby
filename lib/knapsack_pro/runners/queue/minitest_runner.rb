@@ -67,6 +67,8 @@ module KnapsackPro
             KnapsackPro.tracker.reset!
             KnapsackPro.tracker.set_prerun_tests(test_file_paths)
 
+            KnapsackPro::Hooks::Queue.call_before_subset_queue
+
             all_test_file_paths += test_file_paths
 
             result = minitest_run(runner, test_file_paths, args)

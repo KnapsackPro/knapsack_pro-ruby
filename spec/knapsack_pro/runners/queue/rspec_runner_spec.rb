@@ -225,6 +225,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         expect(described_class).to receive(:rspec_clear_examples)
 
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
+
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 
         expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
