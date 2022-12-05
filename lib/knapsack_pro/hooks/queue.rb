@@ -12,7 +12,7 @@ module KnapsackPro
         end
 
         def reset_before_subset_queue
-          @reset_before_subset_queue = nil
+          @before_subset_queue_store = nil
         end
 
         def reset_after_subset_queue
