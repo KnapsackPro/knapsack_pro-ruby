@@ -82,6 +82,8 @@ module KnapsackPro
             KnapsackPro.tracker.reset!
             KnapsackPro.tracker.set_prerun_tests(test_file_paths)
 
+            KnapsackPro::Hooks::Queue.call_before_subset_queue
+
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
 

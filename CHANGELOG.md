@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.5.0
+
+* Add the `KnapsackPro::Hooks::Queue.before_subset_queue` hook in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/183
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.4.2...v3.5.0
+
 ### 3.4.2
 
 * Fix: Load `rspec/core` in Regular Mode when using RSpec split by test examples feature

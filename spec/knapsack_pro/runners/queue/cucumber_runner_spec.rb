@@ -115,6 +115,8 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
         expect(tracker).to receive(:reset!)
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
+
         # .cucumber_run
         expect(Kernel).to receive(:system).with('bundle exec cucumber --retry 5 --no-strict-flaky --require fake-features-dir -- "features/a.feature" "features/b.feature"')
 
