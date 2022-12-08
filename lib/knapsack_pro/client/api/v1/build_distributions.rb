@@ -3,13 +3,13 @@ module KnapsackPro
     module API
       module V1
         class BuildDistributions < Base
-          CODE_ATTEMPT_TO_READ_FROM_CACHE_CANCELED = 'ATTEMPT_TO_READ_FROM_CACHE_CANCELED'
+          TEST_SUITE_SPLIT_CACHE_MISS_CODE = 'TEST_SUITE_SPLIT_CACHE_MISS'
 
           class << self
             def subset(args)
               request_hash = {
                 :fixed_test_suite_split => KnapsackPro::Config::Env.fixed_test_suite_split,
-                :attempt_to_read_from_cache => args.fetch(:attempt_to_read_from_cache),
+                :cache_read_attempt => args.fetch(:cache_read_attempt),
                 :commit_hash => args.fetch(:commit_hash),
                 :branch => args.fetch(:branch),
                 :node_total => args.fetch(:node_total),
@@ -17,7 +17,7 @@ module KnapsackPro
                 :ci_build_id => KnapsackPro::Config::Env.ci_node_build_id,
               }
 
-              unless request_hash[:attempt_to_read_from_cache]
+              unless request_hash[:cache_read_attempt]
                 request_hash.merge!({
                   :test_files => args.fetch(:test_files)
                 })

@@ -9,15 +9,14 @@ module KnapsackPro
     end
 
     def test_file_paths
-      action = build_action(attempt_to_read_from_cache: true)
+      action = build_action(cache_read_attempt: true)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
-      # when an attempt to read from the cache on the API side was canceled
-      # because the test suite split was not cached yet
-      if connection.success? && connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::CODE_ATTEMPT_TO_READ_FROM_CACHE_CANCELED
+      # when a cache miss because the test suite split was not cached yet
+      if connection.success? && connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::TEST_SUITE_SPLIT_CACHE_MISS_CODE
         # make an attempt to initalize a new test suite split on the API side
-        action = build_action(attempt_to_read_from_cache: false)
+        action = build_action(cache_read_attempt: false)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
       end
@@ -58,14 +57,14 @@ module KnapsackPro
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
-    def build_action(attempt_to_read_from_cache:)
+    def build_action(cache_read_attempt:)
       test_files =
-        unless attempt_to_read_from_cache
+        unless cache_read_attempt
           encrypted_test_files
         end
 
       KnapsackPro::Client::API::V1::BuildDistributions.subset(
-        attempt_to_read_from_cache: attempt_to_read_from_cache,
+        cache_read_attempt: cache_read_attempt,
         commit_hash: repository_adapter.commit_hash,
         branch: encrypted_branch,
         node_total: ci_node_total,

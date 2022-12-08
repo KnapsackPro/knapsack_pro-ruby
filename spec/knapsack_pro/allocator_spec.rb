@@ -78,12 +78,12 @@ describe KnapsackPro::Allocator do
 
       action = double
       expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
-        attempt_to_read_from_cache: true,
+        cache_read_attempt: true,
         commit_hash: repository_adapter.commit_hash,
         branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
-        test_files: nil, # when `attempt_to_read_from_cache=true` then expect `test_files` is `nil` to make the request fast
+        test_files: nil, # when `cache_read_attempt=true` then expect `test_files` is `nil` to make the request fast due to small payload
       }).and_return(action)
 
       connection = instance_double(KnapsackPro::Client::Connection,
@@ -125,11 +125,11 @@ describe KnapsackPro::Allocator do
           it { should eq ['a_spec.rb', 'b_spec.rb'] }
         end
 
-        context 'when the response has the API code=ATTEMPT_TO_READ_FROM_CACHE_CANCELED' do
+        context 'when the response has the API code=TEST_SUITE_SPLIT_CACHE_MISS' do
           let(:response) do
-            { 'code' => 'ATTEMPT_TO_READ_FROM_CACHE_CANCELED' }
+            { 'code' => 'TEST_SUITE_SPLIT_CACHE_MISS' }
           end
-          let(:api_code) { 'ATTEMPT_TO_READ_FROM_CACHE_CANCELED' }
+          let(:api_code) { 'TEST_SUITE_SPLIT_CACHE_MISS' }
 
           before do
             encrypted_branch = double
@@ -142,7 +142,7 @@ describe KnapsackPro::Allocator do
             # Try to initalize a new test suite split by sending a list of test files from disk.
             action = double
             expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
-              attempt_to_read_from_cache: false,
+              cache_read_attempt: false,
               commit_hash: repository_adapter.commit_hash,
               branch: encrypted_branch,
               node_total: ci_node_total,

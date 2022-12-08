@@ -10,7 +10,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
 
     subject do
       described_class.subset(
-        attempt_to_read_from_cache: attempt_to_read_from_cache,
+        cache_read_attempt: cache_read_attempt,
         commit_hash: commit_hash,
         branch: branch,
         node_total: node_total,
@@ -24,8 +24,8 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
       expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(ci_build_id)
     end
 
-    context 'when attempt_to_read_from_cache=true' do
-      let(:attempt_to_read_from_cache) { true }
+    context 'when cache_read_attempt=true' do
+      let(:cache_read_attempt) { true }
 
       it 'does not send test_files among other params' do
         action = double
@@ -34,7 +34,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
           http_method: :post,
           request_hash: {
             fixed_test_suite_split: fixed_test_suite_split,
-            attempt_to_read_from_cache: attempt_to_read_from_cache,
+            cache_read_attempt: cache_read_attempt,
             commit_hash: commit_hash,
             branch: branch,
             node_total: node_total,
@@ -46,8 +46,8 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
       end
     end
 
-    context 'when attempt_to_read_from_cache=false' do
-      let(:attempt_to_read_from_cache) { false }
+    context 'when cache_read_attempt=false' do
+      let(:cache_read_attempt) { false }
 
       it 'sends test_files among other params' do
         action = double
@@ -56,7 +56,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
           http_method: :post,
           request_hash: {
             fixed_test_suite_split: fixed_test_suite_split,
-            attempt_to_read_from_cache: attempt_to_read_from_cache,
+            cache_read_attempt: cache_read_attempt,
             commit_hash: commit_hash,
             branch: branch,
             node_total: node_total,
