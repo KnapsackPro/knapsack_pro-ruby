@@ -83,7 +83,7 @@ describe KnapsackPro::Allocator do
         branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
-        test_files: nil, # when `cache_read_attempt=true` then expect `test_files` is `nil` to make the request fast due to small payload
+        test_files: nil, # when `cache_read_attempt=true`, then expect `test_files` is `nil` to make the request fast due to a small payload
       }).and_return(action)
 
       connection = instance_double(KnapsackPro::Client::Connection,
@@ -139,7 +139,7 @@ describe KnapsackPro::Allocator do
             expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
 
             # 2nd request is not an attempt to read from the cache.
-            # Try to initalize a new test suite split by sending a list of test files from disk.
+            # Try to initalize a new test suite split by sending a list of test files from the disk.
             action = double
             expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
               cache_read_attempt: false,
