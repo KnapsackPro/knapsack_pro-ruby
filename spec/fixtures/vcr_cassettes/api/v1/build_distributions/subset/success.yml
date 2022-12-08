@@ -5,7 +5,7 @@ http_interactions:
     uri: http://api.knapsackpro.test:3000/v1/build_distributions/subset
     body:
       encoding: UTF-8
-      string: '{"fixed_test_suite_split":true,"attempt_to_read_from_cache":true,"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","ci_build_id":"missing-build-id"}'
+      string: '{"fixed_test_suite_split":true,"cache_read_attempt":true,"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","ci_build_id":"missing-build-id"}'
     headers:
       Content-Type:
       - application/json
@@ -14,7 +14,7 @@ http_interactions:
       Knapsack-Pro-Client-Name:
       - knapsack_pro-ruby
       Knapsack-Pro-Client-Version:
-      - 3.4.2
+      - 3.5.0
       Knapsack-Pro-Test-Suite-Token:
       - 3fa64859337f6e56409d49f865d13fd7
       Accept-Encoding:
@@ -41,24 +41,21 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Etag:
-      - W/"580af2708793b77366473fbff34efab9"
+      - W/"1f643e3528e8ff45d9d2d67ab7e32be1"
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 12f18830-2f57-443b-8a80-d8fd8536857a
+      - 9b378323-c960-4868-894e-5ae0cdab8840
       X-Runtime:
-      - '0.089243'
+      - '0.273775'
       Server-Timing:
-      - start_processing.action_controller;dur=0.01, sql.active_record;dur=26.60,
-        instantiation.active_record;dur=6.71, unpermitted_parameters.action_controller;dur=0.01,
-        process_action.action_controller;dur=64.32
+      - sql.active_record;dur=55.90, start_processing.action_controller;dur=0.00,
+        unpermitted_parameters.action_controller;dur=0.01, instantiation.active_record;dur=10.69,
+        process_action.action_controller;dur=92.24
       Transfer-Encoding:
       - chunked
     body:
       encoding: UTF-8
-      string: '{"message":"An attempt to read from the cached test suite split was
-        canceled due to a missing cache. If you see this message, everything works
-        as expected. Now Knapsack Pro client will repeat the request with a list of
-        test files to initialize a new test suite split in Regular Mode.","code":"ATTEMPT_TO_READ_FROM_CACHE_CANCELED"}'
-  recorded_at: Tue, 22 Nov 2022 23:50:32 GMT
+      string: '{"code":"TEST_SUITE_SPLIT_CACHE_MISS"}'
+  recorded_at: Thu, 08 Dec 2022 23:27:07 GMT
 recorded_with: VCR 6.1.0

@@ -5,7 +5,7 @@ http_interactions:
     uri: http://api.knapsackpro.test:3000/v1/build_distributions/subset
     body:
       encoding: UTF-8
-      string: '{"fixed_test_suite_split":true,"attempt_to_read_from_cache":true,"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","ci_build_id":"missing-build-id"}'
+      string: '{"fixed_test_suite_split":true,"cache_read_attempt":true,"commit_hash":"abcdefg","branch":"master","node_total":"2","node_index":"1","ci_build_id":"missing-build-id"}'
     headers:
       Content-Type:
       - application/json
@@ -14,7 +14,7 @@ http_interactions:
       Knapsack-Pro-Client-Name:
       - knapsack_pro-ruby
       Knapsack-Pro-Client-Version:
-      - 3.4.2
+      - 3.5.0
       Knapsack-Pro-Test-Suite-Token:
       - fake
       Accept-Encoding:
@@ -43,16 +43,17 @@ http_interactions:
       Cache-Control:
       - no-cache
       X-Request-Id:
-      - d0fc0868-1521-4351-b1aa-730649b01ecb
+      - a5ffe97f-4558-426b-9475-166eb89ab7cb
       X-Runtime:
-      - '0.038631'
+      - '0.231483'
       Server-Timing:
-      - sql.active_record;dur=7.25, start_processing.action_controller;dur=0.00, instantiation.active_record;dur=0.01,
-        halted_callback.action_controller;dur=0.00, process_action.action_controller;dur=8.93
+      - sql.active_record;dur=24.31, start_processing.action_controller;dur=0.00,
+        instantiation.active_record;dur=0.02, halted_callback.action_controller;dur=0.00,
+        process_action.action_controller;dur=15.10
       Transfer-Encoding:
       - chunked
     body:
       encoding: UTF-8
       string: '{"errors":["invalid test suite token"]}'
-  recorded_at: Tue, 22 Nov 2022 23:50:57 GMT
+  recorded_at: Thu, 08 Dec 2022 23:27:10 GMT
 recorded_with: VCR 6.1.0
