@@ -17,66 +17,11 @@ describe KnapsackPro::Allocator do
 
   describe '#test_file_paths' do
     let(:response) { double }
+    let(:api_code) { nil }
 
     subject { allocator.test_file_paths }
 
-    before do
-      encrypted_test_files = double
-      expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
-
-      encrypted_branch = double
-      expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
-
-      action = double
-      expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
-        commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        test_files: encrypted_test_files,
-      }).and_return(action)
-
-      connection = instance_double(KnapsackPro::Client::Connection,
-                                   call: response,
-                                   success?: success?,
-                                   errors?: errors?)
-      expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
-    end
-
-    context 'when successful request to API' do
-      let(:success?) { true }
-
-      context 'when response has errors' do
-        let(:errors?) { true }
-
-        it do
-          expect { subject }.to raise_error(ArgumentError)
-        end
-      end
-
-      context 'when response has no errors' do
-        let(:errors?) { false }
-        let(:response) do
-          {
-            'test_files' => [
-              { 'path' => 'a_spec.rb' },
-              { 'path' => 'b_spec.rb' },
-            ]
-          }
-        end
-
-        before do
-          expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
-        end
-
-        it { should eq ['a_spec.rb', 'b_spec.rb'] }
-      end
-    end
-
-    context 'when not successful request to API' do
-      let(:success?) { false }
-      let(:errors?) { false }
-
+    shared_examples_for 'when connection to API failed (fallback mode)' do
       context 'when fallback mode is disabled' do
         before do
           expect(KnapsackPro::Config::Env).to receive(:fallback_mode_enabled?).and_return(false)
@@ -125,6 +70,144 @@ describe KnapsackPro::Allocator do
 
         it { should eq ['c_spec.rb', 'd_spec.rb'] }
       end
+    end
+
+    before do
+      encrypted_branch = double
+      expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
+      action = double
+      expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
+        cache_read_attempt: true,
+        commit_hash: repository_adapter.commit_hash,
+        branch: encrypted_branch,
+        node_total: ci_node_total,
+        node_index: ci_node_index,
+        test_files: nil, # when `cache_read_attempt=true`, then expect `test_files` is `nil` to make the request fast due to a small payload
+      }).and_return(action)
+
+      connection = instance_double(KnapsackPro::Client::Connection,
+                                   call: response,
+                                   success?: success?,
+                                   errors?: errors?,
+                                   api_code: api_code)
+      expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
+    end
+
+    context 'when successful request to API' do
+      let(:success?) { true }
+
+      context 'when response has errors' do
+        let(:errors?) { true }
+
+        it do
+          expect { subject }.to raise_error(ArgumentError)
+        end
+      end
+
+      context 'when response has no errors' do
+        let(:errors?) { false }
+
+        context 'when the response returns test files (successful attempt to read from the cache - the cached test suite split exists on the API side)' do
+          let(:response) do
+            {
+              'test_files' => [
+                { 'path' => 'a_spec.rb' },
+                { 'path' => 'b_spec.rb' },
+              ]
+            }
+          end
+
+          before do
+            expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
+          end
+
+          it { should eq ['a_spec.rb', 'b_spec.rb'] }
+        end
+
+        context 'when the response has the API code=TEST_SUITE_SPLIT_CACHE_MISS' do
+          let(:response) do
+            { 'code' => 'TEST_SUITE_SPLIT_CACHE_MISS' }
+          end
+          let(:api_code) { 'TEST_SUITE_SPLIT_CACHE_MISS' }
+
+          before do
+            encrypted_branch = double
+            expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
+
+            encrypted_test_files = double
+            expect(KnapsackPro::Crypto::Encryptor).to receive(:call).with(fast_and_slow_test_files_to_run).and_return(encrypted_test_files)
+
+            # 2nd request is not an attempt to read from the cache.
+            # Try to initalize a new test suite split by sending a list of test files from the disk.
+            action = double
+            expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:subset).with({
+              cache_read_attempt: false,
+              commit_hash: repository_adapter.commit_hash,
+              branch: encrypted_branch,
+              node_total: ci_node_total,
+              node_index: ci_node_index,
+              test_files: encrypted_test_files,
+            }).and_return(action)
+
+            connection = instance_double(KnapsackPro::Client::Connection,
+                                         call: response2,
+                                         success?: response2_success?,
+                                         errors?: response2_errors?,
+                                         api_code: nil)
+            expect(KnapsackPro::Client::Connection).to receive(:new).with(action).and_return(connection)
+          end
+
+          context 'when successful 2nd request to API' do
+            let(:response2_success?) { true }
+
+            context 'when 2nd response has errors' do
+              let(:response2_errors?) { true }
+              let(:response2) { nil }
+
+              it do
+                expect { subject }.to raise_error(ArgumentError)
+              end
+            end
+
+            context 'when 2nd response has no errors' do
+              let(:response2_errors?) { false }
+
+              context 'when 2nd response returns test files' do
+                let(:response2) do
+                  {
+                    'test_files' => [
+                      { 'path' => 'a_spec.rb' },
+                      { 'path' => 'b_spec.rb' },
+                    ]
+                  }
+                end
+
+                before do
+                  expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response2['test_files']).and_call_original
+                end
+
+                it { should eq ['a_spec.rb', 'b_spec.rb'] }
+              end
+            end
+          end
+
+          context 'when not successful 2nd request to API' do
+            let(:response2_success?) { false }
+            let(:response2_errors?) { false }
+            let(:response2) { nil }
+
+            it_behaves_like 'when connection to API failed (fallback mode)'
+          end
+        end
+      end
+    end
+
+    context 'when not successful request to API' do
+      let(:success?) { false }
+      let(:errors?) { false }
+
+      it_behaves_like 'when connection to API failed (fallback mode)'
     end
   end
 end

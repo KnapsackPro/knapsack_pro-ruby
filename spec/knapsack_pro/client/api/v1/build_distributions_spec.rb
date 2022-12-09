@@ -5,10 +5,12 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
     let(:branch) { double }
     let(:node_total) { double }
     let(:node_index) { double }
+    let(:ci_build_id) { double }
     let(:test_files) { double }
 
     subject do
       described_class.subset(
+        cache_read_attempt: cache_read_attempt,
         commit_hash: commit_hash,
         branch: branch,
         node_total: node_total,
@@ -19,23 +21,52 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
 
     before do
       expect(KnapsackPro::Config::Env).to receive(:fixed_test_suite_split).and_return(fixed_test_suite_split)
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(ci_build_id)
     end
 
-    it do
-      action = double
-      expect(KnapsackPro::Client::API::Action).to receive(:new).with({
-        endpoint_path: '/v1/build_distributions/subset',
-        http_method: :post,
-        request_hash: {
-          fixed_test_suite_split: fixed_test_suite_split,
-          commit_hash: commit_hash,
-          branch: branch,
-          node_total: node_total,
-          node_index: node_index,
-          test_files: test_files
-        }
-      }).and_return(action)
-      expect(subject).to eq action
+    context 'when cache_read_attempt=true' do
+      let(:cache_read_attempt) { true }
+
+      it 'does not send test_files among other params' do
+        action = double
+        expect(KnapsackPro::Client::API::Action).to receive(:new).with({
+          endpoint_path: '/v1/build_distributions/subset',
+          http_method: :post,
+          request_hash: {
+            fixed_test_suite_split: fixed_test_suite_split,
+            cache_read_attempt: cache_read_attempt,
+            commit_hash: commit_hash,
+            branch: branch,
+            node_total: node_total,
+            node_index: node_index,
+            ci_build_id: ci_build_id,
+          }
+        }).and_return(action)
+        expect(subject).to eq action
+      end
+    end
+
+    context 'when cache_read_attempt=false' do
+      let(:cache_read_attempt) { false }
+
+      it 'sends test_files among other params' do
+        action = double
+        expect(KnapsackPro::Client::API::Action).to receive(:new).with({
+          endpoint_path: '/v1/build_distributions/subset',
+          http_method: :post,
+          request_hash: {
+            fixed_test_suite_split: fixed_test_suite_split,
+            cache_read_attempt: cache_read_attempt,
+            commit_hash: commit_hash,
+            branch: branch,
+            node_total: node_total,
+            node_index: node_index,
+            ci_build_id: ci_build_id,
+            test_files: test_files
+          }
+        }).and_return(action)
+        expect(subject).to eq action
+      end
     end
   end
 

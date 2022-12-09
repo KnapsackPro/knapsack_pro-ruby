@@ -6,6 +6,7 @@ describe 'Request API /v1/build_distributions/subset' do
 
   let(:action) do
     KnapsackPro::Client::API::V1::BuildDistributions.subset(
+      cache_read_attempt: true,
       commit_hash: 'abcdefg',
       branch: 'master',
       node_total: '2',
