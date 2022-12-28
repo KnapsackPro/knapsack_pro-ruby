@@ -243,6 +243,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           expect(config).to receive(:around).with(:each).and_yield(current_example)
           expect(::RSpec).to receive(:configure).and_yield(config)
 
+          expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
           expect(tracker).to receive(:stop_timer).ordered
 
           expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
@@ -273,6 +274,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           expect(config).to receive(:after).with(:suite).and_yield
           expect(::RSpec).to receive(:configure).and_yield(config)
 
+          expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
           expect(tracker).to receive(:stop_timer).ordered
 
           expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
@@ -316,6 +318,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
             expect(config).to receive(:after).with(:suite).and_yield
             expect(::RSpec).to receive(:configure).and_yield(config)
 
+            expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
             expect(tracker).to receive(:stop_timer).ordered
 
             expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
@@ -352,6 +355,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
             expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
 
+            expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
             expect(tracker).to receive(:stop_timer).ordered
 
             expect(tracker).to receive(:current_test_path=).with(test_path).ordered
