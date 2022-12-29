@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.7.0
+
+* Adjust the timer behaviour in the RSpec adapter
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/184
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.6.0...v3.7.0
+
 ### 3.6.0
 
 * Add an attempt to read from the cache for Regular Mode API

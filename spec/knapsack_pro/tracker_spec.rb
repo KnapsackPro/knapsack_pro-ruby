@@ -19,9 +19,7 @@ describe KnapsackPro::Tracker do
     subject { tracker.current_test_path }
 
     context 'when current_test_path not set' do
-      it do
-        expect { subject }.to raise_error("current_test_path needs to be set by Knapsack Pro Adapter's bind method")
-      end
+      it { should eql nil }
     end
 
     context 'when current_test_path set' do

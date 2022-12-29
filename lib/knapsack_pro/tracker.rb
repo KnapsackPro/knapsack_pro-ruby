@@ -46,7 +46,8 @@ module KnapsackPro
     end
 
     def current_test_path
-      raise("current_test_path needs to be set by Knapsack Pro Adapter's bind method") unless @current_test_path
+      return unless @current_test_path
+
       KnapsackPro::TestFileCleaner.clean(@current_test_path)
     end
 

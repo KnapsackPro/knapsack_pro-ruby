@@ -48,11 +48,15 @@ module KnapsackPro
           end
 
           config.around(:each) do |example|
-            # stop timer to update time for a previously run test example
-            # this way we count time spend in runtime for the previous test example after around(:each) is already done
-            KnapsackPro.tracker.stop_timer
-
             current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(example)
+
+            # Stop timer to update time for a previously run test example.
+            # This way we count time spent in runtime for the previous test example after around(:each) is already done.
+            # Only do that if we're in the same test file. Otherwise, `before(:all)` execution time in the current file
+            # will be applied to the previously ran test file.
+            if KnapsackPro.tracker.current_test_path&.start_with?(KnapsackPro::TestFileCleaner.clean(current_test_path))
+              KnapsackPro.tracker.stop_timer
+            end
 
             KnapsackPro.tracker.current_test_path =
               if KnapsackPro::Config::Env.rspec_split_by_test_examples? && KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(RSpecAdapter, current_test_path)
