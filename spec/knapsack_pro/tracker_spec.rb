@@ -102,6 +102,7 @@ describe KnapsackPro::Tracker do
       before do
         test_paths.each_with_index do |test_path, index|
           tracker.current_test_path = test_path
+          sleep 0.001
           tracker.stop_timer
         end
       end
