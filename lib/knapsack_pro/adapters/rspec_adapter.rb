@@ -5,7 +5,7 @@ module KnapsackPro
 
       def self.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
         if KnapsackPro::Config::Env.rspec_split_by_test_examples? && has_tag_option?(cli_args)
-          error_message = 'It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/faq/question/how-to-split-slow-rspec-test-files-by-test-examples-by-individual-it#warning-dont-use-rspec-tag-option'
+          error_message = "It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: #{KnapsackPro::Urls::RSPEC__SPLIT_BY_TEST_EXAMPLES__TAG}"
           KnapsackPro.logger.error(error_message)
           raise error_message
         end
@@ -66,7 +66,7 @@ module KnapsackPro
               end
 
             if example.metadata[:focus] && KnapsackPro::Adapters::RSpecAdapter.rspec_configuration.filter.rules[:focus]
-              raise "We detected a test file path #{current_test_path} with a test using the metadata `:focus` tag. RSpec might not run some tests in the Queue Mode (causing random tests skipping problem). Please remove the `:focus` tag from your codebase. See more: https://knapsackpro.com/faq/question/rspec-is-not-running-some-tests"
+              raise "We detected a test file path #{current_test_path} with a test using the metadata `:focus` tag. RSpec might not run some tests in the Queue Mode (causing random tests skipping problem). Please remove the `:focus` tag from your codebase. See more: #{KnapsackPro::Urls::RSPEC__SKIPS_TESTS}"
             end
 
             example.run
@@ -123,7 +123,7 @@ module KnapsackPro
     # and didn't notice the class name changed
     class RspecAdapter < RSpecAdapter
       def self.bind
-        error_message = 'You have attempted to call KnapsackPro::Adapters::RspecAdapter.bind. Please switch to using the new class name: KnapsackPro::Adapters::RSpecAdapter. See https://docs.knapsackpro.com/knapsack_pro-ruby/guide for up-to-date configuration instructions.'
+        error_message = "You have attempted to call KnapsackPro::Adapters::RspecAdapter.bind. Please switch to using the new class name: KnapsackPro::Adapters::RSpecAdapter. See #{KnapsackPro::Urls::INSTALLATION_GUIDE} for up-to-date configuration instructions."
         KnapsackPro.logger.error(error_message)
         raise error_message
       end

@@ -47,7 +47,7 @@ module KnapsackPro
       if test_files.size > 0 && measured_test_files.size == 0
         KnapsackPro.logger.warn("#{test_files.size} test files were executed on this CI node but the recorded time was lost due to:")
         KnapsackPro.logger.warn("1. Please ensure you do not remove the contents of the .knapsack_pro directory between tests run.")
-        KnapsackPro.logger.warn("2. Ensure you've added Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://docs.knapsackpro.com/integration/")
+        KnapsackPro.logger.warn("2. Ensure you've added Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: #{KnapsackPro::Urls::INSTALLATION_GUIDE}")
         KnapsackPro.logger.warn("3. Another potential reason for this warning is that all your tests are empty test files, pending tests, or they have syntax errors, and the time execution was not recorded for them.")
       end
 
