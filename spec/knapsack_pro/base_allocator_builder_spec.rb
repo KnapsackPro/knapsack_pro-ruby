@@ -149,7 +149,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
         end
 
         it do
-          expect { subject }.to raise_error RuntimeError, 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases'
+          expect { subject }.to raise_error RuntimeError, 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://knapsackpro.com/perma/ruby/split-by-test-examples'
         end
       end
 

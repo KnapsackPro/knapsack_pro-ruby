@@ -20,7 +20,7 @@ module KnapsackPro
     end
 
     def self.read_from_json_report
-      raise 'The report with slow test files has not been generated yet. If you have enabled split by test cases https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases and you see this error it means that your tests accidentally cleaned up the .knapsack_pro directory. Please do not remove this directory during tests runtime!' unless File.exist?(report_path)
+      raise "The report with slow test files has not been generated yet. If you have enabled split by test cases #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES} and you see this error it means that your tests accidentally cleaned up the .knapsack_pro directory. Please do not remove this directory during tests runtime!" unless File.exist?(report_path)
       slow_test_files_json_report = File.read(report_path)
       JSON.parse(slow_test_files_json_report)
     end

@@ -36,7 +36,7 @@ describe KnapsackPro::SlowTestFileFinder do
       let(:test_files_encrypted?) { true }
 
       it do
-        expect { subject }.to raise_error RuntimeError, 'Split by test cases is not possible when you have enabled test file names encryption ( https://github.com/KnapsackPro/knapsack_pro-ruby#test-file-names-encryption ). You need to disable encryption with KNAPSACK_PRO_TEST_FILES_ENCRYPTED=false in order to use split by test cases https://github.com/KnapsackPro/knapsack_pro-ruby#split-test-files-by-test-cases'
+        expect { subject }.to raise_error RuntimeError, 'Split by test cases is not possible when you have enabled test file names encryption ( https://knapsackpro.com/perma/ruby/encryption ). You need to disable encryption with KNAPSACK_PRO_TEST_FILES_ENCRYPTED=false in order to use split by test cases https://knapsackpro.com/perma/ruby/split-by-test-examples'
       end
     end
   end

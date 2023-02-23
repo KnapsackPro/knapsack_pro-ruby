@@ -24,7 +24,7 @@ module KnapsackPro
         end
 
         unless found_valid_test_file_path
-          KnapsackPro.logger.warn('cannot detect a valid test file path. Probably the test file contains only shared examples. Please add test cases to your test file. Read more at https://github.com/KnapsackPro/knapsack_pro-ruby/pull/123')
+          KnapsackPro.logger.warn("cannot detect a valid test file path. Probably the test file contains only shared examples. Please add test cases to your test file. Read more at #{KnapsackPro::Urls::TEST_UNIT__TEST_FILE_PATH_DETECTION}")
           KnapsackPro.logger.warn("See test file for #{obj.inspect}")
         end
 

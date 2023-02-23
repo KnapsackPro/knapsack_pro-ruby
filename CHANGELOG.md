@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.8.0
+
+* Extract URLs and point them at `https://knapsackpro.com/perma/ruby/*`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/187
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.7.0...v3.8.0
+
 ### 3.7.0
 
 * Adjust the timer behaviour in the RSpec adapter
