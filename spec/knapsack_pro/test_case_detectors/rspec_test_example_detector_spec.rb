@@ -11,6 +11,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       expect(FileUtils).to receive(:mkdir_p).with(report_dir)
 
+      allow(File).to receive(:exist?)
       expect(File).to receive(:exist?).at_least(:once).with(report_path).and_return(true)
       expect(File).to receive(:delete).with(report_path)
 

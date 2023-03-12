@@ -98,6 +98,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
 
     before do
       expect(::Kernel).to receive(:at_exit).and_yield
+      allow(File).to receive(:exist?)
       expect(File).to receive(:exist?).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt').and_return(adapter_bind_method_called_file_exists)
     end
 
