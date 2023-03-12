@@ -114,6 +114,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
         # .minitest_run
+        allow(File).to receive(:exist?)
         expect(File).to receive(:exist?).with('./a_test.rb').and_return(true)
         expect(File).to receive(:exist?).with('./b_test.rb').and_return(true)
         expect(File).to receive(:exist?).with('./fake_path_test.rb').and_return(false)
