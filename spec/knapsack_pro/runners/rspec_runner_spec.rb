@@ -36,6 +36,7 @@ describe KnapsackPro::Runners::RSpecRunner do
                         test_files_to_execute_exist?: true)
       end
       let(:task) { double }
+      let(:task_config) { double }
 
       before do
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called).ordered
@@ -47,36 +48,55 @@ describe KnapsackPro::Runners::RSpecRunner do
 
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:rspec_run').at_least(1).and_return(task)
 
-        t = double
-        expect(RSpec::Core::RakeTask).to receive(:new).with('knapsack_pro:rspec_run').and_yield(t)
-        expect(t).to receive(:rspec_opts=).with('--profile --color --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
-        expect(t).to receive(:pattern=).with([])
+        expect(RSpec::Core::RakeTask).to receive(:new).with('knapsack_pro:rspec_run').and_yield(task_config)
+        expect(task_config).to receive(:rspec_opts=).with('--profile --color --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
+        expect(task_config).to receive(:pattern=).with([])
       end
 
-      context 'when rake task already exists' do
-        before do
-          expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(true)
-          expect(task).to receive(:clear)
+      shared_examples 'invokes RSpec rake task' do
+        context 'when rake task already exists' do
+          before do
+            expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(true)
+            expect(task).to receive(:clear)
+          end
+
+          it do
+            result = double(:result)
+            expect(task).to receive(:invoke).and_return(result)
+            expect(subject).to eq result
+          end
         end
 
-        it do
-          result = double(:result)
-          expect(task).to receive(:invoke).and_return(result)
-          expect(subject).to eq result
+        context "when rake task doesn't exist" do
+          before do
+            expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(false)
+            expect(task).not_to receive(:clear)
+          end
+
+          it do
+            result = double(:result)
+            expect(task).to receive(:invoke).and_return(result)
+            expect(subject).to eq result
+          end
         end
       end
 
-      context "when rake task doesn't exist" do
+      context 'when the default log level' do
         before do
-          expect(Rake::Task).to receive(:task_defined?).with('knapsack_pro:rspec_run').and_return(false)
-          expect(task).not_to receive(:clear)
+          expect(task_config).to receive(:verbose=).with(true)
         end
 
-        it do
-          result = double(:result)
-          expect(task).to receive(:invoke).and_return(result)
-          expect(subject).to eq result
+        it_behaves_like 'invokes RSpec rake task'
+      end
+
+      context 'when the warning log level' do
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:log_level).and_return(::Logger::WARN)
+
+          expect(task_config).to receive(:verbose=).with(false)
         end
+
+        it_behaves_like 'invokes RSpec rake task'
       end
     end
 
