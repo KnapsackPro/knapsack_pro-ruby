@@ -32,6 +32,7 @@ module KnapsackPro
             # instead we pass test files and test example paths to t.rspec_opts
             t.pattern = []
             t.rspec_opts = "#{args} --default-path #{runner.test_dir} #{runner.stringify_test_file_paths}"
+            t.verbose = KnapsackPro::Config::Env.log_level < ::Logger::WARN
           end
           Rake::Task[task_name].invoke
         end

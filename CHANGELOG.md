@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.9.0
+
+* Suppress all RSpec spec file names displayed in stdout at the beginning of running tests in Regular Mode only when the log level is >= `warn`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/190
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.8.0...v3.9.0
+
 ### 3.8.0
 
 * Extract URLs and point them at `https://knapsackpro.com/perma/ruby/*`
