@@ -51,10 +51,10 @@ The `knapsack_pro` gem supports all CIs and the following test runners:
 
 ## Installation
 
-The [Installation Guide](http://docs.knapsackpro.com/knapsack_pro-ruby/guide/?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=installation_guide) will ask you a few questions and generate instruction steps for your project:
+The [Installation Guide](https://docs.knapsackpro.com/knapsack_pro-ruby/guide/?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=installation_guide) will ask you a few questions and generate instruction steps for your project:
 
 <div align="center">
-  <a href="http://docs.knapsackpro.com/knapsack_pro-ruby/guide/?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=installation_guide">
+  <a href="https://docs.knapsackpro.com/knapsack_pro-ruby/guide/?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=installation_guide">
     <img alt="Install button" src="./.github/assets/install-button.png" width="116" height="50" />
   </a>
 </div>
