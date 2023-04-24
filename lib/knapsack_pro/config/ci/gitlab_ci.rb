@@ -32,6 +32,16 @@ module KnapsackPro
         def project_dir
           ENV['CI_PROJECT_DIR']
         end
+
+        def user_seat_string
+          env_str = (
+            ENV['GITLAB_USER_NAME'] || # Gitlab Release 10.0
+            ENV['GITLAB_USER_EMAIL'] # Gitlab Release 8.12
+          )
+          return unless env_str
+
+          hexdigested(env_str)
+        end
       end
     end
   end

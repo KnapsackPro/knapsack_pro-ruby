@@ -29,6 +29,13 @@ module KnapsackPro
         def project_dir
           ENV['GITHUB_WORKSPACE']
         end
+
+        def user_seat_string
+          env_str = ENV['GITHUB_ACTOR']
+          return unless env_str
+
+          hexdigested(env_str)
+        end
       end
     end
   end

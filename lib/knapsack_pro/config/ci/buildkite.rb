@@ -29,6 +29,13 @@ module KnapsackPro
         def project_dir
           ENV['BUILDKITE_BUILD_CHECKOUT_PATH']
         end
+
+        def user_seat_string
+          env_str = ENV['BUILDKITE_BUILD_AUTHOR'] || ENV['BUILDKITE_BUILD_CREATOR']
+          return unless env_str
+
+          hexdigested(env_str)
+        end
       end
     end
   end

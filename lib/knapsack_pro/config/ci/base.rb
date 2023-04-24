@@ -22,6 +22,15 @@ module KnapsackPro
 
         def project_dir
         end
+
+        def user_seat_string
+        end
+
+        private
+
+        def hexdigested(string)
+          Digest::SHA2.hexdigest(string)
+        end
       end
     end
   end

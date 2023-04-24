@@ -63,8 +63,8 @@ describe KnapsackPro::Config::CI::Circle do
     subject { described_class.new.branch }
 
     context 'when environment exists' do
-      let(:env) { { 'CIRCLE_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'CIRCLE_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when environment doesn't exist" do
@@ -81,6 +81,44 @@ describe KnapsackPro::Config::CI::Circle do
     end
 
     context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '#user_seat_string' do
+    subject { described_class.new.user_seat_string }
+
+    context 'when the CIRCLE_USERNAME env var exists' do
+      let(:env) do
+        { 'CIRCLE_USERNAME' => 'Jane Doe',
+          'CIRCLE_PR_USERNAME' => nil }
+      end
+
+      # hashed 'Jane Doe'
+      it { should eql '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a' }
+    end
+
+    context 'when the CIRCLE_PR_USERNAME env var exists' do
+      let(:env) do
+        { 'CIRCLE_USERNAME' => nil,
+          'CIRCLE_PR_USERNAME' => 'John Doe' }
+      end
+
+      # hashed 'John Doe'
+      it { should eql '6cea57c2fb6cbc2a40411135005760f241fffc3e5e67ab99882726431037f908' }
+    end
+
+    context 'when both CIRCLE_USERNAME and CIRCLE_PR_USERNAME env vars exist' do
+      let(:env) do
+        { 'CIRCLE_USERNAME' => 'Jane Doe',
+          'CIRCLE_PR_USERNAME' => 'John Doe' }
+      end
+
+      # hashed 'Jane Doe'
+      it { should eql '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a' }
+    end
+
+    context "when neither env var exists" do
       it { should be nil }
     end
   end
