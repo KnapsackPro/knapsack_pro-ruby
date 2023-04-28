@@ -207,6 +207,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC']
         end
 
+        def test_suite_token_rswag
+          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_RSWAG']
+        end
+
         def test_suite_token_minitest
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST']
         end
