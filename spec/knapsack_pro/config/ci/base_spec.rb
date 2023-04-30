@@ -6,5 +6,5 @@ describe KnapsackPro::Config::CI::Base do
   its(:commit_hash) { should be nil }
   its(:branch) { should be nil }
   its(:project_dir) { should be nil }
-  its(:user_seat_string) { should be nil }
+  its(:user_seat) { should be nil }
 end

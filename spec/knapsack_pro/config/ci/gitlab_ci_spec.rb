@@ -100,8 +100,8 @@ describe KnapsackPro::Config::CI::GitlabCI do
     end
   end
 
-  describe '#user_seat_string' do
-    subject { described_class.new.user_seat_string }
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
 
     context 'when the GITLAB_USER_NAME env var exists' do
       let(:env) do
@@ -109,8 +109,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
           'GITLAB_USER_EMAIL' => nil }
       end
 
-      # hashed 'Jane Doe'
-      it { should eql '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a' }
+      it { should eql 'Jane Doe' }
     end
 
     context 'when the GITLAB_USER_EMAIL env var exists' do
@@ -119,8 +118,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
           'GITLAB_USER_EMAIL' => 'janed@example.com' }
       end
 
-      # hashed 'janed@example.com'
-      it { should eql '40274ab35d0a894011b2a37216db8c680d4c7bd4c087c6f8803a96521dd89d56' }
+      it { should eql 'janed@example.com' }
     end
 
     context 'when both GITLAB_USER_NAME and GITLAB_USER_EMAIL env vars exist' do
@@ -129,8 +127,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
           'GITLAB_USER_EMAIL' => 'janed@example.com' }
       end
 
-      # hashed 'Jane Doe'
-      it { should eql '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a' }
+      it { should eql 'Jane Doe' }
     end
 
     context "when neither env var exists" do

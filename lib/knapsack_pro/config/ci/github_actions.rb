@@ -30,11 +30,8 @@ module KnapsackPro
           ENV['GITHUB_WORKSPACE']
         end
 
-        def user_seat_string
-          env_str = ENV['GITHUB_ACTOR']
-          return unless env_str
-
-          hexdigested(env_str)
+        def user_seat
+          ENV['GITHUB_ACTOR']
         end
       end
     end

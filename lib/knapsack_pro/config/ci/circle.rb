@@ -26,11 +26,8 @@ module KnapsackPro
           ENV['CIRCLE_WORKING_DIRECTORY']
         end
 
-        def user_seat_string
-          env_str = ENV['CIRCLE_USERNAME'] || ENV['CIRCLE_PR_USERNAME']
-          return unless env_str
-
-          hexdigested(env_str)
+        def user_seat
+          ENV['CIRCLE_USERNAME'] || ENV['CIRCLE_PR_USERNAME']
         end
       end
     end

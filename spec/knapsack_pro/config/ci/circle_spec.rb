@@ -85,8 +85,8 @@ describe KnapsackPro::Config::CI::Circle do
     end
   end
 
-  describe '#user_seat_string' do
-    subject { described_class.new.user_seat_string }
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
 
     context 'when the CIRCLE_USERNAME env var exists' do
       let(:env) do
@@ -94,8 +94,7 @@ describe KnapsackPro::Config::CI::Circle do
           'CIRCLE_PR_USERNAME' => nil }
       end
 
-      # hashed 'Jane Doe'
-      it { should eql '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a' }
+      it { should eql 'Jane Doe' }
     end
 
     context 'when the CIRCLE_PR_USERNAME env var exists' do
@@ -104,8 +103,7 @@ describe KnapsackPro::Config::CI::Circle do
           'CIRCLE_PR_USERNAME' => 'John Doe' }
       end
 
-      # hashed 'John Doe'
-      it { should eql '6cea57c2fb6cbc2a40411135005760f241fffc3e5e67ab99882726431037f908' }
+      it { should eql 'John Doe' }
     end
 
     context 'when both CIRCLE_USERNAME and CIRCLE_PR_USERNAME env vars exist' do
@@ -114,8 +112,7 @@ describe KnapsackPro::Config::CI::Circle do
           'CIRCLE_PR_USERNAME' => 'John Doe' }
       end
 
-      # hashed 'Jane Doe'
-      it { should eql '01332c876518a793b7c1b8dfaf6d4b404ff5db09b21c6627ca59710cc24f696a' }
+      it { should eql 'Jane Doe' }
     end
 
     context "when neither env var exists" do

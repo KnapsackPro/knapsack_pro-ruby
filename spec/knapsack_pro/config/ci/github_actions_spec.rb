@@ -89,14 +89,13 @@ describe KnapsackPro::Config::CI::GithubActions do
     end
   end
 
-  describe '#user_seat_string' do
-    subject { described_class.new.user_seat_string }
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
 
     context 'when the GITHUB_ACTOR environment variable exists' do
       let(:env) { { 'GITHUB_ACTOR' => 'jane_doe' } }
 
-      # hashed 'jane_doe'
-      it { should eql 'a79b84d8a9787704e9760eb81286676ef64ece85ea780a0793f3de8e698185f9' }
+      it { should eql 'jane_doe' }
     end
 
     context "when the GITHUB_ACTOR environment variable doesn't exist" do

@@ -182,6 +182,51 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.user_seat' do
+    subject { described_class.user_seat }
+
+    context 'when ENV exists' do
+      context 'when KNAPSACK_PRO_USER_SEAT has value' do
+        before { stub_const("ENV", { 'KNAPSACK_PRO_USER_SEAT' => 'John Doe' }) }
+        it { should eq 'John Doe' }
+      end
+
+      context 'when CI environment has value' do
+        before do
+          expect(described_class).to receive(:ci_env_for).with(:user_seat).and_return('Jane Doe')
+        end
+
+        it { should eq 'Jane Doe' }
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '.user_seat_hash' do
+    subject { described_class.user_seat_hash }
+
+    before do
+      expect(described_class).to receive(:user_seat).at_least(1).and_return(user_seat)
+    end
+
+    context 'when the user seat has a value' do
+      let(:user_seat) { 'John Doe' }
+
+      it 'returns a SHA256 hash for the user seat' do
+        expect(subject).to eq '6cea57c2fb6cbc2a40411135005760f241fffc3e5e67ab99882726431037f908'
+      end
+    end
+
+    context 'when the user seat has no value' do
+      let(:user_seat) { nil }
+
+      it { expect(subject).to be_nil }
+    end
+  end
+
   describe '.test_file_pattern' do
     subject { described_class.test_file_pattern }
 
