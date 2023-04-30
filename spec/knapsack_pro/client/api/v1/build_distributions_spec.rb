@@ -6,6 +6,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
     let(:node_total) { double }
     let(:node_index) { double }
     let(:ci_build_id) { double }
+    let(:user_seat_hash) { double }
     let(:test_files) { double }
 
     subject do
@@ -22,6 +23,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
     before do
       expect(KnapsackPro::Config::Env).to receive(:fixed_test_suite_split).and_return(fixed_test_suite_split)
       expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(ci_build_id)
+      expect(KnapsackPro::Config::Env).to receive(:user_seat_hash).and_return(user_seat_hash)
     end
 
     context 'when cache_read_attempt=true' do
@@ -40,6 +42,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
             node_total: node_total,
             node_index: node_index,
             ci_build_id: ci_build_id,
+            user_seat: user_seat_hash,
           }
         }).and_return(action)
         expect(subject).to eq action
@@ -62,6 +65,7 @@ describe KnapsackPro::Client::API::V1::BuildDistributions do
             node_total: node_total,
             node_index: node_index,
             ci_build_id: ci_build_id,
+            user_seat: user_seat_hash,
             test_files: test_files
           }
         }).and_return(action)
