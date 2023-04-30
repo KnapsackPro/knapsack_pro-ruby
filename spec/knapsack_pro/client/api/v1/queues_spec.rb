@@ -7,6 +7,7 @@ describe KnapsackPro::Client::API::V1::Queues do
     let(:node_index) { double }
     let(:test_files) { double }
     let(:node_build_id) { double }
+    let(:user_seat_hash) { double }
 
     subject do
       described_class.queue(
@@ -23,6 +24,7 @@ describe KnapsackPro::Client::API::V1::Queues do
     before do
       expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(fixed_queue_split)
       expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(node_build_id)
+      expect(KnapsackPro::Config::Env).to receive(:user_seat_hash).and_return(user_seat_hash)
     end
 
     context 'when can_initialize_queue=true and attempt_connect_to_queue=true' do
@@ -43,6 +45,7 @@ describe KnapsackPro::Client::API::V1::Queues do
             node_total: node_total,
             node_index: node_index,
             node_build_id: node_build_id,
+            user_seat: user_seat_hash,
           }
         }).and_return(action)
         expect(subject).to eq action
@@ -67,6 +70,7 @@ describe KnapsackPro::Client::API::V1::Queues do
             node_total: node_total,
             node_index: node_index,
             node_build_id: node_build_id,
+            user_seat: user_seat_hash,
             test_files: test_files
           }
         }).and_return(action)
@@ -92,6 +96,7 @@ describe KnapsackPro::Client::API::V1::Queues do
             node_total: node_total,
             node_index: node_index,
             node_build_id: node_build_id,
+            user_seat: user_seat_hash,
           }
         }).and_return(action)
         expect(subject).to eq action
