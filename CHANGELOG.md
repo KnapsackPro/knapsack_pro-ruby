@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.10.0
+
+* Remove Solano CI and Snap CI support because they do not exist anymore
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/194
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.9.0...v3.10.0
+
 ### 3.9.0
 
 * Suppress all RSpec spec file names displayed in stdout at the beginning of running tests in Regular Mode only when the log level is >= `warn`
