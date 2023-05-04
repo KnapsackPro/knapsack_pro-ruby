@@ -29,6 +29,10 @@ module KnapsackPro
         def project_dir
           ENV['GITHUB_WORKSPACE']
         end
+
+        def user_seat
+          ENV['GITHUB_ACTOR']
+        end
       end
     end
   end

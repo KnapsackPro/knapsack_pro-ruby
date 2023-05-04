@@ -25,6 +25,10 @@ module KnapsackPro
         def project_dir
           ENV['CIRCLE_WORKING_DIRECTORY']
         end
+
+        def user_seat
+          ENV['CIRCLE_USERNAME'] || ENV['CIRCLE_PR_USERNAME']
+        end
       end
     end
   end

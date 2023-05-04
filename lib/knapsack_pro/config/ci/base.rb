@@ -22,6 +22,9 @@ module KnapsackPro
 
         def project_dir
         end
+
+        def user_seat
+        end
       end
     end
   end

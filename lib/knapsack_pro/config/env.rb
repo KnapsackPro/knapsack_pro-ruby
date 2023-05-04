@@ -58,6 +58,16 @@ module KnapsackPro
             ci_env_for(:project_dir)
         end
 
+        def user_seat
+          ENV['KNAPSACK_PRO_USER_SEAT'] ||
+            ci_env_for(:user_seat)
+        end
+
+        def user_seat_hash
+          return unless user_seat
+          Digest::SHA2.hexdigest(user_seat)
+        end
+
         def test_file_pattern
           ENV['KNAPSACK_PRO_TEST_FILE_PATTERN']
         end

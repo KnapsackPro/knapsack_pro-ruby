@@ -1,5 +1,13 @@
 # Change Log
 
+### 3.11.0
+
+* Send distinguishable user seat info over to the API
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/192
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.10.0...v3.11.0
+
 ### 3.10.0
 
 * Remove Solano CI and Snap CI support because they do not exist anymore

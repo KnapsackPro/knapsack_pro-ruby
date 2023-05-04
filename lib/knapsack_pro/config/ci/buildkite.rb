@@ -29,6 +29,10 @@ module KnapsackPro
         def project_dir
           ENV['BUILDKITE_BUILD_CHECKOUT_PATH']
         end
+
+        def user_seat
+          ENV['BUILDKITE_BUILD_AUTHOR'] || ENV['BUILDKITE_BUILD_CREATOR']
+        end
       end
     end
   end

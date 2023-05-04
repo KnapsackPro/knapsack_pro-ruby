@@ -63,8 +63,8 @@ describe KnapsackPro::Config::CI::Circle do
     subject { described_class.new.branch }
 
     context 'when environment exists' do
-      let(:env) { { 'CIRCLE_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'CIRCLE_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when environment doesn't exist" do
@@ -81,6 +81,41 @@ describe KnapsackPro::Config::CI::Circle do
     end
 
     context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the CIRCLE_USERNAME env var exists' do
+      let(:env) do
+        { 'CIRCLE_USERNAME' => 'Jane Doe',
+          'CIRCLE_PR_USERNAME' => nil }
+      end
+
+      it { should eql 'Jane Doe' }
+    end
+
+    context 'when the CIRCLE_PR_USERNAME env var exists' do
+      let(:env) do
+        { 'CIRCLE_USERNAME' => nil,
+          'CIRCLE_PR_USERNAME' => 'John Doe' }
+      end
+
+      it { should eql 'John Doe' }
+    end
+
+    context 'when both CIRCLE_USERNAME and CIRCLE_PR_USERNAME env vars exist' do
+      let(:env) do
+        { 'CIRCLE_USERNAME' => 'Jane Doe',
+          'CIRCLE_PR_USERNAME' => 'John Doe' }
+      end
+
+      it { should eql 'Jane Doe' }
+    end
+
+    context "when neither env var exists" do
       it { should be nil }
     end
   end

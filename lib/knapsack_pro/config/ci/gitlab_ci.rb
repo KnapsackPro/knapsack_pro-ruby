@@ -16,7 +16,7 @@ module KnapsackPro
 
         def node_build_id
           ENV['CI_PIPELINE_ID'] || # Gitlab Release 9.0+
-          ENV['CI_BUILD_ID']  # Gitlab Release 8.x
+          ENV['CI_BUILD_ID'] # Gitlab Release 8.x
         end
 
         def commit_hash
@@ -31,6 +31,11 @@ module KnapsackPro
 
         def project_dir
           ENV['CI_PROJECT_DIR']
+        end
+
+        def user_seat
+          ENV['GITLAB_USER_NAME'] || # Gitlab Release 10.0
+          ENV['GITLAB_USER_EMAIL'] # Gitlab Release 8.12
         end
       end
     end

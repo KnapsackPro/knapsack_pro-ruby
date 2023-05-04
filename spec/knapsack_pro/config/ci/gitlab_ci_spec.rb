@@ -73,13 +73,13 @@ describe KnapsackPro::Config::CI::GitlabCI do
     subject { described_class.new.branch }
 
     context 'when Gitlab Release 9.0+ and environment exists' do
-      let(:env) { { 'CI_COMMIT_REF_NAME' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'CI_COMMIT_REF_NAME' => 'main' } }
+      it { should eql 'main' }
     end
 
     context 'when Gitlab Release 8.x and environment exists' do
-      let(:env) { { 'CI_BUILD_REF_NAME' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'CI_BUILD_REF_NAME' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when environment doesn't exist" do
@@ -96,6 +96,41 @@ describe KnapsackPro::Config::CI::GitlabCI do
     end
 
     context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the GITLAB_USER_NAME env var exists' do
+      let(:env) do
+        { 'GITLAB_USER_NAME' => 'Jane Doe',
+          'GITLAB_USER_EMAIL' => nil }
+      end
+
+      it { should eql 'Jane Doe' }
+    end
+
+    context 'when the GITLAB_USER_EMAIL env var exists' do
+      let(:env) do
+        { 'GITLAB_USER_NAME' => nil,
+          'GITLAB_USER_EMAIL' => 'janed@example.com' }
+      end
+
+      it { should eql 'janed@example.com' }
+    end
+
+    context 'when both GITLAB_USER_NAME and GITLAB_USER_EMAIL env vars exist' do
+      let(:env) do
+        { 'GITLAB_USER_NAME' => 'Jane Doe',
+          'GITLAB_USER_EMAIL' => 'janed@example.com' }
+      end
+
+      it { should eql 'Jane Doe' }
+    end
+
+    context "when neither env var exists" do
       it { should be nil }
     end
   end

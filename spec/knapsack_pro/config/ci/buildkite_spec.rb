@@ -76,8 +76,8 @@ describe KnapsackPro::Config::CI::Buildkite do
     subject { described_class.new.branch }
 
     context 'when environment exists' do
-      let(:env) { { 'BUILDKITE_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'BUILDKITE_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when environment doesn't exist" do
@@ -94,6 +94,41 @@ describe KnapsackPro::Config::CI::Buildkite do
     end
 
     context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the BUILDKITE_BUILD_AUTHOR env var exists' do
+      let(:env) do
+        { 'BUILDKITE_BUILD_AUTHOR' => 'Jane Doe',
+          'BUILDKITE_BUILD_CREATOR' => nil }
+      end
+
+      it { should eql 'Jane Doe' }
+    end
+
+    context 'when the BUILDKITE_BUILD_CREATOR env var exists' do
+      let(:env) do
+        { 'BUILDKITE_BUILD_AUTHOR' => nil,
+          'BUILDKITE_BUILD_CREATOR' => 'John Doe' }
+      end
+
+      it { should eql 'John Doe' }
+    end
+
+    context 'when both BUILDKITE_BUILD_AUTHOR and BUILDKITE_BUILD_CREATOR env vars exist' do
+      let(:env) do
+        { 'BUILDKITE_BUILD_AUTHOR' => 'Jane Doe',
+          'BUILDKITE_BUILD_CREATOR' => 'John Doe' }
+      end
+
+      it { should eql 'Jane Doe' }
+    end
+
+    context "when neither env var exists" do
       it { should be nil }
     end
   end

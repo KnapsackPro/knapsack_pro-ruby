@@ -52,12 +52,12 @@ describe KnapsackPro::Config::CI::GithubActions do
       context 'when GITHUB_REF has value' do
         let(:env) do
           {
-            'GITHUB_REF' => 'master',
+            'GITHUB_REF' => 'main',
             'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d',
           }
         end
 
-        it { should eql 'master' }
+        it { should eql 'main' }
       end
 
       context 'when GITHUB_REF is not set' do
@@ -85,6 +85,20 @@ describe KnapsackPro::Config::CI::GithubActions do
     end
 
     context "when environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the GITHUB_ACTOR environment variable exists' do
+      let(:env) { { 'GITHUB_ACTOR' => 'jane_doe' } }
+
+      it { should eql 'jane_doe' }
+    end
+
+    context "when the GITHUB_ACTOR environment variable doesn't exist" do
       it { should be nil }
     end
   end
