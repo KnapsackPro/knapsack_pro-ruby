@@ -23,9 +23,10 @@ module KnapsackPro
         end
 
         def ci_node_build_id
-          ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] ||
+          env_name = 'KNAPSACK_PRO_CI_NODE_BUILD_ID'
+          ENV[env_name] ||
             ci_env_for(:node_build_id) ||
-            'missing-build-id'
+            raise("Missing environment variable #{env_name}. Read more at #{KnapsackPro::Urls::KNAPSACK_PRO_CI_NODE_BUILD_ID}")
         end
 
         def ci_node_retry_count

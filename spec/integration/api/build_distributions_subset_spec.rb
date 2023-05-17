@@ -29,6 +29,7 @@ describe 'Request API /v1/build_distributions/subset' do
     stub_const('ENV', {
       'KNAPSACK_PRO_ENDPOINT' => endpoint,
       'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
+      'KNAPSACK_PRO_CI_NODE_BUILD_ID' => 'some-build-id',
     })
   end
 

@@ -72,8 +72,10 @@ describe KnapsackPro::Config::Env do
       end
     end
 
-    context "when ENV doesn't exist" do
-      it { should eq 'missing-build-id' }
+    context "when ENV does not exist" do
+      it 'raises' do
+        expect { subject }.to raise_error(/Missing environment variable KNAPSACK_PRO_CI_NODE_BUILD_ID/)
+      end
     end
   end
 

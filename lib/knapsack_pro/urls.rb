@@ -18,6 +18,8 @@ module KnapsackPro
 
     INSTALLATION_GUIDE = "#{HOST}/perma/ruby/installation-guide"
 
+    KNAPSACK_PRO_CI_NODE_BUILD_ID= "#{HOST}/perma/ruby/knapsack-pro-ci-node-build-id"
+
     QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false"
 
     QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_TRUE_AND_POSITIVE_RETRY_COUNT = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count"
