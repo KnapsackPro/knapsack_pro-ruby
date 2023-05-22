@@ -1,5 +1,13 @@
 # Change Log
 
+### 4.0.0
+
+* Raise when `KNAPSACK_PRO_CI_NODE_BUILD_ID` is missing
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/195
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.11.0...v4.0.0
+
 ### 3.11.0
 
 * Send distinguishable user seat info over to the API
