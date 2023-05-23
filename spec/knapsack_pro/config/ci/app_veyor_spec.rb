@@ -22,12 +22,12 @@ describe KnapsackPro::Config::CI::AppVeyor do
   describe '#node_build_id' do
     subject { described_class.new.node_build_id }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'APPVEYOR_BUILD_ID' => 123 } }
       it { should eql 123 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -35,12 +35,12 @@ describe KnapsackPro::Config::CI::AppVeyor do
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'APPVEYOR_REPO_COMMIT' => '2e13512fc230d6f9ebf4923352718e4d' } }
       it { should eql '2e13512fc230d6f9ebf4923352718e4d' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -48,12 +48,12 @@ describe KnapsackPro::Config::CI::AppVeyor do
   describe '#branch' do
     subject { described_class.new.branch }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'APPVEYOR_REPO_BRANCH' => 'master' } }
       it { should eql 'master' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -61,12 +61,12 @@ describe KnapsackPro::Config::CI::AppVeyor do
   describe '#project_dir' do
     subject { described_class.new.project_dir }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'APPVEYOR_BUILD_FOLDER' => '/path/to/clone/repo' } }
       it { should eql '/path/to/clone/repo' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end

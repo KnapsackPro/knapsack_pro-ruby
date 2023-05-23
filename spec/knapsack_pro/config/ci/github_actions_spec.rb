@@ -22,12 +22,25 @@ describe KnapsackPro::Config::CI::GithubActions do
   describe '#node_build_id' do
     subject { described_class.new.node_build_id }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'GITHUB_RUN_ID' => 2706 } }
       it { should eql 2706 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
+  describe '#node_retry_count' do
+    subject { described_class.new.node_retry_count }
+
+    context 'when the environment exists' do
+      let(:env) { { 'GITHUB_RUN_ATTEMPT' => 2 } }
+      it { should eql 1 }
+    end
+
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -35,12 +48,12 @@ describe KnapsackPro::Config::CI::GithubActions do
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d' } }
       it { should eql '2e13512fc230d6f9ebf4923352718e4d' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -48,7 +61,7 @@ describe KnapsackPro::Config::CI::GithubActions do
   describe '#branch' do
     subject { described_class.new.branch }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       context 'when GITHUB_REF has value' do
         let(:env) do
           {
@@ -71,7 +84,7 @@ describe KnapsackPro::Config::CI::GithubActions do
       end
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -79,12 +92,12 @@ describe KnapsackPro::Config::CI::GithubActions do
   describe '#project_dir' do
     subject { described_class.new.project_dir }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'GITHUB_WORKSPACE' => '/home/runner/work/my-repo-name/my-repo-name' } }
       it { should eql '/home/runner/work/my-repo-name/my-repo-name' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end

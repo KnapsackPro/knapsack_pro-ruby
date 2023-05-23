@@ -10,12 +10,12 @@ describe KnapsackPro::Config::CI::Circle do
   describe '#node_total' do
     subject { described_class.new.node_total }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CIRCLE_NODE_TOTAL' => 4 } }
       it { should eql 4 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -23,12 +23,12 @@ describe KnapsackPro::Config::CI::Circle do
   describe '#node_index' do
     subject { described_class.new.node_index }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CIRCLE_NODE_INDEX' => 3 } }
       it { should eql 3 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -36,12 +36,12 @@ describe KnapsackPro::Config::CI::Circle do
   describe '#node_build_id' do
     subject { described_class.new.node_build_id }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CIRCLE_BUILD_NUM' => 123 } }
       it { should eql 123 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -49,12 +49,12 @@ describe KnapsackPro::Config::CI::Circle do
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CIRCLE_SHA1' => '3fa64859337f6e56409d49f865d13fd7' } }
       it { should eql '3fa64859337f6e56409d49f865d13fd7' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -62,12 +62,12 @@ describe KnapsackPro::Config::CI::Circle do
   describe '#branch' do
     subject { described_class.new.branch }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CIRCLE_BRANCH' => 'main' } }
       it { should eql 'main' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -80,7 +80,7 @@ describe KnapsackPro::Config::CI::Circle do
       it { should eql '~/knapsack_pro-ruby' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end

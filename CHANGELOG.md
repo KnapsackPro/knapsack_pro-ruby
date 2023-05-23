@@ -1,5 +1,13 @@
 # Change Log
 
+### 4.1.0
+
+* Add support for CI node retry count on GitHub Actions
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/197
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v4.0.0...v4.1.0
+
 ### 4.0.0
 
 * Raise when `KNAPSACK_PRO_CI_NODE_BUILD_ID` is missing
