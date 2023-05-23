@@ -10,12 +10,12 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#node_total' do
     subject { described_class.new.node_total }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'SEMAPHORE_JOB_COUNT' => 4 } }
       it { should eql 4 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -23,12 +23,12 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#node_index' do
     subject { described_class.new.node_index }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'SEMAPHORE_JOB_INDEX' => 4 } }
       it { should eql 3 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -36,12 +36,12 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#node_build_id' do
     subject { described_class.new.node_build_id }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'SEMAPHORE_WORKFLOW_ID' => 123 } }
       it { should eql 123 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -49,12 +49,12 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'SEMAPHORE_GIT_SHA' => '4323320992a21b1169e3ac5b7789d379597738e6' } }
       it { should eql '4323320992a21b1169e3ac5b7789d379597738e6' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -62,12 +62,12 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#branch' do
     subject { described_class.new.branch }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'SEMAPHORE_GIT_BRANCH' => 'master' } }
       it { should eql 'master' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -103,7 +103,7 @@ describe KnapsackPro::Config::CI::Semaphore2 do
       it { should be nil }
     end
 
-    context "when environments don't exist" do
+    context "when the environments don't exist" do
       it { should be nil }
     end
   end

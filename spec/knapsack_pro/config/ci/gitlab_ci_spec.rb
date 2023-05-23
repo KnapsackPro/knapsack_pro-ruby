@@ -10,12 +10,12 @@ describe KnapsackPro::Config::CI::GitlabCI do
   describe '#node_total' do
     subject { described_class.new.node_total }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CI_NODE_TOTAL' => 4 } }
       it { should eql 4 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -23,12 +23,12 @@ describe KnapsackPro::Config::CI::GitlabCI do
   describe '#node_index' do
     subject { described_class.new.node_index }
 
-    context 'when environment exists and is in GitLab CI' do
+    context 'when the environment exists and is in GitLab CI' do
       let(:env) { { 'CI_NODE_INDEX' => 4, 'GITLAB_CI' => 'true' } }
       it { should eql 3 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -46,7 +46,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
       it { should eql 7046508 }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -64,7 +64,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
       it { should eql 'f76c468e3e1d570f71f5822b1e48bb04' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -82,7 +82,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
       it { should eql 'main' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
@@ -90,12 +90,12 @@ describe KnapsackPro::Config::CI::GitlabCI do
   describe '#project_dir' do
     subject { described_class.new.project_dir }
 
-    context 'when environment exists' do
+    context 'when the environment exists' do
       let(:env) { { 'CI_PROJECT_DIR' => '/home/user/knapsack_pro-ruby' } }
       it { should eql '/home/user/knapsack_pro-ruby' }
     end
 
-    context "when environment doesn't exist" do
+    context "when the environment doesn't exist" do
       it { should be nil }
     end
   end
