@@ -32,6 +32,19 @@ describe KnapsackPro::Config::CI::GithubActions do
     end
   end
 
+  describe '#node_retry_count' do
+    subject { described_class.new.node_retry_count }
+
+    context 'when the environment exists' do
+      let(:env) { { 'GITHUB_RUN_ATTEMPT' => 2 } }
+      it { should eql 1 }
+    end
+
+    context "when the environment doesn't exist" do
+      it { should be nil }
+    end
+  end
+
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 

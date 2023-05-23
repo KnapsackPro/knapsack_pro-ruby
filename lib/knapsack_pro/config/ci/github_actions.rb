@@ -16,6 +16,14 @@ module KnapsackPro
           ENV['GITHUB_RUN_ID']
         end
 
+        def node_retry_count
+          # A unique number for each attempt of a particular workflow run in a repository.
+          # This number begins at 1 for the workflow run's first attempt, and increments with each re-run.
+          run_attempt = ENV['GITHUB_RUN_ATTEMPT']
+          return unless run_attempt
+          run_attempt.to_i - 1
+        end
+
         def commit_hash
           ENV['GITHUB_SHA']
         end
