@@ -5,6 +5,8 @@ module KnapsackPro
         @@used_seed = nil
 
         def self.run(args)
+          # ENV['RAILS_ENV'] = ENV['RACK_ENV'] = 'test'
+
           require 'rspec/core'
           require_relative '../../formatters/rspec_queue_summary_formatter'
           require_relative '../../formatters/rspec_queue_profile_formatter_extension'
