@@ -3,6 +3,8 @@ module KnapsackPro
     module Queue
       class CucumberRunner < BaseRunner
         def self.run(args)
+          # ENV['RAILS_ENV'] = ENV['RACK_ENV'] = 'test'
+
           require 'cucumber/rake/task'
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_cucumber

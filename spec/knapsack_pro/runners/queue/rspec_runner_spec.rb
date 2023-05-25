@@ -22,6 +22,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       expect(KnapsackPro::Config::Env).to receive(:test_suite_token_rspec).and_return(test_suite_token_rspec)
       expect(KnapsackPro::Config::EnvGenerator).to receive(:set_queue_id).and_return(queue_id)
 
+      # expect(ENV).to receive(:[]=).with('RAILS_ENV', 'test')
+      # expect(ENV).to receive(:[]=).with('RACK_ENV', 'test')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_rspec)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_RECORDING_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
