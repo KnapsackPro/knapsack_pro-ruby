@@ -3,8 +3,6 @@ module KnapsackPro
     module Queue
       class MinitestRunner < BaseRunner
         def self.run(args)
-          # ENV['RAILS_ENV'] = ENV['RACK_ENV'] = 'test'
-
           require 'minitest'
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_minitest
