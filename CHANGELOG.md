@@ -4,6 +4,8 @@
 
 * Add support for CI node retry count on GitHub Actions
 
+    __(breaking change)__ for open-source forked repositories using GitHub Actions. See a fix in PR description:
+
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/197
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v4.0.0...v4.1.0
