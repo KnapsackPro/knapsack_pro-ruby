@@ -28,6 +28,10 @@ module KnapsackPro
 
         def detected
         end
+
+        def fixed_queue_split
+          true
+        end
       end
     end
   end

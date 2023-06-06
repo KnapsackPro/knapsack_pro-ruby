@@ -29,6 +29,10 @@ module KnapsackPro
         def detected
           ENV.key?('HEROKU_TEST_RUN_ID') ? self.class : nil
         end
+
+        def fixed_queue_split
+          false
+        end
       end
     end
   end

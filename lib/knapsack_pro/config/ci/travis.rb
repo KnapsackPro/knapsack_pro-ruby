@@ -21,6 +21,10 @@ module KnapsackPro
         def detected
           ENV.key?('TRAVIS') ? self.class : nil
         end
+
+        def fixed_queue_split
+          true
+        end
       end
     end
   end

@@ -34,6 +34,10 @@ module KnapsackPro
           # check 2 keys to be sure we are using Semaphore 2.0
           ENV.key?('SEMAPHORE') && ENV.key?('SEMAPHORE_WORKFLOW_ID') ? self.class : nil
         end
+
+        def fixed_queue_split
+          false
+        end
       end
     end
   end
