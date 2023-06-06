@@ -1,4 +1,10 @@
-# Change Log
+# Changelog
+
+### Unreleased
+
+* Set `RAILS_ENV=test` / `RACK_ENV=test` in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/199
 
 ### 4.1.0
 
