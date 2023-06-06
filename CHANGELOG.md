@@ -2,15 +2,19 @@
 
 ### Unreleased
 
-* Set `RAILS_ENV=test` / `RACK_ENV=test` in Queue Mode
+* __(breaking change)__ Use `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true` as default value in Queue Mode and use `false` for proper CI providers
 
-    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/199
-
-### Unreleased
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/198
 
 * Detect CI from environment and get the correct ENVs instead of trying all of them and risk conflicts
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/201
+
+* Set `RAILS_ENV=test` / `RACK_ENV=test` in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/199
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v4.1.0...v5.0.0
 
 ### 4.1.0
 
@@ -24,7 +28,7 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v4.0.0...v4.1.0
 
 ### 4.0.0
 
-* Raise when `KNAPSACK_PRO_CI_NODE_BUILD_ID` is missing
+* __(breaking change)__  Raise when `KNAPSACK_PRO_CI_NODE_BUILD_ID` is missing
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/195
 

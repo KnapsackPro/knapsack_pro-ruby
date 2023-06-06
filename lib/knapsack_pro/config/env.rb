@@ -186,7 +186,16 @@ module KnapsackPro
         end
 
         def fixed_queue_split
-          ENV.fetch('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', false)
+          @fixed_queue_split ||= begin
+            env_name = 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT'
+            computed = ENV.fetch(env_name, ci_env_for(:fixed_queue_split)).to_s
+
+            if !ENV.key?(env_name)
+              KnapsackPro.logger.info("#{env_name} is not set. Using default value: #{computed}. Learn more at #{KnapsackPro::Urls::FIXED_QUEUE_SPLIT}")
+            end
+
+            computed
+          end
         end
 
         def fixed_queue_split?

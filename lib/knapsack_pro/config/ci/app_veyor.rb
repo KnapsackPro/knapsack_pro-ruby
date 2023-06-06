@@ -30,6 +30,10 @@ module KnapsackPro
         def detected
           ENV.key?('APPVEYOR') ? self.class : nil
         end
+
+        def fixed_queue_split
+          false
+        end
       end
     end
   end

@@ -29,6 +29,10 @@ module KnapsackPro
         def detected
           ENV['CI_NAME'] == 'codeship' ? self.class : nil
         end
+
+        def fixed_queue_split
+          true
+        end
       end
     end
   end

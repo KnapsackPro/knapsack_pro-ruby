@@ -632,20 +632,6 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.fixed_test_suite_split' do
-    subject { described_class.fixed_test_suite_split }
-
-    context 'when ENV exists' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT' => false }) }
-      it { should eq false }
-    end
-
-    context "when ENV doesn't exist" do
-      before { stub_const("ENV", {}) }
-      it { should be true }
-    end
-  end
-
   describe '.fixed_test_suite_split?' do
     subject { described_class.fixed_test_suite_split? }
 
@@ -667,38 +653,94 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.fixed_queue_split' do
-    subject { described_class.fixed_queue_split }
-
-    context 'when ENV exists' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => true }) }
-      it { should eq true }
-    end
-
-    context "when ENV doesn't exist" do
-      before { stub_const("ENV", {}) }
-      it { should be false }
-    end
-  end
-
   describe '.fixed_queue_split?' do
     subject { described_class.fixed_queue_split? }
+    after(:each) { described_class.remove_instance_variable(:@fixed_queue_split) }
 
     context 'when ENV exists' do
-      context 'when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'true' }) }
-        it { should be true }
+      context 'when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false' do
+        [
+          ['AppVeyor', { 'APPVEYOR' => '123' }],
+          ['Buildkite', { 'BUILDKITE' => 'true' }],
+          ['CircleCI', { 'CIRCLECI' => 'true' }],
+          ['Cirrus CI', { 'CIRRUS_CI' => 'true' }],
+          ['Codefresh', { 'CF_BUILD_ID' => '123' }],
+          ['Codeship', { 'CI_NAME' => 'codeship' }],
+          ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }],
+          ['GitLab CI', { 'GITLAB_CI' => 'true' }],
+          ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }],
+          ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }],
+          ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }],
+          ['Travis CI', { 'TRAVIS' => 'true' }],
+          ['Unsupported', {}],
+        ].each do |ci, env|
+          it "on #{ci} it is false" do
+            logger = instance_double(Logger)
+            allow(KnapsackPro).to receive(:logger).and_return(logger)
+            expect(logger).not_to receive(:info)
+
+            stub_const("ENV", env.merge({ 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'false' }))
+
+            expect(subject).to eq(false)
+          end
+        end
       end
 
-      context 'when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'false' }) }
-        it { should be false }
+      context 'when KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true' do
+        [
+          ['AppVeyor', { 'APPVEYOR' => '123' }],
+          ['Buildkite', { 'BUILDKITE' => 'true' }],
+          ['CircleCI', { 'CIRCLECI' => 'true' }],
+          ['Cirrus CI', { 'CIRRUS_CI' => 'true' }],
+          ['Codefresh', { 'CF_BUILD_ID' => '123' }],
+          ['Codeship', { 'CI_NAME' => 'codeship' }],
+          ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }],
+          ['GitLab CI', { 'GITLAB_CI' => 'true' }],
+          ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }],
+          ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }],
+          ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }],
+          ['Travis CI', { 'TRAVIS' => 'true' }],
+          ['Unsupported', {}],
+        ].each do |ci, env|
+          it "on #{ci} it is true" do
+            logger = instance_double(Logger)
+            allow(KnapsackPro).to receive(:logger).and_return(logger)
+            expect(logger).not_to receive(:info)
+
+            stub_const("ENV", env.merge({ 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'true' }))
+
+            expect(subject).to eq(true)
+          end
+        end
       end
     end
 
     context "when ENV doesn't exist" do
-      before { stub_const("ENV", {}) }
-      it { should be false }
+      [
+        ['AppVeyor', { 'APPVEYOR' => '123' }, false],
+        ['Buildkite', { 'BUILDKITE' => 'true' }, true],
+        ['CircleCI', { 'CIRCLECI' => 'true' }, false],
+        ['Cirrus CI', { 'CIRRUS_CI' => 'true' }, false],
+        ['Codefresh', { 'CF_BUILD_ID' => '123' }, false],
+        ['Codeship', { 'CI_NAME' => 'codeship' }, true],
+        ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }, true],
+        ['GitLab CI', { 'GITLAB_CI' => 'true' }, false],
+        ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }, false],
+        ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }, false],
+        ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }, false],
+        ['Travis CI', { 'TRAVIS' => 'true' }, true],
+        ['Unsupported', {}, true],
+      ].each do |ci, env, expected|
+        it "on #{ci} it is #{expected}" do
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:info).with("KNAPSACK_PRO_FIXED_QUEUE_SPLIT is not set. Using default value: #{expected}. Learn more at #{KnapsackPro::Urls::FIXED_QUEUE_SPLIT}")
+
+          stub_const("ENV", env)
+
+          expect(subject).to eq(expected)
+        end
+      end
     end
   end
 
