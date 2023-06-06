@@ -25,6 +25,10 @@ module KnapsackPro
         def project_dir
           ENV['CIRRUS_WORKING_DIR']
         end
+
+        def detected
+          ENV.key?('CIRRUS_CI') ? self.class : nil
+        end
       end
     end
   end

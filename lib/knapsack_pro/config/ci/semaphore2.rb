@@ -29,6 +29,10 @@ module KnapsackPro
             "#{ENV['HOME']}/#{ENV['SEMAPHORE_GIT_DIR']}"
           end
         end
+
+        def detected
+          ENV['SEMAPHORE'] == 'true' && ENV.key?('SEMAPHORE_WORKFLOW_ID') ? self.class : nil
+        end
       end
     end
   end

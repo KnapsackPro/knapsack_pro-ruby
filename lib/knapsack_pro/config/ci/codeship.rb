@@ -25,6 +25,10 @@ module KnapsackPro
         def project_dir
           # not provided
         end
+
+        def detected
+          ENV['CI_NAME'] == 'codeship' ? self.class : nil
+        end
       end
     end
   end

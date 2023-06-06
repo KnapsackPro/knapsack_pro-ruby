@@ -33,6 +33,10 @@ module KnapsackPro
         def user_seat
           ENV['BUILDKITE_BUILD_AUTHOR'] || ENV['BUILDKITE_BUILD_CREATOR']
         end
+
+        def detected
+          ENV['BUILDKITE'] == 'true' ? self.class : nil
+        end
       end
     end
   end

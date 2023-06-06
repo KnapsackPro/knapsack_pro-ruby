@@ -41,6 +41,10 @@ module KnapsackPro
         def user_seat
           ENV['GITHUB_ACTOR']
         end
+
+        def detected
+          ENV.key?('GITHUB_ACTIONS') ? self.class : nil
+        end
       end
     end
   end

@@ -895,57 +895,6 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.ci_env_for' do
-    let(:env_name) { :node_total }
-
-    subject { described_class.ci_env_for(env_name) }
-
-    context 'when CI has no value for env_name method' do
-      before do
-        expect(KnapsackPro::Config::CI::Circle).to receive_message_chain(:new, env_name).and_return(nil)
-        expect(KnapsackPro::Config::CI::Semaphore).to receive_message_chain(:new, env_name).and_return(nil)
-        expect(KnapsackPro::Config::CI::Buildkite).to receive_message_chain(:new, env_name).and_return(nil)
-      end
-
-      it do
-        expect(subject).to be_nil
-      end
-    end
-
-    context 'when CI has value for env_name method' do
-      let(:circle_env) { double(:circle) }
-      let(:semaphore_env) { double(:semaphore) }
-      let(:buildkite_env) { double(:buildkite) }
-
-      before do
-        allow(KnapsackPro::Config::CI::Circle).to receive_message_chain(:new, env_name).and_return(circle_env)
-        allow(KnapsackPro::Config::CI::Semaphore).to receive_message_chain(:new, env_name).and_return(semaphore_env)
-        allow(KnapsackPro::Config::CI::Buildkite).to receive_message_chain(:new, env_name).and_return(buildkite_env)
-      end
-
-      context do
-        let(:buildkite_env) { nil }
-        let(:semaphore_env) { nil }
-
-        it { should eq circle_env }
-      end
-
-      context do
-        let(:circle_env) { nil }
-        let(:buildkite_env) { nil }
-
-        it { should eq semaphore_env }
-      end
-
-      context do
-        let(:circle_env) { nil }
-        let(:semaphore_env) { nil }
-
-        it { should eq buildkite_env }
-      end
-    end
-  end
-
   describe '.log_level' do
     subject { described_class.log_level }
 
@@ -1020,6 +969,30 @@ describe KnapsackPro::Config::Env do
     it 'sets test runner adapter' do
       subject
       expect(described_class.test_runner_adapter).to eql 'RSpecAdapter'
+    end
+  end
+
+  describe '.detected_ci' do
+    [
+      ['AppVeyor', { 'APPVEYOR' => '123' }, KnapsackPro::Config::CI::AppVeyor],
+      ['Buildkite', { 'BUILDKITE' => 'true' }, KnapsackPro::Config::CI::Buildkite],
+      ['CircleCI', { 'CIRCLECI' => 'true' }, KnapsackPro::Config::CI::Circle],
+      ['Cirrus CI', { 'CIRRUS_CI' => 'true' }, KnapsackPro::Config::CI::CirrusCI],
+      ['Codefresh', { 'CF_BUILD_ID' => '123' }, KnapsackPro::Config::CI::Codefresh],
+      ['Codeship', { 'CI_NAME' => 'codeship' }, KnapsackPro::Config::CI::Codeship],
+      ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }, KnapsackPro::Config::CI::GithubActions],
+      ['GitLab CI', { 'GITLAB_CI' => 'true' }, KnapsackPro::Config::CI::GitlabCI],
+      ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }, KnapsackPro::Config::CI::Heroku],
+      ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }, KnapsackPro::Config::CI::Semaphore],
+      ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }, KnapsackPro::Config::CI::Semaphore2],
+      ['Travis CI', { 'TRAVIS' => 'true' }, KnapsackPro::Config::CI::Travis],
+      ['Unsupported', {}, KnapsackPro::Config::CI::Base],
+    ].each do |ci, env, expected|
+      it "detects #{ci}" do
+        stub_const("ENV", env)
+
+        expect(described_class.detected_ci).to eq(expected)
+      end
     end
   end
 end

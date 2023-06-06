@@ -26,6 +26,10 @@ module KnapsackPro
         def project_dir
           # not provided
         end
+
+        def detected
+          ENV.key?('CF_BUILD_ID') ? self.class : nil
+        end
       end
     end
   end

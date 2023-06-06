@@ -25,6 +25,10 @@ module KnapsackPro
 
         def user_seat
         end
+
+        def detected
+          nil
+        end
       end
     end
   end

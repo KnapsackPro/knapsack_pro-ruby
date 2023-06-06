@@ -26,6 +26,10 @@ module KnapsackPro
         def project_dir
           ENV['SEMAPHORE_PROJECT_DIR']
         end
+
+        def detected
+          ENV.key?('SEMAPHORE_BUILD_NUMBER') ? self.class : nil
+        end
       end
     end
   end
