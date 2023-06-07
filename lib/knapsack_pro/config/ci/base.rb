@@ -27,7 +27,6 @@ module KnapsackPro
         end
 
         def detected
-          nil
         end
       end
     end
