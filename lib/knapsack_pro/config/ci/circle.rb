@@ -31,7 +31,7 @@ module KnapsackPro
         end
 
         def detected
-          ENV['CIRCLECI'] == 'true' ? self.class : nil
+          ENV.key?('CIRCLECI') ? self.class : nil
         end
       end
     end
