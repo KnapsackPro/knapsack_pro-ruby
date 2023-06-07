@@ -29,6 +29,10 @@ module KnapsackPro
         def user_seat
           ENV['CIRCLE_USERNAME'] || ENV['CIRCLE_PR_USERNAME']
         end
+
+        def detected
+          ENV.key?('CIRCLECI') ? self.class : nil
+        end
       end
     end
   end

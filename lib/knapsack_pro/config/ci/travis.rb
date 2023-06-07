@@ -17,6 +17,10 @@ module KnapsackPro
         def project_dir
           ENV['TRAVIS_BUILD_DIR']
         end
+
+        def detected
+          ENV.key?('TRAVIS') ? self.class : nil
+        end
       end
     end
   end

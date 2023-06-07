@@ -26,6 +26,10 @@ module KnapsackPro
         def project_dir
           ENV['APPVEYOR_BUILD_FOLDER']
         end
+
+        def detected
+          ENV.key?('APPVEYOR') ? self.class : nil
+        end
       end
     end
   end

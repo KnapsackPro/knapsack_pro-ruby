@@ -25,6 +25,10 @@ module KnapsackPro
         def project_dir
           '/app' if node_build_id
         end
+
+        def detected
+          ENV.key?('HEROKU_TEST_RUN_ID') ? self.class : nil
+        end
       end
     end
   end

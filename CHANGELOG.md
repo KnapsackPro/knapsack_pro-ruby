@@ -6,6 +6,12 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/199
 
+### Unreleased
+
+* Detect CI from environment and get the correct ENVs instead of trying all of them and risk conflicts
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/201
+
 ### 4.1.0
 
 * Add support for CI node retry count on GitHub Actions

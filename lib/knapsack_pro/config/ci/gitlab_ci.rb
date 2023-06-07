@@ -37,6 +37,10 @@ module KnapsackPro
           ENV['GITLAB_USER_NAME'] || # Gitlab Release 10.0
           ENV['GITLAB_USER_EMAIL'] # Gitlab Release 8.12
         end
+
+        def detected
+          ENV.key?('GITLAB_CI') ? self.class : nil
+        end
       end
     end
   end
