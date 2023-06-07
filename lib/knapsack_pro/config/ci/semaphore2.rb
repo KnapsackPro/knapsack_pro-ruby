@@ -31,7 +31,7 @@ module KnapsackPro
         end
 
         def detected
-          ENV['SEMAPHORE'] == 'true' && ENV.key?('SEMAPHORE_WORKFLOW_ID') ? self.class : nil
+          ENV.key?('SEMAPHORE') && ENV.key?('SEMAPHORE_WORKFLOW_ID') ? self.class : nil
         end
       end
     end
