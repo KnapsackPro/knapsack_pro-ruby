@@ -39,7 +39,7 @@ module KnapsackPro
         end
 
         def detected
-          ENV['GITLAB_CI'] == 'true' ? self.class : nil
+          ENV.key?('GITLAB_CI') ? self.class : nil
         end
       end
     end
