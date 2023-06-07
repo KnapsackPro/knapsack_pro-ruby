@@ -19,7 +19,7 @@ module KnapsackPro
         end
 
         def detected
-          ENV['TRAVIS'] == 'true' ? self.class : nil
+          ENV.key?('TRAVIS') ? self.class : nil
         end
       end
     end
