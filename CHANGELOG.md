@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.0.0
 
 * __(breaking change)__ Use `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true` as default value in Queue Mode and use `false` for proper CI providers
 
