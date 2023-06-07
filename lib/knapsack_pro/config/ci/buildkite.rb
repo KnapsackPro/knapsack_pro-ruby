@@ -35,7 +35,7 @@ module KnapsackPro
         end
 
         def detected
-          ENV['BUILDKITE'] == 'true' ? self.class : nil
+          ENV.key?('BUILDKITE') ? self.class : nil
         end
       end
     end
