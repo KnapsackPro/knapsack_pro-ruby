@@ -31,6 +31,7 @@ module KnapsackPro
         end
 
         def detected
+          # check 2 keys to be sure we are using Semaphore 2.0
           ENV.key?('SEMAPHORE') && ENV.key?('SEMAPHORE_WORKFLOW_ID') ? self.class : nil
         end
       end
