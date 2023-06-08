@@ -16,7 +16,7 @@ module KnapsackPro
                 :node_total => args.fetch(:node_total),
                 :node_index => args.fetch(:node_index),
                 :node_build_id => KnapsackPro::Config::Env.ci_node_build_id,
-                :user_seat => KnapsackPro::Config::Env.user_seat_hash,
+                :user_seat => KnapsackPro::Config::Env.masked_user_seat,
               }
 
               if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]

@@ -64,9 +64,10 @@ module KnapsackPro
             ci_env_for(:user_seat)
         end
 
-        def user_seat_hash
+        def masked_user_seat
           return unless user_seat
-          Digest::SHA2.hexdigest(user_seat)
+
+          user_seat.gsub(/(?<=\w{2})[a-zA-Z]/, "*")
         end
 
         def test_file_pattern
