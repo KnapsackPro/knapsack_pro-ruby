@@ -207,22 +207,26 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.user_seat_hash' do
-    subject { described_class.user_seat_hash }
+  describe '.masked_seat_hash' do
+    subject { described_class.masked_user_seat }
 
     before do
       expect(described_class).to receive(:user_seat).at_least(1).and_return(user_seat)
     end
 
-    context 'when the user seat has a value' do
+    context 'when the user seat is a name' do
       let(:user_seat) { 'John Doe' }
 
-      it 'returns a SHA256 hash for the user seat' do
-        expect(subject).to eq '6cea57c2fb6cbc2a40411135005760f241fffc3e5e67ab99882726431037f908'
-      end
+      it { expect(subject).to eq 'Jo** Do*' }
     end
 
-    context 'when the user seat has no value' do
+    context 'when the user seat is an e-mail' do
+      let(:user_seat) { 'john.doe@example.com' }
+
+      it { expect(subject).to eq 'jo**.do*@ex*****.co*' }
+    end
+
+    context 'when the user seat is nil' do
       let(:user_seat) { nil }
 
       it { expect(subject).to be_nil }
