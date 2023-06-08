@@ -1,5 +1,14 @@
 # Changelog
 
+### 5.1.0
+
+* Mask user seats data instead of hashing it
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/202
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.0.0...v5.1.0
+
+
 ### 5.0.0
 
 * __(breaking change)__ Use `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true` as default value in Queue Mode and use `false` for proper CI providers
