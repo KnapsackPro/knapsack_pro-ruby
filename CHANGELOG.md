@@ -6,10 +6,6 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/202
 
-    __(breaking change)__ for Buildkite. You need to pass the `BUILDKITE` environment variable to Docker Compose.
-
-    https://github.com/KnapsackPro/knapsack_pro-ruby/issues/204
-
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.0.0...v5.1.0
 
 
@@ -22,6 +18,10 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.0.0...v5.1.0
 * Detect CI from environment and get the correct ENVs instead of trying all of them and risk conflicts
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/201
+
+    __(breaking change)__ for Buildkite. You need to pass the `BUILDKITE` environment variable to Docker Compose.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/issues/204
 
 * Set `RAILS_ENV=test` / `RACK_ENV=test` in Queue Mode
 
