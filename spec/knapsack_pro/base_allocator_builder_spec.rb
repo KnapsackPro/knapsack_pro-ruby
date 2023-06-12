@@ -132,7 +132,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
     context 'when RSpec adapter AND rspec split by test examples is enabled' do
       let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
       let(:test_files_to_run) { double }
-      let(:cmd) { 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector' }
+      let(:cmd) { "RACK_ENV=test RAILS_ENV=test #{$PROGRAM_NAME} knapsack_pro:rspec_test_example_detector" }
 
       before do
         expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(true)
@@ -192,7 +192,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
         end
 
         it do
-          expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
+          expect { subject }.to raise_error(RuntimeError, "Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test #{$PROGRAM_NAME} knapsack_pro:rspec_test_example_detector")
         end
       end
     end

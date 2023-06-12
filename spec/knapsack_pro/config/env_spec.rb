@@ -801,13 +801,13 @@ describe KnapsackPro::Config::Env do
     subject { described_class.rspec_test_example_detector_prefix }
 
     context 'when ENV exists' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX' => '' }) }
-      it { should eq '' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX' => 'MY_VARIABLE=123' }) }
+      it { should eq 'MY_VARIABLE=123' }
     end
 
     context "when ENV doesn't exist" do
       before { stub_const("ENV", {}) }
-      it { should eq 'bundle exec' }
+      it { should be_nil }
     end
   end
 

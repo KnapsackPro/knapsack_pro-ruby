@@ -216,7 +216,7 @@ module KnapsackPro
         end
 
         def rspec_test_example_detector_prefix
-          ENV.fetch('KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX', 'bundle exec')
+          ENV['KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX']
         end
 
         def test_suite_token
