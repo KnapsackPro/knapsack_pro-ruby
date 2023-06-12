@@ -6,6 +6,10 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/202
 
+    __(breaking change)__ for Buildkite. You need to pass the `BUILDKITE` environment variable to Docker Compose.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/issues/204
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.0.0...v5.1.0
 
 
