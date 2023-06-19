@@ -43,7 +43,7 @@ module KnapsackPro
         end
 
         def fixed_queue_split
-          false
+          true
         end
       end
     end
