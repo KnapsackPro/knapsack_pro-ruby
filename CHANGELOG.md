@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.1.1
+
+* Use `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true` as default value in Queue Mode for GitLab CI
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/206
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.1.0...v5.1.1
+
 ### 5.1.0
 
 * Mask user seats data instead of hashing it
