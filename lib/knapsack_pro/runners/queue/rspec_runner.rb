@@ -114,6 +114,15 @@ module KnapsackPro
           end
         end
 
+        def self.ensure_spec_opts_have_rspec_queue_summary_formatter
+          spec_opts = ENV['SPEC_OPTS']
+
+          return unless spec_opts
+          return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+
+          ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
+        end
+
         private
 
         def self.adapter_class
@@ -180,15 +189,6 @@ module KnapsackPro
           @@used_seed = rspec_runner.configuration.seed.to_s
 
           args + ['--seed', @@used_seed]
-        end
-
-        def self.ensure_spec_opts_have_rspec_queue_summary_formatter
-          spec_opts = ENV['SPEC_OPTS']
-
-          return unless spec_opts
-          return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
-
-          ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
         end
       end
     end
