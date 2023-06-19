@@ -728,7 +728,7 @@ describe KnapsackPro::Config::Env do
         ['Codefresh', { 'CF_BUILD_ID' => '123' }, false],
         ['Codeship', { 'CI_NAME' => 'codeship' }, true],
         ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }, true],
-        ['GitLab CI', { 'GITLAB_CI' => 'true' }, false],
+        ['GitLab CI', { 'GITLAB_CI' => 'true' }, true],
         ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }, false],
         ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }, false],
         ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }, false],
