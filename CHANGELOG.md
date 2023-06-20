@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.1.2
+
+* Fix broken RSpec split by test examples feature when `SPEC_OPTS` is set in Queue Mode. Ignore `SPEC_OPTS` when generating test examples report for slow test files.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/191
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.1.1...v5.1.2
+
 ### 5.1.1
 
 * Use `KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true` as default value in Queue Mode for GitLab CI

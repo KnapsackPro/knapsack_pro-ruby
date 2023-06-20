@@ -87,6 +87,7 @@ module KnapsackPro
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
 
+            ensure_spec_opts_have_rspec_queue_summary_formatter
             options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
             rspec_runner = ::RSpec::Core::Runner.new(options)
 
@@ -111,6 +112,15 @@ module KnapsackPro
               all_test_file_paths: all_test_file_paths,
             }
           end
+        end
+
+        def self.ensure_spec_opts_have_rspec_queue_summary_formatter
+          spec_opts = ENV['SPEC_OPTS']
+
+          return unless spec_opts
+          return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+
+          ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
         end
 
         private

@@ -7,6 +7,9 @@ namespace :knapsack_pro do
 
   desc "Generate JSON report for test suite based on default test pattern or based on defined pattern with ENV vars"
   task :rspec_test_example_detector do
+    # ignore the `SPEC_OPTS` options to not affect RSpec execution within this rake task
+    ENV.delete('SPEC_OPTS')
+
     detector = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new
     detector.generate_json_report
   end

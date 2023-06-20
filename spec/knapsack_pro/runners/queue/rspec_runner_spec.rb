@@ -212,6 +212,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         expect(tracker).to receive(:reset!)
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
+        expect(described_class).to receive(:ensure_spec_opts_have_rspec_queue_summary_formatter)
         options = double
         expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
           '--no-color',
@@ -336,6 +337,41 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: exitstatus,
           })
         end
+      end
+    end
+  end
+
+  describe '.ensure_spec_opts_have_rspec_queue_summary_formatter' do
+    subject { described_class.ensure_spec_opts_have_rspec_queue_summary_formatter }
+
+    context 'when `SPEC_OPTS` is set' do
+      context 'when `SPEC_OPTS` has RSpec Queue Summary Formatter' do
+        before do
+          stub_const('ENV', { 'SPEC_OPTS' => '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter' })
+        end
+
+        it 'does nothing' do
+          subject
+          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter'
+        end
+      end
+
+      context 'when `SPEC_OPTS` has no RSpec Queue Summary Formatter' do
+        before do
+          stub_const('ENV', { 'SPEC_OPTS' => '--format json' })
+        end
+
+        it 'adds RSpec Queue Summary Formatter to `SPEC_OPTS`' do
+          subject
+          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter'
+        end
+      end
+    end
+
+    context 'when `SPEC_OPTS` is not set' do
+      it 'does nothing' do
+        subject
+        expect(ENV['SPEC_OPTS']).to be_nil
       end
     end
   end
