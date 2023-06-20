@@ -2,7 +2,7 @@
 
 ### 5.1.2
 
-* Fix broken RSpec split by test examples feature when `SPEC_OPTS` is set in Queue Mode
+* Fix broken RSpec split by test examples feature when `SPEC_OPTS` is set in Queue Mode. Ignore `SPEC_OPTS` when generating test examples report for slow test files.
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/191
 
