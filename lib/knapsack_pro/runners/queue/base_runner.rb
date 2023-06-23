@@ -45,6 +45,9 @@ module KnapsackPro
           Signal.trap('TERM') {
             @@terminate_process = true
           }
+          Signal.trap('INT') {
+            @@terminate_process = true
+          }
         end
       end
     end
