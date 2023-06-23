@@ -37,6 +37,7 @@ module KnapsackPro
             all_test_file_paths: [],
           }
           while accumulator[:status] == :next
+            handle_signal!
             accumulator = run_tests(accumulator)
           end
 

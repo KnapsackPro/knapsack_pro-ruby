@@ -49,6 +49,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -74,6 +75,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -99,6 +101,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -124,6 +127,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -165,6 +169,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           exitstatus: 0,
           all_test_file_paths: [],
         }
+        expect(described_class).to receive(:handle_signal!)
         expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
         expect(Kernel).to receive(:exit).with(expected_exitstatus)
