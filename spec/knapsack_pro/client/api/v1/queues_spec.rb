@@ -8,6 +8,8 @@ describe KnapsackPro::Client::API::V1::Queues do
     let(:test_files) { double }
     let(:node_build_id) { double }
     let(:masked_user_seat) { double }
+    let(:can_initialize_queue) { [false, true].sample }
+    let(:attempt_connect_to_queue) { [false, true].sample }
 
     subject do
       described_class.queue(
@@ -64,6 +66,16 @@ describe KnapsackPro::Client::API::V1::Queues do
         ).and_return(action)
         expect(subject).to eq action
       end
+    end
+
+    it "sends authors" do
+      action = double
+
+      expect(KnapsackPro::Client::API::Action).to receive(:new).with(
+        hash_including(request_hash: hash_including(:build_author, :commit_authors))
+      ).and_return(action)
+
+      expect(subject).to eq action
     end
   end
 end
