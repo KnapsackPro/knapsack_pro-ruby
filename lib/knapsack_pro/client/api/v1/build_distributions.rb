@@ -16,6 +16,8 @@ module KnapsackPro
                 :node_index => args.fetch(:node_index),
                 :ci_build_id => KnapsackPro::Config::Env.ci_node_build_id,
                 :user_seat => KnapsackPro::Config::Env.masked_user_seat,
+                :build_author => KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
+                :commit_authors => KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
               }
 
               unless request_hash[:cache_read_attempt]

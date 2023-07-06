@@ -67,7 +67,7 @@ module KnapsackPro
         def masked_user_seat
           return unless user_seat
 
-          user_seat.gsub(/(?<=\w{2})[a-zA-Z]/, "*")
+          KnapsackPro::MaskString.call(user_seat)
         end
 
         def test_file_pattern
