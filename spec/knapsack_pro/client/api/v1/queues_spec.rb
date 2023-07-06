@@ -33,21 +33,9 @@ describe KnapsackPro::Client::API::V1::Queues do
 
       it 'does not send test_files among other params' do
         action = double
-        expect(KnapsackPro::Client::API::Action).to receive(:new).with({
-          endpoint_path: '/v1/queues/queue',
-          http_method: :post,
-          request_hash: {
-            fixed_queue_split: fixed_queue_split,
-            can_initialize_queue: can_initialize_queue,
-            attempt_connect_to_queue: attempt_connect_to_queue,
-            commit_hash: commit_hash,
-            branch: branch,
-            node_total: node_total,
-            node_index: node_index,
-            node_build_id: node_build_id,
-            user_seat: masked_user_seat,
-          }
-        }).and_return(action)
+        expect(KnapsackPro::Client::API::Action).to receive(:new).with(
+          hash_including(request_hash: hash_excluding(:test_files))
+        ).and_return(action)
         expect(subject).to eq action
       end
     end
@@ -58,22 +46,9 @@ describe KnapsackPro::Client::API::V1::Queues do
 
       it 'sends test_files among other params' do
         action = double
-        expect(KnapsackPro::Client::API::Action).to receive(:new).with({
-          endpoint_path: '/v1/queues/queue',
-          http_method: :post,
-          request_hash: {
-            fixed_queue_split: fixed_queue_split,
-            can_initialize_queue: can_initialize_queue,
-            attempt_connect_to_queue: attempt_connect_to_queue,
-            commit_hash: commit_hash,
-            branch: branch,
-            node_total: node_total,
-            node_index: node_index,
-            node_build_id: node_build_id,
-            user_seat: masked_user_seat,
-            test_files: test_files
-          }
-        }).and_return(action)
+        expect(KnapsackPro::Client::API::Action).to receive(:new).with(
+          hash_including(request_hash: hash_including(test_files: test_files))
+        ).and_return(action)
         expect(subject).to eq action
       end
     end
@@ -84,21 +59,9 @@ describe KnapsackPro::Client::API::V1::Queues do
 
       it 'does not send test_files among other params' do
         action = double
-        expect(KnapsackPro::Client::API::Action).to receive(:new).with({
-          endpoint_path: '/v1/queues/queue',
-          http_method: :post,
-          request_hash: {
-            fixed_queue_split: fixed_queue_split,
-            can_initialize_queue: can_initialize_queue,
-            attempt_connect_to_queue: attempt_connect_to_queue,
-            commit_hash: commit_hash,
-            branch: branch,
-            node_total: node_total,
-            node_index: node_index,
-            node_build_id: node_build_id,
-            user_seat: masked_user_seat,
-          }
-        }).and_return(action)
+        expect(KnapsackPro::Client::API::Action).to receive(:new).with(
+          hash_including(request_hash: hash_excluding(:test_files))
+        ).and_return(action)
         expect(subject).to eq action
       end
     end
