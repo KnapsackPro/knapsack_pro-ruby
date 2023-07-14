@@ -43,6 +43,10 @@ module KnapsackPro
           raise 'Knapsack Pro process was terminated!' if @@terminate_process
         end
 
+        def self.set_terminate_process
+          @@terminate_process = true
+        end
+
         def trap_signals
           SIGNALS.each do |signal|
             Signal.trap(signal) {
