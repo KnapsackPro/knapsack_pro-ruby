@@ -6,7 +6,7 @@ namespace :knapsack_pro do
       Kernel.system("RAILS_ENV=test RACK_ENV=test #{$PROGRAM_NAME} 'knapsack_pro:queue:rspec_go[#{args[:rspec_args]}]'")
       exitstatus = $?.exitstatus
       if exitstatus.nil?
-        puts 'Something went wrong. Most likely process has been killed.'
+        puts 'Something went wrong. Most likely, the process has been killed. Knapsack Pro has been terminated.'
         Kernel.exit(1)
       else
         Kernel.exit(exitstatus)
