@@ -50,7 +50,7 @@ module KnapsackPro
         def trap_signals
           SIGNALS.each do |signal|
             Signal.trap(signal) {
-              KnapsackPro.logger.warn("#{signal} signal has been received. Terminating Knapsack Pro...")
+              puts "#{signal} signal has been received. Terminating Knapsack Pro..."
               @@terminate_process = true
             }
           end
