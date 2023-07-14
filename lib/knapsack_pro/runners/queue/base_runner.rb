@@ -2,6 +2,8 @@ module KnapsackPro
   module Runners
     module Queue
       class BaseRunner
+        SIGNALS = %w(HUP INT QUIT USR1 USR2 TERM ABRT)
+
         @@terminate_process = false
 
         def self.run(args)
@@ -42,41 +44,12 @@ module KnapsackPro
         end
 
         def trap_signals
-          Signal.trap('HUP') {
-            puts '+'*100
-            puts 'HUP'
-            @@terminate_process = true
-          }
-          Signal.trap('INT') {
-            puts '+'*100
-            puts 'INT'
-            @@terminate_process = true
-          }
-          Signal.trap('QUIT') {
-            puts '+'*100
-            puts 'QUIT'
-            @@terminate_process = true
-          }
-          Signal.trap('USR1') {
-            puts '+'*100
-            puts 'USR1'
-            @@terminate_process = true
-          }
-          Signal.trap('USR2') {
-            puts '+'*100
-            puts 'USR2'
-            @@terminate_process = true
-          }
-          Signal.trap('TERM') {
-            puts '+'*100
-            puts 'TERM'
-            @@terminate_process = true
-          }
-          Signal.trap('ABRT') {
-            puts '+'*100
-            puts 'ABRT'
-            @@terminate_process = true
-          }
+          SIGNALS.each do |signal|
+            Signal.trap(signal) {
+              KnapsackPro.logger.warn("#{signal} signal has been received. Terminating Knapsack Pro...")
+              @@terminate_process = true
+            }
+          end
         end
       end
     end
