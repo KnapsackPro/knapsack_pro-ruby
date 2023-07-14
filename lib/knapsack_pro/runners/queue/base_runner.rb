@@ -2,7 +2,7 @@ module KnapsackPro
   module Runners
     module Queue
       class BaseRunner
-        SIGNALS = %w(HUP INT QUIT USR1 USR2 TERM ABRT)
+        TERMINATION_SIGNALS = %w(HUP INT TERM ABRT QUIT USR1 USR2)
 
         @@terminate_process = false
 
@@ -48,7 +48,7 @@ module KnapsackPro
         end
 
         def trap_signals
-          SIGNALS.each do |signal|
+          TERMINATION_SIGNALS.each do |signal|
             Signal.trap(signal) {
               puts "#{signal} signal has been received. Terminating Knapsack Pro..."
               @@terminate_process = true
