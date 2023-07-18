@@ -1,5 +1,11 @@
 # Changelog
 
+### 5.3.0
+
+* Perf: Send authors to the API only on the first request (for Queue Mode)
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.2.1...v5.3.0
+
 ### 5.2.1
 
 * Shallow fetch the last month of commits only on CI
