@@ -1,5 +1,14 @@
 # Changelog
 
+### 5.2.1
+
+* Shallow fetch the last month of commits only on CI
+* Ensure input to `git shortlog`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/209
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.2.0...v5.2.1
+
 ### 5.2.0
 
 * Send authors to the API

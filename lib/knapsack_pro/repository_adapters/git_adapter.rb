@@ -45,7 +45,7 @@ module KnapsackPro
           `git fetch --shallow-since "one month ago" --quiet`
         end
 
-        `git shortlog --summary --email --since "one month ago"`
+        `git log --since "one month ago" | git shortlog --summary --email`
       end
 
       def git_build_author
