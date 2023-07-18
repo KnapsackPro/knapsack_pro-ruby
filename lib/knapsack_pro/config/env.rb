@@ -285,6 +285,11 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_RUNNER_ADAPTER'] = adapter_class.to_s.split('::').last
         end
 
+        def ci?
+          ENV.fetch('CI', 'false').downcase == 'true' ||
+            detected_ci != KnapsackPro::Config::CI::Base
+        end
+
         private
 
         def required_env(env_name)
