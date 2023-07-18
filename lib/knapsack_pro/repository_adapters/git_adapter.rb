@@ -41,7 +41,7 @@ module KnapsackPro
       private
 
       def git_commit_authors
-        `git fetch --shallow-since "1 month ago" >/dev/null 2>&1 && git shortlog --summary --email --since "one month ago"`
+        `git fetch --shallow-since "1 month ago" --quiet && git shortlog --summary --email --since "one month ago"`
       end
 
       def git_build_author
