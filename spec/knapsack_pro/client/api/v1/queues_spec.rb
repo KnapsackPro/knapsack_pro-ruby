@@ -53,6 +53,16 @@ describe KnapsackPro::Client::API::V1::Queues do
         ).and_return(action)
         expect(subject).to eq action
       end
+
+      it "sends authors" do
+        action = double
+
+        expect(KnapsackPro::Client::API::Action).to receive(:new).with(
+          hash_including(request_hash: hash_including(:build_author, :commit_authors))
+        ).and_return(action)
+
+        expect(subject).to eq action
+      end
     end
 
     context 'when can_initialize_queue=false and attempt_connect_to_queue=false' do
@@ -66,16 +76,6 @@ describe KnapsackPro::Client::API::V1::Queues do
         ).and_return(action)
         expect(subject).to eq action
       end
-    end
-
-    it "sends authors" do
-      action = double
-
-      expect(KnapsackPro::Client::API::Action).to receive(:new).with(
-        hash_including(request_hash: hash_including(:build_author, :commit_authors))
-      ).and_return(action)
-
-      expect(subject).to eq action
     end
   end
 end

@@ -17,13 +17,13 @@ module KnapsackPro
                 :node_index => args.fetch(:node_index),
                 :node_build_id => KnapsackPro::Config::Env.ci_node_build_id,
                 :user_seat => KnapsackPro::Config::Env.masked_user_seat,
-                :build_author => KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
-                :commit_authors => KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
               }
 
               if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
                 request_hash.merge!({
-                  :test_files => args.fetch(:test_files)
+                  :test_files => args.fetch(:test_files),
+                  :build_author => KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
+                  :commit_authors => KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
                 })
               end
 
