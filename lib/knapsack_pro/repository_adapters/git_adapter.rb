@@ -41,7 +41,11 @@ module KnapsackPro
       private
 
       def git_commit_authors
-        `git fetch --shallow-since "1 month ago" --quiet && git shortlog --summary --email --since "one month ago"`
+        if KnapsackPro::Config::Env.ci?
+          `git fetch --shallow-since "one month ago" --quiet`
+        end
+
+        `git shortlog --summary --email --since "one month ago"`
       end
 
       def git_build_author

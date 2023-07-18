@@ -1041,4 +1041,18 @@ describe KnapsackPro::Config::Env do
       end
     end
   end
+
+  describe '.ci?' do
+    [
+      ['CI from env', { 'CI' => 'True' }, true],
+      ['Travis CI', { 'TRAVIS' => 'true' }, true],
+      ['Unsupported', {}, false],
+    ].each do |ci, env, expected|
+      it "detects #{ci}" do
+        stub_const("ENV", env)
+
+        expect(described_class.ci?).to eq(expected)
+      end
+    end
+  end
 end
