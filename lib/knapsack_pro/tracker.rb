@@ -68,6 +68,12 @@ module KnapsackPro
       @prerun_tests_loaded = true
     end
 
+    def unexecuted_test_files
+      @test_files_with_time.map do |path, hash|
+        path unless hash[:measured_time]
+      end.compact
+    end
+
     def to_a
       # When the test files are not loaded in the memory then load them from the disk.
       # Useful for the Regular Mode when the memory is not shared between tracker instances.

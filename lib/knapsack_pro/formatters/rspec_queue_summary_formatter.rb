@@ -72,6 +72,29 @@ module KnapsackPro
         registered_output.puts(most_recent_summary)
       end
 
+      def self.print_exit_summary
+        registered_output.puts('Knapsack Pro Queue exited/aborted!')
+        registered_output.puts('')
+
+        unexecuted_test_files = KnapsackPro.tracker.unexecuted_test_files
+        unless unexecuted_test_files.empty?
+          registered_output.puts('Unexecuted tests on this CI node:')
+          registered_output.puts(unexecuted_test_files)
+        end
+
+        unless most_recent_pending.empty?
+          registered_output.puts('All pending tests on this CI node:')
+          registered_output.puts(most_recent_pending)
+        end
+
+        unless most_recent_failures_summary.empty?
+          registered_output.puts('All failed tests on this CI node:')
+          registered_output.puts(most_recent_failures_summary)
+        end
+
+        registered_output.puts(most_recent_summary)
+      end
+
       def initialize(output)
         super
         self.class.registered_output = output
