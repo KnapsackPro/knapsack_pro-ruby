@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.3.1
+
+* Avoid noise to stderr when git is not available when collecting authors
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/211
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.3.0...v5.3.1
+
 ### 5.3.0
 
 * Perf: Send authors to the API only on the first request (for Queue Mode)
