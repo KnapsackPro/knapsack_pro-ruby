@@ -1,5 +1,11 @@
 # Changelog
 
+### 5.3.2
+
+* On top of 5.3.1, avoid noise to stderr when git is not available when collecting the build author
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.3.1...v5.3.2
+
 ### 5.3.1
 
 * Avoid noise to stderr when git is not available when collecting authors
