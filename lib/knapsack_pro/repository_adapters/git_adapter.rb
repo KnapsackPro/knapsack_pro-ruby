@@ -49,7 +49,7 @@ module KnapsackPro
       end
 
       def git_build_author
-        `git log --format="%aN <%aE>" -1`
+        `git log --format="%aN <%aE>" -1 2>/dev/null`
       end
 
       def working_dir
