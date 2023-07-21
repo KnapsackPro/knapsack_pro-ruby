@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.3.3
+
+* Fix hanging CI when `git fetch --shallow-since` takes too long
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/213
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.3.2...v5.3.3
+
 ### 5.3.2
 
 * On top of 5.3.1, avoid noise to stderr when git is not available when collecting the build author
