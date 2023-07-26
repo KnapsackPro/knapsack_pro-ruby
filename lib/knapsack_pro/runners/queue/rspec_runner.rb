@@ -37,6 +37,7 @@ module KnapsackPro
             all_test_file_paths: [],
           }
           while accumulator[:status] == :next
+            handle_signal!
             accumulator = run_tests(accumulator)
           end
 
@@ -93,6 +94,15 @@ module KnapsackPro
 
             exit_code = rspec_runner.run($stderr, $stdout)
             exitstatus = exit_code if exit_code != 0
+
+            if rspec_runner.world.wants_to_quit
+              KnapsackPro.logger.warn('RSpec wants to quit.')
+              set_terminate_process
+            end
+            if rspec_runner.world.rspec_is_quitting
+              KnapsackPro.logger.warn('RSpec is quitting.')
+              set_terminate_process
+            end
 
             printable_args = args_with_seed_option_added_when_viable(args, rspec_runner)
             log_rspec_command(printable_args, test_file_paths, :subset_queue)
