@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.3.4
+
+* fix(Queue Mode): handle OS signals and RSpec internal `wants_to_quit` and `rspec_is_quitting` states to stop consuming tests from the Queue API when the CI node is terminated
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/207
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.3.3...v5.3.4
+
 ### 5.3.3
 
 * Fix hanging CI when `git fetch --shallow-since` takes too long
