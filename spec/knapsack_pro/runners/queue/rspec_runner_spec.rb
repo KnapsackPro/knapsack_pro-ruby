@@ -49,6 +49,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -74,6 +75,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -99,6 +101,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -124,6 +127,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             exitstatus: 0,
             all_test_file_paths: [],
           }
+          expect(described_class).to receive(:handle_signal!)
           expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
           expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -165,6 +169,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           exitstatus: 0,
           all_test_file_paths: [],
         }
+        expect(described_class).to receive(:handle_signal!)
         expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
 
         expect(Kernel).to receive(:exit).with(expected_exitstatus)
@@ -200,6 +205,137 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       let(:test_file_paths) { ['a_spec.rb', 'b_spec.rb'] }
       let(:logger) { double }
       let(:rspec_seed) { 7771 }
+      let(:exit_code) { [0, 1].sample }
+      let(:rspec_wants_to_quit) { false }
+      let(:rspec_is_quitting) { false }
+      let(:rspec_core_runner) do
+        double(world: double(wants_to_quit: rspec_wants_to_quit, rspec_is_quitting: rspec_is_quitting))
+      end
+
+      context 'having no exception when running rspec' do
+        before do
+          subset_queue_id = 'fake-subset-queue-id'
+          expect(KnapsackPro::Config::EnvGenerator).to receive(:set_subset_queue_id).and_return(subset_queue_id)
+
+          expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SUBSET_QUEUE_ID', subset_queue_id)
+
+          tracker = instance_double(KnapsackPro::Tracker)
+          expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
+          expect(tracker).to receive(:reset!)
+          expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
+
+          expect(described_class).to receive(:ensure_spec_opts_have_rspec_queue_summary_formatter)
+          options = double
+          expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
+            '--no-color',
+            '--default-path', 'fake-test-dir',
+            'a_spec.rb', 'b_spec.rb',
+          ]).and_return(options)
+
+          expect(RSpec::Core::Runner).to receive(:new).with(options).and_return(rspec_core_runner)
+          expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_return(exit_code)
+
+          expect(described_class).to receive(:rspec_clear_examples)
+
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
+
+          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
+
+          expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+
+          configuration = double
+          expect(rspec_core_runner).to receive(:configuration).twice.and_return(configuration)
+          expect(configuration).to receive(:seed_used?).and_return(true)
+          expect(configuration).to receive(:seed).and_return(rspec_seed)
+
+          expect(KnapsackPro).to receive(:logger).at_least(2).and_return(logger)
+          expect(logger).to receive(:info)
+            .with("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+          expect(logger).to receive(:info).with(/#{args.join(' ')} --seed #{rspec_seed}/)
+        end
+
+        context 'when the exit code is zero' do
+          let(:exit_code) { 0 }
+
+          it do
+            expect(subject).to eq({
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: exitstatus,
+              all_test_file_paths: test_file_paths,
+            })
+          end
+        end
+
+        context 'when the exit code is not zero' do
+          let(:exit_code) { double }
+
+          it do
+            expect(subject).to eq({
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: exit_code,
+              all_test_file_paths: test_file_paths,
+            })
+          end
+        end
+
+        context 'when RSpec wants to quit' do
+          let(:exit_code) { 0 }
+          let(:rspec_wants_to_quit) { true }
+
+          after do
+            described_class.class_variable_set(:@@terminate_process, false)
+          end
+
+          it 'terminates the process' do
+            expect(logger).to receive(:warn).with('RSpec wants to quit.')
+
+            expect(described_class.class_variable_get(:@@terminate_process)).to be false
+
+            expect(subject).to eq({
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: exitstatus,
+              all_test_file_paths: test_file_paths,
+            })
+
+            expect(described_class.class_variable_get(:@@terminate_process)).to be true
+          end
+        end
+
+        context 'when RSpec is quitting' do
+          let(:exit_code) { 0 }
+          let(:rspec_is_quitting) { true }
+
+          after do
+            described_class.class_variable_set(:@@terminate_process, false)
+          end
+
+          it 'terminates the process' do
+            expect(logger).to receive(:warn).with('RSpec is quitting.')
+
+            expect(described_class.class_variable_get(:@@terminate_process)).to be false
+
+            expect(subject).to eq({
+              status: :next,
+              runner: runner,
+              can_initialize_queue: false,
+              args: args,
+              exitstatus: exitstatus,
+              all_test_file_paths: test_file_paths,
+            })
+
+            expect(described_class.class_variable_get(:@@terminate_process)).to be true
+          end
+        end
+      end
 
       context 'having exception when running rspec' do
         before do
@@ -252,80 +388,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
           expect { subject }.to raise_error SystemExit
-        end
-      end
-
-      context 'having no exception when running rspec' do
-        before do
-          subset_queue_id = 'fake-subset-queue-id'
-          expect(KnapsackPro::Config::EnvGenerator).to receive(:set_subset_queue_id).and_return(subset_queue_id)
-
-          expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SUBSET_QUEUE_ID', subset_queue_id)
-
-          tracker = instance_double(KnapsackPro::Tracker)
-          expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
-          expect(tracker).to receive(:reset!)
-          expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
-
-          expect(described_class).to receive(:ensure_spec_opts_have_rspec_queue_summary_formatter)
-          options = double
-          expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
-            '--no-color',
-            '--default-path', 'fake-test-dir',
-            'a_spec.rb', 'b_spec.rb',
-          ]).and_return(options)
-
-          rspec_core_runner = double
-          expect(RSpec::Core::Runner).to receive(:new).with(options).and_return(rspec_core_runner)
-          expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_return(exit_code)
-
-          expect(described_class).to receive(:rspec_clear_examples)
-
-          expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
-
-          expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
-
-          expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
-
-          configuration = double
-          expect(rspec_core_runner).to receive(:configuration).twice.and_return(configuration)
-          expect(configuration).to receive(:seed_used?).and_return(true)
-          expect(configuration).to receive(:seed).and_return(rspec_seed)
-
-          expect(KnapsackPro).to receive(:logger).twice.and_return(logger)
-          expect(logger).to receive(:info)
-            .with("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
-          expect(logger).to receive(:info).with(/#{args.join(' ')} --seed #{rspec_seed}/)
-        end
-
-        context 'when exit code is zero' do
-          let(:exit_code) { 0 }
-
-          it do
-            expect(subject).to eq({
-              status: :next,
-              runner: runner,
-              can_initialize_queue: false,
-              args: args,
-              exitstatus: exitstatus,
-              all_test_file_paths: test_file_paths,
-            })
-          end
-        end
-
-        context 'when exit code is not zero' do
-          let(:exit_code) { double }
-
-          it do
-            expect(subject).to eq({
-              status: :next,
-              runner: runner,
-              can_initialize_queue: false,
-              args: args,
-              exitstatus: exit_code,
-              all_test_file_paths: test_file_paths,
-            })
-          end
         end
       end
     end
