@@ -212,7 +212,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         double(world: double(wants_to_quit: rspec_wants_to_quit, rspec_is_quitting: rspec_is_quitting))
       end
 
-      context 'having no exception when running rspec' do
+      context 'having no exception when running RSpec' do
         before do
           subset_queue_id = 'fake-subset-queue-id'
           expect(KnapsackPro::Config::EnvGenerator).to receive(:set_subset_queue_id).and_return(subset_queue_id)
@@ -337,7 +337,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'having exception when running rspec' do
+      context 'having exception when running RSpec' do
         before do
           subset_queue_id = 'fake-subset-queue-id'
           expect(KnapsackPro::Config::EnvGenerator).to receive(:set_subset_queue_id).and_return(subset_queue_id)
@@ -365,6 +365,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           allow(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
           allow(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
           allow(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_exit_summary)
+          expect(Kernel).to receive(:exit).with(1)
         end
 
         it 'does not call #save_subset_queue_to_file or #rspec_clear_examples' do
@@ -375,7 +376,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it 'logs the exception' do
           expect(KnapsackPro).to receive(:logger).once.and_return(logger)
-          expect(logger).to receive(:debug).with("Having exception when running rspec: SystemExit")
+          expect(logger).to receive(:error).with("Having exception when running RSpec: #<SystemExit: SystemExit>")
           expect { subject }.to raise_error SystemExit
         end
 

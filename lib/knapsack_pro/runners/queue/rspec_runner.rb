@@ -96,10 +96,11 @@ module KnapsackPro
               exit_code = rspec_runner.run($stderr, $stdout)
               exitstatus = exit_code if exit_code != 0
             rescue Exception => exception
-              KnapsackPro.logger.debug("Having exception when running rspec: #{exception}")
+              KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
               KnapsackPro::Hooks::Queue.call_after_subset_queue
               KnapsackPro::Hooks::Queue.call_after_queue
+              Kernel.exit(1)
               raise
             else
               if rspec_runner.world.wants_to_quit
