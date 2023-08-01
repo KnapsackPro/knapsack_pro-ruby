@@ -92,35 +92,43 @@ module KnapsackPro
             options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
             rspec_runner = ::RSpec::Core::Runner.new(options)
 
-            exit_code = rspec_runner.run($stderr, $stdout)
-            exitstatus = exit_code if exit_code != 0
+            begin
+              exit_code = rspec_runner.run($stderr, $stdout)
+              exitstatus = exit_code if exit_code != 0
+            rescue Exception => exception
+              KnapsackPro.logger.debug("Having exception when running rspec: #{exception}")
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
+              KnapsackPro::Hooks::Queue.call_after_subset_queue
+              KnapsackPro::Hooks::Queue.call_after_queue
+              raise
+            else
+              if rspec_runner.world.wants_to_quit
+                KnapsackPro.logger.warn('RSpec wants to quit.')
+                set_terminate_process
+              end
+              if rspec_runner.world.rspec_is_quitting
+                KnapsackPro.logger.warn('RSpec is quitting.')
+                set_terminate_process
+              end
 
-            if rspec_runner.world.wants_to_quit
-              KnapsackPro.logger.warn('RSpec wants to quit.')
-              set_terminate_process
+              printable_args = args_with_seed_option_added_when_viable(args, rspec_runner)
+              log_rspec_command(printable_args, test_file_paths, :subset_queue)
+
+              rspec_clear_examples
+
+              KnapsackPro::Hooks::Queue.call_after_subset_queue
+
+              KnapsackPro::Report.save_subset_queue_to_file
+
+              return {
+                status: :next,
+                runner: runner,
+                can_initialize_queue: false,
+                args: args,
+                exitstatus: exitstatus,
+                all_test_file_paths: all_test_file_paths,
+              }
             end
-            if rspec_runner.world.rspec_is_quitting
-              KnapsackPro.logger.warn('RSpec is quitting.')
-              set_terminate_process
-            end
-
-            printable_args = args_with_seed_option_added_when_viable(args, rspec_runner)
-            log_rspec_command(printable_args, test_file_paths, :subset_queue)
-
-            rspec_clear_examples
-
-            KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-            KnapsackPro::Report.save_subset_queue_to_file
-
-            return {
-              status: :next,
-              runner: runner,
-              can_initialize_queue: false,
-              args: args,
-              exitstatus: exitstatus,
-              all_test_file_paths: all_test_file_paths,
-            }
           end
         end
 
