@@ -185,4 +185,21 @@ describe KnapsackPro::Tracker do
       expect(tracker.prerun_tests_loaded).to be false
     end
   end
+
+
+  describe '#unexecuted_test_files' do
+    before do
+      tracker.set_prerun_tests(['a_spec.rb', 'b_spec.rb', 'c_spec.rb'])
+
+      # measure execution time for b_spec.rb
+      tracker.current_test_path = 'b_spec.rb'
+      tracker.start_timer
+      sleep 0.1
+      tracker.stop_timer
+    end
+
+    it 'returns test files without measured time' do
+      expect(tracker.unexecuted_test_files).to eq(['a_spec.rb', 'c_spec.rb'])
+    end
+  end
 end
