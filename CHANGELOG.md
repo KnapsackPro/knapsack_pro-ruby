@@ -1,5 +1,15 @@
 # Changelog
 
+### 5.3.5
+
+* Handle RSpec exceptions when running RSpec in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/214
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/215
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.3.4...v5.3.5
+
 ### 5.3.4
 
 * fix(Queue Mode): handle OS signals and RSpec internal `wants_to_quit` and `rspec_is_quitting` states to stop consuming tests from the Queue API when the CI node is terminated
