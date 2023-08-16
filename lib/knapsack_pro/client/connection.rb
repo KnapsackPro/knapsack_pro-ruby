@@ -59,17 +59,14 @@ module KnapsackPro
         request_hash.to_json
       end
 
-      def test_suite_token
-        KnapsackPro::Config::Env.test_suite_token
-      end
-
       def json_headers
         {
           'Content-Type' => 'application/json',
           'Accept' => 'application/json',
           'KNAPSACK-PRO-CLIENT-NAME' => client_name,
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
-          'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+          'KNAPSACK-PRO-TEST-SUITE-TOKEN' => KnapsackPro::Config::Env.test_suite_token,
+          'KNAPSACK-PRO-CI-PROVIDER' => KnapsackPro::Config::Env.ci_provider,
         }
       end
 

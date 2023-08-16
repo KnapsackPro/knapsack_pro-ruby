@@ -41,6 +41,10 @@ module KnapsackPro
         def fixed_queue_split
           true
         end
+
+        def ci_provider
+          "Buildkite"
+        end
       end
     end
   end

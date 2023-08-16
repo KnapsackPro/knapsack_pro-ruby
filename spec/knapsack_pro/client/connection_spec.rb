@@ -289,6 +289,7 @@ describe KnapsackPro::Client::Connection do
     stub_const('ENV', {
       'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
       'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
+      'GITHUB_ACTIONS' => 'true',
     })
   end
 
@@ -323,6 +324,7 @@ describe KnapsackPro::Client::Connection do
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
             'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+            'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
           }
         ).and_return(http_response)
       end
@@ -346,6 +348,7 @@ describe KnapsackPro::Client::Connection do
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
             'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+            'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
           }
         ).and_return(http_response)
       end
@@ -368,6 +371,7 @@ describe KnapsackPro::Client::Connection do
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
             'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+            'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
           }
         ).and_return(http_response)
       end
@@ -391,6 +395,7 @@ describe KnapsackPro::Client::Connection do
             'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
             'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
             'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+            'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
           }
         ).and_return(http_response)
       end

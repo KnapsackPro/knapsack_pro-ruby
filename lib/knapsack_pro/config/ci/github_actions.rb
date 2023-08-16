@@ -49,6 +49,10 @@ module KnapsackPro
         def fixed_queue_split
           true
         end
+
+        def ci_provider
+          "GitHub Actions"
+        end
       end
     end
   end

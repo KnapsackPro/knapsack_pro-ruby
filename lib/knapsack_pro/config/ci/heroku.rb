@@ -33,6 +33,10 @@ module KnapsackPro
         def fixed_queue_split
           false
         end
+
+        def ci_provider
+          "Heroku CI"
+        end
       end
     end
   end

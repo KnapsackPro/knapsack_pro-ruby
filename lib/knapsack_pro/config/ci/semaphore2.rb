@@ -38,6 +38,10 @@ module KnapsackPro
         def fixed_queue_split
           false
         end
+
+        def ci_provider
+          "Semaphore CI 2.0"
+        end
       end
     end
   end

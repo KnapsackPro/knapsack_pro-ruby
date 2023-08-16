@@ -37,6 +37,10 @@ module KnapsackPro
         def fixed_queue_split
           false
         end
+
+        def ci_provider
+          "CircleCI"
+        end
       end
     end
   end

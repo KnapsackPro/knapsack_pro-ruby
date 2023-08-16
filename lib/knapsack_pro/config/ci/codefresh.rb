@@ -34,6 +34,10 @@ module KnapsackPro
         def fixed_queue_split
           false
         end
+
+        def ci_provider
+          "Codefresh"
+        end
       end
     end
   end
