@@ -25,6 +25,10 @@ module KnapsackPro
         def fixed_queue_split
           true
         end
+
+        def ci_provider
+          "Travis CI"
+        end
       end
     end
   end

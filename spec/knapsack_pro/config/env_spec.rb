@@ -676,7 +676,7 @@ describe KnapsackPro::Config::Env do
           ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }],
           ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }],
           ['Travis CI', { 'TRAVIS' => 'true' }],
-          ['Unsupported', {}],
+          ['Unsupported CI', {}],
         ].each do |ci, env|
           it "on #{ci} it is false" do
             logger = instance_double(Logger)
@@ -704,7 +704,7 @@ describe KnapsackPro::Config::Env do
           ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }],
           ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }],
           ['Travis CI', { 'TRAVIS' => 'true' }],
-          ['Unsupported', {}],
+          ['Unsupported CI', {}],
         ].each do |ci, env|
           it "on #{ci} it is true" do
             logger = instance_double(Logger)
@@ -733,7 +733,7 @@ describe KnapsackPro::Config::Env do
         ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }, false],
         ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }, false],
         ['Travis CI', { 'TRAVIS' => 'true' }, true],
-        ['Unsupported', {}, true],
+        ['Unsupported CI', {}, true],
       ].each do |ci, env, expected|
         it "on #{ci} it is #{expected}" do
           logger = instance_double(Logger)
@@ -1032,7 +1032,7 @@ describe KnapsackPro::Config::Env do
       ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }, KnapsackPro::Config::CI::Semaphore],
       ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }, KnapsackPro::Config::CI::Semaphore2],
       ['Travis CI', { 'TRAVIS' => 'true' }, KnapsackPro::Config::CI::Travis],
-      ['Unsupported', {}, KnapsackPro::Config::CI::Base],
+      ['Unsupported CI', {}, KnapsackPro::Config::CI::Base],
     ].each do |ci, env, expected|
       it "detects #{ci}" do
         stub_const("ENV", env)
@@ -1046,12 +1046,42 @@ describe KnapsackPro::Config::Env do
     [
       ['CI from env', { 'CI' => 'True' }, true],
       ['Travis CI', { 'TRAVIS' => 'true' }, true],
-      ['Unsupported', {}, false],
+      ['Unsupported CI', {}, false],
     ].each do |ci, env, expected|
       it "detects #{ci}" do
         stub_const("ENV", env)
 
         expect(described_class.ci?).to eq(expected)
+      end
+    end
+  end
+
+  describe '.ci_provider' do
+    [
+      ['AppVeyor', { 'APPVEYOR' => '123' }],
+      ['Azure Pipelines', { 'SYSTEM_TEAMFOUNDATIONCOLLECTIONURI' => '123' }],
+      ['AWS CodeBuild', { 'CODEBUILD_BUILD_ARN' => '123' }],
+      ['Bitbucket Pipelines', { 'BITBUCKET_COMMIT' => '123' }],
+      ['Buildkite', { 'BUILDKITE' => 'true' }],
+      ['CircleCI', { 'CIRCLECI' => 'true' }],
+      ['Cirrus CI', { 'CIRRUS_CI' => 'true' }],
+      ['Codefresh', { 'CF_BUILD_ID' => '123' }],
+      ['Codeship', { 'CI_NAME' => 'codeship' }],
+      ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }],
+      ['Gitlab CI', { 'GITLAB_CI' => 'true' }],
+      ['Google Cloud Build', { 'BUILDER_OUTPUT' => '123' }],
+      ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }],
+      ['Jenkins', { 'JENKINS_URL' => '123' }],
+      ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }],
+      ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }],
+      ['TeamCity', { 'TEAMCITY_VERSION' => '123' }],
+      ['Travis CI', { 'TRAVIS' => 'true' }],
+      ['Other', {}],
+    ].each do |ci, env|
+      it "detects #{ci} name" do
+        stub_const("ENV", env)
+
+        expect(described_class.ci_provider).to eq(ci)
       end
     end
   end

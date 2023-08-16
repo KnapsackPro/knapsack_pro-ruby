@@ -45,6 +45,10 @@ module KnapsackPro
         def fixed_queue_split
           true
         end
+
+        def ci_provider
+          "Gitlab CI"
+        end
       end
     end
   end

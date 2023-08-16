@@ -33,6 +33,10 @@ module KnapsackPro
         def fixed_queue_split
           true
         end
+
+        def ci_provider
+          "Codeship"
+        end
       end
     end
   end

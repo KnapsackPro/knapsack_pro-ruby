@@ -32,6 +32,17 @@ module KnapsackPro
         def fixed_queue_split
           true
         end
+
+        def ci_provider
+          return 'AWS CodeBuild' if ENV.key?('CODEBUILD_BUILD_ARN')
+          return 'Azure Pipelines' if ENV.key?('SYSTEM_TEAMFOUNDATIONCOLLECTIONURI')
+          return 'Bitbucket Pipelines' if ENV.key?('BITBUCKET_COMMIT')
+          return 'Google Cloud Build' if ENV.key?('BUILDER_OUTPUT')
+          return 'Jenkins' if ENV.key?('JENKINS_URL')
+          return 'TeamCity' if ENV.key?('TEAMCITY_VERSION')
+
+          "Other"
+        end
       end
     end
   end
