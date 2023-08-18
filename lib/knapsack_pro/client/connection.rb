@@ -67,7 +67,7 @@ module KnapsackPro
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
           'KNAPSACK-PRO-TEST-SUITE-TOKEN' => KnapsackPro::Config::Env.test_suite_token,
           'KNAPSACK-PRO-CI-PROVIDER' => KnapsackPro::Config::Env.ci_provider,
-        }
+        }.compact
       end
 
       def client_name
