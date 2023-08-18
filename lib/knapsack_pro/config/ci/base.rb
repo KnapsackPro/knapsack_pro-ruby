@@ -43,8 +43,9 @@ module KnapsackPro
           return 'Google Cloud Build' if ENV.key?('BUILDER_OUTPUT')
           return 'Jenkins' if ENV.key?('JENKINS_URL')
           return 'TeamCity' if ENV.key?('TEAMCITY_VERSION')
+          return 'Other' if KnapsackPro::Config::Env.ci?
 
-          "Other"
+          nil
         end
       end
     end
