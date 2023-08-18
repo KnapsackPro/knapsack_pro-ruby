@@ -1046,7 +1046,7 @@ describe KnapsackPro::Config::Env do
     [
       ['CI from env', { 'CI' => 'True' }, true],
       ['Travis CI', { 'TRAVIS' => 'true' }, true],
-      ['Unsupported CI', {}, false],
+      ['missing CI from ENV or development', {}, false],
     ].each do |ci, env, expected|
       it "detects #{ci}" do
         stub_const("ENV", env)
@@ -1079,7 +1079,8 @@ describe KnapsackPro::Config::Env do
       ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }],
       ['TeamCity', { 'TEAMCITY_VERSION' => '123' }],
       ['Travis CI', { 'TRAVIS' => 'true' }],
-      ['Other', {}],
+      ['Other', { 'CI' => 'true'}],
+      [nil, {}],
     ].each do |ci, env|
       it "detects #{ci} name" do
         stub_const("ENV", env)
