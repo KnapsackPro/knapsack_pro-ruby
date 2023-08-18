@@ -36,7 +36,10 @@ module KnapsackPro
         def ci_provider
           return 'AWS CodeBuild' if ENV.key?('CODEBUILD_BUILD_ARN')
           return 'Azure Pipelines' if ENV.key?('SYSTEM_TEAMFOUNDATIONCOLLECTIONURI')
+          return 'Bamboo' if ENV.key?('bamboo_planKey')
           return 'Bitbucket Pipelines' if ENV.key?('BITBUCKET_COMMIT')
+          return 'Buddy.works' if ENV.key?('BUDDY')
+          return 'Drone.io' if ENV.key?('DRONE')
           return 'Google Cloud Build' if ENV.key?('BUILDER_OUTPUT')
           return 'Jenkins' if ENV.key?('JENKINS_URL')
           return 'TeamCity' if ENV.key?('TEAMCITY_VERSION')
