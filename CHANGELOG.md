@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.4.0
+
+* Send to the API the CI provider with a header
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/216
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.3.5...v5.4.0
+
 ### 5.3.5
 
 * Handle RSpec exceptions when running RSpec in Queue Mode
