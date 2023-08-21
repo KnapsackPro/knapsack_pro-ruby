@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class BaseAllocatorBuilder
     TEST_RUNNER_MAP = {

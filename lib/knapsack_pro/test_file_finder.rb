@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class TestFileFinder
     def self.call(test_file_pattern, test_file_list_enabled: true)

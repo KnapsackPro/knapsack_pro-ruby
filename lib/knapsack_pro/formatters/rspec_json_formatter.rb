@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Support.require_rspec_core('formatters/json_formatter')
 
 # based on https://github.com/rspec/rspec-core/blob/master/lib/rspec/core/formatters/json_formatter.rb

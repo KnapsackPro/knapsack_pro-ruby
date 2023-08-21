@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class RepositoryAdapterInitiator
     def self.call

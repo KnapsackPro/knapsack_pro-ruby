@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Support.require_rspec_core('formatters/base_formatter')
 RSpec::Support.require_rspec_core('formatters/base_text_formatter')
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class MaskString
     def self.call(string)

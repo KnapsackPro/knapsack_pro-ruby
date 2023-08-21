@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # https://docs.gitlab.com/ce/ci/variables/
 module KnapsackPro
   module Config

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # https://codefresh.io/docs/docs/codefresh-yaml/variables/#system-provided-variables
 module KnapsackPro
   module Config
