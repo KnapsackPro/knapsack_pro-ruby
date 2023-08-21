@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.4.1
+
+* Fixes RSpec conflict (see https://github.com/KnapsackPro/knapsack_pro-ruby/issues/217)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/218
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.4.0...v5.4.1
+
 ### 5.4.0
 
 * Send to the API the CI provider with a header
