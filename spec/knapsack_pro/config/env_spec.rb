@@ -1082,7 +1082,7 @@ describe KnapsackPro::Config::Env do
       ['Other', { 'CI' => 'true'}],
       [nil, {}],
     ].each do |ci, env|
-      it "detects #{ci} name" do
+      it "detects #{ci || 'missing CI from env or development'}" do
         stub_const("ENV", env)
 
         expect(described_class.ci_provider).to eq(ci)
