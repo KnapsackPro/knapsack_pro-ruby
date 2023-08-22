@@ -70,4 +70,18 @@ describe KnapsackPro::Config::CI::AppVeyor do
       it { should be nil }
     end
   end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the APPVEYOR_REPO_COMMIT_AUTHOR environment variable exists' do
+      let(:env) { { 'APPVEYOR_REPO_COMMIT_AUTHOR' => 'jane_doe' } }
+
+      it { should eql 'jane_doe' }
+    end
+
+    context "when the APPVEYOR_REPO_COMMIT_AUTHOR environment variable doesn't exist" do
+      it { should be nil }
+    end
+  end
 end

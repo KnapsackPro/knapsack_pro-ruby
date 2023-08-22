@@ -27,6 +27,10 @@ module KnapsackPro
           ENV['APPVEYOR_BUILD_FOLDER']
         end
 
+        def user_seat
+          ENV['APPVEYOR_REPO_COMMIT_AUTHOR']
+        end
+
         def detected
           ENV.key?('APPVEYOR') ? self.class : nil
         end
