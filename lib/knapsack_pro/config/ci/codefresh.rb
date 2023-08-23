@@ -27,6 +27,10 @@ module KnapsackPro
           # not provided
         end
 
+        def user_seat
+          ENV['CF_BUILD_INITIATOR']
+        end
+
         def detected
           ENV.key?('CF_BUILD_ID') ? self.class : nil
         end
