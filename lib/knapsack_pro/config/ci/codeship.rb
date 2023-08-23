@@ -26,6 +26,10 @@ module KnapsackPro
           # not provided
         end
 
+        def user_seat
+          ENV['CI_COMMITTER_NAME']
+        end
+
         def detected
           ENV['CI_NAME'] == 'codeship' ? self.class : nil
         end

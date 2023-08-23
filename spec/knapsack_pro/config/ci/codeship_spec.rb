@@ -63,4 +63,18 @@ describe KnapsackPro::Config::CI::Codeship do
 
     it { should be nil }
   end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the CI_COMMITTER_NAME environment variable exists' do
+      let(:env) { { 'CI_COMMITTER_NAME' => 'jane_doe' } }
+
+      it { should eql 'jane_doe' }
+    end
+
+    context "when the CI_COMMITTER_NAME environment variable doesn't exist" do
+      it { should be nil }
+    end
+  end
 end
