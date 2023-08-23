@@ -18,6 +18,10 @@ module KnapsackPro
           ENV['TRAVIS_BUILD_DIR']
         end
 
+        def user_seat
+          # not provided
+        end
+
         def detected
           ENV.key?('TRAVIS') ? self.class : nil
         end
