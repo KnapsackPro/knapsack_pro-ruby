@@ -1,6 +1,8 @@
 module KnapsackPro
   module Config
     module CI
+      # Semaphore Classic is deprecated
+      # https://semaphoreci.com/blog/semaphore-classic-deprecation
       class Semaphore < Base
         def node_total
           ENV['SEMAPHORE_THREAD_COUNT']
