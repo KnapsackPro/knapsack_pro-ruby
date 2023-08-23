@@ -63,4 +63,19 @@ describe KnapsackPro::Config::CI::Codefresh do
 
     it { should be nil }
   end
+
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when the CF_BUILD_INITIATOR environment variable exists' do
+      let(:env) { { 'CF_BUILD_INITIATOR' => 'jane_doe' } }
+
+      it { should eql 'jane_doe' }
+    end
+
+    context "when the CF_BUILD_INITIATOR environment variable doesn't exist" do
+      it { should be nil }
+    end
+  end
 end
