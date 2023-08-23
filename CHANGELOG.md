@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.5.0
+
+* Detect user seats for AppVeyor, Codefresh, Codeship
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/221
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.4.1...v5.5.0
+
 ### 5.4.1
 
 * Fixes RSpec conflict (see https://github.com/KnapsackPro/knapsack_pro-ruby/issues/217)
