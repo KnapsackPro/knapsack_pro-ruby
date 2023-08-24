@@ -35,5 +35,7 @@ jobs:
             - ./vendor/bundle
           key: v2-dependencies-bundler-{{ checksum "knapsack_pro.gemspec" }}
 
-      # run tests!
+      # enforce `frozen_string_literal: true` in the gem files
+      - run: rubocop -A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
+
       - run: bundle exec rspec spec
