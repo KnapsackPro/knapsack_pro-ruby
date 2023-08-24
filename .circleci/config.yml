@@ -30,10 +30,14 @@ jobs:
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
 
+      - run: gem install rubocop
+
       - save_cache:
           paths:
             - ./vendor/bundle
           key: v2-dependencies-bundler-{{ checksum "knapsack_pro.gemspec" }}
 
-      # run tests!
+      # enforce `frozen_string_literal: true` in the gem files
+      - run: rubocop -A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
+
       - run: bundle exec rspec spec
