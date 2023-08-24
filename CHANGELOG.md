@@ -6,6 +6,10 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/220
 
+* Enforce `frozen_string_literal: true` in the gem files with Rubocop
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/222
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.5.0...v5.6.0
 
 ### 5.5.0
