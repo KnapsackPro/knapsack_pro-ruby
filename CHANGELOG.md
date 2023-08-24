@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.6.0
+
+* Use `frozen_string_literal: true` to reduce memory usage
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/220
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.5.0...v5.6.0
+
 ### 5.5.0
 
 * Detect user seats for AppVeyor, Codefresh, Codeship
