@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class LoggerWrapper
     def initialize(logger)

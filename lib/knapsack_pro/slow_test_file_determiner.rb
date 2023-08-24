@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class SlowTestFileDeterminer
     TIME_THRESHOLD_PER_CI_NODE = 0.7 # 70%

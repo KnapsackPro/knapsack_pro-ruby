@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   module Runners
     class MinitestRunner < BaseRunner

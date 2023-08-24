@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # https://www.appveyor.com/docs/environment-variables/
 module KnapsackPro
   module Config

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class TestFilePresenter
     def self.stringify_paths(test_file_paths)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class QueueAllocatorBuilder < BaseAllocatorBuilder
     def allocator

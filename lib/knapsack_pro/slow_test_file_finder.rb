@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class SlowTestFileFinder
     # Get recorded test files from API.

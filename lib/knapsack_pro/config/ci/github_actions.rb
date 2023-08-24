@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables
 module KnapsackPro
   module Config

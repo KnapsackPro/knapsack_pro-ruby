@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   class Utils
     def self.unsymbolize(obj)

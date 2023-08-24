@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :knapsack_pro do
   task :salt, [:size] do |_, args|
     default_size = 32

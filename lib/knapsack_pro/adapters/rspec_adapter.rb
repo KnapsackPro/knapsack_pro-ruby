@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module KnapsackPro
   module Adapters
     class RSpecAdapter < BaseAdapter
