@@ -282,15 +282,17 @@ describe KnapsackPro::Client::Connection do
                     request_hash: request_hash)
   end
   let(:test_suite_token) { '3fa64859337f6e56409d49f865d13fd7' }
-
   let(:connection) { described_class.new(action) }
-
-  before do
-    stub_const('ENV', {
+  let(:headers) do
+    {
       'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
       'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
       'GITHUB_ACTIONS' => 'true',
-    })
+    }
+  end
+
+  before do
+    stub_const('ENV', headers)
   end
 
   describe '#call' do
@@ -311,7 +313,7 @@ describe KnapsackPro::Client::Connection do
       expect(http).to receive(:read_timeout=).with(15)
     end
 
-    context 'when http method is POST' do
+    context 'when http method is POST on GitHub Actions' do
       let(:http_method) { :post }
 
       before do
@@ -334,7 +336,30 @@ describe KnapsackPro::Client::Connection do
       end
     end
 
-    context 'when http method is GET' do
+    context 'when http method is POST and CI is undetected' do
+      let(:http_method) { :post }
+
+      let(:headers) do
+        {
+          'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
+          'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
+        }
+      end
+
+      before do
+        expect(http).to receive(:post).with(
+          anything,
+          anything,
+          hash_not_including('KNAPSACK-PRO-CI-PROVIDER')
+        ).and_return(http_response)
+      end
+
+      it_behaves_like 'when request got response from API' do
+        let(:expected_http_method) { 'POST' }
+      end
+    end
+
+    context 'when http method is GET on GitHub Actions' do
       let(:http_method) { :get }
 
       before do
@@ -350,6 +375,28 @@ describe KnapsackPro::Client::Connection do
             'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
             'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
           }
+        ).and_return(http_response)
+      end
+
+      it_behaves_like 'when request got response from API' do
+        let(:expected_http_method) { 'GET' }
+      end
+    end
+
+    context 'when http method is GET and CI is undetected' do
+      let(:http_method) { :get }
+
+      let(:headers) do
+        {
+          'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
+          'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
+        }
+      end
+
+      before do
+        expect(http).to receive(:get).with(
+          anything,
+          hash_not_including('KNAPSACK-PRO-CI-PROVIDER')
         ).and_return(http_response)
       end
 
