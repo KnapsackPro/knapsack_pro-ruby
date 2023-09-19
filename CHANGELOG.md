@@ -1,5 +1,13 @@
 # Changelog
 
+### 5.7.0
+
+* Performance improvement: don't run `rake knapsack_pro:rspec_test_example_detector` when no slow test files are detected for RSpec.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/225
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.6.0...v5.7.0
+
 ### 5.6.0
 
 * Use `frozen_string_literal: true` to reduce memory usage
