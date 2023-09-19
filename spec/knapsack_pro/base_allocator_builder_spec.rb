@@ -154,7 +154,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
 
       context 'when rake task to detect RSpec test examples works' do
-        let(:slow_test_files) { double(size: 5) }
+        let(:slow_test_files) { double(size: 5, empty?: false) }
         let(:cmd_result) { true }
         let(:test_file_example_paths) { double }
         let(:logger) { instance_double(Logger) }
@@ -182,7 +182,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
 
       context 'when rake task to detect RSpec test examples failed' do
-        let(:slow_test_files) { double(size: 5) }
+        let(:slow_test_files) { double(size: 5, empty?: false) }
         let(:cmd_result) { false }
 
         before do
