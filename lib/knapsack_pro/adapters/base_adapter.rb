@@ -11,6 +11,14 @@ module KnapsackPro
         "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/#{adapter_name}-bind_method_called_for_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
       end
 
+      def self.split_by_test_cases_enabled?
+        false
+      end
+
+      def self.test_file_cases_for(slow_test_files)
+        raise NotImplementedError
+      end
+
       def self.slow_test_file?(adapter_class, test_file_path)
         @slow_test_file_paths ||=
           begin
