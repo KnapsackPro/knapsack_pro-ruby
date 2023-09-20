@@ -19,7 +19,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(rspec_split_by_test_examples_enabled)
     end
 
-    context 'when RSpec split by test examples enabled' do
+    context 'when the RSpec split by test examples is enabled' do
       let(:rspec_split_by_test_examples_enabled) { true }
 
       it { expect(subject).to be true }
@@ -35,7 +35,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       end
     end
 
-    context 'when RSpec split by test examples disabled' do
+    context 'when the RSpec split by test examples is disabled' do
       let(:rspec_split_by_test_examples_enabled) { false }
 
       it { expect(subject).to be false }
