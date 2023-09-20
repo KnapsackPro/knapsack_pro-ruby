@@ -35,35 +35,16 @@ module KnapsackPro
     def fast_and_slow_test_files_to_run
       test_files_to_run = all_test_files_to_run
 
-      if adapter_class == KnapsackPro::Adapters::RSpecAdapter && KnapsackPro::Config::Env.rspec_split_by_test_examples?
-        require 'rspec/core/version'
-        unless Gem::Version.new(::RSpec::Core::Version::STRING) >= Gem::Version.new('3.3.0')
-          raise "RSpec >= 3.3.0 is required to split test files by test examples. Learn more: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}"
-        end
-
+      if adapter_class.split_by_test_cases_enabled?
         slow_test_files = get_slow_test_files
+        return test_files_to_run if slow_test_files.empty?
 
-        KnapsackPro.logger.info("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing #{slow_test_files.size} slow test files.")
+        test_file_cases = adapter_class.test_file_cases_for(slow_test_files)
 
-        # generate RSpec JSON report in separate process to not pollute RSpec state
-        cmd = [
-          'RACK_ENV=test',
-          'RAILS_ENV=test',
-          KnapsackPro::Config::Env.rspec_test_example_detector_prefix,
-          'rake knapsack_pro:rspec_test_example_detector',
-        ].join(' ')
-        unless Kernel.system(cmd)
-          raise "Could not generate JSON report for RSpec. Rake task failed when running #{cmd}"
-        end
-
-        # read JSON report
-        detector = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new
-        test_file_example_paths = detector.test_file_example_paths
-
-        KnapsackPro::TestFilesWithTestCasesComposer.call(test_files_to_run, slow_test_files, test_file_example_paths)
-      else
-        test_files_to_run
+        return KnapsackPro::TestFilesWithTestCasesComposer.call(test_files_to_run, slow_test_files, test_file_cases)
       end
+
+      test_files_to_run
     end
 
     private

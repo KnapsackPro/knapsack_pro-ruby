@@ -12,6 +12,81 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     it_behaves_like 'adapter'
   end
 
+  describe '.split_by_test_cases_enabled?' do
+    subject { described_class.split_by_test_cases_enabled? }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(rspec_split_by_test_examples_enabled)
+    end
+
+    context 'when the RSpec split by test examples is enabled' do
+      let(:rspec_split_by_test_examples_enabled) { true }
+
+      it { expect(subject).to be true }
+
+      context 'when the RSpec version is < 3.3.0' do
+        before do
+          stub_const('RSpec::Core::Version::STRING', '3.2.0')
+        end
+
+        it do
+          expect { subject }.to raise_error RuntimeError, 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://knapsackpro.com/perma/ruby/split-by-test-examples'
+        end
+      end
+    end
+
+    context 'when the RSpec split by test examples is disabled' do
+      let(:rspec_split_by_test_examples_enabled) { false }
+
+      it { expect(subject).to be false }
+    end
+  end
+
+  describe '.test_file_cases_for' do
+    let(:slow_test_files) do
+      [
+        '1_spec.rb',
+        '2_spec.rb',
+        '3_spec.rb',
+        '4_spec.rb',
+        '5_spec.rb',
+      ]
+    end
+
+    subject { described_class.test_file_cases_for(slow_test_files) }
+
+    before do
+      logger = instance_double(Logger)
+      expect(KnapsackPro).to receive(:logger).and_return(logger)
+      expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing 5 slow test files.")
+
+      cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector'
+      expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
+    end
+
+    context 'when the rake task to detect RSpec test examples succeeded' do
+      let(:cmd_result) { true }
+
+      it 'returns test example paths for slow test files' do
+        rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
+        expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
+
+        test_file_example_paths = double
+        expect(rspec_test_example_detector).to receive(:test_file_example_paths).and_return(test_file_example_paths)
+
+        expect(subject).to eq test_file_example_paths
+      end
+    end
+
+    context 'when the rake task to detect RSpec test examples failed' do
+      let(:cmd_result) { false }
+
+      it do
+        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
+      end
+    end
+  end
+
   describe '.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!' do
     let(:cli_args) { double }
 

@@ -42,6 +42,18 @@ describe KnapsackPro::Adapters::BaseAdapter do
     end
   end
 
+  describe '.split_by_test_cases_enabled?' do
+    subject { described_class.split_by_test_cases_enabled? }
+
+    it { expect(subject).to be false }
+  end
+
+  describe '.test_file_cases_for' do
+    subject { described_class.test_file_cases_for([]) }
+
+    it { expect { subject }.to raise_error NotImplementedError }
+  end
+
   describe '.slow_test_file?' do
     let(:adapter_class) { double }
     let(:slow_test_files) do
