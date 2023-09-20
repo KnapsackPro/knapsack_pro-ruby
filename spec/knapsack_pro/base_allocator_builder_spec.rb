@@ -117,8 +117,8 @@ describe KnapsackPro::BaseAllocatorBuilder do
   describe '#fast_and_slow_test_files_to_run' do
     subject { allocator_builder.fast_and_slow_test_files_to_run }
 
-    context 'when looking for test files on disk by default' do
-      it do
+    context 'when split by test cases disabled' do
+      it 'returns test files to run based on test files on the disk' do
         test_file_pattern = double
         expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
 
@@ -126,6 +126,48 @@ describe KnapsackPro::BaseAllocatorBuilder do
         expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files)
 
         expect(subject).to eq test_files
+      end
+    end
+
+    context 'when split by test cases enabled' do
+      let(:test_files_to_run) { double }
+
+      before  do
+        expect(adapter_class).to receive(:split_by_test_cases_enabled?).and_return(true)
+
+        test_file_pattern = double
+        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+
+        expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files_to_run)
+
+        expect(allocator_builder).to receive(:get_slow_test_files).and_return(slow_test_files)
+      end
+
+      context 'when slow test files are detected' do
+        let(:slow_test_files) do
+          [
+            '1_spec.rb',
+            '2_spec.rb',
+          ]
+        end
+
+        it 'returns test files with test cases' do
+          test_file_cases = double
+          expect(adapter_class).to receive(:test_file_cases_for).with(slow_test_files).and_return(test_file_cases)
+
+          test_files_with_test_cases = double
+          expect(KnapsackPro::TestFilesWithTestCasesComposer).to receive(:call).with(test_files_to_run, slow_test_files, test_file_cases).and_return(test_files_with_test_cases)
+
+          expect(subject).to eq test_files_with_test_cases
+        end
+      end
+
+      context 'when slow test files are not detected' do
+        let(:slow_test_files) { [] }
+
+        it 'returns test files to run based on test files on the disk' do
+          expect(subject).to eq test_files_to_run
+        end
       end
     end
 
