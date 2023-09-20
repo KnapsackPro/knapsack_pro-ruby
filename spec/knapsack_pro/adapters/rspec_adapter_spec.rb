@@ -55,21 +55,35 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
     subject { described_class.test_file_cases_for(slow_test_files) }
 
-    it 'returns test example paths for slow test files' do
+    before do
       logger = instance_double(Logger)
       expect(KnapsackPro).to receive(:logger).and_return(logger)
       expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing 5 slow test files.")
 
       cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector'
-      expect(Kernel).to receive(:system).with(cmd).and_return(true)
+      expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
+    end
 
-      rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
-      expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
+    context 'when the rake task to detect RSpec test examples succeeded' do
+      let(:cmd_result) { true }
 
-      test_file_example_paths = double
-      expect(rspec_test_example_detector).to receive(:test_file_example_paths).and_return(test_file_example_paths)
+      it 'returns test example paths for slow test files' do
+        rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
+        expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
 
-      expect(subject).to eq test_file_example_paths
+        test_file_example_paths = double
+        expect(rspec_test_example_detector).to receive(:test_file_example_paths).and_return(test_file_example_paths)
+
+        expect(subject).to eq test_file_example_paths
+      end
+    end
+
+    context 'when the rake task to detect RSpec test examples failed' do
+      let(:cmd_result) { false }
+
+      it do
+        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
+      end
     end
   end
 
