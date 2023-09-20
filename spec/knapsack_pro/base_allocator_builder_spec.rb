@@ -143,16 +143,6 @@ describe KnapsackPro::BaseAllocatorBuilder do
         expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files_to_run)
       end
 
-      context 'when RSpec version < 3.3.0' do
-        before do
-          stub_const('RSpec::Core::Version::STRING', '3.2.0')
-        end
-
-        it do
-          expect { subject }.to raise_error RuntimeError, 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://knapsackpro.com/perma/ruby/split-by-test-examples'
-        end
-      end
-
       context 'when rake task to detect RSpec test examples works' do
         let(:slow_test_files) { double(size: 5, empty?: false) }
         let(:cmd_result) { true }

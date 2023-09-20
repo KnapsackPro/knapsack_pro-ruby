@@ -12,6 +12,36 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     it_behaves_like 'adapter'
   end
 
+  describe '.split_by_test_cases_enabled?' do
+    subject { described_class.split_by_test_cases_enabled? }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(rspec_split_by_test_examples_enabled)
+    end
+
+    context 'when RSpec split by test examples enabled' do
+      let(:rspec_split_by_test_examples_enabled) { true }
+
+      it { expect(subject).to be true }
+
+      context 'when RSpec version < 3.3.0' do
+        before do
+          stub_const('RSpec::Core::Version::STRING', '3.2.0')
+        end
+
+        it do
+          expect { subject }.to raise_error RuntimeError, 'RSpec >= 3.3.0 is required to split test files by test examples. Learn more: https://knapsackpro.com/perma/ruby/split-by-test-examples'
+        end
+      end
+    end
+
+    context 'when RSpec split by test examples disabled' do
+      let(:rspec_split_by_test_examples_enabled) { false }
+
+      it { expect(subject).to be false }
+    end
+  end
+
   describe '.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!' do
     let(:cli_args) { double }
 
