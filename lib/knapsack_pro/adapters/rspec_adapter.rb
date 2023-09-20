@@ -17,7 +17,7 @@ module KnapsackPro
       end
 
       def self.test_file_cases_for(slow_test_files)
-        KnapsackPro.logger.info("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing #{slow_test_files.size} slow test files.")
+        KnapsackPro.logger.info("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing #{slow_test_files.size} slow test files.")
 
         # generate the RSpec JSON report in a separate process to not pollute the RSpec state
         cmd = [

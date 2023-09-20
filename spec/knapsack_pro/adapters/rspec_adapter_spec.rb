@@ -24,7 +24,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
       it { expect(subject).to be true }
 
-      context 'when RSpec version < 3.3.0' do
+      context 'when the RSpec version is < 3.3.0' do
         before do
           stub_const('RSpec::Core::Version::STRING', '3.2.0')
         end
@@ -58,7 +58,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     before do
       logger = instance_double(Logger)
       expect(KnapsackPro).to receive(:logger).and_return(logger)
-      expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual 'it's. Thanks to that a single slow test file can be split across parallel CI nodes). Analyzing 5 slow test files.")
+      expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing 5 slow test files.")
 
       cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector'
       expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
