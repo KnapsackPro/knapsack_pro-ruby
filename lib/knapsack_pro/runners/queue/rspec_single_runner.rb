@@ -123,6 +123,7 @@ module KnapsackPro
               Kernel.exit(exit_code)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
+              KnapsackPro.logger.error(exception.backtrace.join("\n"))
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
               KnapsackPro::Hooks::Queue.call_after_subset_queue
               KnapsackPro::Hooks::Queue.call_after_queue
