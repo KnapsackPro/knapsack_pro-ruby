@@ -11,7 +11,7 @@ module KnapsackPro
 
           attr_reader :rspec_runner
 
-          def_delegator :@rspec_runner, :world, :options, :configuration, :exit_code, :setup, :run_specs
+          def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :setup, :run_specs
 
           def initalize(rspec_runner, knapsack_pro_runner)
             @rspec_runner = rspec_runner
