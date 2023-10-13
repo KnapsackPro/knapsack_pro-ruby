@@ -49,7 +49,7 @@ module KnapsackPro
           def knapsack_pro_batches
             KnapsackPro.logger.info('Fetch test batches from Knapsack Pro API')
             allocator = @knapsack_pro_runner.send(:allocator)
-            files = allocator.test_file_paths(true, tests)
+            files = allocator.test_file_paths(true, [])
 
             until files.empty?
               yield with_hooks(files)
