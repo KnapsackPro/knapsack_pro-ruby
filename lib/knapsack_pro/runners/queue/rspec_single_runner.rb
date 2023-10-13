@@ -13,13 +13,14 @@ module KnapsackPro
 
           def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :setup, :run_specs
 
-          def initalize(rspec_runner, knapsack_pro_runner)
+          def initialize(rspec_runner, knapsack_pro_runner)
             @rspec_runner = rspec_runner
             @knapsack_pro_runner = knapsack_pro_runner
             @all_test_file_paths = []
           end
 
           def run
+            KnapsackPro.logger.info('Setup RSpec runner.')
             setup($stderr, $stdout)
             return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
@@ -46,6 +47,7 @@ module KnapsackPro
           end
 
           def knapsack_pro_batches
+            KnapsackPro.logger.info('Fetch test batches from Knapsack Pro API')
             allocator = @knapsack_pro_runner.send(:allocator)
             files = allocator.test_file_paths(true, tests)
 
@@ -59,6 +61,7 @@ module KnapsackPro
           private
 
           def with_hooks(files)
+            KnapsackPro.logger.info('Wrap tests in before/after subqueue hooks')
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
