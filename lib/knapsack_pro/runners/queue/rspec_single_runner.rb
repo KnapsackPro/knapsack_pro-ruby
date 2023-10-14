@@ -39,7 +39,7 @@ module KnapsackPro
             # Reset example groups
             world.example_groups.clear
 
-            files.each do |f|
+            configuration.send(:get_files_to_run, files).each do |f|
               file = File.expand_path(f)
               configuration.send(:load_file_handling_errors, :load, file)
               configuration.loaded_spec_files << file
