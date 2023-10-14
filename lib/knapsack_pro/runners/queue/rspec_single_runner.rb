@@ -52,7 +52,9 @@ module KnapsackPro
             files = allocator.test_file_paths(true, [])
 
             until files.empty?
-              yield with_hooks(files)
+              with_hooks(files) do |wrapped|
+                yield wrapped
+              end
 
               files = allocator.test_file_paths(false, @all_test_file_paths)
             end
