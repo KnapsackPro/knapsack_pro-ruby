@@ -33,6 +33,8 @@ module KnapsackPro
 
               break exit_code_from_batch if exit_code_from_batch != 0
             end
+
+            0
           end
 
           def load_spec_files(files)
