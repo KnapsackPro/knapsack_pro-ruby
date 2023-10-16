@@ -57,30 +57,24 @@ module KnapsackPro
 
           # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
           def run_specs
-            @all_examples_count = 0
-
             configuration.with_suite_hooks do
-              knapsack_pro_batches do |files|
-                if files
+              exit_status = configuration.reporter.report(0) do |reporter|
+                knapsack_pro_batches do |files|
+                  break 0 unless files
+
                   load_spec_files(files)
 
                   examples_count = world.example_count(world.example_groups)
 
-                  @all_examples_count += examples_count
-
-                  exit_status = configuration.reporter.report(@all_examples_count) do |reporter|
-                    if examples_count == 0 && configuration.fail_if_no_examples
-                      break configuration.failure_exit_code
-                    else
-                      exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
-                    end
+                  if examples_count == 0 && configuration.fail_if_no_examples
+                    break configuration.failure_exit_code
+                  else
+                    exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
                   end
-
-                  break exit_status if exit_status != 0
-                else
-                  0
                 end
               end
+
+              exit_status
             end
           end
 
