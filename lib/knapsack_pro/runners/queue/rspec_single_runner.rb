@@ -24,7 +24,7 @@ module KnapsackPro
             setup($stderr, $stdout)
             return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
-            knapsack_pro_batches do |files|
+            exit_code = knapsack_pro_batches do |files|
               load_spec_files(files)
 
               exit_code_from_batch = run_specs(world.example_groups).tap do
@@ -34,7 +34,7 @@ module KnapsackPro
               break exit_code_from_batch if exit_code_from_batch != 0
             end
 
-            0
+            exit_code || 0
           end
 
           def load_spec_files(files)
@@ -127,16 +127,16 @@ module KnapsackPro
 
             begin
               exit_code = ProxyRunner.new(rspec_runner, runner).run
-              Kernel.exit(exit_code)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
               KnapsackPro.logger.error(exception.backtrace.join("\n"))
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
               KnapsackPro::Hooks::Queue.call_after_subset_queue
               KnapsackPro::Hooks::Queue.call_after_queue
-              Kernel.exit(1)
               raise
             end
+
+            Kernel.exit(exit_code)
           end
 
           private
