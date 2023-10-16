@@ -24,21 +24,10 @@ module KnapsackPro
             setup($stderr, $stdout)
             return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
-            exit_code = knapsack_pro_batches do |files|
-              load_spec_files(files)
-
-              exit_code_from_batch = run_specs(world.example_groups).tap do
-                rspec_runner.send(:persist_example_statuses)
-              end
-
-              break exit_code_from_batch if exit_code_from_batch != 0
-            end
-
-            exit_code || 0
+            run_specs
           end
 
           def load_spec_files(files)
-            # Reset example groups
             world.example_groups.clear
 
             configuration.send(:get_files_to_run, files).each do |f|
@@ -60,9 +49,40 @@ module KnapsackPro
 
               files = allocator.test_file_paths(false, @all_test_file_paths)
             end
+
+            yield nil
           end
 
           private
+
+          # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
+          def run_specs
+            @all_examples_count = 0
+
+            configuration.with_suite_hooks do
+              knapsack_pro_batches do |files|
+                if files
+                  load_spec_files(files)
+
+                  examples_count = world.example_count(world.example_groups)
+
+                  @all_examples_count += examples_count
+
+                  exit_status = configuration.reporter.report(@all_examples_count) do |reporter|
+                    if examples_count == 0 && configuration.fail_if_no_examples
+                      break configuration.failure_exit_code
+                    else
+                      exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
+                    end
+                  end
+
+                  break exit_status if exit_status != 0
+                else
+                  0
+                end
+              end
+            end
+          end
 
           def with_hooks(files)
             KnapsackPro.logger.info('Wrap tests in before/after subqueue hooks')
