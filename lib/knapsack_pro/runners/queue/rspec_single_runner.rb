@@ -11,7 +11,7 @@ module KnapsackPro
 
           attr_reader :rspec_runner
 
-          def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :setup, :run_specs
+          def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
           def initialize(rspec_runner, knapsack_pro_runner)
             @rspec_runner = rspec_runner
@@ -21,7 +21,12 @@ module KnapsackPro
 
           def run
             KnapsackPro.logger.info('Setup RSpec runner.')
-            setup($stderr, $stdout)
+            # Abstract from #setup, since we do not need to set any filters or files at this point,
+            # and we do not want to let world.announce_filters to be called, since it will print
+            # out `No examples found.` message.
+            configure($stderr, $stdout)
+            world.send(:fail_if_config_and_cli_options_invalid)
+
             return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
             run_specs
@@ -91,8 +96,6 @@ module KnapsackPro
             KnapsackPro::Hooks::Queue.call_before_subset_queue
 
             yield files
-
-            @all_test_file_paths += files
 
             if world.wants_to_quit
               KnapsackPro.logger.warn('RSpec wants to quit.')
