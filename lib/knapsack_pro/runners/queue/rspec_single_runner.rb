@@ -69,7 +69,9 @@ module KnapsackPro
                   if examples_count == 0 && configuration.fail_if_no_examples
                     break configuration.failure_exit_code
                   else
-                    exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
+                    batch_result = exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
+
+                    break batch_result if batch_result != 0
                   end
                 end
               end
