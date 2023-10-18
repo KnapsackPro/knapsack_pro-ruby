@@ -6,110 +6,109 @@ module KnapsackPro
   module Runners
     module Queue
       class RSpecSingleRunner < BaseRunner
-        class ProxyRunner
-          extend Forwardable
+        extend Forwardable
 
-          attr_reader :rspec_runner
+        attr_reader :rspec_runner, :all_test_file_paths
 
-          def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
+        def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
-          def initialize(rspec_runner, knapsack_pro_runner)
-            @rspec_runner = rspec_runner
-            @knapsack_pro_runner = knapsack_pro_runner
-            @all_test_file_paths = []
+        def run(rspec_runner, args)
+          @rspec_runner = rspec_runner
+
+          KnapsackPro.logger.info('Setup RSpec runner.')
+          # Abstract from #setup, since we do not need to set any filters or files at this point,
+          # and we do not want to let world.announce_filters to be called, since it will print
+          # out `No examples found.` message.
+          configure($stderr, $stdout)
+          world.send(:fail_if_config_and_cli_options_invalid)
+
+          return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
+
+          @all_test_file_paths = []
+          @args = args
+
+          status = _run_specs
+        end
+
+        def load_spec_files(files)
+          world.example_groups.clear
+
+          configuration.send(:get_files_to_run, files).each do |f|
+            file = File.expand_path(f)
+            configuration.send(:load_file_handling_errors, :load, file)
+            configuration.loaded_spec_files << file
           end
+        end
 
-          def run
-            KnapsackPro.logger.info('Setup RSpec runner.')
-            # Abstract from #setup, since we do not need to set any filters or files at this point,
-            # and we do not want to let world.announce_filters to be called, since it will print
-            # out `No examples found.` message.
-            configure($stderr, $stdout)
-            world.send(:fail_if_config_and_cli_options_invalid)
+        def knapsack_pro_batches
+          KnapsackPro.logger.info('Fetch test batches from Knapsack Pro API')
+          files = allocator.test_file_paths(true, [])
 
-            return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
-
-            run_specs
-          end
-
-          def load_spec_files(files)
-            world.example_groups.clear
-
-            configuration.send(:get_files_to_run, files).each do |f|
-              file = File.expand_path(f)
-              configuration.send(:load_file_handling_errors, :load, file)
-              configuration.loaded_spec_files << file
-            end
-          end
-
-          def knapsack_pro_batches
-            KnapsackPro.logger.info('Fetch test batches from Knapsack Pro API')
-            allocator = @knapsack_pro_runner.send(:allocator)
-            files = allocator.test_file_paths(true, [])
-
-            until files.empty?
-              with_hooks(files) do |wrapped|
-                yield wrapped
-              end
-
-              files = allocator.test_file_paths(false, @all_test_file_paths)
+          until files.empty?
+            with_hooks(files) do |wrapped|
+              yield wrapped
             end
 
-            yield nil
+            files = allocator.test_file_paths(false, @all_test_file_paths)
           end
 
-          private
+          yield nil
+        end
 
-          # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
-          def run_specs
-            configuration.with_suite_hooks do
-              exit_status = configuration.reporter.report(0) do |reporter|
-                knapsack_pro_batches do |files|
-                  break 0 unless files
+        private
 
-                  load_spec_files(files)
+        # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
+        def _run_specs
+          configuration.with_suite_hooks do
+            exit_status = configuration.reporter.report(0) do |reporter|
+              knapsack_pro_batches do |files|
+                break 0 unless files
 
-                  examples_count = world.example_count(world.example_groups)
+                load_spec_files(files)
 
-                  if examples_count == 0 && configuration.fail_if_no_examples
-                    break configuration.failure_exit_code
-                  else
-                    batch_result = exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
+                examples_count = world.example_count(world.example_groups)
 
-                    break batch_result if batch_result != 0
-                  end
+                if examples_count == 0 && configuration.fail_if_no_examples
+                  break configuration.failure_exit_code
+                else
+                  batch_result = exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
+
+                  break batch_result if batch_result != 0
                 end
               end
-
-              exit_status
             end
+
+            exit_status
+          end
+        end
+
+        def with_hooks(files)
+          KnapsackPro.logger.info('Wrap tests in before/after subqueue hooks')
+          subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
+          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
+
+          KnapsackPro.tracker.reset!
+          KnapsackPro.tracker.set_prerun_tests(files)
+
+          KnapsackPro::Hooks::Queue.call_before_subset_queue
+
+          yield files
+
+          if world.wants_to_quit
+            KnapsackPro.logger.warn('RSpec wants to quit.')
+            self.class.set_terminate_process
+          end
+          if world.rspec_is_quitting
+            KnapsackPro.logger.warn('RSpec is quitting.')
+            self.class.set_terminate_process
           end
 
-          def with_hooks(files)
-            KnapsackPro.logger.info('Wrap tests in before/after subqueue hooks')
-            subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
-            ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
+          printable_args = self.class.args_with_seed_option_added_when_viable(@args, rspec_runner)
+          self.class.log_rspec_command(printable_args, files, :subset_queue)
 
-            KnapsackPro.tracker.reset!
-            KnapsackPro.tracker.set_prerun_tests(files)
+          KnapsackPro::Hooks::Queue.call_after_subset_queue
 
-            KnapsackPro::Hooks::Queue.call_before_subset_queue
-
-            yield files
-
-            if world.wants_to_quit
-              KnapsackPro.logger.warn('RSpec wants to quit.')
-              @knapsack_pro_runner.class.set_terminate_process
-            end
-            if world.rspec_is_quitting
-              KnapsackPro.logger.warn('RSpec is quitting.')
-              @knapsack_pro_runner.class.set_terminate_process
-            end
-
-            KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-            KnapsackPro::Report.save_subset_queue_to_file
-          end
+          KnapsackPro::Report.save_subset_queue_to_file
         end
 
         class << self
@@ -145,7 +144,7 @@ module KnapsackPro
             rspec_runner = ::RSpec::Core::Runner.new(options)
 
             begin
-              exit_code = ProxyRunner.new(rspec_runner, runner).run
+              exit_code = runner.run(rspec_runner, cli_args)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
               KnapsackPro.logger.error(exception.backtrace.join("\n"))
@@ -155,7 +154,43 @@ module KnapsackPro
               raise
             end
 
+            log_rspec_command(cli_args, runner.all_test_file_paths, :end_of_queue)
+
             Kernel.exit(exit_code)
+          end
+
+          def log_rspec_command(cli_args, test_file_paths, type)
+            case type
+            when :subset_queue
+              KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+            when :end_of_queue
+              KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
+            end
+
+            stringified_cli_args = cli_args.join(' ').sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+
+            KnapsackPro.logger.info(
+              "bundle exec rspec #{stringified_cli_args} " +
+              KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+            )
+          end
+
+          def args_with_seed_option_added_when_viable(args, rspec_runner)
+            order_option = adapter_class.order_option(args)
+
+            if order_option
+              # Don't add the seed option for order other than random, e.g. `defined`
+              return args unless order_option.include?('rand')
+              # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
+              return args if order_option.to_s.split(':')[1]
+            end
+
+            # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
+            return args unless rspec_runner.configuration.seed_used?
+
+            @@used_seed = rspec_runner.configuration.seed.to_s
+
+            args + ['--seed', @@used_seed]
           end
 
           private
