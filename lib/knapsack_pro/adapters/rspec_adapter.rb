@@ -123,15 +123,21 @@ module KnapsackPro
         end
       end
 
-      def bind_before_queue_hook
+      def bind_queue_hook
         ::RSpec.configure do |config|
           config.before(:suite) do
-            unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
-              ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
-              KnapsackPro::Hooks::Queue.call_before_queue
-            end
+            KnapsackPro::Hooks::Queue.call_before_queue
+          end
+
+          config.after(:suite) do
+            KnapsackPro::Hooks::Queue.call_after_queue
           end
         end
+      end
+
+      def bind_queue_mode
+        bind_queue_hook
+        bind_time_tracker
       end
 
       private

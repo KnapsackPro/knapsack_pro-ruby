@@ -147,10 +147,7 @@ module KnapsackPro
               exit_code = runner.run(rspec_runner, cli_args)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro.logger.error(exception.backtrace.join("\n"))
               KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
-              KnapsackPro::Hooks::Queue.call_after_subset_queue
-              KnapsackPro::Hooks::Queue.call_after_queue
               raise
             end
 
