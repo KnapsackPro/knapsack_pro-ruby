@@ -1,215 +1,212 @@
 # frozen_string_literal: true
 
+require 'forwardable'
+
 module KnapsackPro
   module Runners
     module Queue
       class RSpecRunner < BaseRunner
-        @@used_seed = nil
+        extend Forwardable
 
-        def self.run(args)
-          require 'rspec/core'
-          require_relative '../../formatters/rspec_queue_summary_formatter'
-          require_relative '../../formatters/rspec_queue_profile_formatter_extension'
+        attr_reader :rspec_runner, :all_test_file_paths
 
-          ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
-          ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
+        def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
-          KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
-          runner = new(adapter_class)
+        def run(rspec_runner, args)
+          @rspec_runner = rspec_runner
 
-          cli_args = (args || '').split
-          adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+          KnapsackPro.logger.info('Setup RSpec runner.')
+          # Abstract from #setup, since we do not need to set any filters or files at this point,
+          # and we do not want to let world.announce_filters to be called, since it will print
+          # out `No examples found.` message.
+          configure($stderr, $stdout)
+          world.send(:fail_if_config_and_cli_options_invalid)
 
-          # when format option is not defined by user then use progress formatter to show tests execution progress
-          cli_args += ['--format', 'progress'] unless adapter_class.has_format_option?(cli_args)
+          return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
-          cli_args += [
-            # shows summary of all tests executed in Queue Mode at the very end
-            '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
-            '--default-path', runner.test_dir,
-          ]
+          @all_test_file_paths = []
+          @args = args
 
-          accumulator = {
-            status: :next,
-            runner: runner,
-            can_initialize_queue: true,
-            args: cli_args,
-            exitstatus: 0,
-            all_test_file_paths: [],
-          }
-          while accumulator[:status] == :next
-            handle_signal!
-            accumulator = run_tests(accumulator)
-          end
-
-          Kernel.exit(accumulator[:exitstatus])
+          status = _run_specs
         end
 
-        def self.run_tests(accumulator)
-          runner = accumulator.fetch(:runner)
-          can_initialize_queue = accumulator.fetch(:can_initialize_queue)
-          args = accumulator.fetch(:args)
-          exitstatus = accumulator.fetch(:exitstatus)
-          all_test_file_paths = accumulator.fetch(:all_test_file_paths)
+        def load_spec_files(files)
+          world.example_groups.clear
 
-          test_file_paths = runner.test_file_paths(
-            can_initialize_queue: can_initialize_queue,
-            executed_test_files: all_test_file_paths
-          )
-
-          if test_file_paths.empty?
-            unless all_test_file_paths.empty?
-              KnapsackPro::Adapters::RSpecAdapter.verify_bind_method_called
-
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
-              KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
-
-              args += ['--seed', @@used_seed] if @@used_seed
-
-              log_rspec_command(args, all_test_file_paths, :end_of_queue)
-            end
-
-            KnapsackPro::Hooks::Queue.call_after_queue
-
-            KnapsackPro::Report.save_node_queue_to_api
-
-            return {
-              status: :completed,
-              exitstatus: exitstatus,
-            }
-          else
-            subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
-            ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
-
-            KnapsackPro.tracker.reset!
-            KnapsackPro.tracker.set_prerun_tests(test_file_paths)
-
-            KnapsackPro::Hooks::Queue.call_before_subset_queue
-
-            all_test_file_paths += test_file_paths
-            cli_args = args + test_file_paths
-
-            ensure_spec_opts_have_rspec_queue_summary_formatter
-            options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
-            rspec_runner = ::RSpec::Core::Runner.new(options)
-
-            begin
-              exit_code = rspec_runner.run($stderr, $stdout)
-              exitstatus = exit_code if exit_code != 0
-            rescue Exception => exception
-              KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
-              KnapsackPro::Hooks::Queue.call_after_subset_queue
-              KnapsackPro::Hooks::Queue.call_after_queue
-              Kernel.exit(1)
-              raise
-            else
-              if rspec_runner.world.wants_to_quit
-                KnapsackPro.logger.warn('RSpec wants to quit.')
-                set_terminate_process
-              end
-              if rspec_runner.world.rspec_is_quitting
-                KnapsackPro.logger.warn('RSpec is quitting.')
-                set_terminate_process
-              end
-
-              printable_args = args_with_seed_option_added_when_viable(args, rspec_runner)
-              log_rspec_command(printable_args, test_file_paths, :subset_queue)
-
-              rspec_clear_examples
-
-              KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-              KnapsackPro::Report.save_subset_queue_to_file
-
-              return {
-                status: :next,
-                runner: runner,
-                can_initialize_queue: false,
-                args: args,
-                exitstatus: exitstatus,
-                all_test_file_paths: all_test_file_paths,
-              }
-            end
+          configuration.send(:get_files_to_run, files).each do |f|
+            file = File.expand_path(f)
+            configuration.send(:load_file_handling_errors, :load, file)
+            configuration.loaded_spec_files << file
           end
         end
 
-        def self.ensure_spec_opts_have_rspec_queue_summary_formatter
-          spec_opts = ENV['SPEC_OPTS']
+        def knapsack_pro_batches
+          KnapsackPro.logger.info('Fetch test batches from Knapsack Pro API')
+          files = allocator.test_file_paths(true, [])
 
-          return unless spec_opts
-          return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+          until files.empty?
+            with_hooks(files) do |wrapped|
+              yield wrapped
+            end
 
-          ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
+            files = allocator.test_file_paths(false, @all_test_file_paths)
+          end
+
+          yield nil
         end
 
         private
 
-        def self.adapter_class
-          KnapsackPro::Adapters::RSpecAdapter
-        end
+        # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
+        def _run_specs
+          configuration.with_suite_hooks do
+            exit_status = configuration.reporter.report(0) do |reporter|
+              knapsack_pro_batches do |files|
+                break 0 unless files
 
-        def self.log_rspec_command(cli_args, test_file_paths, type)
-          case type
-          when :subset_queue
-            KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
-          when :end_of_queue
-            KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
-          end
+                load_spec_files(files)
 
-          stringified_cli_args = cli_args.join(' ').sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+                examples_count = world.example_count(world.example_groups)
 
-          KnapsackPro.logger.info(
-            "bundle exec rspec #{stringified_cli_args} " +
-            KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
-          )
-        end
+                if examples_count == 0 && configuration.fail_if_no_examples
+                  break configuration.failure_exit_code
+                else
+                  batch_result = exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
 
-        # Clear rspec examples without the shared examples:
-        # https://github.com/rspec/rspec-core/pull/2379
-        #
-        # Keep formatters and report to accumulate info about failed/pending tests
-        def self.rspec_clear_examples
-          if ::RSpec::ExampleGroups.respond_to?(:remove_all_constants)
-            ::RSpec::ExampleGroups.remove_all_constants
-          else
-            ::RSpec::ExampleGroups.constants.each do |constant|
-              ::RSpec::ExampleGroups.__send__(:remove_const, constant)
+                  break batch_result if batch_result != 0
+                end
+              end
             end
-          end
-          ::RSpec.world.example_groups.clear
-          ::RSpec.configuration.start_time = ::RSpec::Core::Time.now
 
-          if KnapsackPro::Config::Env.rspec_split_by_test_examples?
-            # Reset example group counts to ensure scoped example ids in metadata
-            # have correct index (not increased by each subsequent run).
-            # Solves this problem: https://github.com/rspec/rspec-core/issues/2721
-            ::RSpec.world.instance_variable_set(:@example_group_counts_by_spec_file, Hash.new(0))
-          end
-
-          # skip reset filters for old RSpec versions
-          if ::RSpec.configuration.respond_to?(:reset_filters)
-            ::RSpec.configuration.reset_filters
+            exit_status
           end
         end
 
-        def self.args_with_seed_option_added_when_viable(args, rspec_runner)
-          order_option = adapter_class.order_option(args)
+        def with_hooks(files)
+          KnapsackPro.logger.info('Wrap tests in before/after subqueue hooks')
+          subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
+          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
-          if order_option
-            # Don't add the seed option for order other than random, e.g. `defined`
-            return args unless order_option.include?('rand')
-            # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
-            return args if order_option.to_s.split(':')[1]
+          KnapsackPro.tracker.reset!
+          KnapsackPro.tracker.set_prerun_tests(files)
+
+          KnapsackPro::Hooks::Queue.call_before_subset_queue
+
+          yield files
+
+          if world.wants_to_quit
+            KnapsackPro.logger.warn('RSpec wants to quit.')
+            self.class.set_terminate_process
+          end
+          if world.rspec_is_quitting
+            KnapsackPro.logger.warn('RSpec is quitting.')
+            self.class.set_terminate_process
           end
 
-          # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
-          return args unless rspec_runner.configuration.seed_used?
+          printable_args = self.class.args_with_seed_option_added_when_viable(@args, rspec_runner)
+          self.class.log_rspec_command(printable_args, files, :subset_queue)
 
-          @@used_seed = rspec_runner.configuration.seed.to_s
+          KnapsackPro::Hooks::Queue.call_after_subset_queue
 
-          args + ['--seed', @@used_seed]
+          KnapsackPro::Report.save_subset_queue_to_file
+        end
+
+        class << self
+          def run(args)
+            require 'rspec/core'
+            require_relative '../../formatters/rspec_queue_summary_formatter'
+            require_relative '../../formatters/rspec_queue_profile_formatter_extension'
+
+            ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
+            ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
+            ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
+
+            KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
+
+            # Initialize runner to trap signals before RSpec::Core::Runner.run is called
+            runner = new(adapter_class)
+
+            cli_args = (args || '').split
+            adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+
+            # when format option is not defined by user then use progress formatter to show tests execution progress
+            cli_args += ['--format', 'progress'] unless adapter_class.has_format_option?(cli_args)
+
+            cli_args += [
+              # shows summary of all tests executed in Queue Mode at the very end
+              '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
+              '--default-path', runner.test_dir,
+            ]
+
+            ensure_spec_opts_have_rspec_queue_summary_formatter
+            options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
+
+            rspec_runner = ::RSpec::Core::Runner.new(options)
+
+            begin
+              exit_code = runner.run(rspec_runner, cli_args)
+            rescue Exception => exception
+              KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
+              KnapsackPro.logger.error(exception.backtrace.join("\n"))
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
+              KnapsackPro::Hooks::Queue.call_after_subset_queue
+              KnapsackPro::Hooks::Queue.call_after_queue
+              raise
+            end
+
+            log_rspec_command(cli_args, runner.all_test_file_paths, :end_of_queue)
+
+            Kernel.exit(exit_code)
+          end
+
+          def log_rspec_command(cli_args, test_file_paths, type)
+            case type
+            when :subset_queue
+              KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+            when :end_of_queue
+              KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
+            end
+
+            stringified_cli_args = cli_args.join(' ').sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+
+            KnapsackPro.logger.info(
+              "bundle exec rspec #{stringified_cli_args} " +
+              KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+            )
+          end
+
+          def args_with_seed_option_added_when_viable(args, rspec_runner)
+            order_option = adapter_class.order_option(args)
+
+            if order_option
+              # Don't add the seed option for order other than random, e.g. `defined`
+              return args unless order_option.include?('rand')
+              # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
+              return args if order_option.to_s.split(':')[1]
+            end
+
+            # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
+            return args unless rspec_runner.configuration.seed_used?
+
+            @@used_seed = rspec_runner.configuration.seed.to_s
+
+            args + ['--seed', @@used_seed]
+          end
+
+          private
+
+          def adapter_class
+            KnapsackPro::Adapters::RSpecAdapter
+          end
+
+          def ensure_spec_opts_have_rspec_queue_summary_formatter
+            spec_opts = ENV['SPEC_OPTS']
+
+            return unless spec_opts
+            return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+
+            ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
+          end
         end
       end
     end
