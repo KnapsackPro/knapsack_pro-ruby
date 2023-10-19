@@ -153,6 +153,8 @@ module KnapsackPro
 
             log_rspec_command(runner.all_test_file_paths, :end_of_queue)
 
+            KnapsackPro::Report.save_node_queue_to_api
+
             Kernel.exit(exit_code)
           end
 
