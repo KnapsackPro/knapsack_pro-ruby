@@ -58,6 +58,8 @@ module KnapsackPro
 
         # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
         def _run_specs
+          ordering_strategy = configuration.ordering_registry.fetch(:global)
+
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(0) do |reporter|
               knapsack_pro_batches do |files|
@@ -70,7 +72,7 @@ module KnapsackPro
                 if examples_count == 0 && configuration.fail_if_no_examples
                   break configuration.failure_exit_code
                 else
-                  batch_result = exit_code(world.example_groups.map { |g| g.run(reporter) }.all?)
+                  batch_result = exit_code(ordering_strategy.order(world.example_groups).map { |g| g.run(reporter) }.all?)
 
                   break batch_result if batch_result != 0
                 end
