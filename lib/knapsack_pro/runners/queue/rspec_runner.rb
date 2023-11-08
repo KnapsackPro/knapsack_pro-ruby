@@ -8,6 +8,8 @@ module KnapsackPro
 
         def self.run(args)
           require 'rspec/core'
+          require_relative '../../formatters/time_tracker'
+          require_relative '../../formatters/fetch_time_tracker'
           require_relative '../../formatters/rspec_queue_summary_formatter'
           require_relative '../../formatters/rspec_queue_profile_formatter_extension'
 
@@ -27,6 +29,7 @@ module KnapsackPro
           cli_args += [
             # shows summary of all tests executed in Queue Mode at the very end
             '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
+            '--format', KnapsackPro::Formatters::TimeTracker.to_s,
             '--default-path', runner.test_dir,
           ]
 
@@ -72,7 +75,24 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_after_queue
 
-            KnapsackPro::Report.save_node_queue_to_api
+            time_tracker = KnapsackPro::Formatters::FetchTimeTracker.call
+            if ENV["NEW_TIME_TRACKER"]
+              KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(all_test_file_paths) || [])
+            else
+              KnapsackPro::Report.save_node_queue_to_api
+            end
+
+            if ENV["VERBOSE"]
+              puts "-"*80
+              puts "OLD"
+              puts KnapsackPro::Report.get_test_files.sort_by { _1["path"] }
+              puts "-"*80
+              puts "NEW"
+              puts time_tracker.queue(all_test_file_paths).sort_by { _1["path"] } if time_tracker
+              puts "-"*80
+              puts "COMPARE"
+              compare(KnapsackPro::Report.get_test_files, time_tracker&.queue(all_test_file_paths) || [])
+            end
 
             return {
               status: :completed,
@@ -82,15 +102,17 @@ module KnapsackPro
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
-            KnapsackPro.tracker.reset!
-            KnapsackPro.tracker.set_prerun_tests(test_file_paths)
+            unless ENV["NEW_TIME_TRACKER"]
+              KnapsackPro.tracker.reset!
+              KnapsackPro.tracker.set_prerun_tests(test_file_paths)
+            end
 
             KnapsackPro::Hooks::Queue.call_before_subset_queue
 
             all_test_file_paths += test_file_paths
             cli_args = args + test_file_paths
 
-            ensure_spec_opts_have_rspec_queue_summary_formatter
+            ensure_spec_opts_have_knapsack_pro_formatters
             options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
             rspec_runner = ::RSpec::Core::Runner.new(options)
 
@@ -99,7 +121,7 @@ module KnapsackPro
               exitstatus = exit_code if exit_code != 0
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(all_test_file_paths)
               KnapsackPro::Hooks::Queue.call_after_subset_queue
               KnapsackPro::Hooks::Queue.call_after_queue
               Kernel.exit(1)
@@ -121,7 +143,9 @@ module KnapsackPro
 
               KnapsackPro::Hooks::Queue.call_after_subset_queue
 
-              KnapsackPro::Report.save_subset_queue_to_file
+              unless ENV["NEW_TIME_TRACKER"]
+                KnapsackPro::Report.save_subset_queue_to_file
+              end
 
               return {
                 status: :next,
@@ -135,13 +159,23 @@ module KnapsackPro
           end
         end
 
-        def self.ensure_spec_opts_have_rspec_queue_summary_formatter
-          spec_opts = ENV['SPEC_OPTS']
+        def self.ensure_spec_opts_have_knapsack_pro_formatters
+          return unless ENV['SPEC_OPTS']
 
-          return unless spec_opts
-          return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+          if [
+              ENV['SPEC_OPTS'].include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s),
+              ENV['SPEC_OPTS'].include?(KnapsackPro::Formatters::TimeTracker.to_s),
+          ].all?
+            return
+          end
 
-          ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
+          unless ENV['SPEC_OPTS'].include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+            ENV['SPEC_OPTS'] = "#{ENV['SPEC_OPTS']} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}"
+          end
+
+          unless ENV['SPEC_OPTS'].include?(KnapsackPro::Formatters::TimeTracker.to_s)
+            ENV['SPEC_OPTS'] = "#{ENV['SPEC_OPTS']} --format #{KnapsackPro::Formatters::TimeTracker}"
+          end
         end
 
         private
@@ -158,7 +192,9 @@ module KnapsackPro
             KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
           end
 
-          stringified_cli_args = cli_args.join(' ').sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+          stringified_cli_args = cli_args.join(' ')
+            .sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+            .sub(" --format #{KnapsackPro::Formatters::TimeTracker}", '')
 
           KnapsackPro.logger.info(
             "bundle exec rspec #{stringified_cli_args} " +
@@ -210,6 +246,57 @@ module KnapsackPro
           @@used_seed = rspec_runner.configuration.seed.to_s
 
           args + ['--seed', @@used_seed]
+        end
+
+        def self.compare(olds, news)
+          old = {}
+          new = {}
+
+          olds.each do |line|
+            key = line.fetch("path")
+            line["time_execution"] = line["time_execution"].round(3)
+            old[key] = line
+          end
+
+          news.each do |line|
+            key = line.fetch("path")
+            line["time_execution"] = line["time_execution"].round(3)
+            new[key] = line
+          end
+
+          old_keys = old.keys
+          new_keys = new.keys
+          common_keys = (old_keys & new_keys).sort
+
+          table =
+            "| #{'Path'.ljust(50, ' ')} | #{'OldTim'.ljust(6, ' ')} | #{'NewTim'.ljust(6, ' ')} | #{'Diff'.ljust(6, ' ')} | F |\n" +
+            "| #{'-'*50} | #{'-'*6} | #{'-'*6} | #{'-'*6} | - |\n" +
+            common_keys.map do |key|
+              k = "%-50s" % [key[0..49]]
+              old_time = old[key]["time_execution"]
+              new_time = new[key]["time_execution"]
+              "| #{k} | #{"%+.3f" % old_time} | #{"%+.3f" % new_time} | #{"%+.3f" % (old_time - new_time).round(3)} | #{(old_time - new_time).abs > 0.01 ? '⚠️' : ' '} |"
+            end.join("\n") +
+            "\n" +
+            (old_keys - new_keys).map do |key|
+              k = "%-50s" % [key[0..49]]
+              old_time = old[key]["time_execution"]
+              "| #{k} | #{"%+.3f" % old_time} | | |"
+            end.join("\n") +
+            "\n" +
+            (new_keys - old_keys).map do |key|
+              k = "%-50s" % [key[0..49]]
+              new_time = new[key]["time_execution"]
+              "| #{k} | | #{"%+.3f" % new_time} | |"
+            end.join("\n")
+
+          puts table
+
+          return unless ENV["YELLOW"]
+
+          File.open(ENV["YELLOW"], 'w+') do |f|
+            f.write(table)
+          end
         end
       end
     end

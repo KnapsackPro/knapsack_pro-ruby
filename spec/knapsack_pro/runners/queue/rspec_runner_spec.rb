@@ -6,6 +6,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
     require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_summary_formatter'
     require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_profile_formatter_extension'
+    require KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker'
   end
 
   describe '.run' do
@@ -45,7 +46,13 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             status: :next,
             runner: runner,
             can_initialize_queue: true,
-            args: ['--example-arg', 'example-value', '--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            args: [
+              '--example-arg', 'example-value',
+              '--format', 'progress',
+              '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
+              '--format', 'KnapsackPro::Formatters::TimeTracker',
+              '--default-path', 'fake-test-dir',
+            ],
             exitstatus: 0,
             all_test_file_paths: [],
           }
@@ -71,7 +78,12 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             status: :next,
             runner: runner,
             can_initialize_queue: true,
-            args: ['--format', 'documentation', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            args: [
+              '--format', 'documentation',
+              '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
+              '--format', 'KnapsackPro::Formatters::TimeTracker',
+              '--default-path', 'fake-test-dir',
+            ],
             exitstatus: 0,
             all_test_file_paths: [],
           }
@@ -97,7 +109,12 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             status: :next,
             runner: runner,
             can_initialize_queue: true,
-            args: ['-f', 'd', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            args: [
+              '-f', 'd',
+              '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
+              '--format', 'KnapsackPro::Formatters::TimeTracker',
+              '--default-path', 'fake-test-dir',
+            ],
             exitstatus: 0,
             all_test_file_paths: [],
           }
@@ -123,7 +140,12 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             status: :next,
             runner: runner,
             can_initialize_queue: true,
-            args: ['-fMyCustomFormatter', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+            args: [
+              '-fMyCustomFormatter',
+              '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
+              '--format', 'KnapsackPro::Formatters::TimeTracker',
+              '--default-path', 'fake-test-dir',
+            ],
             exitstatus: 0,
             all_test_file_paths: [],
           }
@@ -165,7 +187,12 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           status: :next,
           runner: runner,
           can_initialize_queue: true,
-          args: ['--format', 'progress', '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter', '--default-path', 'fake-test-dir'],
+          args: [
+            '--format', 'progress',
+            '--format', 'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
+            '--format', 'KnapsackPro::Formatters::TimeTracker',
+            '--default-path', 'fake-test-dir',
+          ],
           exitstatus: 0,
           all_test_file_paths: [],
         }
@@ -224,7 +251,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(tracker).to receive(:reset!)
           expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
-          expect(described_class).to receive(:ensure_spec_opts_have_rspec_queue_summary_formatter)
+          expect(described_class).to receive(:ensure_spec_opts_have_knapsack_pro_formatters)
           options = double
           expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
             '--no-color',
@@ -349,7 +376,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(tracker).to receive(:reset!)
           expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
-          expect(described_class).to receive(:ensure_spec_opts_have_rspec_queue_summary_formatter)
+          expect(described_class).to receive(:ensure_spec_opts_have_knapsack_pro_formatters)
           options = double
           expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
             '--no-color',
@@ -460,29 +487,40 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     end
   end
 
-  describe '.ensure_spec_opts_have_rspec_queue_summary_formatter' do
-    subject { described_class.ensure_spec_opts_have_rspec_queue_summary_formatter }
+  describe '.ensure_spec_opts_have_knapsack_pro_formatters' do
+    subject { described_class.ensure_spec_opts_have_knapsack_pro_formatters }
 
     context 'when `SPEC_OPTS` is set' do
-      context 'when `SPEC_OPTS` has RSpec Queue Summary Formatter' do
+      context 'when `SPEC_OPTS` has RSpecQueueSummaryFormatter' do
         before do
           stub_const('ENV', { 'SPEC_OPTS' => '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter' })
         end
 
-        it 'does nothing' do
+        it 'adds TimeTracker' do
           subject
-          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter'
+          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter --format KnapsackPro::Formatters::TimeTracker'
         end
       end
 
-      context 'when `SPEC_OPTS` has no RSpec Queue Summary Formatter' do
+      context 'when `SPEC_OPTS` has TimeTracker' do
+        before do
+          stub_const('ENV', { 'SPEC_OPTS' => '--format json --format KnapsackPro::Formatters::TimeTracker' })
+        end
+
+        it 'adds RSpecQueueSummaryFormatter' do
+          subject
+          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::TimeTracker --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter'
+        end
+      end
+
+      context 'when `SPEC_OPTS` has no Knapsack Pro formatters' do
         before do
           stub_const('ENV', { 'SPEC_OPTS' => '--format json' })
         end
 
-        it 'adds RSpec Queue Summary Formatter to `SPEC_OPTS`' do
+        it 'adds RSpecQueueSummaryFormatter and TimeTracker to `SPEC_OPTS`' do
           subject
-          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter'
+          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter --format KnapsackPro::Formatters::TimeTracker'
         end
       end
     end

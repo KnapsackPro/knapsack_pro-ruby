@@ -237,59 +237,70 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.test_path' do
-    let(:example_group) do
-      {
-        file_path: '1_shared_example.rb',
-        parent_example_group: {
-          file_path: '2_shared_example.rb',
-          parent_example_group: {
-            file_path: 'a_spec.rb'
-          }
-        }
-      }
-    end
-    let(:current_example) do
-      OpenStruct.new(metadata: {
-        example_group: example_group
-      })
-    end
+  describe '.file_path_for' do
+    let(:current_example) { ::RSpec.describe.example }
 
-    subject { described_class.test_path(current_example) }
+    subject { described_class.file_path_for(current_example) }
 
-    it { should eql 'a_spec.rb' }
+    context "when id ends in _spec.rb" do
+      it "returns the first part of the id" do
+        allow(current_example).to receive(:id).and_return("./foo_spec.rb[1:1]")
 
-    context 'with turnip features' do
-      describe 'when the turnip version is less than 2' do
-        let(:example_group) do
-          {
-            file_path: "./spec/features/logging_in.feature",
-            turnip: true,
-            parent_example_group: {
-              file_path: "gems/turnip-1.2.4/lib/turnip/rspec.rb"
-            }
-          }
-        end
-
-        before { stub_const("Turnip::VERSION", '1.2.4') }
-
-        it { should eql './spec/features/logging_in.feature' }
+        expect(subject).to eq('./foo_spec.rb')
       end
+    end
 
-      describe 'when turnip is version 2 or greater' do
-        let(:example_group) do
-          {
-            file_path: "gems/turnip-2.0.0/lib/turnip/rspec.rb",
-            turnip: true,
+    context "when id does not end in _spec.rb" do
+      it "returns the file_path" do
+        allow(current_example).to receive(:id).and_return("./foo.rb")
+        allow(current_example).to receive(:metadata).and_return(file_path: "./foo_spec.rb")
+
+        expect(subject).to eq('./foo_spec.rb')
+      end
+    end
+
+    context "when id and file_path do not end in _spec.rb" do
+      it "returns the example_group's file_path" do
+        allow(current_example).to receive(:id).and_return("./foo.rb")
+        allow(current_example).to receive(:metadata).and_return(
+          file_path: "./foo.rb", example_group: { file_path: "./foo_spec.rb" }
+        )
+
+        expect(subject).to eq('./foo_spec.rb')
+      end
+    end
+
+    context "when id, file_path, and example_group's file_path do not end in _spec.rb" do
+      it "returns the top_level_group's file_path" do
+        allow(current_example).to receive(:id).and_return("./foo.rb")
+        allow(current_example).to receive(:metadata).and_return(
+          file_path: "./foo.rb",
+          example_group: {
+            file_path: "./foo.rb",
             parent_example_group: {
-              file_path: "./spec/features/logging_in.feature",
+              file_path: "./foo_spec.rb",
             }
           }
-        end
+        )
 
-        before { stub_const("Turnip::VERSION",  '2.0.0') }
+        expect(subject).to eq('./foo_spec.rb')
+      end
+    end
 
-        it { should eql './spec/features/logging_in.feature' }
+    context "when id, file_path, example_group's, and top_level_group's file_path do not end in _spec.rb" do
+      it "returns empty string" do
+        allow(current_example).to receive(:id).and_return("./foo.rb")
+        allow(current_example).to receive(:metadata).and_return(
+          file_path: "./foo.rb",
+          example_group: {
+            file_path: "./foo.rb",
+            parent_example_group: {
+              file_path: "./foo.rb",
+            }
+          }
+        )
+
+        expect(subject).to eq('')
       end
     end
   end
@@ -321,7 +332,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
           expect(tracker).to receive(:stop_timer).ordered
 
-          expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
+          expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
 
           expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
@@ -329,7 +340,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
           expect {
             subject.bind_time_tracker
-          }.to raise_error /We detected a test file path spec\/a_spec\.rb with a test using the metadata `:focus` tag/
+          }.to raise_error /Knapsack Pro found an example tagged with :focus in spec\/a_spec\.rb/i
         end
       end
 
@@ -352,7 +363,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
           expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
           expect(tracker).to receive(:stop_timer).ordered
 
-          expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
+          expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
 
           expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
@@ -396,7 +407,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
             expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
             expect(tracker).to receive(:stop_timer).ordered
 
-            expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
+            expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
 
             expect(tracker).to receive(:current_test_path=).with(test_example_path).ordered
 
@@ -428,7 +439,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
             expect(config).to receive(:after).with(:suite).and_yield
             expect(::RSpec).to receive(:configure).and_yield(config)
 
-            expect(described_class).to receive(:test_path).with(current_example).and_return(test_path)
+            expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
 
             expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
             expect(tracker).to receive(:stop_timer).ordered

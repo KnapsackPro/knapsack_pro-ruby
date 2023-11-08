@@ -19,7 +19,9 @@ module KnapsackPro
           cli_args = (args || '').split
           adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
-          KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
+          unless ENV["NEW_TIME_TRACKER"]
+            KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
+          end
 
           require 'rspec/core/rake_task'
 
@@ -33,11 +35,29 @@ module KnapsackPro
             # because pattern does not accept test example path like spec/a_spec.rb[1:2]
             # instead we pass test files and test example paths to t.rspec_opts
             t.pattern = []
-            t.rspec_opts = "#{args} --default-path #{runner.test_dir} #{runner.stringify_test_file_paths}"
+            t.rspec_opts = "#{args} #{self.formatters} --default-path #{runner.test_dir} #{runner.stringify_test_file_paths}"
             t.verbose = KnapsackPro::Config::Env.log_level < ::Logger::WARN
           end
           Rake::Task[task_name].invoke
         end
+      end
+
+      # Use RSpec::Core::ConfigurationOptions to respect external configurations like .rspec
+      def self.formatters
+        require_relative '../formatters/time_tracker'
+
+        formatters = ::RSpec::Core::ConfigurationOptions
+          .new([])
+          .options
+          .fetch(:formatters, [])
+          .map do |formatter, output|
+            arg = "--format #{formatter}"
+            arg += " --out #{output}" if output
+            arg
+          end
+        formatters = ['--format progress'] if formatters.empty?
+        formatters += ["--format #{KnapsackPro::Formatters::TimeTracker}"]
+        formatters.join(' ')
       end
     end
   end
