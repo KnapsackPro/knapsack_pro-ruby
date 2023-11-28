@@ -1,3 +1,5 @@
+require_relative '../../../lib/knapsack_pro/formatters/time_tracker'
+
 describe KnapsackPro::Adapters::RSpecAdapter do
   it 'backwards compatibility with knapsack gem old rspec adapter name' do
     expect(KnapsackPro::Adapters::RspecAdapter.new).to be_kind_of(described_class)
@@ -8,7 +10,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
   end
 
   context do
-    before { expect(::RSpec).to receive(:configure) }
+    before { expect(::RSpec).to receive(:configure).at_least(:once) }
     it_behaves_like 'adapter'
   end
 
@@ -309,32 +311,17 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     let(:config) { double }
 
     describe '#bind_time_tracker' do
-      let(:tracker) { instance_double(KnapsackPro::Tracker) }
-      let(:logger) { instance_double(Logger) }
-      let(:global_time) { 'Global time: 01m 05s' }
-      let(:test_path) { 'spec/a_spec.rb' }
       let(:current_example) { double(metadata: {}) }
 
       context "when the example's metadata has :focus tag AND RSpec inclusion rule includes :focus" do
         let(:current_example) { double(metadata: { focus: true }) }
+        let(:test_path) { 'spec/a_spec.rb' }
 
         it do
-          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(false)
-
-          expect(config).to receive(:prepend_before).with(:context).and_yield
-
-          allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-          expect(tracker).to receive(:start_timer).ordered
-
           expect(config).to receive(:around).with(:each).and_yield(current_example)
           expect(::RSpec).to receive(:configure).and_yield(config)
 
-          expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
-          expect(tracker).to receive(:stop_timer).ordered
-
           expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
-
-          expect(tracker).to receive(:current_test_path=).with(test_path).ordered
 
           expect(described_class).to receive_message_chain(:rspec_configuration, :filter, :rules, :[]).with(:focus).and_return(true)
 
@@ -344,118 +331,28 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         end
       end
 
-      context 'when rspec split by test examples is disabled' do
-        before do
-          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(false)
-        end
+      context 'with no focus' do
+        let(:logger) { instance_double(Logger) }
+        let(:duration) { 65 }
+        let(:global_time) { 'Global time execution for tests: 01m 05s' }
+        let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
 
         it 'records time for current test path' do
-          expect(config).to receive(:prepend_before).with(:context).and_yield
-
-          allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-          expect(tracker).to receive(:start_timer).ordered
+          expect(current_example).to receive(:id).and_return("./foo_spec.rb")
 
           expect(config).to receive(:around).with(:each).and_yield(current_example)
-          expect(config).to receive(:append_after).with(:context).and_yield
           expect(config).to receive(:after).with(:suite).and_yield
-          expect(::RSpec).to receive(:configure).and_yield(config)
-
-          expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
-          expect(tracker).to receive(:stop_timer).ordered
-
-          expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
-
-          expect(tracker).to receive(:current_test_path=).with(test_path).ordered
+          expect(::RSpec).to receive(:configure).twice.and_yield(config)
 
           expect(current_example).to receive(:run)
 
-          expect(tracker).to receive(:stop_timer).ordered
+          expect(time_tracker).to receive(:subset_duration).and_return(duration)
+          expect(KnapsackPro::Formatters::FetchTimeTracker).to receive(:call).and_return(time_tracker)
 
-          expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
           expect(logger).to receive(:debug).with(global_time)
 
           subject.bind_time_tracker
-        end
-      end
-
-      context 'when rspec split by test examples is enabled' do
-        let(:test_example_path) { 'spec/a_spec.rb[1:1]' }
-
-        before do
-          expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(true)
-        end
-
-        context 'when current test_path is a slow test file' do
-          before do
-            expect(described_class).to receive(:slow_test_file?).with(described_class, test_path).and_return(true)
-          end
-
-          it 'records time for example.id' do
-            expect(current_example).to receive(:id).and_return(test_example_path)
-
-            expect(config).to receive(:prepend_before).with(:context).and_yield
-
-            allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-            expect(tracker).to receive(:start_timer).ordered
-
-            expect(config).to receive(:around).with(:each).and_yield(current_example)
-            expect(config).to receive(:append_after).with(:context).and_yield
-            expect(config).to receive(:after).with(:suite).and_yield
-            expect(::RSpec).to receive(:configure).and_yield(config)
-
-            expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
-            expect(tracker).to receive(:stop_timer).ordered
-
-            expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
-
-            expect(tracker).to receive(:current_test_path=).with(test_example_path).ordered
-
-            expect(current_example).to receive(:run)
-
-            expect(tracker).to receive(:stop_timer).ordered
-
-            expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
-            expect(KnapsackPro).to receive(:logger).and_return(logger)
-            expect(logger).to receive(:debug).with(global_time)
-
-            subject.bind_time_tracker
-          end
-        end
-
-        context 'when current test_path is not a slow test file' do
-          before do
-            expect(described_class).to receive(:slow_test_file?).with(described_class, test_path).and_return(false)
-          end
-
-          it 'records time for current test path' do
-            expect(config).to receive(:prepend_before).with(:context).and_yield
-
-            allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-            expect(tracker).to receive(:start_timer).ordered
-
-            expect(config).to receive(:around).with(:each).and_yield(current_example)
-            expect(config).to receive(:append_after).with(:context).and_yield
-            expect(config).to receive(:after).with(:suite).and_yield
-            expect(::RSpec).to receive(:configure).and_yield(config)
-
-            expect(described_class).to receive(:file_path_for).with(current_example).and_return(test_path)
-
-            expect(tracker).to receive(:current_test_path).ordered.and_return(test_path)
-            expect(tracker).to receive(:stop_timer).ordered
-
-            expect(tracker).to receive(:current_test_path=).with(test_path).ordered
-
-            expect(current_example).to receive(:run)
-
-            expect(tracker).to receive(:stop_timer).ordered
-
-            expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
-            expect(KnapsackPro).to receive(:logger).and_return(logger)
-            expect(logger).to receive(:debug).with(global_time)
-
-            subject.bind_time_tracker
-          end
         end
       end
     end
@@ -465,7 +362,11 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(config).to receive(:after).with(:suite).and_yield
         expect(::RSpec).to receive(:configure).and_yield(config)
 
-        expect(KnapsackPro::Report).to receive(:save)
+        time_tracker = instance_double(KnapsackPro::Formatters::TimeTracker)
+        times = [{ path: "foo_spec.rb", time_execution: 1.0 }]
+        expect(time_tracker).to receive(:subset).and_return(times)
+        expect(KnapsackPro::Formatters::FetchTimeTracker).to receive(:call).and_return(time_tracker)
+        expect(KnapsackPro::Report).to receive(:save).with(times)
 
         subject.bind_save_report
       end

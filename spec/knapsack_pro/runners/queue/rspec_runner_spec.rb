@@ -246,11 +246,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
           expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SUBSET_QUEUE_ID', subset_queue_id)
 
-          tracker = instance_double(KnapsackPro::Tracker)
-          expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
-          expect(tracker).to receive(:reset!)
-          expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
-
           expect(described_class).to receive(:ensure_spec_opts_have_knapsack_pro_formatters)
           options = double
           expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
@@ -267,8 +262,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
 
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
-
-          expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
 
           configuration = double
           expect(rspec_core_runner).to receive(:configuration).twice.and_return(configuration)
@@ -371,11 +364,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
           expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SUBSET_QUEUE_ID', subset_queue_id)
 
-          tracker = instance_double(KnapsackPro::Tracker)
-          expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
-          expect(tracker).to receive(:reset!)
-          expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
-
           expect(described_class).to receive(:ensure_spec_opts_have_knapsack_pro_formatters)
           options = double
           expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
@@ -388,16 +376,14 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(RSpec::Core::Runner).to receive(:new).with(options).and_return(rspec_core_runner)
           expect(rspec_core_runner).to receive(:run).with($stderr, $stdout).and_raise SystemExit
           expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
-          allow(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
           allow(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
           allow(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
           allow(KnapsackPro::Formatters::RSpecQueueSummaryFormatter).to receive(:print_exit_summary)
           expect(Kernel).to receive(:exit).with(1)
         end
 
-        it 'does not call #save_subset_queue_to_file or #rspec_clear_examples' do
+        it 'does not call #rspec_clear_examples' do
           expect(described_class).not_to receive(:rspec_clear_examples)
-          expect(KnapsackPro::Report).not_to receive(:save_subset_queue_to_file)
           expect { subject }.to raise_error SystemExit
         end
 
@@ -438,7 +424,14 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           expect(KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension).to receive(:print_summary)
 
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+
+          time_tracker = instance_double(KnapsackPro::Formatters::TimeTracker)
+          times = all_test_file_paths.map do |path|
+            [{ path: path, time_execution: 1.0 }]
+          end
+          expect(time_tracker).to receive(:queue).and_return(times)
+          expect(KnapsackPro::Formatters::FetchTimeTracker).to receive(:call).and_return(time_tracker)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(times)
 
           expect(logger).to receive(:info)
             .with('To retry all the tests assigned to this CI node, please run the following command on your machine:')
@@ -475,7 +468,15 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
         it do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
-          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api)
+
+          time_tracker = instance_double(KnapsackPro::Formatters::TimeTracker)
+          times = all_test_file_paths.map do |path|
+            [{ path: path, time_execution: 0.0 }]
+          end
+          expect(time_tracker).to receive(:queue).and_return(times)
+          expect(KnapsackPro::Formatters::FetchTimeTracker).to receive(:call).and_return(time_tracker)
+          expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(times)
+
           expect(KnapsackPro).to_not receive(:logger)
 
           expect(subject).to eq({

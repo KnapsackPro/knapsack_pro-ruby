@@ -76,23 +76,7 @@ module KnapsackPro
             KnapsackPro::Hooks::Queue.call_after_queue
 
             time_tracker = KnapsackPro::Formatters::FetchTimeTracker.call
-            if ENV["NEW_TIME_TRACKER"]
-              KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(all_test_file_paths) || [])
-            else
-              KnapsackPro::Report.save_node_queue_to_api
-            end
-
-            if ENV["VERBOSE"]
-              puts "-"*80
-              puts "OLD"
-              puts KnapsackPro::Report.get_test_files.sort_by { _1["path"] }
-              puts "-"*80
-              puts "NEW"
-              puts time_tracker.queue(all_test_file_paths).sort_by { _1["path"] } if time_tracker
-              puts "-"*80
-              puts "COMPARE"
-              compare(KnapsackPro::Report.get_test_files, time_tracker&.queue(all_test_file_paths) || [])
-            end
+            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(all_test_file_paths) || [])
 
             return {
               status: :completed,
@@ -101,11 +85,6 @@ module KnapsackPro
           else
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
-
-            unless ENV["NEW_TIME_TRACKER"]
-              KnapsackPro.tracker.reset!
-              KnapsackPro.tracker.set_prerun_tests(test_file_paths)
-            end
 
             KnapsackPro::Hooks::Queue.call_before_subset_queue
 
@@ -142,10 +121,6 @@ module KnapsackPro
               rspec_clear_examples
 
               KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-              unless ENV["NEW_TIME_TRACKER"]
-                KnapsackPro::Report.save_subset_queue_to_file
-              end
 
               return {
                 status: :next,
@@ -246,57 +221,6 @@ module KnapsackPro
           @@used_seed = rspec_runner.configuration.seed.to_s
 
           args + ['--seed', @@used_seed]
-        end
-
-        def self.compare(olds, news)
-          old = {}
-          new = {}
-
-          olds.each do |line|
-            key = line.fetch("path")
-            line["time_execution"] = line["time_execution"].round(3)
-            old[key] = line
-          end
-
-          news.each do |line|
-            key = line.fetch("path")
-            line["time_execution"] = line["time_execution"].round(3)
-            new[key] = line
-          end
-
-          old_keys = old.keys
-          new_keys = new.keys
-          common_keys = (old_keys & new_keys).sort
-
-          table =
-            "| #{'Path'.ljust(50, ' ')} | #{'OldTim'.ljust(6, ' ')} | #{'NewTim'.ljust(6, ' ')} | #{'Diff'.ljust(6, ' ')} | F |\n" +
-            "| #{'-'*50} | #{'-'*6} | #{'-'*6} | #{'-'*6} | - |\n" +
-            common_keys.map do |key|
-              k = "%-50s" % [key[0..49]]
-              old_time = old[key]["time_execution"]
-              new_time = new[key]["time_execution"]
-              "| #{k} | #{"%+.3f" % old_time} | #{"%+.3f" % new_time} | #{"%+.3f" % (old_time - new_time).round(3)} | #{(old_time - new_time).abs > 0.01 ? '⚠️' : ' '} |"
-            end.join("\n") +
-            "\n" +
-            (old_keys - new_keys).map do |key|
-              k = "%-50s" % [key[0..49]]
-              old_time = old[key]["time_execution"]
-              "| #{k} | #{"%+.3f" % old_time} | | |"
-            end.join("\n") +
-            "\n" +
-            (new_keys - old_keys).map do |key|
-              k = "%-50s" % [key[0..49]]
-              new_time = new[key]["time_execution"]
-              "| #{k} | | #{"%+.3f" % new_time} | |"
-            end.join("\n")
-
-          puts table
-
-          return unless ENV["YELLOW"]
-
-          File.open(ENV["YELLOW"], 'w+') do |f|
-            f.write(table)
-          end
         end
       end
     end

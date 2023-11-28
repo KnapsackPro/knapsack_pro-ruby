@@ -19,10 +19,6 @@ module KnapsackPro
           cli_args = (args || '').split
           adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
-          unless ENV["NEW_TIME_TRACKER"]
-            KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
-          end
-
           require 'rspec/core/rake_task'
 
           task_name = 'knapsack_pro:rspec_run'
