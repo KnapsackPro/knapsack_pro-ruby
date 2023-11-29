@@ -2,13 +2,9 @@
 
 module KnapsackPro
   class Report
-    def self.get_tests
-      KnapsackPro.tracker.to_a
-    end
-
     def self.save(tests = nil)
       if tests.nil?
-        tests = get_tests
+        tests = KnapsackPro.tracker.to_a
       end
 
       if tests.empty?
