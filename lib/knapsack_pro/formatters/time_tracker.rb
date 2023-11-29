@@ -127,7 +127,6 @@ module KnapsackPro
       end
 
       def rspec_split_by_test_example?(file)
-        return false unless KnapsackPro::Config::Env.queue_recording_enabled?
         return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
         return false unless KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(KnapsackPro::Adapters::RSpecAdapter, file)
         true
