@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './fetch_time_tracker'
+require_relative './time_tracker_fetcher'
 
 RSpec::Support.require_rspec_core('formatters/base_formatter')
 RSpec::Support.require_rspec_core('formatters/base_text_formatter')

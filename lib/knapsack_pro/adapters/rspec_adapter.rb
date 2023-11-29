@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../formatters/fetch_time_tracker'
+require_relative '../formatters/time_tracker_fetcher'
 
 module KnapsackPro
   module Adapters

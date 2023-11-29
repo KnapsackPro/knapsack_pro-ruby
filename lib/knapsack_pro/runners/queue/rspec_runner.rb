@@ -9,7 +9,7 @@ module KnapsackPro
         def self.run(args)
           require 'rspec/core'
           require_relative '../../formatters/time_tracker'
-          require_relative '../../formatters/fetch_time_tracker'
+          require_relative '../../formatters/time_tracker_fetcher'
           require_relative '../../formatters/rspec_queue_summary_formatter'
           require_relative '../../formatters/rspec_queue_profile_formatter_extension'
 
