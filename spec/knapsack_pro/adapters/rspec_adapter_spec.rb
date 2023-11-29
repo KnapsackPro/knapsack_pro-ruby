@@ -327,7 +327,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
           expect {
             subject.bind_time_tracker
-          }.to raise_error /Knapsack Pro found an example tagged with :focus in spec\/a_spec\.rb/i
+          }.to raise_error /Knapsack Pro found an example tagged with focus in spec\/a_spec\.rb/i
         end
       end
 
