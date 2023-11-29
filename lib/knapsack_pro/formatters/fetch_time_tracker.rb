@@ -1,6 +1,6 @@
 module KnapsackPro
   module Formatters
-    class FetchTimeTracker
+    class TimeTrackerFetcher
       def self.call
         ::RSpec
           .configuration

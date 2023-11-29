@@ -104,7 +104,7 @@ module KnapsackPro
       def log_subset_duration
         ::RSpec.configure do |config|
           config.after(:suite) do
-            time_tracker = KnapsackPro::Formatters::FetchTimeTracker.call
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             formatted = KnapsackPro::Presenter.global_time(time_tracker.subset_duration)
             KnapsackPro.logger.debug(formatted)
           end
@@ -114,7 +114,7 @@ module KnapsackPro
       def bind_save_report
         ::RSpec.configure do |config|
           config.after(:suite) do
-            time_tracker = KnapsackPro::Formatters::FetchTimeTracker.call
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             KnapsackPro::Report.save(time_tracker.subset)
           end
         end

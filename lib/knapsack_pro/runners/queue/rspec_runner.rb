@@ -75,7 +75,7 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_after_queue
 
-            time_tracker = KnapsackPro::Formatters::FetchTimeTracker.call
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(all_test_file_paths) || [])
 
             return {

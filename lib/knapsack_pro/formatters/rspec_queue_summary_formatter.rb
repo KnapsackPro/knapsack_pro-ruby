@@ -82,7 +82,7 @@ module KnapsackPro
         registered_output.puts('Knapsack Pro Queue exited/aborted!')
         registered_output.puts('')
 
-        time_tracker = KnapsackPro::Formatters::FetchTimeTracker.call
+        time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
         unexecuted_test_files = time_tracker&.unexecuted_test_files(all_test_file_paths) || []
         unless unexecuted_test_files.empty?
           registered_output.puts('Unexecuted tests on this CI node:')
@@ -122,7 +122,7 @@ module KnapsackPro
 
       def dump_summary(summary)
         colorizer = ::RSpec::Core::Formatters::ConsoleCodes
-        duration = KnapsackPro::Formatters::FetchTimeTracker.call.duration
+        duration = KnapsackPro::Formatters::TimeTrackerFetcher.call.duration
         formatted_duration = ::RSpec::Core::Formatters::Helpers.format_duration(duration)
 
         formatted = "\nFinished in #{formatted_duration}\n" \

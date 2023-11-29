@@ -430,7 +430,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             [{ path: path, time_execution: 1.0 }]
           end
           expect(time_tracker).to receive(:queue).and_return(times)
-          expect(KnapsackPro::Formatters::FetchTimeTracker).to receive(:call).and_return(time_tracker)
+          expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(times)
 
           expect(logger).to receive(:info)
@@ -474,7 +474,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             [{ path: path, time_execution: 0.0 }]
           end
           expect(time_tracker).to receive(:queue).and_return(times)
-          expect(KnapsackPro::Formatters::FetchTimeTracker).to receive(:call).and_return(time_tracker)
+          expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
           expect(KnapsackPro::Report).to receive(:save_node_queue_to_api).with(times)
 
           expect(KnapsackPro).to_not receive(:logger)
