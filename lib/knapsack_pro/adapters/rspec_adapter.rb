@@ -93,10 +93,10 @@ module KnapsackPro
       def ensure_no_focus!
         ::RSpec.configure do |config|
           config.around(:each) do |example|
-            file_path = KnapsackPro::Adapters::RSpecAdapter.file_path_for(example)
-            file_path = KnapsackPro::TestFileCleaner.clean(file_path)
-
             if example.metadata[:focus] && KnapsackPro::Adapters::RSpecAdapter.rspec_configuration.filter.rules[:focus]
+              file_path = KnapsackPro::Adapters::RSpecAdapter.file_path_for(example)
+              file_path = KnapsackPro::TestFileCleaner.clean(file_path)
+
               raise "Knapsack Pro found an example tagged with focus in #{file_path}, please remove it. See more: #{KnapsackPro::Urls::RSPEC__SKIPS_TESTS}"
             end
 

@@ -338,8 +338,6 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
 
         it 'records time for current test path' do
-          expect(current_example).to receive(:id).and_return("./foo_spec.rb")
-
           expect(config).to receive(:around).with(:each).and_yield(current_example)
           expect(config).to receive(:after).with(:suite).and_yield
           expect(::RSpec).to receive(:configure).twice.and_yield(config)
