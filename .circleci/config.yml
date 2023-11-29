@@ -41,3 +41,5 @@ jobs:
       - run: rubocop -A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
 
       - run: bundle exec rspec spec
+
+      - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb

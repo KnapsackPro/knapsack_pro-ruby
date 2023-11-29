@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../formatters/time_tracker_fetcher'
+
 module KnapsackPro
   module Adapters
     class RSpecAdapter < BaseAdapter
@@ -54,63 +56,61 @@ module KnapsackPro
         parsed_options(cli_args)&.[](:order)
       end
 
-      def self.test_path(example)
-        example_group = example.metadata[:example_group]
+      def self.file_path_for(example)
+        [
+          -> { parse_file_path(example.id) },
+          -> { example.metadata[:file_path] },
+          -> { example.metadata[:example_group][:file_path] },
+          -> { top_level_group(example)[:file_path] },
+        ]
+          .each do |path|
+            p = path.call
+            return p if p.include?('_spec.rb')
+          end
 
-        if defined?(::Turnip) && Gem::Version.new(::Turnip::VERSION) < Gem::Version.new('2.0.0')
-          unless example_group[:turnip]
-            until example_group[:parent_example_group].nil?
-              example_group = example_group[:parent_example_group]
-            end
-          end
-        else
-          until example_group[:parent_example_group].nil?
-            example_group = example_group[:parent_example_group]
-          end
+        return ''
+      end
+
+      def self.parse_file_path(id)
+        # https://github.com/rspec/rspec-core/blob/1eeadce5aa7137ead054783c31ff35cbfe9d07cc/lib/rspec/core/example.rb#L122
+        id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
+      end
+
+      # private
+      def self.top_level_group(example)
+        group = example.metadata[:example_group]
+        until group[:parent_example_group].nil?
+          group = group[:parent_example_group]
         end
-
-        example_group[:file_path]
+        group
       end
 
       def bind_time_tracker
+        ensure_no_focus!
+        log_batch_duration
+      end
+
+      def ensure_no_focus!
         ::RSpec.configure do |config|
-          config.prepend_before(:context) do
-            KnapsackPro.tracker.start_timer
-          end
-
           config.around(:each) do |example|
-            current_test_path = KnapsackPro::Adapters::RSpecAdapter.test_path(example)
-
-            # Stop timer to update time for a previously run test example.
-            # This way we count time spent in runtime for the previous test example after around(:each) is already done.
-            # Only do that if we're in the same test file. Otherwise, `before(:all)` execution time in the current file
-            # will be applied to the previously ran test file.
-            if KnapsackPro.tracker.current_test_path&.start_with?(KnapsackPro::TestFileCleaner.clean(current_test_path))
-              KnapsackPro.tracker.stop_timer
-            end
-
-            KnapsackPro.tracker.current_test_path =
-              if KnapsackPro::Config::Env.rspec_split_by_test_examples? && KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(RSpecAdapter, current_test_path)
-                example.id
-              else
-                current_test_path
-              end
-
             if example.metadata[:focus] && KnapsackPro::Adapters::RSpecAdapter.rspec_configuration.filter.rules[:focus]
-              raise "We detected a test file path #{current_test_path} with a test using the metadata `:focus` tag. RSpec might not run some tests in the Queue Mode (causing random tests skipping problem). Please remove the `:focus` tag from your codebase. See more: #{KnapsackPro::Urls::RSPEC__SKIPS_TESTS}"
+              file_path = KnapsackPro::Adapters::RSpecAdapter.file_path_for(example)
+              file_path = KnapsackPro::TestFileCleaner.clean(file_path)
+
+              raise "Knapsack Pro found an example tagged with focus in #{file_path}, please remove it. See more: #{KnapsackPro::Urls::RSPEC__SKIPS_TESTS}"
             end
 
             example.run
           end
+        end
+      end
 
-          config.append_after(:context) do
-            # after(:context) hook is run one time only, after all of the examples in a group
-            # stop timer to count time for the very last executed test example
-            KnapsackPro.tracker.stop_timer
-          end
-
+      def log_batch_duration
+        ::RSpec.configure do |config|
           config.after(:suite) do
-            KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            formatted = KnapsackPro::Presenter.global_time(time_tracker.batch_duration)
+            KnapsackPro.logger.debug(formatted)
           end
         end
       end
@@ -118,7 +118,8 @@ module KnapsackPro
       def bind_save_report
         ::RSpec.configure do |config|
           config.after(:suite) do
-            KnapsackPro::Report.save
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            KnapsackPro::Report.save(time_tracker.batch)
           end
         end
       end

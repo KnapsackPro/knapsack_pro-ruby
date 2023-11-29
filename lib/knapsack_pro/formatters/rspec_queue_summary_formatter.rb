@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './time_tracker_fetcher'
+
 RSpec::Support.require_rspec_core('formatters/base_formatter')
 RSpec::Support.require_rspec_core('formatters/base_text_formatter')
 
@@ -76,11 +78,12 @@ module KnapsackPro
         registered_output.puts(most_recent_summary)
       end
 
-      def self.print_exit_summary
+      def self.print_exit_summary(all_test_file_paths)
         registered_output.puts('Knapsack Pro Queue exited/aborted!')
         registered_output.puts('')
 
-        unexecuted_test_files = KnapsackPro.tracker.unexecuted_test_files
+        time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+        unexecuted_test_files = time_tracker&.unexecuted_test_files(all_test_file_paths) || []
         unless unexecuted_test_files.empty?
           registered_output.puts('Unexecuted tests on this CI node:')
           registered_output.puts(unexecuted_test_files)
@@ -119,7 +122,7 @@ module KnapsackPro
 
       def dump_summary(summary)
         colorizer = ::RSpec::Core::Formatters::ConsoleCodes
-        duration = KnapsackPro.tracker.global_time_since_beginning
+        duration = KnapsackPro::Formatters::TimeTrackerFetcher.call.duration
         formatted_duration = ::RSpec::Core::Formatters::Helpers.format_duration(duration)
 
         formatted = "\nFinished in #{formatted_duration}\n" \

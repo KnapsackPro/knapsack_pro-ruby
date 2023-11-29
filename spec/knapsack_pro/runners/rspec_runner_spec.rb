@@ -42,14 +42,11 @@ describe KnapsackPro::Runners::RSpecRunner do
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called).ordered
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!).with(['--profile', '--color']).ordered
 
-        tracker = instance_double(KnapsackPro::Tracker)
-        expect(KnapsackPro).to receive(:tracker).and_return(tracker)
-        expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
-
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:rspec_run').at_least(1).and_return(task)
 
         expect(RSpec::Core::RakeTask).to receive(:new).with('knapsack_pro:rspec_run').and_yield(task_config)
-        expect(task_config).to receive(:rspec_opts=).with('--profile --color --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
+        expect(RSpec::Core::ConfigurationOptions).to receive_message_chain(:new, :options).and_return({})
+        expect(task_config).to receive(:rspec_opts=).with('--profile --color --format progress --format KnapsackPro::Formatters::TimeTracker --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
         expect(task_config).to receive(:pattern=).with([])
       end
 

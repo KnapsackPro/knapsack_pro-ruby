@@ -1,5 +1,15 @@
 # Changelog
 
+### Unreleased (Major)
+
+* __(breaking change)__ Dropped support for Turnip < 2.0.0
+* Use an RSpec Formatter to track tests' execution times more accurately
+* Removed `Time.raw_now`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/229
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.7.0...UNRELEASED
+
 ### 5.7.0
 
 * Performance improvement: don't run `rake knapsack_pro:rspec_test_example_detector` when no slow test files are detected for RSpec.
