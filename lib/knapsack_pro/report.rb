@@ -32,18 +32,13 @@ module KnapsackPro
       end
     end
 
-    def self.get_test_files
-      test_files = []
-      Dir.glob("#{queue_path}/*.json").each do |file|
-        report = JSON.parse(File.read(file))
-        test_files += report
-      end
-      test_files
-    end
-
     def self.save_node_queue_to_api(test_files = nil)
       if test_files.nil?
-        test_files = get_test_files
+        test_files = []
+        Dir.glob("#{queue_path}/*.json").each do |file|
+          report = JSON.parse(File.read(file))
+          test_files += report
+        end
       end
 
       if test_files.empty?
