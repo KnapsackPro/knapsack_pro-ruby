@@ -2,8 +2,8 @@
 
 ### Unreleased (Major)
 
-* Use an RSpec Formatter to track tests' execution times
-* Dropped support for Turnip < 2.0.0
+* __(breaking change)__ Dropped support for Turnip < 2.0.0
+* Use an RSpec Formatter to track tests' execution times more accurately
 * Removed `Time.raw_now`
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/229
