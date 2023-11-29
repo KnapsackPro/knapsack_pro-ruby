@@ -97,7 +97,7 @@ module KnapsackPro
             file_path = KnapsackPro::TestFileCleaner.clean(file_path)
 
             if example.metadata[:focus] && KnapsackPro::Adapters::RSpecAdapter.rspec_configuration.filter.rules[:focus]
-              raise "Knapsack Pro found an example tagged with :focus in #{file_path}, please remove it. See more: #{KnapsackPro::Urls::RSPEC__SKIPS_TESTS}"
+              raise "Knapsack Pro found an example tagged with focus in #{file_path}, please remove it. See more: #{KnapsackPro::Urls::RSPEC__SKIPS_TESTS}"
             end
 
             example.run
