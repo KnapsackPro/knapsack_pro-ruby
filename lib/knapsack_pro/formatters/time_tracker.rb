@@ -10,7 +10,7 @@ module KnapsackPro
         :example_group_finished,
         :stop
 
-      # Called at the beginning of each subset,
+      # Called at the beginning of each batch,
       # but only the first instance of this class is used,
       # so don't rely on the initializer to reset values.
       def initialize(_output)
@@ -18,10 +18,10 @@ module KnapsackPro
         @time_all = nil
         @before_all = 0.0
         @group = {}
-        @subset = {}
+        @batch = {}
         @queue = {}
         @suite_started = now
-        @subset_started = now
+        @batch_started = now
       end
 
       def example_group_started(notification)
@@ -43,16 +43,16 @@ module KnapsackPro
         return unless top_level_group?(notification.group)
 
         add_hooks_time(@group, @before_all, now - @time_all)
-        @subset = merge(@subset, @group)
+        @batch = merge(@batch, @group)
         @before_all = 0.0
         @group = {}
       end
 
-      # Called at the end of each subset
+      # Called at the end of each batch
       def stop(_notification)
-        @queue = merge(@queue, @subset)
-        @subset = {}
-        @subset_started = now
+        @queue = merge(@queue, @batch)
+        @batch = {}
+        @batch_started = now
       end
 
       def queue(scheduled_paths)
@@ -69,8 +69,8 @@ module KnapsackPro
         end
       end
 
-      def subset
-        @subset.values.map do |example|
+      def batch
+        @batch.values.map do |example|
           example.transform_keys(&:to_s)
         end
       end
@@ -79,17 +79,17 @@ module KnapsackPro
         now - @suite_started
       end
 
-      def subset_duration
-        now - @subset_started
+      def batch_duration
+        now - @batch_started
       end
 
       def unexecuted_test_files(scheduled_paths)
-        pending_paths = (@queue.values + @subset.values)
+        pending_paths = (@queue.values + @batch.values)
           .filter { |example| example[:time_execution] == 0.0 }
           .map { |example| example[:path] }
 
         not_run_paths = scheduled_paths -
-          (@queue.values + @subset.values)
+          (@queue.values + @batch.values)
           .map { |example| example[:path] }
 
         pending_paths + not_run_paths

@@ -346,7 +346,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
           expect(current_example).to receive(:run)
 
-          expect(time_tracker).to receive(:subset_duration).and_return(duration)
+          expect(time_tracker).to receive(:batch_duration).and_return(duration)
           expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
 
           expect(KnapsackPro).to receive(:logger).and_return(logger)
@@ -364,7 +364,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
         time_tracker = instance_double(KnapsackPro::Formatters::TimeTracker)
         times = [{ path: "foo_spec.rb", time_execution: 1.0 }]
-        expect(time_tracker).to receive(:subset).and_return(times)
+        expect(time_tracker).to receive(:batch).and_return(times)
         expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
         expect(KnapsackPro::Report).to receive(:save).with(times)
 

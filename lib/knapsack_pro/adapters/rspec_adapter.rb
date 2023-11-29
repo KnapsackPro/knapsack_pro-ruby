@@ -83,7 +83,7 @@ module KnapsackPro
 
       def bind_time_tracker
         ensure_no_focus!
-        log_subset_duration
+        log_batch_duration
       end
 
       def ensure_no_focus!
@@ -101,11 +101,11 @@ module KnapsackPro
         end
       end
 
-      def log_subset_duration
+      def log_batch_duration
         ::RSpec.configure do |config|
           config.after(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            formatted = KnapsackPro::Presenter.global_time(time_tracker.subset_duration)
+            formatted = KnapsackPro::Presenter.global_time(time_tracker.batch_duration)
             KnapsackPro.logger.debug(formatted)
           end
         end
@@ -115,7 +115,7 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.after(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            KnapsackPro::Report.save(time_tracker.subset)
+            KnapsackPro::Report.save(time_tracker.batch)
           end
         end
       end
