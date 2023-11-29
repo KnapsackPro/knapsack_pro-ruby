@@ -6,8 +6,8 @@ module KnapsackPro
       KnapsackPro.tracker.to_a
     end
 
-    def self.save(tests = [])
-      if tests.empty?
+    def self.save(tests = nil)
+      if tests.nil?
         tests = get_tests
       end
 
@@ -45,8 +45,8 @@ module KnapsackPro
       test_files
     end
 
-    def self.save_node_queue_to_api(test_files = [])
-      if test_files.empty?
+    def self.save_node_queue_to_api(test_files = nil)
+      if test_files.nil?
         test_files = get_test_files
       end
 
