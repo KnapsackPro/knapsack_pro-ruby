@@ -58,8 +58,7 @@ module KnapsackPro
 
       def self.file_path_for(example)
         [
-          # https://github.com/rspec/rspec-core/blob/1eeadce5aa7137ead054783c31ff35cbfe9d07cc/lib/rspec/core/example.rb#L122
-          -> { example.id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first },
+          -> { parse_file_path(example.id) },
           -> { example.metadata[:file_path] },
           -> { example.metadata[:example_group][:file_path] },
           -> { top_level_group(example)[:file_path] },
@@ -70,6 +69,11 @@ module KnapsackPro
           end
 
         return ''
+      end
+
+      def self.parse_file_path(id)
+        # https://github.com/rspec/rspec-core/blob/1eeadce5aa7137ead054783c31ff35cbfe9d07cc/lib/rspec/core/example.rb#L122
+        id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
       end
 
       # private

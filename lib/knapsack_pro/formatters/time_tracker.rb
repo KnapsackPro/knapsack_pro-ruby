@@ -57,7 +57,7 @@ module KnapsackPro
 
       def queue(scheduled_paths)
         recorded_paths = @queue.values.map do |example|
-          example[:path].match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
+          KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
         end
 
         missing = (scheduled_paths - recorded_paths).each_with_object({}) do |path, object|
