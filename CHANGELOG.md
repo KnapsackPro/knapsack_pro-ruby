@@ -8,7 +8,7 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/229
 
-https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.7.0...UNRELEASED
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.7.0...v6.0.0
 
 ### 5.7.0
 
