@@ -1,5 +1,13 @@
 # Changelog
 
+### 6.0.1
+
+* fix(RSpec): allow to use Queue Mode for RSpec <= 3.10 when the `rspec_is_quitting` method is not present for RSpec World object
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/231
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.0...v6.0.1
+
 ### 6.0.0
 
 * __(breaking change)__ Dropped support for Turnip < 2.0.0
