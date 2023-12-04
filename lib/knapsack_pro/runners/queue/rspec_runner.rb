@@ -110,7 +110,7 @@ module KnapsackPro
                 KnapsackPro.logger.warn('RSpec wants to quit.')
                 set_terminate_process
               end
-              if rspec_runner.world.rspec_is_quitting
+              if rspec_runner.world.respond_to?(:rspec_is_quitting) && rspec_runner.world.rspec_is_quitting
                 KnapsackPro.logger.warn('RSpec is quitting.')
                 set_terminate_process
               end
