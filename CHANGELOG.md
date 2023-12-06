@@ -1,8 +1,16 @@
 # Changelog
 
+### 6.0.2
+
+* fix(RSpec): allow using `TimeTracker` in RSpec < 3.10.2 when formatters were required to expose `#output`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/232
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.1...v6.0.2
+
 ### 6.0.1
 
-* fix(RSpec): allow to use Queue Mode for RSpec <= 3.10 when the `rspec_is_quitting` method is not present for RSpec World object
+* fix(RSpec): allow using Queue Mode in RSpec <= 3.10 when the `rspec_is_quitting` method is not present for RSpec World object
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/231
 

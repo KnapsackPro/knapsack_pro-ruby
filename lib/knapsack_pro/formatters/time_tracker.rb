@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'stringio'
+
 module KnapsackPro
   module Formatters
     class TimeTracker
@@ -10,10 +12,13 @@ module KnapsackPro
         :example_group_finished,
         :stop
 
+      attr_reader :output # RSpec < v3.10.2
+
       # Called at the beginning of each batch,
       # but only the first instance of this class is used,
       # so don't rely on the initializer to reset values.
       def initialize(_output)
+        @output = StringIO.new
         @time_each = nil
         @time_all = nil
         @before_all = 0.0
