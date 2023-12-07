@@ -1,5 +1,14 @@
 # Changelog
 
+### 6.0.3
+
+* fix(Turnip): make sure `.feature` files are recorded
+* fix(RSpec): stop recording `UNKNOWN_PATH` that would generate an error in case of a CI node retry
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/233
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.2...v6.0.3
+
 ### 6.0.2
 
 * fix(RSpec): allow using `TimeTracker` in RSpec < 3.10.2 when formatters were required to expose `#output`
