@@ -305,6 +305,15 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(subject).to eq('')
       end
     end
+
+    context "when id does not end in .feature (nor _spec.rb)" do
+      it "returns the file_path" do
+        allow(current_example).to receive(:id).and_return("./foo.rb")
+        allow(current_example).to receive(:metadata).and_return(file_path: "./foo.feature")
+
+        expect(subject).to eq("./foo.feature")
+      end
+    end
   end
 
   describe 'bind methods' do

@@ -65,7 +65,7 @@ module KnapsackPro
         ]
           .each do |path|
             p = path.call
-            return p if p.include?('_spec.rb')
+            return p if p.include?('_spec.rb') || p.include?('.feature')
           end
 
         return ''
