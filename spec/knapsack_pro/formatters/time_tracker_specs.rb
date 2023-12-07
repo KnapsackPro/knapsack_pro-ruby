@@ -280,9 +280,9 @@ class TestTimeTracker
     SPEC
 
     run_specs(spec) do |spec_paths, times|
-      raise unless times.size == 2
-      raise unless times[0]["path"] == "UNKNOWN_PATH"
-      raise unless times[1]["path"] == spec_paths.first
+      raise unless times.size == 1
+      raise unless times[0]["path"] == spec_paths.first
+      raise unless times[0]["time_execution"] == 0.0
     end
 
   ensure
@@ -431,7 +431,7 @@ class TestTimeTracker
       .queue(paths)
       .sort_by { |time| time["path"] }
       .filter do |time|
-        paths.any? { |path| time["path"].start_with?(path) || time["path"] == "UNKNOWN_PATH" }
+        paths.any? { |path| time["path"].start_with?(path) }
       end
     yield(paths, times, time_tracker)
 

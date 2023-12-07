@@ -115,8 +115,9 @@ module KnapsackPro
 
       def record_example(accumulator, example, started_at)
         path = path_for(example)
-        time_execution = time_execution_for(example, started_at)
+        return if path.nil?
 
+        time_execution = time_execution_for(example, started_at)
         if accumulator.key?(path)
           accumulator[path][:time_execution] += time_execution
         else
@@ -126,7 +127,8 @@ module KnapsackPro
 
       def path_for(example)
         file = file_path_for(example)
-        return "UNKNOWN_PATH" if file == ""
+        return nil if file == ""
+
         path = rspec_split_by_test_example?(file) ? example.id : file
         KnapsackPro::TestFileCleaner.clean(path)
       end
