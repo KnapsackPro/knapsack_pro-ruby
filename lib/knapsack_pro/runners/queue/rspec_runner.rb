@@ -99,7 +99,7 @@ module KnapsackPro
             KnapsackPro.logger.warn('RSpec wants to quit.')
             self.class.set_terminate_process
           end
-          if world.rspec_is_quitting
+          if world.respond_to?(:rspec_is_quitting) && world.rspec_is_quitting
             KnapsackPro.logger.warn('RSpec is quitting.')
             self.class.set_terminate_process
           end
@@ -141,7 +141,7 @@ module KnapsackPro
               '--default-path', runner.test_dir,
             ]
 
-            ensure_spec_opts_have_rspec_queue_summary_formatter
+            ensure_spec_opts_have_knapsack_pro_formatters
             options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
 
             rspec_runner = ::RSpec::Core::Runner.new(options)
@@ -158,7 +158,8 @@ module KnapsackPro
 
             log_rspec_command(runner.all_test_file_paths, :end_of_queue)
 
-            KnapsackPro::Report.save_node_queue_to_api
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(runner.all_test_file_paths))
 
             Kernel.exit(exit_code)
           end
@@ -171,7 +172,9 @@ module KnapsackPro
               KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
             end
 
-            stringified_cli_args = @printable_args.join(' ').sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+            stringified_cli_args = @printable_args.join(' ')
+              .sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+              .sub(" --format #{KnapsackPro::Formatters::TimeTracker}", '')
 
             KnapsackPro.logger.info(
               "bundle exec rspec #{stringified_cli_args} " +
@@ -203,7 +206,7 @@ module KnapsackPro
             KnapsackPro::Adapters::RSpecAdapter
           end
 
-          def ensure_spec_opts_have_rspec_queue_summary_formatter
+          def ensure_spec_opts_have_knapsack_pro_formatters
             spec_opts = ENV['SPEC_OPTS']
 
             knapsack_pro_formatters = [
