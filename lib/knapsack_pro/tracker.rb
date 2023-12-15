@@ -8,11 +8,10 @@ module KnapsackPro
     # to better allocate it in Queue Mode for future CI build runs
     DEFAULT_TEST_FILE_TIME = 0.0 # seconds
 
-    attr_reader :global_time_since_beginning, :global_time, :test_files_with_time, :prerun_tests_loaded
+    attr_reader :global_time, :test_files_with_time, :prerun_tests_loaded
     attr_writer :current_test_path
 
     def initialize
-      @global_time_since_beginning = 0
       KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(tracker_dir_path)
       set_defaults
@@ -68,12 +67,6 @@ module KnapsackPro
       save_prerun_tests_report(@test_files_with_time)
 
       @prerun_tests_loaded = true
-    end
-
-    def unexecuted_test_files
-      @test_files_with_time.map do |path, hash|
-        path unless hash[:measured_time]
-      end.compact
     end
 
     def to_a
@@ -141,7 +134,6 @@ module KnapsackPro
 
     def update_global_time(execution_time)
       @global_time += execution_time
-      @global_time_since_beginning += execution_time
     end
 
     def update_test_file_time(execution_time)

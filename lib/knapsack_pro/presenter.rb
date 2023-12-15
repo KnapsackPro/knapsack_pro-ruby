@@ -3,8 +3,9 @@
 module KnapsackPro
   class Presenter
     class << self
-      def global_time
-        global_time = pretty_seconds(KnapsackPro.tracker.global_time)
+      def global_time(time = nil)
+        time = KnapsackPro.tracker.global_time if time.nil?
+        global_time = pretty_seconds(time)
         "Global time execution for tests: #{global_time}"
       end
 

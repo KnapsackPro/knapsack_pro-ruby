@@ -1,0 +1,15 @@
+#!/bin/bash
+
+bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
+FORMATTERS_EXIT_CODE=$?
+
+bundle exec rspec spec
+RSPEC_EXIT_CODE=$?
+
+if [ "$FORMATTERS_EXIT_CODE" -ne "0" ]; then
+  exit $FORMATTERS_EXIT_CODE
+fi
+
+if [ "$RSPEC_EXIT_CODE" -ne "0" ]; then
+  exit $RSPEC_EXIT_CODE
+fi

@@ -1,5 +1,40 @@
 # Changelog
 
+### 6.0.3
+
+* fix(Turnip): make sure `.feature` files are recorded
+* fix(RSpec): stop recording `UNKNOWN_PATH` that would generate an error in case of a CI node retry
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/233
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.2...v6.0.3
+
+### 6.0.2
+
+* fix(RSpec): allow using `TimeTracker` in RSpec < 3.10.2 when formatters were required to expose `#output`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/232
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.1...v6.0.2
+
+### 6.0.1
+
+* fix(RSpec): allow using Queue Mode in RSpec <= 3.10 when the `rspec_is_quitting` method is not present for RSpec World object
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/231
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.0...v6.0.1
+
+### 6.0.0
+
+* __(breaking change)__ Dropped support for Turnip < 2.0.0
+* Use an RSpec Formatter to track tests' execution times more accurately
+* Removed `Time.raw_now`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/229
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v5.7.0...v6.0.0
+
 ### 5.7.0
 
 * Performance improvement: don't run `rake knapsack_pro:rspec_test_example_detector` when no slow test files are detected for RSpec.

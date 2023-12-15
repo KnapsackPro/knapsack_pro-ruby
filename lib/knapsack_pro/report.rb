@@ -2,15 +2,17 @@
 
 module KnapsackPro
   class Report
-    def self.save
-      test_files = KnapsackPro.tracker.to_a
+    def self.save(tests = nil)
+      if tests.nil?
+        tests = KnapsackPro.tracker.to_a
+      end
 
-      if test_files.empty?
+      if tests.empty?
         KnapsackPro.logger.warn("No test files were executed on this CI node.")
         KnapsackPro.logger.debug("When you use knapsack_pro Regular Mode, the reason for no tests executing might be a very narrow tests list. Most likely, you run only tests with a specified tag, and there were fewer test files with the tag than parallel CI nodes.")
       end
 
-      create_build_subset(test_files)
+      create_build_subset(tests)
     end
 
     def self.save_subset_queue_to_file
@@ -30,11 +32,13 @@ module KnapsackPro
       end
     end
 
-    def self.save_node_queue_to_api
-      test_files = []
-      Dir.glob("#{queue_path}/*.json").each do |file|
-        report = JSON.parse(File.read(file))
-        test_files += report
+    def self.save_node_queue_to_api(test_files = nil)
+      if test_files.nil?
+        test_files = []
+        Dir.glob("#{queue_path}/*.json").each do |file|
+          report = JSON.parse(File.read(file))
+          test_files += report
+        end
       end
 
       if test_files.empty?

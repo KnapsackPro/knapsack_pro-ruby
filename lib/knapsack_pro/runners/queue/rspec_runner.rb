@@ -114,6 +114,8 @@ module KnapsackPro
         class << self
           def run(args)
             require 'rspec/core'
+            require_relative '../../formatters/time_tracker'
+            require_relative '../../formatters/time_tracker_fetcher'
             require_relative '../../formatters/rspec_queue_summary_formatter'
             require_relative '../../formatters/rspec_queue_profile_formatter_extension'
 
@@ -135,6 +137,7 @@ module KnapsackPro
             cli_args += [
               # shows summary of all tests executed in Queue Mode at the very end
               '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
+              '--format', KnapsackPro::Formatters::TimeTracker.to_s,
               '--default-path', runner.test_dir,
             ]
 
@@ -149,7 +152,7 @@ module KnapsackPro
               exit_code = runner.run(rspec_runner)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(runner.all_test_file_paths)
               raise
             end
 
@@ -203,10 +206,21 @@ module KnapsackPro
           def ensure_spec_opts_have_rspec_queue_summary_formatter
             spec_opts = ENV['SPEC_OPTS']
 
-            return unless spec_opts
-            return if spec_opts.include?(KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s)
+            knapsack_pro_formatters = [
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
+              KnapsackPro::Formatters::TimeTracker.to_s,
+            ]
 
-            ENV['SPEC_OPTS'] = "#{spec_opts} --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s}"
+            return unless spec_opts
+            return if knapsack_pro_formatters.all? { |formatter| spec_opts.include?(formatter) }
+
+            knapsack_pro_formatters.each do |formatter|
+              unless spec_opts.include?(formatter)
+                spec_opts += " --format #{formatter}"
+              end
+            end
+
+            ENV['SPEC_OPTS'] = spec_opts
           end
         end
       end

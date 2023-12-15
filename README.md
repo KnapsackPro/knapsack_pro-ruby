@@ -74,7 +74,7 @@ bundle update knapsack_pro
 RSpec:
 
 ```bash
-bundle exec rspec spec
+bin/test
 ```
 
 Scripted tests can be found in the [Rails App With Knapsack Pro repository](https://github.com/KnapsackPro/rails-app-with-knapsack_pro/blob/master/bin/knapsack_pro_all.rb).
