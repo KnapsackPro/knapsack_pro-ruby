@@ -88,9 +88,6 @@ module KnapsackPro
           subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
-          KnapsackPro.tracker.reset!
-          KnapsackPro.tracker.set_prerun_tests(files)
-
           KnapsackPro::Hooks::Queue.call_before_subset_queue
 
           yield files
@@ -107,8 +104,6 @@ module KnapsackPro
           self.class.log_rspec_command(files, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-          KnapsackPro::Report.save_subset_queue_to_file
         end
 
         class << self
