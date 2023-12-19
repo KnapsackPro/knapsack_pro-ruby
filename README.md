@@ -18,9 +18,6 @@
   <a href="https://rubygems.org/gems/knapsack_pro">
     <img alt="Gem Version" src="https://badge.fury.io/rb/knapsack_pro.svg" />
   </a>
-  <a href="https://codeclimate.com/github/KnapsackPro/knapsack_pro-ruby">
-    <img alt="Code Climate" src="https://codeclimate.com/github/KnapsackPro/knapsack_pro-ruby/badges/gpa.svg" />
-  </a>
 </div>
 
 <br />

@@ -1,45 +1,230 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
-version: 2
-jobs:
-  build:
-    parallelism: 1
-    docker:
-      # specify the version you desire here
-      # https://circleci.com/developer/images/image/cimg/ruby
-      - image: cimg/ruby:3.2.1
-        environment:
-          CODECLIMATE_REPO_TOKEN: b6626e682a8e97e0c5978febc92c3526792a2d018b41b8e1b52689da37fb7d92
+version: 2.1
 
-    working_directory: ~/knapsack_pro-ruby
-
+commands:
+  setup_knapsack_pro_ruby:
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
-          - v2-dependencies-bundler-{{ checksum "knapsack_pro.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-bundler-
-
+          - v1-bundler-ruby-{{ checksum "knapsack_pro.gemspec" }}
+          - v1-bundler-ruby-
       - run:
-          name: install ruby dependencies
           command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-
-      - run: gem install rubocop
-
+            bundle config set --local path './vendor/bundle'
+            bundle install --jobs=4 --retry=3
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v2-dependencies-bundler-{{ checksum "knapsack_pro.gemspec" }}
+          key: v1-bundler-ruby-{{ checksum "knapsack_pro.gemspec" }}
 
-      # enforce `frozen_string_literal: true` in the gem files
-      - run: rubocop -A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
+  setup_rails_app_with_knapsack_pro:
+    parameters:
+      path:
+        type: string
+      ruby:
+        type: string
+      rspec:
+        type: string
+    steps:
+      - run:
+          working_directory: << parameters.path >>
+          command: |
+            git clone --depth 1 --branch $CIRCLE_BRANCH --single-branch git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./ || git clone --depth 1 git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./
+            sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
+      - restore_cache:
+          keys:
+          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>
+          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-
+          - v1-bundler-rails-
+      - run:
+          working_directory: << parameters.path >>
+          command: |
+            bundle config set --local path './vendor/bundle'
+            bundle install --jobs=4 --retry=3
+      - save_cache:
+          paths:
+            - << parameters.path >>/vendor/bundle
+          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>
 
+jobs:
+  unit:
+    parallelism: 1
+    working_directory: ~/knapsack_pro-ruby
+    docker:
+      - image: cimg/ruby:3.2
+    steps:
+      - setup_knapsack_pro_ruby
+      - run: gem install rubocop
+      - run: rubocop --fail-level A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
       - run: bundle exec rspec spec
-
       - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
+
+  integration-regular:
+    parallelism: 4
+    working_directory: ~/knapsack_pro-ruby
+    parameters:
+      ruby:
+        type: string
+      rspec:
+        type: string
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 3fa64859337f6e56409d49f865d13fd7
+          EXTRA_TEST_FILES_DELAY: 10
+      - image: cimg/postgres:16.1
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - setup_knapsack_pro_ruby
+      - setup_rails_app_with_knapsack_pro:
+          path: ~/rails-app-with-knapsack_pro
+          ruby: << parameters.ruby >>
+          rspec: << parameters.rspec >>
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            ruby --version
+            bundle exec rspec --version
+            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
+            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bin/rails db:setup
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
+            bundle exec rake knapsack_pro:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # fallback ||
+            export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
+            export KNAPSACK_PRO_MAX_REQUEST_RETRIES=1
+            bundle exec rake knapsack_pro:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split by test examples ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            bundle exec rake knapsack_pro:rspec
+
+  integration-queue:
+    parameters:
+      ruby:
+        type: string
+      rspec:
+        type: string
+    parallelism: 4
+    working_directory: ~/knapsack_pro-ruby
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 3fa64859337f6e56409d49f865d13fd7
+          EXTRA_TEST_FILES_DELAY: 10
+      - image: cimg/postgres:16.1
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - setup_knapsack_pro_ruby
+      - setup_rails_app_with_knapsack_pro:
+          path: ~/rails-app-with-knapsack_pro
+          ruby: << parameters.ruby >>
+          rspec: << parameters.rspec >>
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            ruby --version
+            bundle exec rspec --version
+            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
+            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bin/rails db:setup
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # run 0 tests as queue is consumed ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # retry the same split ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # fallback ||
+            export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
+            export KNAPSACK_PRO_MAX_REQUEST_RETRIES=1
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split by test examples ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # turnip ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--turnip"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_DIR=turnip
+            export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
+            bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # turnip retry ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--turnip"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_DIR=turnip
+            export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
+            bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
+
+workflows:
+  tests:
+    jobs:
+      - unit
+      - integration-regular:
+          name: integration-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2"]
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+      - integration-queue:
+          name: integration-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2"]
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
