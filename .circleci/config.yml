@@ -76,6 +76,7 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 3fa64859337f6e56409d49f865d13fd7
+          EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:16.1
         environment:
           POSTGRES_DB: rails-app-with-knapsack_pro_test
@@ -116,7 +117,6 @@ jobs:
             # split by test examples ||
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
-            export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="{spec/timecop_spec.rb}"
             bundle exec rake knapsack_pro:rspec
 
   integration-queue:
@@ -136,6 +136,7 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 3fa64859337f6e56409d49f865d13fd7
+          EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:16.1
         environment:
           POSTGRES_DB: rails-app-with-knapsack_pro_test
@@ -191,7 +192,6 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
-            export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="{spec/timecop_spec.rb}"
             bundle exec rake knapsack_pro:queue:rspec
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
