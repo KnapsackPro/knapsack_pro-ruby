@@ -29,7 +29,7 @@ commands:
       - run:
           working_directory: << parameters.path >>
           command: |
-            git clone --depth 1 git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./
+            git clone --depth 1 --branch $CIRCLE_BRANCH --single-branch git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./ || git clone --depth 1 git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./
             sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
       - restore_cache:
           keys:
