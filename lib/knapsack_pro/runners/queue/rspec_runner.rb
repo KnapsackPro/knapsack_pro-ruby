@@ -30,7 +30,11 @@ module KnapsackPro
         end
 
         def load_spec_files(files)
-          world.example_groups.clear
+          world.reset
+          # Reset both manager since `configuration.reset_filters` still copies
+          # inclusion and exclusion from static_config_filter_manager.
+          configuration.filter_manager = RSpec::Core::FilterManager.new
+          configuration.static_config_filter_manager = RSpec::Core::FilterManager.new
 
           configuration.__send__(:get_files_to_run, files).each do |f|
             file = File.expand_path(f)
