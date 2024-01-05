@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased (patch)
+
+* fix(minitest): avoid installing `at_exit` (that would result in an empty run of Minitest after Knapsack Pro is finished in Queue Mode)
+
 ### 6.0.3
 
 * fix(Turnip): make sure `.feature` files are recorded

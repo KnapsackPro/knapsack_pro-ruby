@@ -7,6 +7,10 @@ module KnapsackPro
         def self.run(args)
           require 'minitest'
 
+          # Avoid installing `at_exit` since we are calling `Minitest.run` ourselves.
+          # Without this, Minitest would run again (autorun) after `Minitest.run`.
+          ::Minitest.class_variable_set('@@installed_at_exit', true)
+
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_minitest
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
