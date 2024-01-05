@@ -75,7 +75,8 @@ jobs:
           RAILS_ENV: test
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 3fa64859337f6e56409d49f865d13fd7
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: $KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
@@ -118,6 +119,9 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake knapsack_pro:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bundle exec rake knapsack_pro:minitest[--verbose]
 
   integration-queue:
     parameters:
@@ -135,7 +139,8 @@ jobs:
           RAILS_ENV: test
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 3fa64859337f6e56409d49f865d13fd7
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: $KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
@@ -211,6 +216,20 @@ jobs:
             export KNAPSACK_PRO_TEST_DIR=turnip
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
             bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # minitest ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--minitest"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            bundle exec rake knapsack_pro:queue:minitest[--verbose]
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # minitest retry ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--minitest"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            bundle exec rake knapsack_pro:queue:minitest[--verbose]
 
 workflows:
   tests:
