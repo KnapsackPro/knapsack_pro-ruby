@@ -311,21 +311,21 @@ workflows:
           name: integration-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
-              ruby: ["3.0", "3.1", "3.2"]
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
               rspec: ["3.10.2", "3.11.0", "3.12.2"]
       - integration-queue-rspec:
           name: integration-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
-              ruby: ["3.0", "3.1", "3.2"]
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
               rspec: ["3.10.2", "3.11.0", "3.12.2"]
       - integration-regular-minitest:
           name: integration-regular__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
-              ruby: ["3.0", "3.1", "3.2"]
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
       - integration-queue-minitest:
           name: integration-queue__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
-              ruby: ["3.0", "3.1", "3.2"]
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
