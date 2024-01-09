@@ -25,12 +25,16 @@ commands:
         type: string
       rspec:
         type: string
+        default: ""
     steps:
       - run:
           working_directory: << parameters.path >>
           command: |
             git clone --depth 1 --branch $CIRCLE_BRANCH --single-branch git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./ || git clone --depth 1 git@github.com:KnapsackPro/rails-app-with-knapsack_pro.git ./
-            sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
+            if [[ "<< parameters.rspec >>" != "" ]]; then
+              sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
+              echo "Updated RSpec version in Gemfile"
+            fi
       - restore_cache:
           keys:
           - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>
@@ -59,7 +63,7 @@ jobs:
       - run: bundle exec rspec spec
       - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
 
-  integration-regular:
+  integration-regular-rspec:
     parallelism: 4
     working_directory: ~/knapsack_pro-ruby
     parameters:
@@ -76,7 +80,6 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: $KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
@@ -119,11 +122,8 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake knapsack_pro:rspec
-      - run:
-          working_directory: ~/rails-app-with-knapsack_pro
-          command: bundle exec rake knapsack_pro:minitest[--verbose]
 
-  integration-queue:
+  integration-queue-rspec:
     parameters:
       ruby:
         type: string
@@ -140,7 +140,6 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: $KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
@@ -216,6 +215,77 @@ jobs:
             export KNAPSACK_PRO_TEST_DIR=turnip
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
             bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
+
+  integration-regular-minitest:
+    parallelism: 4
+    working_directory: ~/knapsack_pro-ruby
+    parameters:
+      ruby:
+        type: string
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
+          EXTRA_TEST_FILES_DELAY: 10
+      - image: cimg/postgres:14.7
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - setup_knapsack_pro_ruby
+      - setup_rails_app_with_knapsack_pro:
+          path: ~/rails-app-with-knapsack_pro
+          ruby: << parameters.ruby >>
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: ruby --version
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bin/rails db:setup
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bundle exec rake knapsack_pro:minitest[--verbose]
+
+  integration-queue-minitest:
+    parameters:
+      ruby:
+        type: string
+    parallelism: 4
+    working_directory: ~/knapsack_pro-ruby
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
+          EXTRA_TEST_FILES_DELAY: 10
+      - image: cimg/postgres:14.7
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - setup_knapsack_pro_ruby
+      - setup_rails_app_with_knapsack_pro:
+          path: ~/rails-app-with-knapsack_pro
+          ruby: << parameters.ruby >>
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: ruby --version
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bin/rails db:setup
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
@@ -235,15 +305,25 @@ workflows:
   tests:
     jobs:
       - unit
-      - integration-regular:
+      - integration-regular-rspec:
           name: integration-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.0", "3.1", "3.2"]
               rspec: ["3.10.2", "3.11.0", "3.12.2"]
-      - integration-queue:
+      - integration-queue-rspec:
           name: integration-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.0", "3.1", "3.2"]
               rspec: ["3.10.2", "3.11.0", "3.12.2"]
+      - integration-regular-minitest:
+          name: integration-regular__ruby-<< matrix.ruby >>__minitest
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2"]
+      - integration-queue-minitest:
+          name: integration-queue__ruby-<< matrix.ruby >>__minitest
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2"]
