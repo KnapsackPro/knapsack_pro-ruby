@@ -64,7 +64,7 @@ jobs:
       - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
 
   integration-regular-rspec:
-    parallelism: 4
+    parallelism: 2
     working_directory: ~/knapsack_pro-ruby
     parameters:
       ruby:
@@ -129,7 +129,7 @@ jobs:
         type: string
       rspec:
         type: string
-    parallelism: 4
+    parallelism: 2
     working_directory: ~/knapsack_pro-ruby
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
@@ -217,7 +217,7 @@ jobs:
             bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
 
   integration-regular-minitest:
-    parallelism: 4
+    parallelism: 2
     working_directory: ~/knapsack_pro-ruby
     parameters:
       ruby:
@@ -257,7 +257,7 @@ jobs:
     parameters:
       ruby:
         type: string
-    parallelism: 4
+    parallelism: 2
     working_directory: ~/knapsack_pro-ruby
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
