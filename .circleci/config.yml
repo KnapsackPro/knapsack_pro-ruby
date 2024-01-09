@@ -251,7 +251,9 @@ jobs:
           command: bin/rails db:setup
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
-          command: bundle exec rake knapsack_pro:minitest[--verbose]
+          command: |
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
+            bundle exec rake knapsack_pro:minitest[--verbose]
 
   integration-queue-minitest:
     parameters:
