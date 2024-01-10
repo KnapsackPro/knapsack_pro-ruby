@@ -1,5 +1,13 @@
 # Changelog
 
+### 6.0.4
+
+* fix(minitest): avoid installing `at_exit` (that would result in an empty run of Minitest after Knapsack Pro is finished in Queue Mode)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/236
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.3...v6.0.4
+
 ### 6.0.3
 
 * fix(Turnip): make sure `.feature` files are recorded
