@@ -9,6 +9,7 @@ module KnapsackPro
         extend Forwardable
 
         attr_reader :rspec_runner, :all_test_file_paths
+        attr_accessor :rspec_configuration_options
 
         def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
@@ -31,10 +32,9 @@ module KnapsackPro
 
         def load_spec_files(files)
           world.reset
-          # Reset both manager since `configuration.reset_filters` still copies
-          # inclusion and exclusion from static_config_filter_manager.
-          configuration.filter_manager = RSpec::Core::FilterManager.new
-          configuration.static_config_filter_manager = RSpec::Core::FilterManager.new
+          filter_manager = RSpec::Core::FilterManager.new
+          rspec_configuration_options.configure_filter_manager(filter_manager)
+          configuration.filter_manager = filter_manager
 
           configuration.__send__(:get_files_to_run, files).each do |f|
             file = File.expand_path(f)
@@ -141,9 +141,10 @@ module KnapsackPro
             ]
 
             ensure_spec_opts_have_knapsack_pro_formatters
-            options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
+            rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
+            runner.rspec_configuration_options = rspec_configuration_options
 
-            rspec_runner = ::RSpec::Core::Runner.new(options)
+            rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
 
             @printable_args = args_with_seed_option_added_when_viable(cli_args, rspec_runner)
 
