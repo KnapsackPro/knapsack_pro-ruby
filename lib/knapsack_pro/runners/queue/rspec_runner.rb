@@ -33,6 +33,7 @@ module KnapsackPro
         def load_spec_files(files)
           world.reset
           filter_manager = RSpec::Core::FilterManager.new
+          # TODO refactor private RSpec API
           rspec_configuration_options.configure_filter_manager(filter_manager)
           configuration.filter_manager = filter_manager
 
