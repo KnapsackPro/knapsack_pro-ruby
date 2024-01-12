@@ -159,6 +159,8 @@ module KnapsackPro
 
             KnapsackPro::Adapters::RSpecAdapter.verify_bind_method_called
 
+            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
+
             log_rspec_command(runner.all_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
