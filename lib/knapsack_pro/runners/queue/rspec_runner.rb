@@ -8,12 +8,13 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         extend Forwardable
 
-        attr_reader :rspec_runner, :all_test_file_paths
+        attr_reader :rspec_runner, :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
         def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
         def run(rspec_runner)
+          @node_assigned_test_file_paths = []
           @rspec_runner = rspec_runner
 
           KnapsackPro.logger.debug('Setup RSpec runner.')
@@ -25,10 +26,10 @@ module KnapsackPro
 
           return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
-          @all_test_file_paths = []
-
           _exit_status = run_specs
         end
+
+        private
 
         def load_spec_files(files)
           world.reset
@@ -44,22 +45,29 @@ module KnapsackPro
           end
         end
 
+        def pull_tests_from_queue(is_first_pull: false)
+          test_file_paths = test_file_paths(
+            can_initialize_queue: is_first_pull,
+            executed_test_files: @node_assigned_test_file_paths
+          )
+          @node_assigned_test_file_paths += test_file_paths
+          test_file_paths
+        end
+
         def knapsack_pro_batches
           KnapsackPro.logger.debug('Fetch test batches from Knapsack Pro API')
-          files = allocator.test_file_paths(true, [])
+          test_file_paths = pull_tests_from_queue(is_first_pull: true)
 
-          until files.empty?
-            with_hooks(files) do |wrapped|
+          until test_file_paths.empty?
+            with_hooks(test_file_paths) do |wrapped|
               yield wrapped
             end
 
-            files = allocator.test_file_paths(false, @all_test_file_paths)
+            test_file_paths = pull_tests_from_queue
           end
 
           yield nil
         end
-
-        private
 
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
@@ -154,7 +162,7 @@ module KnapsackPro
               exit_code = queue_runner.run(rspec_runner)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(queue_runner.all_test_file_paths)
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(queue_runner.node_assigned_test_file_paths)
               raise
             end
 
@@ -163,10 +171,10 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-            log_rspec_command(queue_runner.all_test_file_paths, :end_of_queue)
+            log_rspec_command(queue_runner.node_assigned_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(queue_runner.all_test_file_paths))
+            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(queue_runner.node_assigned_test_file_paths))
 
             Kernel.exit(exit_code)
           end
