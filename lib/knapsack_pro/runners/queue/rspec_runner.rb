@@ -17,7 +17,6 @@ module KnapsackPro
           @node_assigned_test_file_paths = []
           @rspec_runner = rspec_runner
 
-          KnapsackPro.logger.debug('Setup RSpec runner.')
           # Abstract from #setup, since we do not need to set any filters or files at this point,
           # and we do not want to let world.announce_filters to be called, since it will print
           # out `No examples found.` message.
@@ -55,7 +54,6 @@ module KnapsackPro
         end
 
         def knapsack_pro_batches
-          KnapsackPro.logger.debug('Fetch test batches from Knapsack Pro API')
           test_file_paths = pull_tests_from_queue(is_first_pull: true)
 
           until test_file_paths.empty?
@@ -98,7 +96,6 @@ module KnapsackPro
         end
 
         def with_hooks(files)
-          KnapsackPro.logger.debug('Wrap tests in before/after subqueue hooks')
           subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
