@@ -57,7 +57,7 @@ module KnapsackPro
           test_file_paths = pull_tests_from_queue(is_first_pull: true)
 
           until test_file_paths.empty?
-            with_hooks(test_file_paths) do |wrapped|
+            with_queue_hooks(test_file_paths) do |wrapped|
               yield wrapped
             end
 
@@ -95,7 +95,7 @@ module KnapsackPro
           end
         end
 
-        def with_hooks(files)
+        def with_queue_hooks(files)
           subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
