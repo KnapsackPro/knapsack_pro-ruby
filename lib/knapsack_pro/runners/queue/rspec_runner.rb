@@ -54,6 +54,7 @@ module KnapsackPro
         end
 
         def knapsack_pro_batches
+          self.class.handle_signal!
           test_file_paths = pull_tests_from_queue(can_initialize_queue: true)
 
           until test_file_paths.empty?
@@ -61,6 +62,7 @@ module KnapsackPro
               yield wrapped
             end
 
+            self.class.handle_signal!
             test_file_paths = pull_tests_from_queue
           end
 
