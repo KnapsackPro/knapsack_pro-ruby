@@ -125,8 +125,8 @@ module KnapsackPro
 
             KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
 
-            # Initialize runner to trap signals before RSpec::Core::Runner.run is called
-            runner = new(adapter_class)
+            # Initialize queue_runner to trap signals before RSpec::Core::Runner.run is called
+            queue_runner = new(adapter_class)
 
             cli_args = (args || '').split
             adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
@@ -138,22 +138,22 @@ module KnapsackPro
               # shows summary of all tests executed in Queue Mode at the very end
               '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
               '--format', KnapsackPro::Formatters::TimeTracker.to_s,
-              '--default-path', runner.test_dir,
+              '--default-path', queue_runner.test_dir,
             ]
 
             ensure_spec_opts_have_knapsack_pro_formatters
             rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
-            runner.rspec_configuration_options = rspec_configuration_options
+            queue_runner.rspec_configuration_options = rspec_configuration_options
 
             rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
 
             @printable_args = args_with_seed_option_added_when_viable(cli_args, rspec_runner)
 
             begin
-              exit_code = runner.run(rspec_runner)
+              exit_code = queue_runner.run(rspec_runner)
             rescue Exception => exception
               KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(runner.all_test_file_paths)
+              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(queue_runner.all_test_file_paths)
               raise
             end
 
@@ -162,10 +162,10 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-            log_rspec_command(runner.all_test_file_paths, :end_of_queue)
+            log_rspec_command(queue_runner.all_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(runner.all_test_file_paths))
+            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(queue_runner.all_test_file_paths))
 
             Kernel.exit(exit_code)
           end
