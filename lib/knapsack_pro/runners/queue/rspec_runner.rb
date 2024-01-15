@@ -27,7 +27,7 @@ module KnapsackPro
 
           @all_test_file_paths = []
 
-          status = _run_specs
+          _exit_status = run_specs
         end
 
         def load_spec_files(files)
@@ -61,8 +61,9 @@ module KnapsackPro
 
         private
 
-        # https://github.com/iridakos/rspec-core/blob/main/lib/rspec/core/runner.rb#L113
-        def _run_specs
+        # Based on:
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
+        def run_specs
           ordering_strategy = configuration.ordering_registry.fetch(:global)
 
           configuration.with_suite_hooks do
