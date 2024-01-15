@@ -44,9 +44,9 @@ module KnapsackPro
           end
         end
 
-        def pull_tests_from_queue(is_first_pull: false)
+        def pull_tests_from_queue(can_initialize_queue: false)
           test_file_paths = test_file_paths(
-            can_initialize_queue: is_first_pull,
+            can_initialize_queue: can_initialize_queue,
             executed_test_files: @node_assigned_test_file_paths
           )
           @node_assigned_test_file_paths += test_file_paths
@@ -54,7 +54,7 @@ module KnapsackPro
         end
 
         def knapsack_pro_batches
-          test_file_paths = pull_tests_from_queue(is_first_pull: true)
+          test_file_paths = pull_tests_from_queue(can_initialize_queue: true)
 
           until test_file_paths.empty?
             with_queue_hooks(test_file_paths) do |wrapped|
