@@ -53,17 +53,19 @@ module KnapsackPro
           test_file_paths
         end
 
-        def knapsack_pro_batches
-          self.class.handle_signal!
-          test_file_paths = pull_tests_from_queue(can_initialize_queue: true)
+        def pull_tests_in_batches_from_queue
+          can_initialize_queue = true
 
-          until test_file_paths.empty?
+          loop do
+            self.class.handle_signal!
+            test_file_paths = pull_tests_from_queue(can_initialize_queue: can_initialize_queue)
+            can_initialize_queue = false
+
+            break if test_file_paths.empty?
+
             with_queue_hooks(test_file_paths) do |wrapped|
               yield wrapped
             end
-
-            self.class.handle_signal!
-            test_file_paths = pull_tests_from_queue
           end
 
           yield nil
@@ -76,7 +78,7 @@ module KnapsackPro
 
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(0) do |reporter|
-              knapsack_pro_batches do |files|
+              pull_tests_in_batches_from_queue do |files|
                 break 0 unless files
 
                 load_spec_files(files)
