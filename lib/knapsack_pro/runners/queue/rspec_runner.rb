@@ -18,14 +18,19 @@ module KnapsackPro
           @rspec_runner = rspec_runner
 
           rspec_runner.knapsack_setup
-
-          if configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered
-            raise "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
-          end
+          ensure_no_deprecated_options!(rspec_runner)
 
           return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
           _exit_status = run_specs
+        end
+
+        def ensure_no_deprecated_options!(rspec_runner)
+          if rspec_runner.deprecated_run_all_when_everything_filtered_enabled?
+            error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
+            KnapsackPro.logger.error(error_message)
+            raise error_message
+          end
         end
 
         private

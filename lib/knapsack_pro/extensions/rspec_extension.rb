@@ -21,6 +21,10 @@ module KnapsackPro
 
           world.knapsack_setup
         end
+
+        def deprecated_run_all_when_everything_filtered_enabled?
+          !!(configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered)
+        end
       end
     end
   end
