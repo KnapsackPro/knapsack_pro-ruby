@@ -124,12 +124,16 @@ module KnapsackPro
         end
       end
 
-      def bind_queue_hook
+      def bind_before_queue_hook
         ::RSpec.configure do |config|
           config.before(:suite) do
             KnapsackPro::Hooks::Queue.call_before_queue
           end
+        end
+      end
 
+      def bind_after_queue_hook
+        ::RSpec.configure do |config|
           config.after(:suite) do
             KnapsackPro::Hooks::Queue.call_after_queue
           end
@@ -137,8 +141,10 @@ module KnapsackPro
       end
 
       def bind_queue_mode
-        bind_queue_hook
-        bind_time_tracker
+        # call the following method before `super` to ensure the after queue hook that runs in after(:suite) is called before after(:suite) hook defined by `bind_time_tracker`
+        bind_after_queue_hook
+
+        super
       end
 
       private

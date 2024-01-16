@@ -389,5 +389,16 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         subject.bind_before_queue_hook
       end
     end
+
+    describe '#bind_after_queue_hook' do
+      it do
+        expect(config).to receive(:after).with(:suite).and_yield
+        expect(::RSpec).to receive(:configure).and_yield(config)
+
+        expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)
+
+        subject.bind_after_queue_hook
+      end
+    end
   end
 end
