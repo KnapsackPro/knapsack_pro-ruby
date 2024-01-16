@@ -53,7 +53,7 @@ module KnapsackPro
           test_file_paths
         end
 
-        def pull_tests_in_batches_from_queue
+        def with_batched_tests_from_queue
           can_initialize_queue = true
 
           loop do
@@ -78,7 +78,7 @@ module KnapsackPro
 
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(0) do |reporter|
-              pull_tests_in_batches_from_queue do |files|
+              with_batched_tests_from_queue do |files|
                 break 0 unless files
 
                 load_spec_files(files)
