@@ -54,6 +54,7 @@ jobs:
   unit:
     parallelism: 1
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     docker:
       - image: cimg/ruby:3.2
     steps:
@@ -66,6 +67,7 @@ jobs:
   integration-regular-rspec:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     parameters:
       ruby:
         type: string
@@ -131,6 +133,7 @@ jobs:
         type: string
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
         environment:
@@ -219,6 +222,7 @@ jobs:
   integration-regular-minitest:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     parameters:
       ruby:
         type: string
@@ -261,6 +265,7 @@ jobs:
         type: string
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
         environment:
