@@ -17,11 +17,7 @@ module KnapsackPro
           @node_assigned_test_file_paths = []
           @rspec_runner = rspec_runner
 
-          # Abstract from #setup, since we do not need to set any filters or files at this point,
-          # and we do not want to let world.announce_filters to be called, since it will print
-          # out `No examples found.` message.
-          configure($stderr, $stdout)
-          world.__send__(:fail_if_config_and_cli_options_invalid)
+          rspec_runner.knapsack_setup
 
           if configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered
             raise "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
