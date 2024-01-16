@@ -32,6 +32,8 @@ module KnapsackPro
 
     RSPEC__SPLIT_BY_TEST_EXAMPLES__TAG = "#{HOST}/perma/ruby/rspec-split-by-test-examples-tag"
 
+    RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED = "#{HOST}/perma/ruby/rspec-deprecated-run-all-when-everything-filtered"
+
     SPLIT_BY_TEST_EXAMPLES = "#{HOST}/perma/ruby/split-by-test-examples"
 
     TEST_UNIT__TEST_FILE_PATH_DETECTION = "#{HOST}/perma/ruby/test-unit-test-file-path-detection"

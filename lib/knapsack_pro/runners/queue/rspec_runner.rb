@@ -23,6 +23,10 @@ module KnapsackPro
           configure($stderr, $stdout)
           world.__send__(:fail_if_config_and_cli_options_invalid)
 
+          if configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered
+            raise "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
+          end
+
           return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
 
           _exit_status = run_specs
