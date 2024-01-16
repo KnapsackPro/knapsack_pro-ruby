@@ -13,20 +13,26 @@ module KnapsackPro
 
         def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
+        # Based on:
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L85
+        #
+        # @return [Fixnum] exit status code.
+        #   0 if all specs passed,
+        #   or the configured failure exit code (1 by default) if specs failed.
         def run(rspec_runner)
           @node_assigned_test_file_paths = []
           @rspec_runner = rspec_runner
 
-          rspec_runner.knapsack_setup
+          rspec_runner.knapsack__setup
           ensure_no_deprecated_options!(rspec_runner)
 
-          return configuration.reporter.exit_early(exit_code) if world.wants_to_quit
+          return rspec_runner.knapsack__exit_early if rspec_runner.knapsack__wants_to_quit?
 
-          _exit_status = run_specs
+          run_specs
         end
 
         def ensure_no_deprecated_options!(rspec_runner)
-          if rspec_runner.deprecated_run_all_when_everything_filtered_enabled?
+          if rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?
             error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
             KnapsackPro.logger.error(error_message)
             raise error_message
@@ -78,6 +84,8 @@ module KnapsackPro
 
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
+        #
+        # @return [Fixnum] exit status code.
         def run_specs
           ordering_strategy = configuration.ordering_registry.fetch(:global)
 
