@@ -102,9 +102,9 @@ module KnapsackPro
                   break configuration.failure_exit_code
                 else
                   batch_result = exit_code(
-                    ordering_strategy.order(world.example_groups).map do |g|
+                    ordering_strategy.order(world.example_groups).map do |example_group|
                       self.class.handle_signal!
-                      g.run(reporter)
+                      example_group.run(reporter)
                     end.all?
                   )
 
