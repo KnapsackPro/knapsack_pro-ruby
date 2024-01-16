@@ -28,7 +28,13 @@ module KnapsackPro
 
           return rspec_runner.knapsack__exit_early if rspec_runner.knapsack__wants_to_quit?
 
-          run_specs
+          begin
+            run_specs
+          rescue Exception => exception
+            KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
+            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(queue_runner.node_assigned_test_file_paths)
+            raise
+          end
         end
 
         def ensure_no_deprecated_options!(rspec_runner)
@@ -180,13 +186,7 @@ module KnapsackPro
 
             @printable_args = args_with_seed_option_added_when_viable(cli_args, rspec_runner)
 
-            begin
-              exit_code = queue_runner.run(rspec_runner)
-            rescue Exception => exception
-              KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(queue_runner.node_assigned_test_file_paths)
-              raise
-            end
+            exit_code = queue_runner.run(rspec_runner)
 
             KnapsackPro::Adapters::RSpecAdapter.verify_bind_method_called
 
