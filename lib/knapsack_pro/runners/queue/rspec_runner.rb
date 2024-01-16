@@ -13,6 +13,12 @@ module KnapsackPro
 
         def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
 
+        def initialize(adapter_class)
+          super
+          @node_assigned_test_file_paths = []
+          @rspec_runner = nil # lazy assigned instance of ::RSpec::Core::Runner
+        end
+
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L85
         #
@@ -20,7 +26,6 @@ module KnapsackPro
         #   0 if all specs passed,
         #   or the configured failure exit code (1 by default) if specs failed.
         def run(rspec_runner)
-          @node_assigned_test_file_paths = []
           @rspec_runner = rspec_runner
 
           rspec_runner.knapsack__setup
