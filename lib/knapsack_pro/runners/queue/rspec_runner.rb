@@ -133,10 +133,13 @@ module KnapsackPro
         class << self
           def run(args)
             require 'rspec/core'
+            require_relative '../../extensions/rspec_extension'
             require_relative '../../formatters/time_tracker'
             require_relative '../../formatters/time_tracker_fetcher'
             require_relative '../../formatters/rspec_queue_summary_formatter'
             require_relative '../../formatters/rspec_queue_profile_formatter_extension'
+
+            KnapsackPro::Extensions::RSpecExtension.setup!
 
             ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
             ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
