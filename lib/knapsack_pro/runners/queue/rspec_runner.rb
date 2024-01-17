@@ -87,8 +87,8 @@ module KnapsackPro
 
             break if test_file_paths.empty?
 
-            with_queue_hooks(test_file_paths) do |wrapped|
-              yield wrapped
+            with_queue_hooks(test_file_paths) do |wrapped_test_file_paths|
+              yield wrapped_test_file_paths
             end
           end
 
