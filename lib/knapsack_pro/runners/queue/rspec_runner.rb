@@ -54,14 +54,14 @@ module KnapsackPro
 
         private
 
-        def load_spec_files(files)
+        def load_spec_files(test_file_paths)
           world.reset
           filter_manager = RSpec::Core::FilterManager.new
           # TODO refactor private RSpec API
           rspec_configuration_options.configure_filter_manager(filter_manager)
           configuration.filter_manager = filter_manager
 
-          configuration.__send__(:get_files_to_run, files).each do |f|
+          configuration.__send__(:get_files_to_run, test_file_paths).each do |f|
             file = File.expand_path(f)
             configuration.__send__(:load_file_handling_errors, :load, file)
             configuration.loaded_spec_files << file
@@ -104,10 +104,10 @@ module KnapsackPro
 
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
-              with_batched_tests_from_queue do |files|
-                break SUCCESS_EXIT_CODE if files.nil?
+              with_batched_tests_from_queue do |test_file_paths|
+                break SUCCESS_EXIT_CODE if test_file_paths.nil?
 
-                load_spec_files(files)
+                load_spec_files(test_file_paths)
 
                 examples_count = world.example_count(world.example_groups)
 
