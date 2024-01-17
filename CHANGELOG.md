@@ -18,6 +18,8 @@
 
   * Ignore the `fail_if_no_examples` option because in Queue Mode a late CI node can start after other CI nodes already executed tests. It is expected to not run examples in such scenario.
 
+  * Raise an exception if the deprecated `run_all_when_everything_filtered` option is detected. [See docs](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed).
+
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/237
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.4...v7.0.0
