@@ -6,6 +6,8 @@
   * TODO
 
 * RSpec improvements in Queue Mode
+  * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
+
   * Respect the `--failure-exit-code` option:
 
     ```
