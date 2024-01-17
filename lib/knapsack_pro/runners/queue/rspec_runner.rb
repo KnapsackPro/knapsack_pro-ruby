@@ -130,13 +130,13 @@ module KnapsackPro
           end
         end
 
-        def with_queue_hooks(files)
+        def with_queue_hooks(test_file_paths)
           subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
           KnapsackPro::Hooks::Queue.call_before_subset_queue
 
-          yield files
+          yield test_file_paths
 
           if world.wants_to_quit
             KnapsackPro.logger.warn('RSpec wants to quit.')
@@ -147,7 +147,7 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          self.class.log_rspec_command(files, :subset_queue)
+          self.class.log_rspec_command(test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
         end
