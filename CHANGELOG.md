@@ -1,5 +1,23 @@
 # Changelog
 
+### 7.0.0
+
+* __(breaking change)__ RSpec
+  * TODO
+
+* RSpec improvements in Queue Mode
+  * Respect the `--failure-exit-code` option:
+
+    ```
+    bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
+    ```
+
+  * Ignore the `fail_if_no_examples` option because in Queue Mode a late CI node can start after other CI nodes already executed tests. It is expected to not run examples in such scenario.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/237
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.4...v7.0.0
+
 ### 6.0.4
 
 * fix(minitest): avoid installing `at_exit` (that would result in an empty run of Minitest after Knapsack Pro is finished in Queue Mode)
