@@ -8,10 +8,10 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         extend Forwardable
 
-        attr_reader :rspec_runner, :node_assigned_test_file_paths
+        attr_reader :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
-        def_delegators :@rspec_runner, :world, :options, :configuration, :exit_code, :configure
+        def_delegators :@rspec_runner, :world, :configuration, :exit_code
 
         def initialize(adapter_class)
           super
