@@ -8,8 +8,6 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         extend Forwardable
 
-        SUCCESS_EXIT_CODE = 0
-
         attr_reader :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
@@ -99,32 +97,30 @@ module KnapsackPro
         # @return [Fixnum] exit status code.
         def run_specs
           ordering_strategy = configuration.ordering_registry.fetch(:global)
+          node_examples_passed = true
 
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
               with_batched_tests_from_queue do |test_file_paths|
-                break SUCCESS_EXIT_CODE if test_file_paths.empty?
+                break if test_file_paths.empty?
 
                 load_spec_files(test_file_paths)
 
-                examples_count = world.example_count(world.example_groups)
+                examples_passed = ordering_strategy.order(world.example_groups).map do |example_group|
+                  self.class.handle_signal!
+                  example_group.run(reporter)
+                end.all?
 
-                if examples_count == 0 && configuration.fail_if_no_examples
-                  break configuration.failure_exit_code
-                else
-                  batch_result = exit_code(
-                    ordering_strategy.order(world.example_groups).map do |example_group|
-                      self.class.handle_signal!
-                      example_group.run(reporter)
-                    end.all?
-                  )
+                node_examples_passed = false unless examples_passed
 
-                  break batch_result if batch_result != SUCCESS_EXIT_CODE
+                if reporter.fail_fast_limit_met?
+                  KnapsackPro.logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+                  break
                 end
               end
             end
 
-            exit_status
+            exit_code(node_examples_passed)
           end
         end
 
