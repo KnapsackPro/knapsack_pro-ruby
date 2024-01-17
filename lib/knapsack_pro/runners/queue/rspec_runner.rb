@@ -92,7 +92,7 @@ module KnapsackPro
             end
           end
 
-          yield nil
+          yield _test_file_paths = nil
         end
 
         # Based on:
