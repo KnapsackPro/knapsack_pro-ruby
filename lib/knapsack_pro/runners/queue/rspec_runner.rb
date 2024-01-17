@@ -167,7 +167,7 @@ module KnapsackPro
 
             KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
 
-            # Initialize queue_runner to trap signals before RSpec::Core::Runner.run is called
+            # Initialize queue_runner to trap signals before RSpec::Core::Runner is called
             queue_runner = new(adapter_class)
 
             cli_args = (args || '').split
