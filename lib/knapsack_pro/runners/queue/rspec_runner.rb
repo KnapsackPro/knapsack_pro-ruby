@@ -101,7 +101,7 @@ module KnapsackPro
           ordering_strategy = configuration.ordering_registry.fetch(:global)
 
           configuration.with_suite_hooks do
-            exit_status = configuration.reporter.report(0) do |reporter|
+            exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
               with_batched_tests_from_queue do |files|
                 break 0 unless files
 
