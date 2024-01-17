@@ -85,14 +85,12 @@ module KnapsackPro
             test_file_paths = pull_tests_from_queue(can_initialize_queue: can_initialize_queue)
             can_initialize_queue = false
 
-            break if test_file_paths.empty?
+            break yield test_file_paths if test_file_paths.empty?
 
             with_queue_hooks(test_file_paths) do |wrapped_test_file_paths|
               yield wrapped_test_file_paths
             end
           end
-
-          yield _test_file_paths = nil
         end
 
         # Based on:
@@ -105,7 +103,7 @@ module KnapsackPro
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
               with_batched_tests_from_queue do |test_file_paths|
-                break SUCCESS_EXIT_CODE if test_file_paths.nil?
+                break SUCCESS_EXIT_CODE if test_file_paths.empty?
 
                 load_spec_files(test_file_paths)
 
