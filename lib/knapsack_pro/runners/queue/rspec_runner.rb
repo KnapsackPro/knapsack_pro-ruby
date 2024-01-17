@@ -8,6 +8,8 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         extend Forwardable
 
+        SUCCESS_EXIT_CODE = 0
+
         attr_reader :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
@@ -103,7 +105,7 @@ module KnapsackPro
           configuration.with_suite_hooks do
             exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
               with_batched_tests_from_queue do |files|
-                break 0 unless files
+                break SUCCESS_EXIT_CODE if files.nil?
 
                 load_spec_files(files)
 
@@ -119,7 +121,7 @@ module KnapsackPro
                     end.all?
                   )
 
-                  break batch_result if batch_result != 0
+                  break batch_result if batch_result != SUCCESS_EXIT_CODE
                 end
               end
             end
