@@ -6,6 +6,8 @@
   * TODO
 
 * RSpec improvements in Queue Mode
+  * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 can be handled sooner. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
+
   * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
 
   * Respect the `--failure-exit-code` option:
