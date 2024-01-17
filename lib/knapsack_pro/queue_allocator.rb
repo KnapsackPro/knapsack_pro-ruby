@@ -19,6 +19,7 @@ module KnapsackPro
           ['spec/collection_spec.rb'],
           ['spec/features/calculator_spec.rb[1:1:1]'],
           ['spec/bar_spec.rb'],
+          [], # the last Queue API response is always the empty list of test files
         ]
         #batches = [
           #[]
