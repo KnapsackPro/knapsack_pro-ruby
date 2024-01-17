@@ -40,7 +40,7 @@ module KnapsackPro
             run_specs
           rescue Exception => exception
             KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(queue_runner.node_assigned_test_file_paths)
+            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(node_assigned_test_file_paths)
             raise
           end
         end
