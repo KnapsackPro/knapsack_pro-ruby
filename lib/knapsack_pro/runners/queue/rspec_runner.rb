@@ -96,6 +96,8 @@ module KnapsackPro
         #
         # @return [Fixnum] exit status code.
         def run_specs
+          # Based on:
+          # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L53
           ordering_strategy = configuration.ordering_registry.fetch(:global)
           node_examples_passed = true
 
