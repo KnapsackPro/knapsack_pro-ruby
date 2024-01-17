@@ -20,6 +20,9 @@ module KnapsackPro
           ['spec/features/calculator_spec.rb[1:1:1]'],
           ['spec/bar_spec.rb'],
         ]
+        #batches = [
+          #[]
+        #]
         tests = batches[@@index] || []
         @@index += 1
         puts '='*50
