@@ -11,6 +11,9 @@ module KnapsackPro
         attr_reader :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
+        @@used_seed = nil
+        @@cli_args = nil
+
         def_delegators :@rspec_runner, :world, :configuration, :exit_code
 
         def initialize(adapter_class)
@@ -141,7 +144,8 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          self.class.log_rspec_command(test_file_paths, :subset_queue)
+          printable_args = self.class.args_with_seed_option_added_when_viable(@@cli_args, @rspec_runner)
+          self.class.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
         end
@@ -178,14 +182,13 @@ module KnapsackPro
               '--format', KnapsackPro::Formatters::TimeTracker.to_s,
               '--default-path', queue_runner.test_dir,
             ]
+            @@cli_args = cli_args
 
             ensure_spec_opts_have_knapsack_pro_formatters
             rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
             queue_runner.rspec_configuration_options = rspec_configuration_options
 
             rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
-
-            @printable_args = args_with_seed_option_added_when_viable(cli_args, rspec_runner)
 
             exit_code = queue_runner.run(rspec_runner)
 
@@ -194,7 +197,8 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-            log_rspec_command(queue_runner.node_assigned_test_file_paths, :end_of_queue)
+            printable_args = args_with_seed_option_added_when_viable(cli_args, rspec_runner)
+            log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(queue_runner.node_assigned_test_file_paths))
@@ -202,7 +206,7 @@ module KnapsackPro
             Kernel.exit(exit_code)
           end
 
-          def log_rspec_command(test_file_paths, type)
+          def log_rspec_command(args, test_file_paths, type)
             case type
             when :subset_queue
               KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
@@ -210,7 +214,7 @@ module KnapsackPro
               KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
             end
 
-            stringified_cli_args = @printable_args.join(' ')
+            stringified_cli_args = args.join(' ')
               .sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
               .sub(" --format #{KnapsackPro::Formatters::TimeTracker}", '')
 
