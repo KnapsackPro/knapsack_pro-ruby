@@ -9,7 +9,7 @@
     The `before(:suite)` and `after(:suite)` hooks are executed multiple times. Each time for a set of tests fetched from Knapsack Pro Queue API.
 
     __After:__<br>
-    The `before(:suite)` and `after(:suite)` hooks are executed only once. The `before(:suite)` hook is executed before starting tests. The `after(:suite)` hook is executed after all tests are completed. It is a default RSpec behavior expected by users.
+    The `before(:suite)` and `after(:suite)` hooks are executed only once. The `before(:suite)` hook is executed before starting tests. The `after(:suite)` hook is executed after all tests are completed. It is the default RSpec behavior expected by users.
 
   * The `KnapsackPro::Hooks::Queue.after_queue` hook change:
 
