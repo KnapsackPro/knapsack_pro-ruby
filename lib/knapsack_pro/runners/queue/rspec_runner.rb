@@ -57,12 +57,16 @@ module KnapsackPro
           begin
             run_specs
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
-            Kernel.exit(Core.error_exit_code(rspec_runner.knapsack__error_exit_code))
+            rspec_runner.knapsack__error_exit_code
+              .yield_self { Core.error_exit_code(_1) }
+              .yield_self { Kernel.exit(_1) }
             raise
           rescue Exception => exception
             KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(node_assigned_test_file_paths)
-            Kernel.exit(Core.error_exit_code(rspec_runner.knapsack__error_exit_code))
+            rspec_runner.knapsack__error_exit_code
+              .yield_self { Core.error_exit_code(_1) }
+              .yield_self { Kernel.exit(_1) }
             raise
           end
         end
