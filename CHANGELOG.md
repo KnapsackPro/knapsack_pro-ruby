@@ -65,7 +65,7 @@
 
   * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
 
-  * Respect the `--failure-exit-code` option:
+  * Respect the `--failure-exit-code` option. It overrides the exit code used when there are failing specs.
 
     ```bash
     bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
