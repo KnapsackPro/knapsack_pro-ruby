@@ -19,18 +19,41 @@
     __After:__<br>
     The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
 
-* RSpec recommend changes in your project:
+* RSpec recommended changes in your project:
+  * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports. The `KnapsackPro::Hooks::Queue.after_subset_queue` hook is no longer needed to generate a valid XML/JSON report.
+
+  ```ruby
+  # REMOVE THE FOLLOWING CODE
+  # spec_helper.rb or rails_helper.rb
+  TMP_REPORT = "tmp/rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
+  FINAL_REPORT = "tmp/final_rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
+
+  KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+    if File.exist?(TMP_REPORT)
+      FileUtils.mv(TMP_REPORT, FINAL_REPORT)
+    end
+  end
+  ```
+
+  You can keep the Knapsack Pro command unchanged with the `--format RspecJunitFormatter --out tmp/rspec.xml` options.
+
+  ```bash
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
+  ```
+
+  Reference in [docs](https://docs.knapsackpro.com/ruby/rspec/#formatters-rspec_junit_formatter-json).
+
   * If you use Queue Mode and the `percy-capybara` gem < 4, replace:
 
-  ```
+  ```ruby
   KnapsackPro::Hooks::Queue.before_queue { |queue_id| Percy::Capybara.initialize_build }
   KnapsackPro::Hooks::Queue.after_queue { |queue_id| Percy::Capybara.finalize_build }
   ```
 
   with:
 
-  ```
-  # recommend
+  ```ruby
+  # recommended
   before(:suite) { Percy::Capybara.initialize_build }
   after(:suite) { Percy::Capybara.finalize_build }
   ```
@@ -44,7 +67,7 @@
 
   * Respect the `--failure-exit-code` option:
 
-    ```
+    ```bash
     bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
     ```
 
