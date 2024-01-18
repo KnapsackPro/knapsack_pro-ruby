@@ -3,11 +3,17 @@
 ### 7.0.0
 
 * __(breaking change)__ RSpec in Queue Mode:
+  * The RSpec `before(:suite)` and `after(:suite)` hooks change:
+
+    __Before:__ The `before(:suite)` and `after(:suite)` hooks are executed multiple times. Each time for a set of tests fetched from Knapsack Pro Queue API.
+
+    __After:__ The `before(:suite)` and `after(:suite)` hooks are executed only once. The `before(:suite)` hook is executed before starting tests. The `after(:suite)` hook is executed after all tests are completed.
+
   * The `KnapsackPro::Hooks::Queue.after_queue` hook change:
 
-    __Before__: The `KnapsackPro::Hooks::Queue.after_queue` hook is executed outside of the `after(:suite)` hook.
+    __Before:__ The `KnapsackPro::Hooks::Queue.after_queue` hook is executed outside of the `after(:suite)` hook.
 
-    __After__: The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
+    __After:__ The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
 
 * RSpec recommend changes in your project:
   * If you use Queue Mode and the `percy-capybara` gem < 4, replace:
