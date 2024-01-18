@@ -23,6 +23,10 @@ module KnapsackPro
             def error_exit_code(rspec_error_exit_code)
               rspec_error_exit_code || FAILURE_EXIT_CODE
             end
+
+            def to_cli_args(args)
+              (args || '').split
+            end
           end
         end
 
@@ -188,7 +192,7 @@ module KnapsackPro
             # Initialize queue_runner to trap signals before RSpec::Core::Runner is called
             queue_runner = new(adapter_class)
 
-            cli_args = (args || '').split
+            cli_args = Core.to_cli_args(args)
             adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
             # when format option is not defined by user then use progress formatter to show tests execution progress
