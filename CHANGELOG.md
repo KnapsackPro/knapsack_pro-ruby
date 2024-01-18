@@ -58,7 +58,7 @@
     after(:suite) { Percy::Capybara.finalize_build }
     ```
 
-  Reference in [docs](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) for the latest Percy version.
+    Reference in [docs](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) for the latest Percy version.
 
 * RSpec improvements in Queue Mode:
   * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 can be handled sooner. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
@@ -75,7 +75,7 @@
 
   * Raise an exception if the deprecated `run_all_when_everything_filtered` option is detected. [See docs](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed).
 
-    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/237
+PR with the above changes: https://github.com/KnapsackPro/knapsack_pro-ruby/pull/237
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.4...v7.0.0
 
