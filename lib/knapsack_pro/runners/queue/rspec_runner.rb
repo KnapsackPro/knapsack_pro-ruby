@@ -8,6 +8,8 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         extend Forwardable
 
+        FAILURE_EXIT_CODE = 1
+
         attr_reader :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
@@ -39,12 +41,18 @@ module KnapsackPro
           begin
             run_specs
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
+            Kernel.exit(error_exit_code(rspec_runner))
             raise
           rescue Exception => exception
             KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(node_assigned_test_file_paths)
+            Kernel.exit(error_exit_code(rspec_runner))
             raise
           end
+        end
+
+        def error_exit_code(rspec_runner)
+          rspec_runner.knapsack__error_exit_code || FAILURE_EXIT_CODE
         end
 
         def ensure_no_deprecated_options!(rspec_runner)

@@ -61,15 +61,23 @@
     Reference in [docs](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) for the latest Percy version.
 
 * RSpec improvements in Queue Mode:
-  * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 can be handled sooner. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
+  * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 are handled quicker. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
+    * Use `1` as a default exit code when the process is terminated.
+    * Use the value of the `--error-exit-code` option as the exit code when it is defined.
 
-  * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
+  * Respect the `--error-exit-code` option. It overrides the exit code used when there are errors loading or running specs outside of examples.
+
+    ```bash
+    bundle exec rake "knapsack_pro:queue:rspec[--error-exit-code 3]"
+    ```
 
   * Respect the `--failure-exit-code` option. It overrides the exit code used when there are failing specs.
 
     ```bash
     bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
     ```
+
+  * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
 
   * Ignore the `fail_if_no_examples` option because in Queue Mode a late CI node can start after other CI nodes already executed tests. It is expected to not run examples in such scenario.
 
