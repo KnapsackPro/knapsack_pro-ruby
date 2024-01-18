@@ -8,9 +8,9 @@ module KnapsackPro
       class RSpecRunner < BaseRunner
         extend Forwardable
 
-        FAILURE_EXIT_CODE = 1
-
         class Core
+          FAILURE_EXIT_CODE = 1
+
           class << self
             def ensure_no_deprecated_options!(deprecated_run_all_when_everything_filtered_enabled)
               return unless deprecated_run_all_when_everything_filtered_enabled
@@ -18,6 +18,10 @@ module KnapsackPro
               error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
               KnapsackPro.logger.error(error_message)
               raise error_message
+            end
+
+            def error_exit_code(rspec_error_exit_code)
+              rspec_error_exit_code || FAILURE_EXIT_CODE
             end
           end
         end
@@ -53,18 +57,14 @@ module KnapsackPro
           begin
             run_specs
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
-            Kernel.exit(error_exit_code(rspec_runner))
+            Kernel.exit(Core.error_exit_code(rspec_runner.knapsack__error_exit_code))
             raise
           rescue Exception => exception
             KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(node_assigned_test_file_paths)
-            Kernel.exit(error_exit_code(rspec_runner))
+            Kernel.exit(Core.error_exit_code(rspec_runner.knapsack__error_exit_code))
             raise
           end
-        end
-
-        def error_exit_code(rspec_runner)
-          rspec_runner.knapsack__error_exit_code || FAILURE_EXIT_CODE
         end
 
         private
