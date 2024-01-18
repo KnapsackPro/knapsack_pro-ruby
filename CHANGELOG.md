@@ -2,10 +2,28 @@
 
 ### 7.0.0
 
-* __(breaking change)__ RSpec
+* __(breaking change)__ RSpec in Queue Mode:
   * TODO
 
-* RSpec improvements in Queue Mode
+* RSpec recommend changes in your project:
+  * If you use Queue Mode and the `percy-capybara` gem < 4, replace:
+
+  ```
+  KnapsackPro::Hooks::Queue.before_queue { |queue_id| Percy::Capybara.initialize_build }
+  KnapsackPro::Hooks::Queue.after_queue { |queue_id| Percy::Capybara.finalize_build }
+  ```
+
+  with:
+
+  ```
+  # recommend
+  before(:suite) { Percy::Capybara.initialize_build }
+  after(:suite) { Percy::Capybara.finalize_build }
+  ```
+
+  Reference in [docs](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) for the latest Percy version.
+
+* RSpec improvements in Queue Mode:
   * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 can be handled sooner. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
 
   * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
