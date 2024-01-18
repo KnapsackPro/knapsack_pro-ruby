@@ -6,6 +6,7 @@
   * The `KnapsackPro::Hooks::Queue.after_queue` hook change:
 
     __Before__: The `KnapsackPro::Hooks::Queue.after_queue` hook is executed outside of the `after(:suite)` hook.
+
     __After__: The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
 
 * RSpec recommend changes in your project:
