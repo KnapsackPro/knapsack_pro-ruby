@@ -43,6 +43,8 @@
 
     Reference in [docs](https://docs.knapsackpro.com/ruby/rspec/#formatters-rspec_junit_formatter-json).
 
+    See [docs](https://docs.knapsackpro.com/ruby/circleci/) if you use CircleCI.
+
   * If you use Queue Mode and the `percy-capybara` gem < 4, replace:
 
     ```ruby
