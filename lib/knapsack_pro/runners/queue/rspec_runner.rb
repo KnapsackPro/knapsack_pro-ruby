@@ -12,7 +12,7 @@ module KnapsackPro
           FAILURE_EXIT_CODE = 1
 
           class << self
-            def ensure_no_deprecated_options!(deprecated_run_all_when_everything_filtered_enabled)
+            def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
               return unless deprecated_run_all_when_everything_filtered_enabled
 
               error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
@@ -54,7 +54,7 @@ module KnapsackPro
           @rspec_runner = rspec_runner
 
           rspec_runner.knapsack__setup
-          Core.ensure_no_deprecated_options!(rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
+          Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
 
           return rspec_runner.knapsack__exit_early if rspec_runner.knapsack__wants_to_quit?
 
