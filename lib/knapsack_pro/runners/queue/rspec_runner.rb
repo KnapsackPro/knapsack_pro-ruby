@@ -46,13 +46,28 @@ module KnapsackPro
             def to_cli_args(args)
               (args || '').split
             end
+
+            def args_with_seed_option_added_when_viable(args, rspec_runner)
+              order_option = ADAPTER_CLASS.order_option(args)
+
+              if order_option
+                # Don't add the seed option for order other than random, e.g. `defined`
+                return args unless order_option.include?('rand')
+                # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
+                return args if order_option.to_s.split(':')[1]
+              end
+
+              # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
+              return args unless rspec_runner.knapsack__seed_used?
+
+              args + ['--seed', rspec_runner.knapsack__seed]
+            end
           end
         end
 
         attr_reader :node_assigned_test_file_paths
         attr_accessor :rspec_configuration_options
 
-        @@used_seed = nil
         @@cli_args = nil
 
         def_delegators :@rspec_runner, :world, :configuration, :exit_code
@@ -190,7 +205,7 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          printable_args = self.class.args_with_seed_option_added_when_viable(@@cli_args, @rspec_runner)
+          printable_args = Core.args_with_seed_option_added_when_viable(@@cli_args, @rspec_runner)
           self.class.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
@@ -243,7 +258,7 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-            printable_args = args_with_seed_option_added_when_viable(cli_args, rspec_runner)
+            printable_args = Core.args_with_seed_option_added_when_viable(cli_args, rspec_runner)
             log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
@@ -268,24 +283,6 @@ module KnapsackPro
               "bundle exec rspec #{stringified_cli_args} " +
               KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
             )
-          end
-
-          def args_with_seed_option_added_when_viable(args, rspec_runner)
-            order_option = Core::ADAPTER_CLASS.order_option(args)
-
-            if order_option
-              # Don't add the seed option for order other than random, e.g. `defined`
-              return args unless order_option.include?('rand')
-              # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
-              return args if order_option.to_s.split(':')[1]
-            end
-
-            # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
-            return args unless rspec_runner.configuration.seed_used?
-
-            @@used_seed = rspec_runner.configuration.seed.to_s
-
-            args + ['--seed', @@used_seed]
           end
         end
       end

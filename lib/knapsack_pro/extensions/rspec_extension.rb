@@ -39,6 +39,14 @@ module KnapsackPro
         def knapsack__deprecated_run_all_when_everything_filtered_enabled?
           !!(configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered)
         end
+
+        def knapsack__seed
+          configuration.seed.to_s
+        end
+
+        def knapsack__seed_used?
+          configuration.seed_used?
+        end
       end
     end
   end
