@@ -20,6 +20,26 @@ module KnapsackPro
               raise error_message
             end
 
+            def ensure_spec_opts_have_knapsack_pro_formatters
+              spec_opts = ENV['SPEC_OPTS']
+
+              knapsack_pro_formatters = [
+                KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
+                KnapsackPro::Formatters::TimeTracker.to_s,
+              ]
+
+              return unless spec_opts
+              return if knapsack_pro_formatters.all? { |formatter| spec_opts.include?(formatter) }
+
+              knapsack_pro_formatters.each do |formatter|
+                unless spec_opts.include?(formatter)
+                  spec_opts += " --format #{formatter}"
+                end
+              end
+
+              ENV['SPEC_OPTS'] = spec_opts
+            end
+
             def error_exit_code(rspec_error_exit_code)
               rspec_error_exit_code || FAILURE_EXIT_CODE
             end
@@ -211,7 +231,7 @@ module KnapsackPro
             ]
             @@cli_args = cli_args
 
-            ensure_spec_opts_have_knapsack_pro_formatters
+            Core.ensure_spec_opts_have_knapsack_pro_formatters
             rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
             queue_runner.rspec_configuration_options = rspec_configuration_options
 
@@ -273,26 +293,6 @@ module KnapsackPro
 
           def adapter_class
             KnapsackPro::Adapters::RSpecAdapter
-          end
-
-          def ensure_spec_opts_have_knapsack_pro_formatters
-            spec_opts = ENV['SPEC_OPTS']
-
-            knapsack_pro_formatters = [
-              KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
-              KnapsackPro::Formatters::TimeTracker.to_s,
-            ]
-
-            return unless spec_opts
-            return if knapsack_pro_formatters.all? { |formatter| spec_opts.include?(formatter) }
-
-            knapsack_pro_formatters.each do |formatter|
-              unless spec_opts.include?(formatter)
-                spec_opts += " --format #{formatter}"
-              end
-            end
-
-            ENV['SPEC_OPTS'] = spec_opts
           end
         end
       end
