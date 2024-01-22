@@ -4,6 +4,7 @@ module KnapsackPro
       def self.setup!
         RSpec::Core::World.prepend(World)
         RSpec::Core::Runner.prepend(Runner)
+        RSpec::Core::Configuration.prepend(Configuration)
       end
 
       module World
@@ -46,6 +47,35 @@ module KnapsackPro
 
         def knapsack__seed_used?
           configuration.seed_used?
+        end
+
+        # @param test_file_paths Array[String]
+        #   Examples:
+        #     a_spec.rb
+        #     a_spec.rb[1:1]
+        def knapsack__load_spec_files_batch(test_file_paths)
+          world.reset
+
+          # Reset filters
+          # but we do not reset `configuration.static_config_filter_manager` to preserve the --tag option
+          filter_manager = RSpec::Core::FilterManager.new
+          options.configure_filter_manager(filter_manager)
+          configuration.filter_manager = filter_manager
+
+          configuration.knapsack__load_spec_files(test_file_paths)
+        end
+      end
+
+      module Configuration
+        # Based on:
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/configuration.rb#L1619
+        def knapsack__load_spec_files(test_file_paths)
+          batch_of_files_to_run = get_files_to_run(test_file_paths)
+          batch_of_files_to_run.each do |f|
+            file = File.expand_path(f)
+            load_file_handling_errors(:load, file)
+            loaded_spec_files << file
+          end
         end
       end
     end
