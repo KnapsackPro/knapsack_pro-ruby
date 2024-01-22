@@ -85,7 +85,6 @@ module KnapsackPro
         end
 
         attr_reader :node_assigned_test_file_paths
-        attr_accessor :rspec_configuration_options
 
         @@cli_args = nil
 
@@ -134,7 +133,7 @@ module KnapsackPro
           world.reset
           filter_manager = RSpec::Core::FilterManager.new
           # TODO refactor private RSpec API
-          rspec_configuration_options.configure_filter_manager(filter_manager)
+          @rspec_runner.options.configure_filter_manager(filter_manager)
           configuration.filter_manager = filter_manager
 
           configuration.__send__(:get_files_to_run, test_file_paths).each do |f|
@@ -266,8 +265,6 @@ module KnapsackPro
 
             Core.ensure_spec_opts_have_knapsack_pro_formatters
             rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
-            queue_runner.rspec_configuration_options = rspec_configuration_options
-
             rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
 
             exit_code = queue_runner.run(rspec_runner)
