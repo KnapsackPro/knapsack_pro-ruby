@@ -72,8 +72,9 @@ module KnapsackPro
               end
 
               stringified_cli_args = args.join(' ')
-                .sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
-                .sub(" --format #{KnapsackPro::Formatters::TimeTracker}", '')
+              FORMATTERS.each do |formatter|
+                stringified_cli_args.sub!(" --format #{formatter}", '')
+              end
 
               KnapsackPro.logger.info(
                 "bundle exec rspec #{stringified_cli_args} " +
