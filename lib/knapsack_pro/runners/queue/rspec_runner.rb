@@ -119,6 +119,11 @@ module KnapsackPro
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
         #
+        # Option: `configuration.fail_if_no_examples`
+        #   We ignore configuration.fail_if_no_examples option on purpose because it should be off in Queue Mode.
+        #   RSpec should not fail when examples are not executed for a batch of tests fetched from Queue API. The batch could have tests that have no examples (for example, someone commented out the content of the spec file).
+        #   We should fetch another batch of tests from Queue API and keep running tests.
+        #
         # @return [Fixnum] exit status code.
         def run_specs
           # Based on:
