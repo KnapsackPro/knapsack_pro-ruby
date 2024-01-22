@@ -10,6 +10,10 @@ module KnapsackPro
 
         class Core
           FAILURE_EXIT_CODE = 1
+          FORMATTERS = [
+            'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
+            'KnapsackPro::Formatters::TimeTracker',
+          ]
 
           class << self
             def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
@@ -23,18 +27,12 @@ module KnapsackPro
             def ensure_spec_opts_have_knapsack_pro_formatters
               spec_opts = ENV['SPEC_OPTS']
 
-              knapsack_pro_formatters = [
-                KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
-                KnapsackPro::Formatters::TimeTracker.to_s,
-              ]
-
               return unless spec_opts
-              return if knapsack_pro_formatters.all? { |formatter| spec_opts.include?(formatter) }
+              return if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
 
-              knapsack_pro_formatters.each do |formatter|
-                unless spec_opts.include?(formatter)
-                  spec_opts += " --format #{formatter}"
-                end
+              FORMATTERS.each do |formatter|
+                next if spec_opts.include?(formatter)
+                spec_opts += " --format #{formatter}"
               end
 
               ENV['SPEC_OPTS'] = spec_opts
