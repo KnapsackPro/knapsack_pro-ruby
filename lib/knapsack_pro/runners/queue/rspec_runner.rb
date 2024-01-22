@@ -62,6 +62,24 @@ module KnapsackPro
 
               args + ['--seed', rspec_runner.knapsack__seed]
             end
+
+            def log_rspec_command(args, test_file_paths, type)
+              case type
+              when :subset_queue
+                KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+              when :end_of_queue
+                KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
+              end
+
+              stringified_cli_args = args.join(' ')
+                .sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
+                .sub(" --format #{KnapsackPro::Formatters::TimeTracker}", '')
+
+              KnapsackPro.logger.info(
+                "bundle exec rspec #{stringified_cli_args} " +
+                KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+              )
+            end
           end
         end
 
@@ -206,7 +224,7 @@ module KnapsackPro
           end
 
           printable_args = Core.args_with_seed_option_added_when_viable(@@cli_args, @rspec_runner)
-          self.class.log_rspec_command(printable_args, test_file_paths, :subset_queue)
+          Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
         end
@@ -259,30 +277,12 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
             printable_args = Core.args_with_seed_option_added_when_viable(cli_args, rspec_runner)
-            log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
+            Core.log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(queue_runner.node_assigned_test_file_paths))
 
             Kernel.exit(exit_code)
-          end
-
-          def log_rspec_command(args, test_file_paths, type)
-            case type
-            when :subset_queue
-              KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
-            when :end_of_queue
-              KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
-            end
-
-            stringified_cli_args = args.join(' ')
-              .sub(" --format #{KnapsackPro::Formatters::RSpecQueueSummaryFormatter}", '')
-              .sub(" --format #{KnapsackPro::Formatters::TimeTracker}", '')
-
-            KnapsackPro.logger.info(
-              "bundle exec rspec #{stringified_cli_args} " +
-              KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
-            )
           end
         end
       end
