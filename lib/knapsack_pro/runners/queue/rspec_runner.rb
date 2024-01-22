@@ -9,6 +9,7 @@ module KnapsackPro
         extend Forwardable
 
         class Core
+          ADAPTER_CLASS = KnapsackPro::Adapters::RSpecAdapter
           FAILURE_EXIT_CODE = 1
           FORMATTERS = [
             'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
@@ -210,16 +211,16 @@ module KnapsackPro
             ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
             ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
-            KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
+            KnapsackPro::Config::Env.set_test_runner_adapter(Core::ADAPTER_CLASS)
 
             # Initialize queue_runner to trap signals before RSpec::Core::Runner is called
-            queue_runner = new(adapter_class)
+            queue_runner = new(Core::ADAPTER_CLASS)
 
             cli_args = Core.to_cli_args(args)
-            adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+            Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
             # when format option is not defined by user then use progress formatter to show tests execution progress
-            cli_args += ['--format', 'progress'] unless adapter_class.has_format_option?(cli_args)
+            cli_args += ['--format', 'progress'] unless Core::ADAPTER_CLASS.has_format_option?(cli_args)
 
             cli_args += [
               # shows summary of all tests executed in Queue Mode at the very end
@@ -270,7 +271,7 @@ module KnapsackPro
           end
 
           def args_with_seed_option_added_when_viable(args, rspec_runner)
-            order_option = adapter_class.order_option(args)
+            order_option = Core::ADAPTER_CLASS.order_option(args)
 
             if order_option
               # Don't add the seed option for order other than random, e.g. `defined`
@@ -285,12 +286,6 @@ module KnapsackPro
             @@used_seed = rspec_runner.configuration.seed.to_s
 
             args + ['--seed', @@used_seed]
-          end
-
-          private
-
-          def adapter_class
-            KnapsackPro::Adapters::RSpecAdapter
           end
         end
       end
