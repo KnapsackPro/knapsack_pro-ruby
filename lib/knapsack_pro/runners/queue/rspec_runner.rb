@@ -256,14 +256,15 @@ module KnapsackPro
             # Initialize queue_runner to trap signals before RSpec::Core::Runner is called
             queue_runner = new(Core::ADAPTER_CLASS)
 
-            cli_args = Core.to_cli_args(args)
-            Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+            Core.ensure_spec_opts_have_knapsack_pro_formatters
 
+            cli_args = Core.to_cli_args(args)
             cli_args = Core.ensure_args_have_default_formatter(cli_args)
             cli_args = Core.args_with_default_options(cli_args, queue_runner.test_dir)
             @@cli_args = cli_args
 
-            Core.ensure_spec_opts_have_knapsack_pro_formatters
+            Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+
             rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
             rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
 
