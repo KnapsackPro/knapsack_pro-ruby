@@ -65,7 +65,7 @@ module KnapsackPro
             end
 
             # @param args Array[String]
-            def ensure_args_have_formatter(args)
+            def ensure_args_have_default_formatter(args)
               args if Core::ADAPTER_CLASS.has_format_option?(args)
 
               args + ['--format', 'progress']
@@ -259,7 +259,7 @@ module KnapsackPro
             cli_args = Core.to_cli_args(args)
             Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
-            cli_args = Core.ensure_args_have_formatter(cli_args)
+            cli_args = Core.ensure_args_have_default_formatter(cli_args)
             cli_args = Core.args_with_default_options(cli_args, queue_runner.test_dir)
             @@cli_args = cli_args
 
