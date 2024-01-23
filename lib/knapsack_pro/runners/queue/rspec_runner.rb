@@ -71,6 +71,19 @@ module KnapsackPro
               args + ['--format', 'progress']
             end
 
+            # @param args Array[String]
+            def args_with_default_options(args, test_dir)
+              new_args = args + [
+                '--default-path', test_dir,
+              ]
+
+              FORMATTERS.each do |formatter|
+                new_args += ['--format', formatter]
+              end
+
+              new_args
+            end
+
             def log_rspec_command(args, test_file_paths, type)
               case type
               when :subset_queue
@@ -247,13 +260,7 @@ module KnapsackPro
             Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
             cli_args = Core.ensure_args_have_formatter(cli_args)
-
-            cli_args += [
-              # shows summary of all tests executed in Queue Mode at the very end
-              '--format', KnapsackPro::Formatters::RSpecQueueSummaryFormatter.to_s,
-              '--format', KnapsackPro::Formatters::TimeTracker.to_s,
-              '--default-path', queue_runner.test_dir,
-            ]
+            cli_args = Core.args_with_default_options(cli_args, queue_runner.test_dir)
             @@cli_args = cli_args
 
             Core.ensure_spec_opts_have_knapsack_pro_formatters
