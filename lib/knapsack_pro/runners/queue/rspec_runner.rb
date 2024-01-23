@@ -48,7 +48,7 @@ module KnapsackPro
             end
 
             # @param args Array[String]
-            def args_with_seed_option_added_when_viable(args, rspec_runner)
+            def args_with_seed_option_added_when_viable(rspec_runner, args)
               order_option = ADAPTER_CLASS.order_option(args)
 
               if order_option
@@ -217,7 +217,7 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          printable_args = Core.args_with_seed_option_added_when_viable(@@cli_args, @rspec_runner)
+          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @@cli_args)
           Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
@@ -267,7 +267,7 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-            printable_args = Core.args_with_seed_option_added_when_viable(cli_args, rspec_runner)
+            printable_args = Core.args_with_seed_option_added_when_viable(rspec_runner, cli_args)
             Core.log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
