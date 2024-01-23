@@ -105,16 +105,24 @@ module KnapsackPro
           end
         end
 
-        attr_reader :node_assigned_test_file_paths
-
-        @@cli_args = nil
+        attr_reader :node_assigned_test_file_paths, :cli_args
 
         def_delegators :@rspec_runner, :world, :configuration, :exit_code
 
-        def initialize(adapter_class)
-          super
+        def initialize(adapter_class, args)
+          super(adapter_class)
           @node_assigned_test_file_paths = []
           @rspec_runner = nil # lazy assigned instance of ::RSpec::Core::Runner
+
+          Core.ensure_spec_opts_have_knapsack_pro_formatters
+
+          cli_args = Core.to_cli_args(args)
+          cli_args = Core.ensure_args_have_default_formatter(cli_args)
+          cli_args = Core.args_with_default_options(cli_args, test_dir)
+
+          Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
+
+          @cli_args = cli_args
         end
 
         # Based on:
@@ -230,7 +238,7 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @@cli_args)
+          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @cli_args)
           Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
@@ -254,18 +262,9 @@ module KnapsackPro
             KnapsackPro::Config::Env.set_test_runner_adapter(Core::ADAPTER_CLASS)
 
             # Initialize queue_runner to trap signals before RSpec::Core::Runner is called
-            queue_runner = new(Core::ADAPTER_CLASS)
+            queue_runner = new(Core::ADAPTER_CLASS, args)
 
-            Core.ensure_spec_opts_have_knapsack_pro_formatters
-
-            cli_args = Core.to_cli_args(args)
-            cli_args = Core.ensure_args_have_default_formatter(cli_args)
-            cli_args = Core.args_with_default_options(cli_args, queue_runner.test_dir)
-            @@cli_args = cli_args
-
-            Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
-
-            rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(cli_args)
+            rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(queue_runner.cli_args)
             rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
 
             exit_code = queue_runner.run(rspec_runner)
@@ -275,7 +274,7 @@ module KnapsackPro
             KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
             KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-            printable_args = Core.args_with_seed_option_added_when_viable(rspec_runner, cli_args)
+            printable_args = Core.args_with_seed_option_added_when_viable(rspec_runner, queue_runner.cli_args)
             Core.log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
 
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
