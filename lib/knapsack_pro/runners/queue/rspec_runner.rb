@@ -66,7 +66,7 @@ module KnapsackPro
 
             # @param args Array[String]
             def ensure_args_have_default_formatter(args)
-              args if Core::ADAPTER_CLASS.has_format_option?(args)
+              return args if Core::ADAPTER_CLASS.has_format_option?(args)
 
               args + ['--format', 'progress']
             end
