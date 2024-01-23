@@ -14,6 +14,14 @@ module KnapsackPro
       end
 
       module Runner
+        def knapsack__mark_setup_as_done
+          @knapsack__setup_done = true
+        end
+
+        def knapsack__setup_done?
+          !!@knapsack__setup_done
+        end
+
         def knapsack__setup
           # Abstract from RSpec::Core::Runner#setup, since we do not need to set any filters or files at this point,
           # and we do not want to let world.announce_filters to be called, since it will print
@@ -21,6 +29,8 @@ module KnapsackPro
           configure($stderr, $stdout)
 
           world.knapsack__setup
+
+          knapsack__mark_setup_as_done
         end
 
         def knapsack__wants_to_quit?
@@ -38,6 +48,8 @@ module KnapsackPro
         end
 
         def knapsack__deprecated_run_all_when_everything_filtered_enabled?
+          raise "Cannot call the #{__method__} method because setup was not done." unless knapsack__setup_done?
+
           !!(configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered)
         end
 
