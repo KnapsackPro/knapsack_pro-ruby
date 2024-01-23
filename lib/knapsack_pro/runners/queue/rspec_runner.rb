@@ -119,6 +119,9 @@ module KnapsackPro
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
           @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
+          @rspec_runner.knapsack__setup
+
+          Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
         end
 
         # Based on:
@@ -128,9 +131,6 @@ module KnapsackPro
         #   0 if all specs passed,
         #   or the configured failure exit code (1 by default) if specs failed.
         def run
-          @rspec_runner.knapsack__setup
-          Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
-
           return @rspec_runner.knapsack__exit_early if @rspec_runner.knapsack__wants_to_quit?
 
           begin
@@ -261,9 +261,7 @@ module KnapsackPro
 
             KnapsackPro::Config::Env.set_test_runner_adapter(Core::ADAPTER_CLASS)
 
-            # Initialize queue_runner to trap signals before RSpec::Core::Runner is called
             queue_runner = new(Core::ADAPTER_CLASS, args)
-
             exit_code = queue_runner.run
 
             Core::ADAPTER_CLASS.verify_bind_method_called
