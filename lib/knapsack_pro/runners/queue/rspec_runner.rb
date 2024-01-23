@@ -105,23 +105,16 @@ module KnapsackPro
           end
         end
 
-        attr_reader :node_assigned_test_file_paths, :cli_args, :rspec_runner
+        attr_reader :cli_args, :rspec_runner
 
         def_delegators :@rspec_runner, :world, :configuration, :exit_code
 
         def initialize(adapter_class, args)
           super(adapter_class)
+          @adapter_class = adapter_class
           @node_assigned_test_file_paths = []
           @cli_args = prepare_cli_args(args)
-
-          Core.ensure_spec_opts_have_knapsack_pro_formatters
-          adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
-
-          rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
-          @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
-          @rspec_runner.knapsack__setup
-
-          Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
+          @rspec_runner = nil # lazy initialization of RSpec::Core::Runner
         end
 
         # Based on:
@@ -131,10 +124,12 @@ module KnapsackPro
         #   0 if all specs passed,
         #   or the configured failure exit code (1 by default) if specs failed.
         def run
+          pre_run_setup
+
           return @rspec_runner.knapsack__exit_early if @rspec_runner.knapsack__wants_to_quit?
 
           begin
-            run_specs
+            exit_code = run_specs
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
             @rspec_runner.knapsack__error_exit_code
               .yield_self { Core.error_exit_code(_1) }
@@ -142,12 +137,14 @@ module KnapsackPro
             raise
           rescue Exception => exception
             KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(node_assigned_test_file_paths)
+            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(@node_assigned_test_file_paths)
             @rspec_runner.knapsack__error_exit_code
               .yield_self { Core.error_exit_code(_1) }
               .yield_self { Kernel.exit(_1) }
             raise
           end
+
+          post_run_tasks(exit_code)
         end
 
         private
@@ -156,6 +153,32 @@ module KnapsackPro
           cli_args = Core.to_cli_args(args)
           cli_args = Core.ensure_args_have_default_formatter(cli_args)
           Core.args_with_default_options(cli_args, test_dir)
+        end
+
+        def pre_run_setup
+          Core.ensure_spec_opts_have_knapsack_pro_formatters
+          @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
+
+          rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
+          @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
+          @rspec_runner.knapsack__setup
+
+          Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
+        end
+
+        def post_run_tasks(exit_code)
+          @adapter_class.verify_bind_method_called
+
+          KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
+          KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
+
+          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @cli_args)
+          Core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
+
+          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_assigned_test_file_paths))
+
+          Kernel.exit(exit_code)
         end
 
         def pull_tests_from_queue(can_initialize_queue: false)
@@ -262,20 +285,7 @@ module KnapsackPro
             KnapsackPro::Config::Env.set_test_runner_adapter(Core::ADAPTER_CLASS)
 
             queue_runner = new(Core::ADAPTER_CLASS, args)
-            exit_code = queue_runner.run
-
-            Core::ADAPTER_CLASS.verify_bind_method_called
-
-            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
-            KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
-
-            printable_args = Core.args_with_seed_option_added_when_viable(queue_runner.rspec_runner, queue_runner.cli_args)
-            Core.log_rspec_command(printable_args, queue_runner.node_assigned_test_file_paths, :end_of_queue)
-
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(queue_runner.node_assigned_test_file_paths))
-
-            Kernel.exit(exit_code)
+            queue_runner.run
           end
         end
       end
