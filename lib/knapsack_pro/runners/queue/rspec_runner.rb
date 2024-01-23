@@ -47,6 +47,7 @@ module KnapsackPro
               (args || '').split
             end
 
+            # @param args Array[String]
             def args_with_seed_option_added_when_viable(args, rspec_runner)
               order_option = ADAPTER_CLASS.order_option(args)
 
@@ -61,6 +62,13 @@ module KnapsackPro
               return args unless rspec_runner.knapsack__seed_used?
 
               args + ['--seed', rspec_runner.knapsack__seed]
+            end
+
+            # @param args Array[String]
+            def ensure_args_have_formatter(args)
+              args if Core::ADAPTER_CLASS.has_format_option?(args)
+
+              args + ['--format', 'progress']
             end
 
             def log_rspec_command(args, test_file_paths, type)
@@ -238,8 +246,7 @@ module KnapsackPro
             cli_args = Core.to_cli_args(args)
             Core::ADAPTER_CLASS.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
-            # when format option is not defined by user then use progress formatter to show tests execution progress
-            cli_args += ['--format', 'progress'] unless Core::ADAPTER_CLASS.has_format_option?(cli_args)
+            cli_args = Core.ensure_args_have_formatter(cli_args)
 
             cli_args += [
               # shows summary of all tests executed in Queue Mode at the very end
