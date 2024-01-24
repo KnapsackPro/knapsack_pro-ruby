@@ -6,8 +6,6 @@ module KnapsackPro
   module Runners
     module Queue
       class RSpecRunner < BaseRunner
-        extend Forwardable
-
         class Core
           ADAPTER_CLASS = KnapsackPro::Adapters::RSpecAdapter
           FAILURE_EXIT_CODE = 1
@@ -106,8 +104,6 @@ module KnapsackPro
         end
 
         attr_reader :cli_args, :rspec_runner
-
-        def_delegators :@rspec_runner, :world
 
         def initialize(adapter_class, args)
           super(adapter_class)
@@ -223,11 +219,11 @@ module KnapsackPro
 
           yield test_file_paths
 
-          if world.wants_to_quit
+          if @rspec_runner.knapsack__wants_to_quit?
             KnapsackPro.logger.warn('RSpec wants to quit.')
             self.class.set_terminate_process
           end
-          if world.respond_to?(:rspec_is_quitting) && world.rspec_is_quitting
+          if @rspec_runner.knapsack__rspec_is_quitting?
             KnapsackPro.logger.warn('RSpec is quitting.')
             self.class.set_terminate_process
           end

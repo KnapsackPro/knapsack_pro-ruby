@@ -43,6 +43,16 @@ module KnapsackPro
           world.wants_to_quit
         end
 
+        # `rspec_is_quitting` was added in RSpec 3.11.0
+        # Changelog:
+        #   https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/Changelog.md#3110--2022-02-09
+        # PR:
+        #   https://github.com/rspec/rspec-core/pull/2926
+        # We support RSpec < 3.11.0.
+        def knapsack__rspec_is_quitting?
+          world.respond_to?(:rspec_is_quitting) && world.rspec_is_quitting
+        end
+
         def knapsack__exit_early
           _exit_status = configuration.reporter.exit_early(exit_code)
         end
