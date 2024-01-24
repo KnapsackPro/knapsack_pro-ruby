@@ -103,8 +103,6 @@ module KnapsackPro
           end
         end
 
-        attr_reader :cli_args, :rspec_runner
-
         def initialize(adapter_class, args)
           super(adapter_class)
           @adapter_class = adapter_class
