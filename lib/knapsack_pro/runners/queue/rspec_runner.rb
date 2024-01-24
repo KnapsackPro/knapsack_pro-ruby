@@ -114,6 +114,10 @@ module KnapsackPro
                 KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
               )
             end
+
+            def log_fail_fast_limit_met
+              KnapsackPro.logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+            end
           end
         end
 
@@ -137,7 +141,7 @@ module KnapsackPro
           return @rspec_runner.knapsack__exit_early if @rspec_runner.knapsack__wants_to_quit?
 
           begin
-            exit_code = @rspec_runner.run_specs(self, KnapsackPro.logger)
+            exit_code = @rspec_runner.run_specs(self)
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
             @rspec_runner.knapsack__error_exit_code
               .yield_self { Core.error_exit_code(_1) }
@@ -173,6 +177,10 @@ module KnapsackPro
 
         def handle_signal!
           self.class.handle_signal!
+        end
+
+        def log_fail_fast_limit_met
+          Core.log_fail_fast_limit_met
         end
 
         private

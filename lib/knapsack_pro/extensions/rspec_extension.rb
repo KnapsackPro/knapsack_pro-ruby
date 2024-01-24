@@ -113,7 +113,7 @@ module KnapsackPro
         #   * RSpec should not fail when examples are not executed for a batch of tests fetched from Queue API. The batch could have tests that have no examples (for example, someone commented out the content of the spec file). We should fetch another batch of tests from Queue API and keep running tests.
         #
         # @return [Fixnum] exit status code.
-        def run_specs(queue_runner, logger)
+        def run_specs(queue_runner)
           # Based on:
           # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L53
           ordering_strategy = configuration.ordering_registry.fetch(:global)
@@ -132,7 +132,7 @@ module KnapsackPro
                 node_examples_passed = false unless examples_passed
 
                 if reporter.fail_fast_limit_met?
-                  logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+                  queue_runner.log_fail_fast_limit_met
                   break
                 end
               end
