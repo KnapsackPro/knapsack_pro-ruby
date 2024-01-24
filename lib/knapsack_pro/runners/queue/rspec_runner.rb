@@ -107,7 +107,7 @@ module KnapsackPro
 
         attr_reader :cli_args, :rspec_runner
 
-        def_delegators :@rspec_runner, :world, :configuration, :exit_code
+        def_delegators :@rspec_runner, :world
 
         def initialize(adapter_class, args)
           super(adapter_class)
