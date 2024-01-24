@@ -10,6 +10,8 @@ module KnapsackPro
       end
 
       module World
+        # Based on `announce_filters`
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L171
         def knapsack__setup
           fail_if_config_and_cli_options_invalid
         end
@@ -24,6 +26,8 @@ module KnapsackPro
           !!@knapsack__setup_done
         end
 
+        # Based on:
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L98
         def knapsack__setup
           # Abstract from RSpec::Core::Runner#setup, since we do not need to set any filters or files at this point,
           # and we do not want to let world.announce_filters to be called, since it will print
@@ -43,6 +47,7 @@ module KnapsackPro
           _exit_status = configuration.reporter.exit_early(exit_code)
         end
 
+        # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/configuration.rb#L546
         # Set with --error-exit-code CODE - Override the exit code used when there are errors loading or running specs outside of examples.
         def knapsack__error_exit_code
