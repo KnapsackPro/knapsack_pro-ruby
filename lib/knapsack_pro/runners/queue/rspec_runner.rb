@@ -206,6 +206,29 @@ module KnapsackPro
           end
         end
 
+        def with_queue_hooks(test_file_paths)
+          subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
+          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
+
+          KnapsackPro::Hooks::Queue.call_before_subset_queue
+
+          yield test_file_paths
+
+          if world.wants_to_quit
+            KnapsackPro.logger.warn('RSpec wants to quit.')
+            self.class.set_terminate_process
+          end
+          if world.respond_to?(:rspec_is_quitting) && world.rspec_is_quitting
+            KnapsackPro.logger.warn('RSpec is quitting.')
+            self.class.set_terminate_process
+          end
+
+          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @cli_args)
+          Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
+
+          KnapsackPro::Hooks::Queue.call_after_subset_queue
+        end
+
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
         #
@@ -242,29 +265,6 @@ module KnapsackPro
 
             exit_code(node_examples_passed)
           end
-        end
-
-        def with_queue_hooks(test_file_paths)
-          subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
-          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
-
-          KnapsackPro::Hooks::Queue.call_before_subset_queue
-
-          yield test_file_paths
-
-          if world.wants_to_quit
-            KnapsackPro.logger.warn('RSpec wants to quit.')
-            self.class.set_terminate_process
-          end
-          if world.respond_to?(:rspec_is_quitting) && world.rspec_is_quitting
-            KnapsackPro.logger.warn('RSpec is quitting.')
-            self.class.set_terminate_process
-          end
-
-          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @cli_args)
-          Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
-
-          KnapsackPro::Hooks::Queue.call_after_subset_queue
         end
 
         class << self
