@@ -176,6 +176,11 @@ module KnapsackPro
         end
 
         def pre_run_setup
+          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
+          ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
+
+          KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
+
           Core.ensure_spec_opts_have_knapsack_pro_formatters
           @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
 
@@ -245,10 +250,6 @@ module KnapsackPro
             KnapsackPro::Extensions::RSpecExtension.setup!
 
             ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-            ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
-            ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
-
-            KnapsackPro::Config::Env.set_test_runner_adapter(Core::ADAPTER_CLASS)
 
             queue_runner = new(Core::ADAPTER_CLASS, args)
             queue_runner.run
