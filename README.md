@@ -44,7 +44,7 @@ The `knapsack_pro` gem supports all CIs and the following test runners:
 
 ## Requirements
 
-`>= Ruby 2.1.0`
+`>= Ruby 3.0.0`
 
 ## Installation
 
