@@ -2,6 +2,16 @@
 
 module KnapsackPro
   module Extensions
+    # Knapsack extension on top of RSpec methods.
+    #
+    # It should expose methods with the `knapsack__` prefix.
+    # The methods should hide RSpec public or private methods, a complex chain of methods, etc.
+    # From an outside perspective, when someone uses the `knapsack__` method, they don't break the Law of Demeter.
+    # All the complexity of RSpec internals is hidden inside of the `knapsack__` method.
+    #
+    # The structure of the `knapsack__` method that is inspired by an existing RSpec method should have a similar structure to the original method.
+    # It should be easy to see a code difference when a new RSpec version is released.
+    # Please use permalinks to RSpec source code when you create a new `knapsack__` method.
     module RSpecExtension
       def self.setup!
         RSpec::Core::World.prepend(World)

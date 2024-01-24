@@ -5,7 +5,21 @@ require 'forwardable'
 module KnapsackPro
   module Runners
     module Queue
+      # Imperative Shell [instance of KnapsackPro::Runners::Queue::RSpecRunner]
+      # Architecture based on: https://www.destroyallsoftware.com/talks/boundaries
+      #
+      # It should contain calls to RSpec methods.
+      # Preferably via methods with the  `knapsack__` prefix.
+      # We want to isolate the imperative shell from the internals of RSpec.
+      # It should be tested via integration tests if possible.
+      # Alternatively, it should be tested using E2E tests on CI that are running against a real Rails app with the RSpec test suite.
       class RSpecRunner < BaseRunner
+        # Functional Core.
+        # Architecture based on: https://www.destroyallsoftware.com/talks/boundaries
+        #
+        # It has business logic related to how Knapsack Pro works.
+        # It should be easy to unit test it.
+        # It should NOT contain direct calls to RSpec.
         class Core
           ADAPTER_CLASS = KnapsackPro::Adapters::RSpecAdapter
           FAILURE_EXIT_CODE = 1
