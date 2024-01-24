@@ -60,7 +60,7 @@ module KnapsackPro
             end
 
             # @param args Array[String]
-            def args_with_seed_option_added_when_viable(rspec_runner, args)
+            def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
               order_option = ADAPTER_CLASS.order_option(args)
 
               if order_option
@@ -71,9 +71,9 @@ module KnapsackPro
               end
 
               # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
-              return args unless rspec_runner.knapsack__seed_used?
+              return args unless is_seed_used
 
-              args + ['--seed', rspec_runner.knapsack__seed]
+              args + ['--seed', seed]
             end
 
             # @param args Array[String]
@@ -205,7 +205,7 @@ module KnapsackPro
           KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
           KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
-          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @cli_args)
+          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
           Core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
@@ -240,7 +240,7 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner, @cli_args)
+          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
           Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
