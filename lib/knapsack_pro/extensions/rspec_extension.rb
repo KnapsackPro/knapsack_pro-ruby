@@ -83,6 +83,44 @@ module KnapsackPro
 
           configuration.knapsack__load_spec_files(test_file_paths)
         end
+
+        # Based on:
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
+        #
+        # Option: `configuration.fail_if_no_examples`
+        #   Ignore the configuration.fail_if_no_examples option because it should be off in Queue Mode.
+        #   * Ignore the fail_if_no_examples option because in Queue Mode a late CI node can start after other CI nodes already executed tests. It is expected to not run examples in such scenario.
+        #   * RSpec should not fail when examples are not executed for a batch of tests fetched from Queue API. The batch could have tests that have no examples (for example, someone commented out the content of the spec file). We should fetch another batch of tests from Queue API and keep running tests.
+        #
+        # @return [Fixnum] exit status code.
+        def run_specs(queue_runner, logger)
+          # Based on:
+          # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L53
+          ordering_strategy = configuration.ordering_registry.fetch(:global)
+          node_examples_passed = true
+
+          configuration.with_suite_hooks do
+            exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
+              queue_runner.with_batched_tests_from_queue do |test_file_paths|
+                knapsack__load_spec_files_batch(test_file_paths)
+
+                examples_passed = ordering_strategy.order(world.example_groups).map do |example_group|
+                  queue_runner.handle_signal!
+                  example_group.run(reporter)
+                end.all?
+
+                node_examples_passed = false unless examples_passed
+
+                if reporter.fail_fast_limit_met?
+                  logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+                  break
+                end
+              end
+            end
+
+            exit_code(node_examples_passed)
+          end
+        end
       end
 
       module Configuration

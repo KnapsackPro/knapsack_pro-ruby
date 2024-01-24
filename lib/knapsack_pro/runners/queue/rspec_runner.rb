@@ -129,7 +129,7 @@ module KnapsackPro
           return @rspec_runner.knapsack__exit_early if @rspec_runner.knapsack__wants_to_quit?
 
           begin
-            exit_code = run_specs
+            exit_code = @rspec_runner.run_specs(self, KnapsackPro.logger)
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
             @rspec_runner.knapsack__error_exit_code
               .yield_self { Core.error_exit_code(_1) }
@@ -145,6 +145,26 @@ module KnapsackPro
           end
 
           post_run_tasks(exit_code)
+        end
+
+        def with_batched_tests_from_queue
+          can_initialize_queue = true
+
+          loop do
+            self.class.handle_signal!
+            test_file_paths = pull_tests_from_queue(can_initialize_queue: can_initialize_queue)
+            can_initialize_queue = false
+
+            break if test_file_paths.empty?
+
+            with_queue_hooks(test_file_paths) do |wrapped_test_file_paths|
+              yield wrapped_test_file_paths
+            end
+          end
+        end
+
+        def handle_signal!
+          self.class.handle_signal!
         end
 
         private
@@ -190,22 +210,6 @@ module KnapsackPro
           test_file_paths
         end
 
-        def with_batched_tests_from_queue
-          can_initialize_queue = true
-
-          loop do
-            self.class.handle_signal!
-            test_file_paths = pull_tests_from_queue(can_initialize_queue: can_initialize_queue)
-            can_initialize_queue = false
-
-            break if test_file_paths.empty?
-
-            with_queue_hooks(test_file_paths) do |wrapped_test_file_paths|
-              yield wrapped_test_file_paths
-            end
-          end
-        end
-
         def with_queue_hooks(test_file_paths)
           subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
           ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
@@ -227,44 +231,6 @@ module KnapsackPro
           Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
-        end
-
-        # Based on:
-        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
-        #
-        # Option: `configuration.fail_if_no_examples`
-        #   Ignore the configuration.fail_if_no_examples option because it should be off in Queue Mode.
-        #   * Ignore the fail_if_no_examples option because in Queue Mode a late CI node can start after other CI nodes already executed tests. It is expected to not run examples in such scenario.
-        #   * RSpec should not fail when examples are not executed for a batch of tests fetched from Queue API. The batch could have tests that have no examples (for example, someone commented out the content of the spec file). We should fetch another batch of tests from Queue API and keep running tests.
-        #
-        # @return [Fixnum] exit status code.
-        def run_specs
-          # Based on:
-          # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L53
-          ordering_strategy = configuration.ordering_registry.fetch(:global)
-          node_examples_passed = true
-
-          configuration.with_suite_hooks do
-            exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
-              with_batched_tests_from_queue do |test_file_paths|
-                @rspec_runner.knapsack__load_spec_files_batch(test_file_paths)
-
-                examples_passed = ordering_strategy.order(world.example_groups).map do |example_group|
-                  self.class.handle_signal!
-                  example_group.run(reporter)
-                end.all?
-
-                node_examples_passed = false unless examples_passed
-
-                if reporter.fail_fast_limit_met?
-                  KnapsackPro.logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
-                  break
-                end
-              end
-            end
-
-            exit_code(node_examples_passed)
-          end
         end
 
         class << self
