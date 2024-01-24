@@ -151,7 +151,7 @@ module KnapsackPro
           can_initialize_queue = true
 
           loop do
-            self.class.handle_signal!
+            handle_signal!
             test_file_paths = pull_tests_from_queue(can_initialize_queue: can_initialize_queue)
             can_initialize_queue = false
 
