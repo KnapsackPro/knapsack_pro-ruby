@@ -19,8 +19,6 @@
     __After:__<br>
     The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
 
-  * We are no longer modifying the default RSpec formatters in Queue Mode. The `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS` environment variable is removed.
-
 * RSpec recommended changes in your project:
   * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports. The `KnapsackPro::Hooks::Queue.after_subset_queue` hook is no longer needed to generate a valid XML/JSON report.
 
@@ -64,6 +62,8 @@
 
     Reference in [docs](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) for the latest Percy version.
 
+  * We are no longer modifying the default RSpec formatters in Queue Mode. The `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS` environment variable is removed. You can remove it from the CI config if you are using it.
+
 * RSpec improvements in Queue Mode:
   * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 are handled quicker. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
     * Use `1` as a default exit code when the process is terminated.
@@ -86,7 +86,6 @@
   * Ignore the `fail_if_no_examples` option in Queue Mode. Reasons why:
     * A late CI node can start after other CI nodes already executed tests. It is expected to not run examples in such scenario.
     * RSpec should not fail when examples are not executed for a batch of tests fetched from Queue API. The batch could have tests that have no examples (for example, someone commented out the content of the spec file). We should fetch another batch of tests from Queue API and keep running tests.
-
 
   * Raise an exception if the deprecated `run_all_when_everything_filtered` option is detected. [See docs](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed).
 
