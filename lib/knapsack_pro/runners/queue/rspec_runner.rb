@@ -39,18 +39,17 @@ module KnapsackPro
             raise error_message
           end
 
-          def ensure_spec_opts_have_knapsack_pro_formatters
-            spec_opts = ENV['SPEC_OPTS']
-
-            return unless spec_opts
-            return if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
+          # @param spec_opts ENV['SPEC_OPTS']
+          def ensure_spec_opts_have_knapsack_pro_formatters(spec_opts)
+            return spec_opts unless spec_opts
+            return spec_opts if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
 
             FORMATTERS.each do |formatter|
               next if spec_opts.include?(formatter)
               spec_opts += " --format #{formatter}"
             end
 
-            ENV['SPEC_OPTS'] = spec_opts
+            spec_opts
           end
 
           def error_exit_code(rspec_error_exit_code)
@@ -229,7 +228,7 @@ module KnapsackPro
 
           KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
 
-          @function_core.ensure_spec_opts_have_knapsack_pro_formatters
+          ENV['SPEC_OPTS'] = @function_core.ensure_spec_opts_have_knapsack_pro_formatters(ENV['SPEC_OPTS'])
           @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
