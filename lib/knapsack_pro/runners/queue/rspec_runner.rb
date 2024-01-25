@@ -121,12 +121,14 @@ module KnapsackPro
           end
         end
 
-        def initialize(adapter_class, args)
+        def initialize(adapter_class, args, stream_error, stream_out)
           super(adapter_class)
           @adapter_class = adapter_class
           @node_assigned_test_file_paths = []
           @cli_args = prepare_cli_args(args)
           @rspec_runner = nil # lazy initialization of RSpec::Core::Runner
+          @stream_error = stream_error
+          @stream_out = stream_out
         end
 
         # Based on:
@@ -198,7 +200,7 @@ module KnapsackPro
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
           @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
-          @rspec_runner.knapsack__setup
+          @rspec_runner.knapsack__setup(@stream_error, @stream_out)
 
           Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
         end
@@ -251,7 +253,7 @@ module KnapsackPro
         end
 
         class << self
-          def run(args)
+          def run(args, stream_error = $stderr, stream_out = $stdout)
             require 'rspec/core'
             require_relative '../../extensions/rspec_extension'
             require_relative '../../formatters/time_tracker'
@@ -263,7 +265,7 @@ module KnapsackPro
 
             ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
 
-            queue_runner = new(Core::ADAPTER_CLASS, args)
+            queue_runner = new(Core::ADAPTER_CLASS, args, stream_error, stream_out)
             queue_runner.run
           end
         end
