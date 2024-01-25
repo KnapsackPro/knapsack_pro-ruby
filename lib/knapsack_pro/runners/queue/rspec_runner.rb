@@ -20,124 +20,149 @@ module KnapsackPro
         # It has business logic related to how Knapsack Pro works.
         # It should be easy to unit test it.
         # It should NOT contain direct calls to RSpec.
-        class Core
+        class FunctionalCore
           ADAPTER_CLASS = KnapsackPro::Adapters::RSpecAdapter
           FAILURE_EXIT_CODE = 1
           FORMATTERS = [
             'KnapsackPro::Formatters::TimeTracker',
           ]
 
-          class << self
-            def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
-              return unless deprecated_run_all_when_everything_filtered_enabled
+          def initialize(logger)
+            @logger = logger
+          end
 
-              error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
-              KnapsackPro.logger.error(error_message)
-              raise error_message
+          def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
+            return unless deprecated_run_all_when_everything_filtered_enabled
+
+            error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
+            logger.error(error_message)
+            raise error_message
+          end
+
+          def ensure_spec_opts_have_knapsack_pro_formatters
+            spec_opts = ENV['SPEC_OPTS']
+
+            return unless spec_opts
+            return if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
+
+            FORMATTERS.each do |formatter|
+              next if spec_opts.include?(formatter)
+              spec_opts += " --format #{formatter}"
             end
 
-            def ensure_spec_opts_have_knapsack_pro_formatters
-              spec_opts = ENV['SPEC_OPTS']
+            ENV['SPEC_OPTS'] = spec_opts
+          end
 
-              return unless spec_opts
-              return if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
+          def error_exit_code(rspec_error_exit_code)
+            Kernel.exit(rspec_error_exit_code || FAILURE_EXIT_CODE)
+          end
 
-              FORMATTERS.each do |formatter|
-                next if spec_opts.include?(formatter)
-                spec_opts += " --format #{formatter}"
-              end
+          def to_cli_args(args)
+            (args || '').split
+          end
 
-              ENV['SPEC_OPTS'] = spec_opts
+          # @param args Array[String]
+          def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
+            order_option = ADAPTER_CLASS.order_option(args)
+
+            if order_option
+              # Don't add the seed option for order other than random, e.g. `defined`
+              return args unless order_option.include?('rand')
+              # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
+              return args if order_option.to_s.split(':')[1]
             end
 
-            def error_exit_code(rspec_error_exit_code)
-              Kernel.exit(rspec_error_exit_code || FAILURE_EXIT_CODE)
+            # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
+            return args unless is_seed_used
+
+            args + ['--seed', seed]
+          end
+
+          # @param args Array[String]
+          def ensure_args_have_default_formatter(args)
+            return args if ADAPTER_CLASS.has_format_option?(args)
+
+            args + ['--format', 'progress']
+          end
+
+          # @param args Array[String]
+          def args_with_default_options(args, test_dir)
+            new_args = args + [
+              '--default-path', test_dir,
+            ]
+
+            FORMATTERS.each do |formatter|
+              new_args += ['--format', formatter]
             end
 
-            def to_cli_args(args)
-              (args || '').split
+            new_args
+          end
+
+          def log_rspec_command(args, test_file_paths, type)
+            case type
+            when :subset_queue
+              logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+            when :end_of_queue
+              logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
             end
 
-            # @param args Array[String]
-            def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
-              order_option = ADAPTER_CLASS.order_option(args)
-
-              if order_option
-                # Don't add the seed option for order other than random, e.g. `defined`
-                return args unless order_option.include?('rand')
-                # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
-                return args if order_option.to_s.split(':')[1]
-              end
-
-              # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
-              return args unless is_seed_used
-
-              args + ['--seed', seed]
+            stringified_cli_args = args.join(' ')
+            FORMATTERS.each do |formatter|
+              stringified_cli_args.sub!(" --format #{formatter}", '')
             end
 
-            # @param args Array[String]
-            def ensure_args_have_default_formatter(args)
-              return args if Core::ADAPTER_CLASS.has_format_option?(args)
+            logger.info(
+              "bundle exec rspec #{stringified_cli_args} " +
+              KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+            )
+          end
 
-              args + ['--format', 'progress']
-            end
+          def log_fail_fast_limit_met
+            logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+          end
 
-            # @param args Array[String]
-            def args_with_default_options(args, test_dir)
-              new_args = args + [
-                '--default-path', test_dir,
-              ]
+          def log_exit_summary(node_assigned_test_file_paths)
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            return unless time_tracker
 
-              FORMATTERS.each do |formatter|
-                new_args += ['--format', formatter]
-              end
+            unexecuted_test_files = time_tracker.unexecuted_test_files(node_assigned_test_file_paths)
+            return if unexecuted_test_files.empty?
 
-              new_args
-            end
+            logger.warn("Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}")
+          end
 
-            def log_rspec_command(args, test_file_paths, type)
-              case type
-              when :subset_queue
-                KnapsackPro.logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
-              when :end_of_queue
-                KnapsackPro.logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
-              end
+          private
 
-              stringified_cli_args = args.join(' ')
-              FORMATTERS.each do |formatter|
-                stringified_cli_args.sub!(" --format #{formatter}", '')
-              end
+          attr_reader :logger
+        end
 
-              KnapsackPro.logger.info(
-                "bundle exec rspec #{stringified_cli_args} " +
-                KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
-              )
-            end
+        class << self
+          def run(args, stream_error = $stderr, stream_out = $stdout, logger = KnapsackPro.logger)
+            require 'rspec/core'
+            require_relative '../../extensions/rspec_extension'
+            require_relative '../../formatters/time_tracker'
+            require_relative '../../formatters/time_tracker_fetcher'
 
-            def log_fail_fast_limit_met
-              KnapsackPro.logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
-            end
+            KnapsackPro::Extensions::RSpecExtension.setup!
 
-            def log_exit_summary(node_assigned_test_file_paths)
-              time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-              return unless time_tracker
+            ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
 
-              unexecuted_test_files = time_tracker.unexecuted_test_files(node_assigned_test_file_paths)
-              return if unexecuted_test_files.empty?
+            function_core = FunctionalCore.new(logger)
 
-              KnapsackPro.logger.warn("Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}")
-            end
+            queue_runner = new(FunctionalCore::ADAPTER_CLASS, function_core, args, stream_error, stream_out)
+            queue_runner.run
           end
         end
 
-        def initialize(adapter_class, args, stream_error, stream_out)
+        def initialize(adapter_class, function_core, args, stream_error, stream_out)
           super(adapter_class)
           @adapter_class = adapter_class
-          @node_assigned_test_file_paths = []
+          @function_core = function_core
           @cli_args = prepare_cli_args(args)
-          @rspec_runner = nil # lazy initialization of RSpec::Core::Runner
           @stream_error = stream_error
           @stream_out = stream_out
+          @node_assigned_test_file_paths = []
+          @rspec_runner = nil # lazy initialization of RSpec::Core::Runner
         end
 
         # Based on:
@@ -154,12 +179,12 @@ module KnapsackPro
           begin
             exit_code = @rspec_runner.knapsack__run_specs(self)
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
-            Core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
+            @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened outside of the RSpec tests context: #{exception.inspect}")
-            Core.log_exit_summary(@node_assigned_test_file_paths)
-            Core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
+            @function_core.log_exit_summary(@node_assigned_test_file_paths)
+            @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
           end
 
@@ -187,15 +212,15 @@ module KnapsackPro
         end
 
         def log_fail_fast_limit_met
-          Core.log_fail_fast_limit_met
+          @function_core.log_fail_fast_limit_met
         end
 
         private
 
         def prepare_cli_args(args)
-          cli_args = Core.to_cli_args(args)
-          cli_args = Core.ensure_args_have_default_formatter(cli_args)
-          Core.args_with_default_options(cli_args, test_dir)
+          cli_args = @function_core.to_cli_args(args)
+          cli_args = @function_core.ensure_args_have_default_formatter(cli_args)
+          @function_core.args_with_default_options(cli_args, test_dir)
         end
 
         def pre_run_setup
@@ -204,21 +229,21 @@ module KnapsackPro
 
           KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
 
-          Core.ensure_spec_opts_have_knapsack_pro_formatters
+          @function_core.ensure_spec_opts_have_knapsack_pro_formatters
           @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
           @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
           @rspec_runner.knapsack__setup(@stream_error, @stream_out)
 
-          Core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
+          @function_core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
         end
 
         def post_run_tasks(exit_code)
           @adapter_class.verify_bind_method_called
 
-          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          Core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
+          printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          @function_core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
           KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_assigned_test_file_paths))
@@ -252,26 +277,10 @@ module KnapsackPro
             self.class.set_terminate_process
           end
 
-          printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          Core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
+          printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          @function_core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue
-        end
-
-        class << self
-          def run(args, stream_error = $stderr, stream_out = $stdout)
-            require 'rspec/core'
-            require_relative '../../extensions/rspec_extension'
-            require_relative '../../formatters/time_tracker'
-            require_relative '../../formatters/time_tracker_fetcher'
-
-            KnapsackPro::Extensions::RSpecExtension.setup!
-
-            ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-
-            queue_runner = new(Core::ADAPTER_CLASS, args, stream_error, stream_out)
-            queue_runner.run
-          end
         end
       end
     end
