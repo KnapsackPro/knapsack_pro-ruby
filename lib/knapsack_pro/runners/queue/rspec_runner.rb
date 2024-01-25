@@ -100,7 +100,7 @@ module KnapsackPro
           def log_rspec_command(args, test_file_paths, type)
             case type
             when :subset_queue
-              logger.info("To retry the last batch of tests fetched from the API Queue, please run the following command on your machine:")
+              logger.info("To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:")
             when :end_of_queue
               logger.info("To retry all the tests assigned to this CI node, please run the following command on your machine:")
             end
