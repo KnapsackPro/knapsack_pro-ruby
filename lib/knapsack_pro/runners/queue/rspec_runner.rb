@@ -209,7 +209,6 @@ module KnapsackPro
           @adapter_class.verify_bind_method_called
 
           KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
-          KnapsackPro::Formatters::RSpecQueueProfileFormatterExtension.print_summary
 
           printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
           Core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
@@ -259,7 +258,6 @@ module KnapsackPro
             require_relative '../../formatters/time_tracker'
             require_relative '../../formatters/time_tracker_fetcher'
             require_relative '../../formatters/rspec_queue_summary_formatter'
-            require_relative '../../formatters/rspec_queue_profile_formatter_extension'
 
             KnapsackPro::Extensions::RSpecExtension.setup!
 
