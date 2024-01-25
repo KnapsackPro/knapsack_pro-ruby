@@ -269,11 +269,11 @@ module KnapsackPro
 
           if @rspec_runner.knapsack__wants_to_quit?
             KnapsackPro.logger.warn('RSpec wants to quit.')
-            self.class.set_terminate_process
+            set_terminate_process
           end
           if @rspec_runner.knapsack__rspec_is_quitting?
             KnapsackPro.logger.warn('RSpec is quitting.')
-            self.class.set_terminate_process
+            set_terminate_process
           end
 
           printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)

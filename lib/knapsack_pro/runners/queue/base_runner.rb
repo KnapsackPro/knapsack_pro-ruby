@@ -50,6 +50,10 @@ module KnapsackPro
           @@terminate_process = true
         end
 
+        def set_terminate_process
+          self.class.set_terminate_process
+        end
+
         def trap_signals
           TERMINATION_SIGNALS.each do |signal|
             Signal.trap(signal) {
