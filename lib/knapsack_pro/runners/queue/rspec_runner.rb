@@ -141,7 +141,7 @@ module KnapsackPro
           return @rspec_runner.knapsack__exit_early if @rspec_runner.knapsack__wants_to_quit?
 
           begin
-            exit_code = @rspec_runner.run_specs(self)
+            exit_code = @rspec_runner.knapsack__run_specs(self)
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
             Core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
