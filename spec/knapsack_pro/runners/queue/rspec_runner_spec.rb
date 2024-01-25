@@ -1,11 +1,5 @@
 describe KnapsackPro::Runners::Queue::RSpecRunner do
   before do
-    # we don't want to modify rspec formatters because we want to see tests summary at the end
-    # when you run this test file or whole test suite for the knapsack_pro gem
-    stub_const('ENV', { 'KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS' => false })
-
-    require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_summary_formatter'
-    require KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec_queue_profile_formatter_extension'
     require KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker'
   end
 

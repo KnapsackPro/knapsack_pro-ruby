@@ -24,7 +24,6 @@ module KnapsackPro
           ADAPTER_CLASS = KnapsackPro::Adapters::RSpecAdapter
           FAILURE_EXIT_CODE = 1
           FORMATTERS = [
-            'KnapsackPro::Formatters::RSpecQueueSummaryFormatter',
             'KnapsackPro::Formatters::TimeTracker',
           ]
 
@@ -118,6 +117,16 @@ module KnapsackPro
             def log_fail_fast_limit_met
               KnapsackPro.logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
             end
+
+            def log_exit_summary(node_assigned_test_file_paths)
+              time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+              return unless time_tracker
+
+              unexecuted_test_files = time_tracker.unexecuted_test_files(node_assigned_test_file_paths)
+              return if unexecuted_test_files.empty?
+
+              KnapsackPro.logger.warn("Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}")
+            end
           end
         end
 
@@ -148,8 +157,8 @@ module KnapsackPro
             Core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
           rescue Exception => exception
-            KnapsackPro.logger.error("Having exception when running RSpec: #{exception.inspect}")
-            KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_exit_summary(@node_assigned_test_file_paths)
+            KnapsackPro.logger.error("An unexpected exception happened outside of the RSpec tests context: #{exception.inspect}")
+            Core.log_exit_summary(@node_assigned_test_file_paths)
             Core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
           end
@@ -208,8 +217,6 @@ module KnapsackPro
         def post_run_tasks(exit_code)
           @adapter_class.verify_bind_method_called
 
-          KnapsackPro::Formatters::RSpecQueueSummaryFormatter.print_summary
-
           printable_args = Core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
           Core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
 
@@ -257,7 +264,6 @@ module KnapsackPro
             require_relative '../../extensions/rspec_extension'
             require_relative '../../formatters/time_tracker'
             require_relative '../../formatters/time_tracker_fetcher'
-            require_relative '../../formatters/rspec_queue_summary_formatter'
 
             KnapsackPro::Extensions::RSpecExtension.setup!
 
