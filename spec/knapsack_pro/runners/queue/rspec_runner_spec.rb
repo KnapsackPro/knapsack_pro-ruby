@@ -247,6 +247,50 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           subject
         end
       end
+
+      describe '#log_exit_summary' do
+        let(:node_assigned_test_file_paths) { ['a_spec.rb', 'b_spec.rb', 'c_spec.rb'] }
+
+        subject { function_core.log_exit_summary(node_assigned_test_file_paths) }
+
+        before do
+          expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
+        end
+
+        context 'when the KnapsackPro::Formatters::TimeTracker formatter is not found' do
+          let(:time_tracker) { nil }
+
+          it 'does nothing' do
+            expect(subject).to be_nil
+          end
+        end
+
+        context 'when the KnapsackPro::Formatters::TimeTracker formatter is found' do
+          let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
+
+          before do
+            expect(time_tracker).to receive(:unexecuted_test_files).with(node_assigned_test_file_paths).and_return(unexecuted_test_files)
+          end
+
+          context 'when unexecuted test files are not found' do
+            let(:unexecuted_test_files) { [] }
+
+            it 'does nothing' do
+              expect(subject).to be_nil
+            end
+          end
+
+          context 'when unexecuted test files are found' do
+            let(:unexecuted_test_files) { ['b_spec.rb', 'c_spec.rb'] }
+
+            it 'logs a warning' do
+              expect(logger).to receive(:warn).with('Unexecuted tests on this CI node (including pending tests): b_spec.rb c_spec.rb')
+
+              subject
+            end
+          end
+        end
+      end
     end
   end
 
