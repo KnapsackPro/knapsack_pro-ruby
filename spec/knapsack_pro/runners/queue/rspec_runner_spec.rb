@@ -193,6 +193,22 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
     end
+
+    describe '#args_with_default_options' do
+      let(:args) { ['--color', '--format', 'documentation'] }
+      let(:test_dir) { 'spec' }
+
+      subject { function_core.args_with_default_options(args, test_dir) }
+
+      it 'adds default formatters' do
+        expect(subject).to eq [
+          '--color',
+          '--format', 'documentation',
+          '--default-path', 'spec',
+          '--format', 'KnapsackPro::Formatters::TimeTracker',
+        ]
+      end
+    end
   end
 
 =begin
