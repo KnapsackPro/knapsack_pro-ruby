@@ -74,6 +74,33 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
     end
+
+    describe '#to_cli_args' do
+      subject { function_core.to_cli_args(args) }
+
+      context 'when args are undefined' do
+        let(:args) { nil }
+
+        it { expect(subject).to eq [] }
+      end
+
+      context 'when args are an empty string' do
+        let(:args) { '' }
+
+        it { expect(subject).to eq [] }
+      end
+
+      context 'when args are defined' do
+        let(:args) { '--color --format d' }
+
+        it do
+          expect(subject).to eq [
+            '--color',
+            '--format', 'd',
+          ]
+        end
+      end
+    end
   end
 
 =begin
