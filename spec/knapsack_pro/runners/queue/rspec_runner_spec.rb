@@ -583,50 +583,5 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     end
   end
 
-  xdescribe '.ensure_spec_opts_have_knapsack_pro_formatters' do
-    subject { described_class.ensure_spec_opts_have_knapsack_pro_formatters }
-
-    context 'when `SPEC_OPTS` is set' do
-      context 'when `SPEC_OPTS` has RSpecQueueSummaryFormatter' do
-        before do
-          stub_const('ENV', { 'SPEC_OPTS' => '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter' })
-        end
-
-        it 'adds TimeTracker' do
-          subject
-          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter --format KnapsackPro::Formatters::TimeTracker'
-        end
-      end
-
-      context 'when `SPEC_OPTS` has TimeTracker' do
-        before do
-          stub_const('ENV', { 'SPEC_OPTS' => '--format json --format KnapsackPro::Formatters::TimeTracker' })
-        end
-
-        it 'adds RSpecQueueSummaryFormatter' do
-          subject
-          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::TimeTracker --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter'
-        end
-      end
-
-      context 'when `SPEC_OPTS` has no Knapsack Pro formatters' do
-        before do
-          stub_const('ENV', { 'SPEC_OPTS' => '--format json' })
-        end
-
-        it 'adds RSpecQueueSummaryFormatter and TimeTracker to `SPEC_OPTS`' do
-          subject
-          expect(ENV['SPEC_OPTS']).to eq '--format json --format KnapsackPro::Formatters::RSpecQueueSummaryFormatter --format KnapsackPro::Formatters::TimeTracker'
-        end
-      end
-    end
-
-    context 'when `SPEC_OPTS` is not set' do
-      it 'does nothing' do
-        subject
-        expect(ENV['SPEC_OPTS']).to be_nil
-      end
-    end
-  end
 =end
 end
