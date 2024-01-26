@@ -101,6 +101,74 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
     end
+
+    describe '#args_with_seed_option_added_when_viable' do
+      subject { function_core.args_with_seed_option_added_when_viable(is_seed_used, seed, args) }
+
+      context 'when the order option is not random' do
+        let(:args) { ['--order', 'defined'] }
+        let(:is_seed_used) { false }
+        let(:seed) { nil }
+
+        it 'does not add the seed option to args' do
+          expect(subject).to eq ['--order', 'defined']
+        end
+      end
+
+      ['random', 'rand'].each do |random_option_value|
+        context "when the order option is `#{random_option_value}`" do
+          let(:args) { ['--order', random_option_value] }
+
+          context 'when the seed is not used' do
+            let(:is_seed_used) { false }
+            let(:seed) { '123' }
+
+            it 'does not add the seed option to args' do
+              expect(subject).to eq ['--order', random_option_value]
+            end
+          end
+
+          context 'when the seed is used' do
+            let(:is_seed_used) { true }
+            let(:seed) { '123' }
+
+            it 'adds the seed option to args' do
+              expect(subject).to eq ['--order', random_option_value, '--seed', '123']
+            end
+          end
+        end
+      end
+
+      context 'when the order option is `rand:123`' do
+        let(:args) { ['--order', 'rand:123'] }
+        let(:is_seed_used) { true }
+        let(:seed) { '123' }
+
+        it 'does not add the seed option to args' do
+          expect(subject).to eq ['--order', 'rand:123']
+        end
+      end
+
+      context 'when the order option is not set in args AND seed is used' do
+        let(:args) { ['--format', 'documentation'] }
+        let(:is_seed_used) { true }
+        let(:seed) { '123' }
+
+        it 'adds the seed option to args' do
+          expect(subject).to eq ['--format', 'documentation', '--seed', '123']
+        end
+      end
+
+      context 'when the order option is not set in args AND seed is not used' do
+        let(:args) { ['--format', 'documentation'] }
+        let(:is_seed_used) { false }
+        let(:seed) { '123' }
+
+        it 'does not add the seed option to args' do
+          expect(subject).to eq ['--format', 'documentation']
+        end
+      end
+    end
   end
 
 =begin
