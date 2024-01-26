@@ -237,6 +237,16 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           subject
         end
       end
+
+      describe '#log_fail_fast_limit_met' do
+        subject { function_core.log_fail_fast_limit_met }
+
+        it 'logs a warning' do
+          expect(logger).to receive(:warn).with('Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+
+          subject
+        end
+      end
     end
   end
 
