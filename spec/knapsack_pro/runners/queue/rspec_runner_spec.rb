@@ -115,6 +115,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
+      # To see available options:
+      # bundle exec rspec --help
       ['random', 'rand'].each do |random_option_value|
         context "when the order option is `#{random_option_value}`" do
           let(:args) { ['--order', random_option_value] }
@@ -185,7 +187,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when has format option' do
+      context 'when has a format option' do
         let(:args) { ['--color', '--format', 'd'] }
 
         it 'returns args' do
