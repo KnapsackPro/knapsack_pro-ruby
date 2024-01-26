@@ -229,7 +229,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when logs the RSpec command after all tests fetched from the Queue API' do
+      context 'when logs the RSpec command for all tests fetched from the Queue API' do
         let(:type) { :end_of_queue }
 
         it 'logs the RSpec copy & paste command' do
@@ -274,7 +274,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             expect(time_tracker).to receive(:unexecuted_test_files).with(node_assigned_test_file_paths).and_return(unexecuted_test_files)
           end
 
-          context 'when unexecuted test files are not found' do
+          context 'when there are no unexecuted test files' do
             let(:unexecuted_test_files) { [] }
 
             it 'does nothing' do
@@ -282,7 +282,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
             end
           end
 
-          context 'when unexecuted test files are found' do
+          context 'when there are unexecuted test files' do
             let(:unexecuted_test_files) { ['b_spec.rb', 'c_spec.rb'] }
 
             it 'logs a warning' do
