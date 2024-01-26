@@ -169,6 +169,30 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
     end
+
+    describe '#ensure_args_have_default_formatter' do
+      subject { function_core.ensure_args_have_default_formatter(args) }
+
+      before do
+        expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:has_format_option?).with(args).and_call_original
+      end
+
+      context 'when has no format option' do
+        let(:args) { ['--color', '--profile'] }
+
+        it 'adds the progress formatter to args' do
+          expect(subject).to eq ['--color', '--profile', '--format', 'progress']
+        end
+      end
+
+      context 'when has format option' do
+        let(:args) { ['--color', '--format', 'd'] }
+
+        it 'returns args' do
+          expect(subject).to eq ['--color', '--format', 'd']
+        end
+      end
+    end
   end
 
 =begin
