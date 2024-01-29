@@ -2,23 +2,36 @@ require 'open3'
 require 'json'
 
 describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
+  SPEC_DIRECTORY = 'spec_integration'
+  class SpecItem
+    attr_reader :path, :content
+
+    def initialize(path, content)
+      @path = "#{SPEC_DIRECTORY}/#{path}"
+      @content = content
+    end
+  end
+
   # @param rspec_options String
-  def run_specs(spec_helper_content, rspec_options, specs)
+  def run_specs(spec_helper_content, rspec_options, spec_items)
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
 
-    spec_helper_path = 'spec_integration/spec_helper.rb'
+    spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
     File.open(spec_helper_path, 'w') { |file| file.write(spec_helper_content) }
 
-    paths = Array(specs).map.with_index do |spec, i|
-      path = "spec_integration/#{i}_#{SecureRandom.uuid}_spec.rb"
-      File.open(path, 'w') { |file| file.write(spec) }
-      path
+    paths = spec_items.map do |spec_item|
+      File.open(spec_item.path, 'w') { |file| file.write(spec_item.content) }
+      spec_item.path
     end
 
-    yield paths
+    yield
   ensure
     File.delete(spec_helper_path)
     paths.each { |path| File.delete(path) }
+  end
+
+  def mock_batched_tests(batched_tests)
+    ENV['TEST__BATCHED_TESTS'] = batched_tests.to_json
   end
 
   def log_command_result(stdout, stderr, status)
@@ -49,7 +62,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   end
 
   subject do
-    command = 'ruby spec_integration/queue_runner.rb'
+    command = "ruby #{SPEC_DIRECTORY}/queue_runner.rb"
     stdout, stderr, status = Open3.capture3(command)
     log_command_result(stdout, stderr, status)
     OpenStruct.new(stdout: stdout, stderr: stderr, exit_code: status.exitstatus)
@@ -57,24 +70,27 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
   before do
     # uncomment to show output from the Queue RSpec run for each test example
-    #ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
+    ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
 
   context 'context' do
     it do
-      spec_1 = <<~SPEC
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
         describe "A" do
           it 'test case' do
             expect(1).to eq 1
           end
         end
-      SPEC
+        SPEC
+      )
 
       rspec_options = '--format d'
-      run_specs(spec_helper_with_knapsack, rspec_options, [spec_1]) do |paths|
-        ENV['TEST__BATCHED_TESTS'] = [
-          [paths[0]],
-        ].to_json
+      run_specs(spec_helper_with_knapsack, rspec_options, [spec_a]) do
+        mock_batched_tests([
+          [spec_a.path],
+        ])
 
         result = subject
 
