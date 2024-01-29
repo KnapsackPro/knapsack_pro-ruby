@@ -21,6 +21,25 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
     paths.each { |path| File.delete(path) }
   end
 
+  def log_command_result(stdout, stderr, status)
+    return if ENV['TEST__SHOW_DEBUG_LOG'] != 'true'
+
+    puts '='*50
+    puts 'STDOUT'
+    puts stdout
+    puts
+
+    puts '='*50
+    puts 'STDERR'
+    puts stderr
+    puts
+
+    puts '='*50
+    puts 'Exit status code'
+    puts status
+    puts
+  end
+
   let(:spec_helper_with_knapsack) do
     <<~SPEC
     require 'knapsack_pro'
@@ -31,7 +50,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
   subject do
     command = 'ruby spec_integration/queue_runner.rb'
-    Open3.capture3(command)
+    stdout, stderr, status = Open3.capture3(command)
+    log_command_result(stdout, stderr, status)
+    OpenStruct.new(stdout: stdout, stderr: stderr, exit_code: status.exitstatus)
   end
 
   before do
@@ -54,26 +75,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
           [paths[0]],
         ].to_json
 
-        stdout, stderr, status = subject
+        result = subject
 
-        if ENV['TEST__SHOW_DEBUG_LOG']
-          puts '='*50
-          puts 'STDOUT'
-          puts stdout
-          puts
-
-          puts '='*50
-          puts 'STDERR'
-          puts stderr
-          puts
-
-          puts '='*50
-          puts 'Exit status code'
-          puts status
-          puts
-        end
-
-        expect(status.exitstatus).to eq 0
+        expect(result.exit_code).to eq 0
       end
     end
   end
