@@ -47,7 +47,8 @@ module KnapsackPro
       def example_group_finished(notification)
         return unless top_level_group?(notification.group)
 
-        add_hooks_time(@group, @before_all, now - @time_all)
+        after_all = @time_all.nil? ? 0.0 : now - @time_all
+        add_hooks_time(@group, @before_all, after_all)
         @batch = merge(@batch, @group)
         @before_all = 0.0
         @group = {}
