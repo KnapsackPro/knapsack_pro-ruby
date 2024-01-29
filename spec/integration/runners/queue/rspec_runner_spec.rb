@@ -56,7 +56,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   end
 
   before do
-    ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
+    # uncomment to show output from the Queue RSpec run for each test example
+    #ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
 
   context 'context' do
@@ -71,7 +72,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
       rspec_options = '--format d'
       run_specs(spec_helper_with_knapsack, rspec_options, [spec_1]) do |paths|
-        ENV['MOCK_BATCHED_TESTS'] = [
+        ENV['TEST__BATCHED_TESTS'] = [
           [paths[0]],
         ].to_json
 

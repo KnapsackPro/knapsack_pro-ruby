@@ -7,7 +7,7 @@ ENV['KNAPSACK_PRO_TEST_DIR'] = 'spec_integration'
 
 RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
-BATCHED_TESTS = ENV['TEST__BATCHED_TESTS'] ? JSON.load(ENV['TEST__BATCHED_TESTS']) : []
+BATCHED_TESTS = JSON.load(ENV.fetch('TEST__BATCHED_TESTS'))
 
 module KnapsackProExtensions
   module QueueAllocatorExtension
