@@ -173,7 +173,11 @@ module KnapsackPro
         def run
           pre_run_setup
 
-          return @rspec_runner.knapsack__exit_early if @rspec_runner.knapsack__wants_to_quit?
+          if @rspec_runner.knapsack__wants_to_quit?
+            exit_code = @rspec_runner.knapsack__exit_early
+            Kernel.exit(exit_code)
+            return
+          end
 
           begin
             exit_code = @rspec_runner.knapsack__run_specs(self)

@@ -722,7 +722,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   end
 
   context 'when a syntax error (an exception) in spec_helper.rb' do
-    it 'returns 1 as exit code' do
+    it 'returns 1 as exit code because RSpec wants to quit and exit early without running tests' do
       rspec_options = '--format documentation'
 
       spec_helper_content = <<~SPEC
@@ -765,7 +765,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
         result = subject
 
-        #expect(result.stdout).to include('')
+        expect(result.stdout).to include('An error occurred while loading spec_helper.')
+        expect(result.stdout).to include("undefined local variable or method `a_fake_method' for main:Object")
+        expect(result.stdout).to include('0 examples, 0 failures, 1 error occurred outside of examples')
 
         expect(result.exit_code).to eq 1
       end
