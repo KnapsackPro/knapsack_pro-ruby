@@ -3,6 +3,7 @@ require 'json'
 
 describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   SPEC_DIRECTORY = 'spec_integration'
+
   class SpecItem
     attr_reader :path, :content
 
