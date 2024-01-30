@@ -727,7 +727,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
-      a_fake_method_call
+      a_fake_method
       SPEC
 
       spec_a = SpecItem.new(
