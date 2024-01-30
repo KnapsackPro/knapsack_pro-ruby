@@ -652,6 +652,75 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
     end
   end
 
+  context 'when a spec file has a syntax error outside of the test example' do
+    it 'stops running tests on the batch that has a test file with the syntax error AND returns 1 as exit code' do
+      rspec_options = '--format documentation'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      failing_spec = SpecItem.new(
+        'failing_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          a_fake_method
+
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        failing_spec,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [failing_spec.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        # 1st batch of tests executed correctly
+        expect(result.stdout).to include('A1 test example')
+        # 2nd batch contains the test file that cannot be loaded
+        expect(result.stdout).to_not include('B1 test example')
+        # 3rd batch is never executed
+        expect(result.stdout).to_not include('C1 test example')
+
+        expect(result.stdout).to include('An error occurred while loading ./spec_integration/failing_spec.rb')
+        expect(result.stdout).to include("undefined local variable or method `a_fake_method' for RSpec::ExampleGroups::BDescribe:Class")
+        expect(result.stdout).to include('WARN -- : [knapsack_pro] RSpec wants to quit')
+        expect(result.stdout).to include('1 example, 0 failures, 1 error occurred outside of examples')
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
+
   context 'when the test suite has pending tests' do
     it 'shows the summary of pending tests' do
       rspec_options = '--format documentation'
