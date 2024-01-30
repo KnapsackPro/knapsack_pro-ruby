@@ -706,7 +706,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
         # 1st batch of tests executed correctly
         expect(result.stdout).to include('A1 test example')
-        # 2nd batch contains the test file that cannot be loaded
+        # 2nd batch contains the test file that cannot be loaded and the test file is not executed
         expect(result.stdout).to_not include('B1 test example')
         # 3rd batch is never executed
         expect(result.stdout).to_not include('C1 test example')
