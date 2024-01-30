@@ -74,9 +74,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   end
 
   context 'when a few batches of tests returned by the Queue API' do
-    let(:rspec_options) { '--format d' }
-
     it do
+      rspec_options = '--format d'
+
       spec_a = SpecItem.new(
         'a_spec.rb',
         <<~SPEC
@@ -149,6 +149,54 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
         # expect successful tests
         expect(result.exit_code).to eq 0
+      end
+    end
+  end
+
+  context 'when spec_helper.rb has a missing bind method' do
+    it do
+      rspec_options = ''
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('ERROR -- : [knapsack_pro] You forgot to call KnapsackPro::Adapters::RSpecAdapter.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly https://knapsackpro.com/perma/ruby/installation-guide')
+
+        expect(result.exit_code).to eq 1
       end
     end
   end
