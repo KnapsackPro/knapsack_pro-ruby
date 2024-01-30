@@ -152,7 +152,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
     end
   end
 
-  context 'when spec_helper.rb has a missing bind method' do
+  context 'when spec_helper.rb has a missing KnapsackPro::Adapters::RSpecAdapter.bind method' do
     it do
       rspec_options = ''
 
