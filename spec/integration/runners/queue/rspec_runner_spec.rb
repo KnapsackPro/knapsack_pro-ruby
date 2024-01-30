@@ -324,7 +324,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   end
 
   context 'when hooks are defined' do
-    it 'RSpec before/after hooks are called only once for multiple batches of tests' do
+    it 'calls RSpec before/after hooks only once for multiple batches of tests' do
       rspec_options = ''
 
       spec_helper_content = <<~SPEC
@@ -388,6 +388,84 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
 
         expect(result.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
         expect(result.stdout.scan(/RSpec_after_suite_hook/).size).to eq 1
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+
+    it 'calls queue hooks for multiple batches of tests' do
+      rspec_options = ''
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+        puts 'before_queue - run before the test suite'
+      end
+
+      KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id|
+        puts 'before_subset_queue - run before the next subset of tests'
+      end
+
+      KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+        puts 'after_subset_queue - run after the previous subset of tests'
+      end
+
+      KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+        puts 'after_queue - run after the test suite'
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout.scan(/before_queue - run before the test suite/).size).to eq 1
+        expect(result.stdout.scan(/before_subset_queue - run before the next subset of tests/).size).to eq 2
+        expect(result.stdout.scan(/after_subset_queue - run after the previous subset of tests/).size).to eq 2
+        expect(result.stdout.scan(/after_queue - run after the test suite/).size).to eq 1
 
         expect(result.exit_code).to eq 0
       end
