@@ -29,6 +29,7 @@ module KnapsackProExtensions
 
   module Report
     def create_build_subset(test_files)
+      return unless SHOW_DEBUG_LOG
       puts "DEBUG: mocked the #{__method__} method"
     end
   end
