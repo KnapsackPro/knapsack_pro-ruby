@@ -200,4 +200,127 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
       end
     end
   end
+
+  context 'when RSpec options are not set' do
+    it 'uses a default progress formatter' do
+      rspec_options = ''
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it {}
+          it {}
+          it {}
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it {}
+          it {}
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it {}
+          it {}
+          it {}
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        beginning_of_knapsack_pro_log_info_message = 'I, ['
+
+        # shows dots for the 1st batch of tests
+        expect(result.stdout).to include('.....' + beginning_of_knapsack_pro_log_info_message)
+        # shows dots for the 2nd batch of tests
+        expect(result.stdout).to include('...' + beginning_of_knapsack_pro_log_info_message)
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
+
+  context 'when RSpec options are not set AND Knapsack Pro log level is warn' do
+    before do
+      ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'warn'
+      ENV.delete('TEST__SHOW_DEBUG_LOG')
+    end
+    after do
+      ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
+    end
+
+    it 'uses a default progress formatter and shows dots for all test examples' do
+      rspec_options = ''
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it {}
+          it {}
+          it {}
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it {}
+          it {}
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it {}
+          it {}
+          it {}
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('.'*8)
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
 end
