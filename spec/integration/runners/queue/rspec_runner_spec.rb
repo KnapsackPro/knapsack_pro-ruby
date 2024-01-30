@@ -56,7 +56,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests" do
   let(:spec_helper_with_knapsack) do
     <<~SPEC
     require 'knapsack_pro'
-
     KnapsackPro::Adapters::RSpecAdapter.bind
     SPEC
   end
