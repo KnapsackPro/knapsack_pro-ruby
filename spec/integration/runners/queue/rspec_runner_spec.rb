@@ -1198,4 +1198,94 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when the fail_if_no_examples option is true AND the late CI node has an empty batch of tests because other CI nodes already consumed tests from the Queue API' do
+    it 'sets 0 as exit code to ignore the fail_if_no_examples option' do
+      rspec_options = '--format documentation'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      RSpec.configure do |config|
+        config.fail_if_no_examples = true
+      end
+      SPEC
+
+      run_specs(spec_helper_content, rspec_options, []) do
+        mock_batched_tests([])
+
+        result = subject
+
+        expect(result.stdout).to include('0 examples, 0 failures')
+        expect(result.stdout).to include('WARN -- : [knapsack_pro] No test files were executed on this CI node.')
+        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
+
+  context 'when the fail_if_no_examples option is true AND a batch of tests has a test file without test examples' do
+    it 'sets 0 as exit code to ignore the fail_if_no_examples option' do
+      rspec_options = '--format documentation'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      RSpec.configure do |config|
+        config.fail_if_no_examples = true
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path], # batch with no test examples
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('2 examples, 0 failures')
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
 end
