@@ -918,6 +918,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         expect(result.stdout).to_not include('C1 test example')
 
+        # 2nd test example raised unhandled exception during runtime.
+        # It breaks RSpec so it was not marked as failed.
         expect(result.stdout).to include('2 examples, 0 failures')
 
         expect(result.stdout).to include('WARN -- : [knapsack_pro] Unexecuted tests on this CI node (including pending tests): spec_integration/b_spec.rb')
