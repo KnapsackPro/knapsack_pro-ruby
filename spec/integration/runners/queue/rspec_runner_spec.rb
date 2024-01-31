@@ -857,4 +857,73 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when a test file raises an exception that cannot be handle by RSpec' do
+    it 'stops running tests when unhandled exception happens and sets 1 as exit code' do
+      rspec_options = '--format documentation'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      # list of unhandled exceptions:
+      # RSpec::Support::AllExceptionsExceptOnesWeMustNotRescue::AVOID_RESCUING
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            raise NoMemoryError.new
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('A1 test example')
+
+        expect(result.stdout).to include('B_describe')
+        expect(result.stdout).to include('An unexpected exception happened. RSpec cannot handle it. The exception: #<NoMemoryError: NoMemoryError>')
+        expect(result.stdout).to_not include('B1 test example')
+
+        expect(result.stdout).to_not include('C1 test example')
+
+        expect(result.stdout).to include('2 examples, 0 failures')
+
+        expect(result.stdout).to include('WARN -- : [knapsack_pro] Unexecuted tests on this CI node (including pending tests): spec_integration/b_spec.rb')
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
 end
