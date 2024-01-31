@@ -1199,6 +1199,24 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
+  context 'when the late CI node has an empty batch of tests because other CI nodes already consumed tests from the Queue API' do
+    it 'sets 0 as exit code' do
+      rspec_options = '--format documentation'
+
+      run_specs(spec_helper_with_knapsack, rspec_options, []) do
+        mock_batched_tests([])
+
+        result = subject
+
+        expect(result.stdout).to include('0 examples, 0 failures')
+        expect(result.stdout).to include('WARN -- : [knapsack_pro] No test files were executed on this CI node.')
+        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
+
   context 'when the fail_if_no_examples option is true AND the late CI node has an empty batch of tests because other CI nodes already consumed tests from the Queue API' do
     it 'sets 0 as exit code to ignore the fail_if_no_examples option' do
       rspec_options = '--format documentation'
