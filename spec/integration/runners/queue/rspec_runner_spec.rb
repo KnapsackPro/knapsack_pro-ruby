@@ -394,7 +394,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
 
-    it 'calls queue hooks for multiple batches of tests' do
+    it 'calls queue hooks for multiple batches of tests (queue hooks can be defined multiple times)' do
       rspec_options = ''
 
       spec_helper_content = <<~SPEC
@@ -402,19 +402,31 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       KnapsackPro::Adapters::RSpecAdapter.bind
 
       KnapsackPro::Hooks::Queue.before_queue do |queue_id|
-        puts 'before_queue - run before the test suite'
+        puts '1st before_queue - run before the test suite'
+      end
+      KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+        puts '2nd before_queue - run before the test suite'
       end
 
       KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id|
-        puts 'before_subset_queue - run before the next subset of tests'
+        puts '1st before_subset_queue - run before the next subset of tests'
+      end
+      KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id|
+        puts '2nd before_subset_queue - run before the next subset of tests'
       end
 
       KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
-        puts 'after_subset_queue - run after the previous subset of tests'
+        puts '1st after_subset_queue - run after the previous subset of tests'
+      end
+      KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+        puts '2nd after_subset_queue - run after the previous subset of tests'
       end
 
       KnapsackPro::Hooks::Queue.after_queue do |queue_id|
-        puts 'after_queue - run after the test suite'
+        puts '1st after_queue - run after the test suite'
+      end
+      KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+        puts '2nd after_queue - run after the test suite'
       end
       SPEC
 
@@ -463,10 +475,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         result = subject
 
-        expect(result.stdout.scan(/before_queue - run before the test suite/).size).to eq 1
-        expect(result.stdout.scan(/before_subset_queue - run before the next subset of tests/).size).to eq 2
-        expect(result.stdout.scan(/after_subset_queue - run after the previous subset of tests/).size).to eq 2
-        expect(result.stdout.scan(/after_queue - run after the test suite/).size).to eq 1
+        expect(result.stdout.scan(/1st before_queue - run before the test suite/).size).to eq 1
+        expect(result.stdout.scan(/2nd before_queue - run before the test suite/).size).to eq 1
+        expect(result.stdout.scan(/1st before_subset_queue - run before the next subset of tests/).size).to eq 2
+        expect(result.stdout.scan(/2nd before_subset_queue - run before the next subset of tests/).size).to eq 2
+        expect(result.stdout.scan(/1st after_subset_queue - run after the previous subset of tests/).size).to eq 2
+        expect(result.stdout.scan(/2nd after_subset_queue - run after the previous subset of tests/).size).to eq 2
+        expect(result.stdout.scan(/1st after_queue - run after the test suite/).size).to eq 1
+        expect(result.stdout.scan(/2nd after_queue - run after the test suite/).size).to eq 1
 
         expect(result.exit_code).to eq 0
       end
