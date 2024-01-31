@@ -65,9 +65,9 @@
   * We are no longer modifying the default RSpec formatters in Queue Mode. The `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS` environment variable is removed. You can remove it from the CI config if you are using it.
 
 * RSpec improvements in Queue Mode:
-  * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 are handled quicker. The process is terminated before the next RSpec example group (`describe`/`context` block) is executed.
-    * Use `1` as a default exit code when the process is terminated.
-    * Use the value of the `--error-exit-code` option as the exit code when it is defined.
+  * Termination signals HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 are handled quicker. The process is terminated before the next top level RSpec example group (`describe`/`context` block) is executed.
+    * It uses `1` as a default exit code when the process is terminated.
+    * Or, it uses a custom exit code defined by the `--error-exit-code` option.
 
   * Respect the `--error-exit-code` option. It overrides the exit code used when there are errors loading or running specs outside of examples.
 
