@@ -161,7 +161,7 @@ module KnapsackPro
           @stream_error = stream_error
           @stream_out = stream_out
           @node_assigned_test_file_paths = []
-          @rspec_runner = nil # lazy initialization of RSpec::Core::Runner
+          @rspec_runner = nil # RSpec::Core::Runner is lazy initialized
         end
 
         # Based on:
