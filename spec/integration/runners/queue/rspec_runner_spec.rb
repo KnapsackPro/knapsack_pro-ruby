@@ -1142,4 +1142,60 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when deprecated run_all_when_everything_filtered option is true' do
+    it 'shows error message and sets 1 as exit code' do
+      rspec_options = '--format documentation'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      RSpec.configure do |config|
+        config.run_all_when_everything_filtered = true
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('ERROR -- : [knapsack_pro] The run_all_when_everything_filtered option is deprecated. See: https://knapsackpro.com/perma/ruby/rspec-deprecated-run-all-when-everything-filtered')
+
+        expect(result.stdout).to_not include('A1 test example')
+        expect(result.stdout).to_not include('B1 test example')
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
 end
