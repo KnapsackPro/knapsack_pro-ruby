@@ -1364,4 +1364,65 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when --profile is set' do
+    it 'shows top slowest examples and example groups' do
+      rspec_options = '--format d --profile'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('Top 3 slowest examples')
+        expect(result.stdout).to include('A_describe A1 test example')
+        expect(result.stdout).to include('B_describe B1 test example')
+        expect(result.stdout).to include('C_describe C1 test example')
+
+        expect(result.stdout).to include('Top 3 slowest example groups')
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
 end
