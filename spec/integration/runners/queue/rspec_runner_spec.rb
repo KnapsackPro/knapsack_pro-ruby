@@ -1483,7 +1483,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when --fail-fast is set' do
-    it 'stops running tests on the failing test AND returns 1 as exit code AND shows a warning message when fail fast limit met' do
+    it 'stops running tests on the failing test AND returns 1 as exit code AND shows a warning message' do
       rspec_options = '--format d --fail-fast'
 
       spec_a = SpecItem.new(
@@ -1542,6 +1542,85 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(result.stdout).to include('WARN -- : [knapsack_pro] Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
 
         expect(result.stdout).to include('2 examples, 1 failure')
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
+
+  context 'when the fail_fast option is set with a specific number of tests' do
+    it 'stops running tests on the 2nd failing test AND returns 1 as exit code AND shows a warning message when fail fast limit met' do
+      rspec_options = '--format d'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      RSpec.configure do |config|
+        config.fail_fast = 2
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 0
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 0
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('A1 test example (FAILED - 1)')
+        expect(result.stdout).to include('B1 test example')
+        expect(result.stdout).to include('B2 test example (FAILED - 2)')
+        expect(result.stdout).to_not include('C1 test example')
+        expect(result.stdout).to_not include('C2 test example')
+
+        expect(result.stdout).to include('WARN -- : [knapsack_pro] Test execution has been canceled because the RSpec --fail-fast option is enabled. It can cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+
+        expect(result.stdout).to include('3 examples, 2 failures')
 
         expect(result.exit_code).to eq 1
       end
