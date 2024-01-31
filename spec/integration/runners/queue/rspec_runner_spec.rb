@@ -859,7 +859,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when a test file raises an exception that cannot be handle by RSpec' do
-    it 'stops running tests when unhandled exception happens and sets 1 as exit code' do
+    it 'stops running tests when unhandled exception happens and sets 1 as exit code and shows summary of unexecuted tests' do
       rspec_options = '--format documentation'
 
       spec_a = SpecItem.new(
