@@ -185,7 +185,7 @@ module KnapsackPro
             @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
           rescue Exception => exception
-            KnapsackPro.logger.error("An unexpected exception happened outside of the RSpec tests context: #{exception.inspect}")
+            KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
             @function_core.log_exit_summary(@node_assigned_test_file_paths)
             @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
