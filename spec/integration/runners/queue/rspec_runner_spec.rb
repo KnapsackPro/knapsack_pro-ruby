@@ -1306,4 +1306,62 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when tests are failing AND --failure-exit-code is set' do
+    it 'returns a custom exit code' do
+      rspec_options = '--format documentation --failure-exit-code 4'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      failing_spec = SpecItem.new(
+        'failing_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 0
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        failing_spec,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, failing_spec.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('B1 test example (FAILED - 1)')
+        expect(result.stdout).to include('Failure/Error: expect(1).to eq 0')
+        expect(result.stdout).to include('3 examples, 1 failure')
+
+        expect(result.exit_code).to eq 4
+      end
+    end
+  end
 end
