@@ -1085,4 +1085,61 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when a termination signal is received by the process AND --error-exit-code is set' do
+    it 'terminates the process and sets a custom exit code' do
+      rspec_options = '--format documentation --error-exit-code 3'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            Process.kill("INT", Process.pid)
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
+
+        expect(result.exit_code).to eq 3
+      end
+    end
+  end
 end
