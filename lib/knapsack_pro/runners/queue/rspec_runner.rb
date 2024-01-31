@@ -98,6 +98,8 @@ module KnapsackPro
           end
 
           def log_rspec_command(args, test_file_paths, type)
+            return if test_file_paths.empty?
+
             case type
             when :subset_queue
               logger.info('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')

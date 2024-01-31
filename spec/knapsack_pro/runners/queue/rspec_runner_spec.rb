@@ -218,6 +218,17 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
       subject { function_core.log_rspec_command(args, test_file_paths, type) }
 
+      context 'when there are no test file paths' do
+        let(:type) { :end_of_queue }
+        let(:test_file_paths) { [] }
+
+        it 'does not log' do
+          expect(logger).to_not receive(:info)
+
+          subject
+        end
+      end
+
       context 'when logs the RSpec command for a subset of queue (a batch of tests fetched from the Queue API)' do
         let(:type) { :subset_queue }
 
