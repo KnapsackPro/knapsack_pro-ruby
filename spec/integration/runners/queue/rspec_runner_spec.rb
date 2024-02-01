@@ -1207,7 +1207,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when deprecated run_all_when_everything_filtered option is true' do
-    it 'shows error message and sets 1 as exit code' do
+    it 'shows an error message and sets 1 as exit code' do
       rspec_options = '--format documentation'
 
       spec_helper_content = <<~SPEC
@@ -1256,6 +1256,82 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         expect(result.stdout).to_not include('A1 test example')
         expect(result.stdout).to_not include('B1 test example')
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
+
+  context 'when filter_run_when_matching is set to :focus and some tests are tagged with the focus tag' do
+    it 'shows an error message for :focus tagged tests and sets 1 as exit code' do
+      rspec_options = '--format documentation'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      RSpec.configure do |config|
+        config.filter_run_when_matching :focus
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example', :focus do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path], [spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+
+        expect(result.stdout).to include('A1 test example')
+
+        expect(result.stdout).to include('B1 test example (FAILED - 1)')
+        expect(result.stdout).to_not include('B2 test example') # skips B2 test due to tagged B1
+
+        expect(result.stdout).to include('C1 test example')
+
+        expect(result.stdout).to include('Knapsack Pro found an example tagged with focus in spec_integration/b_spec.rb, please remove it. See more: https://knapsackpro.com/perma/ruby/rspec-skips-tests')
 
         expect(result.exit_code).to eq 1
       end
