@@ -8,7 +8,6 @@ ENV['KNAPSACK_PRO_TEST_DIR'] = 'spec_integration'
 RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
 BATCHED_TESTS = JSON.load(ENV.fetch('TEST__BATCHED_TESTS'))
-LAST_BUILD_DISTRIBUTION_RESPONSE = JSON.load(ENV.fetch('TEST__LAST_BUILD_DISTRIBUTION_RESPONSE'))
 
 module KnapsackProExtensions
   module QueueAllocatorExtension
@@ -37,7 +36,8 @@ module KnapsackProExtensions
 
   module BuildDistributionFetcher
     def call
-      KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity.new(LAST_BUILD_DISTRIBUTION_RESPONSE)
+      response = JSON.load(ENV.fetch('TEST__LAST_BUILD_DISTRIBUTION_RESPONSE'))
+      KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity.new(response)
     end
   end
 end
