@@ -2332,4 +2332,102 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when the RSpec split by examples is enabled AND simplecov is used' do
+    let(:coverage_dir) { "#{KNAPSACK_PRO_TMP_DIR}/coverage" }
+    let(:coverage_file) { "#{coverage_dir}/index.html" }
+
+    before do
+      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+
+      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+    end
+    after do
+      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
+      ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+    end
+
+    it 'produces a code coverage report' do
+      rspec_options = '--format documentation'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      require 'simplecov'
+      SimpleCov.start do
+        coverage_dir '#{coverage_dir}'
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+          it 'A2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_test_cases_for_slow_test_files([
+          "#{spec_a.path}[1:1]",
+          "#{spec_a.path}[1:2]",
+        ])
+        mock_batched_tests([
+          ["#{spec_a.path}[1:1]", spec_b.path],
+          ["#{spec_a.path}[1:2]", spec_c.path],
+        ])
+
+        result = subject
+
+        file_content = File.read(coverage_file)
+
+        expect(file_content).to include(spec_a.path)
+        expect(file_content).to include(spec_b.path)
+        expect(file_content).to include(spec_c.path)
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
 end

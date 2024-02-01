@@ -6,4 +6,5 @@ gemspec
 group :test do
   gem 'rspec_junit_formatter', require: false
   gem 'nokogiri', require: false
+  gem 'simplecov', require: false
 end
