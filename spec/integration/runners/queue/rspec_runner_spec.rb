@@ -1667,14 +1667,30 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         SPEC
       )
 
+      spec_d = SpecItem.new(
+        'd_spec.rb',
+        <<~SPEC
+        describe "D_describe" do
+          it 'D1 test example' do
+            expect(1).to eq 1
+          end
+          it 'D2 test example', :my_tag do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
         spec_b,
-        spec_c
+        spec_c,
+        spec_d,
       ]) do
         mock_batched_tests([
           [spec_a.path, spec_b.path],
           [spec_c.path],
+          [spec_d.path],
         ])
 
         result = subject
@@ -1685,6 +1701,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(result.stdout).to include('B1 test example')
 
         expect(result.stdout).to_not include('C1 test example')
+
+        expect(result.stdout).to_not include('D1 test example')
+        expect(result.stdout).to include('D2 test example')
+
+        expect(result.stdout).to include('3 examples, 0 failures')
 
         expect(result.exit_code).to eq 0
       end
