@@ -35,6 +35,27 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     ENV['TEST__BATCHED_TESTS'] = batched_tests.to_json
   end
 
+  # https://docs.knapsackpro.com/api/v1/#build_distributions_last_get
+  #
+  # @param test_files Array[Array[String, Float]]
+  #   Example: [['a_spec.rb', 1.0], ['b_spec.rb', 2.1]]
+  def mock_last_build_distribution_response(test_files)
+    mapped_test_files = test_files.map do |test_file|
+      {
+        "path" => test_file.fetch(0),
+        "time_execution" => test_file.fetch(1),
+      }
+    end
+
+    time_execution = test_files.sum { _1.fetch(1) }
+
+    ENV['TEST__LAST_BUILD_DISTRIBUTION_RESPONSE'] = {
+      "build_distribution_id" => "uuid",
+      "time_execution" => time_execution,
+      "test_files" => mapped_test_files,
+    }.to_json
+  end
+
   def log_command_result(stdout, stderr, status)
     return if ENV['TEST__SHOW_DEBUG_LOG'] != 'true'
 
@@ -1712,6 +1733,97 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(result.stdout).to include('D2 test example')
 
         expect(result.stdout).to include('3 examples, 0 failures')
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
+
+  context 'when the RSpec split by examples is enabled' do
+    before do
+      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+      ENV['KNAPSACK_PRO_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/**{,/*/**}/*_spec.rb"
+    end
+    after do
+      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
+      ENV.delete('KNAPSACK_PRO_TEST_FILE_PATTERN')
+    end
+
+    it 'splits slow test files by examples' do
+      rspec_options = '--format d'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+          it 'A2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        mock_last_build_distribution_response([
+          [spec_a.path, 100.0],
+          [spec_b.path, 1.0],
+          [spec_c.path, 2.0],
+        ])
+
+
+        result = subject
+
+        #expect(result.stdout).to_not include('A1 test example')
+        #expect(result.stdout).to include('A2 test example')
+
+        #expect(result.stdout).to include('B1 test example')
+
+        #expect(result.stdout).to_not include('C1 test example')
+
+        #expect(result.stdout).to_not include('D1 test example')
+        #expect(result.stdout).to include('D2 test example')
+
+        #expect(result.stdout).to include('3 examples, 0 failures')
 
         expect(result.exit_code).to eq 0
       end

@@ -8,6 +8,7 @@ ENV['KNAPSACK_PRO_TEST_DIR'] = 'spec_integration'
 RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
 BATCHED_TESTS = JSON.load(ENV.fetch('TEST__BATCHED_TESTS'))
+LAST_BUILD_DISTRIBUTION_RESPONSE = JSON.load(ENV.fetch('TEST__LAST_BUILD_DISTRIBUTION_RESPONSE'))
 
 module KnapsackProExtensions
   module QueueAllocatorExtension
@@ -33,10 +34,17 @@ module KnapsackProExtensions
       puts "DEBUG: mocked the #{__method__} method"
     end
   end
+
+  module BuildDistributionFetcher
+    def call
+      KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity.new(LAST_BUILD_DISTRIBUTION_RESPONSE)
+    end
+  end
 end
 
 # START MOCK API
 KnapsackPro::QueueAllocator.prepend(KnapsackProExtensions::QueueAllocatorExtension)
+KnapsackPro::BuildDistributionFetcher.prepend(KnapsackProExtensions::BuildDistributionFetcher)
 
 module KnapsackPro
   class Report
