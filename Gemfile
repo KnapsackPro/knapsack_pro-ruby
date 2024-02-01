@@ -5,5 +5,5 @@ gemspec
 
 group :test do
   gem 'rspec_junit_formatter', require: false
-  gem 'nokogiri'
+  gem 'nokogiri', require: false
 end
