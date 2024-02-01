@@ -29,6 +29,11 @@ module KnapsackProExtensions
 
   module Report
     def create_build_subset(test_files)
+      if ENV['TEST__LOG_EXECUTION_TIMES']
+        have_execution_time = test_files.all? { _1.fetch('time_execution') > 0 }
+        puts "LOG_EXECUTION_TIMES: test_files: #{test_files.size}, test files have execution time: #{have_execution_time}"
+      end
+
       return unless SHOW_DEBUG_LOG
       puts "DEBUG: mocked the #{__method__} method"
     end

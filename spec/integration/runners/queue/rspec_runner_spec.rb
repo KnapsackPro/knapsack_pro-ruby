@@ -158,6 +158,62 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(result.exit_code).to eq 0
       end
     end
+
+    it 'detects test execution times correctly before sending it to API' do
+      ENV['TEST__LOG_EXECUTION_TIMES'] = 'true'
+
+      rspec_options = '--format d'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('LOG_EXECUTION_TIMES: test_files: 3, test files have execution time: true')
+
+        expect(result.exit_code).to eq 0
+      end
+    end
   end
 
   context 'when spec_helper.rb has a missing KnapsackPro::Adapters::RSpecAdapter.bind method' do
