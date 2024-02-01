@@ -1835,4 +1835,92 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when the RSpec split by examples is enabled AND --tag is set' do
+    before do
+      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+
+      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+    end
+    after do
+      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
+      ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+    end
+
+    it 'sets 1 as exit code and raises an error (a test example path as a_spec.rb[1:1] would always be executed even when it does not have the tag that is set via the --tag option. We cannot run tests because it could lead to running unintentional tests)' do
+      rspec_options = '--format d --tag my_tag'
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+          it 'A2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe", :my_tag do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_test_cases_for_slow_test_files([
+          "#{spec_a.path}[1:1]",
+          "#{spec_a.path}[1:2]",
+        ])
+        mock_batched_tests([
+          ["#{spec_a.path}[1:1]", spec_b.path],
+          ["#{spec_a.path}[1:2]", spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('ERROR -- : [knapsack_pro] It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/perma/ruby/rspec-split-by-test-examples-tag')
+
+        expect(result.stdout).to_not include('A1 test example')
+        expect(result.stdout).to_not include('A2 test example')
+        expect(result.stdout).to_not include('B1 test example')
+        expect(result.stdout).to_not include('B2 test example')
+        expect(result.stdout).to_not include('C1 test example')
+        expect(result.stdout).to_not include('C2 test example')
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
 end
