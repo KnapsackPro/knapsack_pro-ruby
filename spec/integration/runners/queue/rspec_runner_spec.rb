@@ -78,7 +78,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   before do
     # Uncomment the following to show output from the Queue RSpec run for each test example.
     # This is useful when you create or edit a test.
-    ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
+    #ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
 
     ENV['KNAPSACK_PRO_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/**{,/*/**}/*_spec.rb"
   end
