@@ -34,22 +34,35 @@ module KnapsackProExtensions
     end
   end
 
-  module BuildDistributionFetcher
-    def call
-      response = JSON.load(ENV.fetch('TEST__LAST_BUILD_DISTRIBUTION_RESPONSE'))
-      KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity.new(response)
+  module RSpecAdapter
+    def test_file_cases_for(slow_test_files)
+      puts "DEBUG: mocked test file cases for slow test files: #{slow_test_files}"
+
+      test_file_paths = JSON.load(ENV.fetch('TEST__TEST_FILE_CASES_FOR_SLOW_TEST_FILES'))
+      test_file_paths.map do |path|
+        { 'path' => path }
+      end
     end
   end
 end
 
 # START MOCK API
 KnapsackPro::QueueAllocator.prepend(KnapsackProExtensions::QueueAllocatorExtension)
-KnapsackPro::BuildDistributionFetcher.prepend(KnapsackProExtensions::BuildDistributionFetcher)
 
 module KnapsackPro
   class Report
     class << self
       prepend KnapsackProExtensions::Report
+    end
+  end
+end
+
+module KnapsackPro
+  module Adapters
+    class RSpecAdapter
+      class << self
+        prepend KnapsackProExtensions::RSpecAdapter
+      end
     end
   end
 end

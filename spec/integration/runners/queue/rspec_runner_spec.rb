@@ -35,25 +35,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     ENV['TEST__BATCHED_TESTS'] = batched_tests.to_json
   end
 
-  # https://docs.knapsackpro.com/api/v1/#build_distributions_last_get
-  #
-  # @param test_files Array[Array[String, Float]]
-  #   Example: [['a_spec.rb', 1.0], ['b_spec.rb', 2.1]]
-  def mock_last_build_distribution_response(test_files)
-    mapped_test_files = test_files.map do |test_file|
-      {
-        "path" => test_file.fetch(0),
-        "time_execution" => test_file.fetch(1),
-      }
-    end
-
-    time_execution = test_files.sum { _1.fetch(1) }
-
-    ENV['TEST__LAST_BUILD_DISTRIBUTION_RESPONSE'] = {
-      "build_distribution_id" => "uuid",
-      "time_execution" => time_execution,
-      "test_files" => mapped_test_files,
-    }.to_json
+  # @param test_file_paths Array[String]
+  #   Example: ['spec_integration/a_spec.rb[1:1]']
+  def mock_test_cases_for_slow_test_files(test_file_paths)
+    ENV['TEST__TEST_FILE_CASES_FOR_SLOW_TEST_FILES'] = test_file_paths.to_json
   end
 
   def log_command_result(stdout, stderr, status)
@@ -1743,15 +1728,20 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  xcontext 'when the RSpec split by examples is enabled' do
+  context 'when the RSpec split by examples is enabled' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+
+      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
+      ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
     end
 
-    it 'splits slow test files by examples' do
+    it 'splits slow test files by examples and ensures the test examples are executed only once' do
       rspec_options = '--format d'
 
       spec_a = SpecItem.new(
@@ -1801,31 +1791,45 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         spec_b,
         spec_c,
       ]) do
+        mock_test_cases_for_slow_test_files([
+          "#{spec_a.path}[1:1]",
+          "#{spec_a.path}[1:2]",
+        ])
         mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
+          ["#{spec_a.path}[1:1]", spec_b.path],
+          ["#{spec_a.path}[1:2]", spec_c.path],
         ])
-
-        mock_last_build_distribution_response([
-          [spec_a.path, 100.0],
-          [spec_b.path, 1.0],
-          [spec_c.path, 2.0],
-        ])
-
 
         result = subject
 
-        #expect(result.stdout).to_not include('A1 test example')
-        #expect(result.stdout).to include('A2 test example')
+        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] Detected 1 slow test files: [{"path"=>"spec_integration/a_spec.rb"}]')
 
-        #expect(result.stdout).to include('B1 test example')
+        expect(result.stdout).to include(
+          <<~OUTPUT
+          A_describe
+            A1 test example
 
-        #expect(result.stdout).to_not include('C1 test example')
+          B_describe
+            B1 test example
+            B2 test example
+          OUTPUT
+        )
 
-        #expect(result.stdout).to_not include('D1 test example')
-        #expect(result.stdout).to include('D2 test example')
+        expect(result.stdout).to include(
+          <<~OUTPUT
+          A_describe
+            A2 test example
 
-        #expect(result.stdout).to include('3 examples, 0 failures')
+          C_describe
+            C1 test example
+            C2 test example
+          OUTPUT
+        )
+
+        expect(result.stdout.scan(/A1 test example/).size).to eq 1
+        expect(result.stdout.scan(/A2 test example/).size).to eq 1
+
+        expect(result.stdout).to include('6 examples, 0 failures')
 
         expect(result.exit_code).to eq 0
       end
