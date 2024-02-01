@@ -2108,4 +2108,117 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when the RSpec split by examples is enabled AND JSON formatter is used' do
+    let(:json_file) { "#{SPEC_DIRECTORY}/rspec.json" }
+
+    before do
+      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+
+      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+    end
+    after do
+      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
+      ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+
+      File.delete(json_file)
+    end
+
+    it 'produces a JSON report' do
+      rspec_options = "--format documentation --format json --out ./#{json_file}"
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+          it 'A2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+      ]) do
+        mock_test_cases_for_slow_test_files([
+          "#{spec_a.path}[1:1]",
+          "#{spec_a.path}[1:2]",
+        ])
+        mock_batched_tests([
+          ["#{spec_a.path}[1:1]", spec_b.path],
+          ["#{spec_a.path}[1:2]", spec_c.path],
+        ])
+
+        result = subject
+
+        file_content = File.read(json_file)
+        json = JSON.load(file_content)
+        examples = json.fetch('examples')
+
+        example_ids = examples.map do
+          _1.fetch('id')
+        end
+        expect(example_ids).to match_array([
+          "./spec_integration/a_spec.rb[1:1]",
+          "./spec_integration/b_spec.rb[1:1]",
+          "./spec_integration/b_spec.rb[1:2]",
+          "./spec_integration/a_spec.rb[1:2]",
+          "./spec_integration/c_spec.rb[1:1]",
+          "./spec_integration/c_spec.rb[1:2]"
+        ])
+
+        example_full_descriptions = examples.map do
+          _1.fetch('full_description')
+        end
+        expect(example_full_descriptions).to match_array([
+          "A_describe A1 test example",
+          "B_describe B1 test example",
+          "B_describe B2 test example",
+          "A_describe A2 test example",
+          "C_describe C1 test example",
+          "C_describe C2 test example"
+        ])
+
+        expect(json.fetch('summary_line')).to eq '6 examples, 0 failures'
+
+        expect(result.exit_code).to eq 0
+      end
+    end
+  end
 end
