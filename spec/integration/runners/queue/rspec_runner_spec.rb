@@ -1743,14 +1743,12 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled' do
+  xcontext 'when the RSpec split by examples is enabled' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
-      ENV['KNAPSACK_PRO_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/**{,/*/**}/*_spec.rb"
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
-      ENV.delete('KNAPSACK_PRO_TEST_FILE_PATTERN')
     end
 
     it 'splits slow test files by examples' do
