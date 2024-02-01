@@ -124,6 +124,14 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake knapsack_pro:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split custom files by test examples ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/features/calculator_spec.rb"
+            bundle exec rake knapsack_pro:rspec
 
   e2e-queue-rspec:
     parameters:
