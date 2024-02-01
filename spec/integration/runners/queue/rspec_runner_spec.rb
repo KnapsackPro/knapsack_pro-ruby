@@ -1628,7 +1628,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when --tag is set' do
-    it 'runs only tagged test examples' do
+    it 'runs only tagged test examples from multiple batches of tests fetched from the Queue API' do
       rspec_options = '--format d --tag my_tag'
 
       spec_a = SpecItem.new(
