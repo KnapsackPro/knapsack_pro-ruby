@@ -854,6 +854,68 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
+  # https://github.com/rspec/rspec-core/pull/2926/files
+  context 'when RSpec is quitting' do
+    let(:helper_with_exit_location) { "#{SPEC_DIRECTORY}/helper_with_exit.rb" }
+
+    before do
+      File.open(helper_with_exit_location, 'w') { |file| file.write('exit 123') }
+    end
+    after do
+      File.delete(helper_with_exit_location)
+    end
+
+    it 'returns non zero exit code because RSpec is quitting' do
+      rspec_options = "--format documentation --require ./#{helper_with_exit_location}"
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe" do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe" do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('While loading ./spec_integration/helper_with_exit.rb an `exit` / `raise SystemExit` occurred, RSpec will now quit.')
+
+        expect(result.stdout).to_not include('A1 test example')
+        expect(result.stdout).to_not include('B1 test example')
+
+        expect(result.exit_code).to eq 123
+      end
+    end
+  end
+
   context 'when the test suite has pending tests' do
     it 'shows the summary of pending tests' do
       rspec_options = '--format documentation'
