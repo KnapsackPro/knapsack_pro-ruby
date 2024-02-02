@@ -568,7 +568,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
               unless ENV[env_var_name]
                 yield
               end
-              ENV[env_var_name] = 'hook_defined'
+              ENV[env_var_name] = 'hook_called'
             end
           end
         end
