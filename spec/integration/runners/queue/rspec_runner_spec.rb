@@ -551,6 +551,131 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(result.exit_code).to eq 0
       end
     end
+
+    it 'calls hooks defined with when_first_matching_example_defined only once for multiple batches of tests' do
+      rspec_options = '--format documentation'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      def when_first_matching_example_defined(type:)
+        env_var_name = "WHEN_FIRST_MATCHING_EXAMPLE_DEFINED_FOR_" + type.to_s.upcase
+
+        RSpec.configure do |config|
+          config.when_first_matching_example_defined(type: type) do
+            config.before(:context) do
+              unless ENV[env_var_name]
+                yield
+              end
+              ENV[env_var_name] = 'hook_defined'
+            end
+          end
+        end
+      end
+
+      when_first_matching_example_defined(type: :model) do
+        puts "RSpec_custom_hook_called_once_for_model"
+      end
+
+      when_first_matching_example_defined(type: :system) do
+        puts "RSpec_custom_hook_called_once_for_system"
+      end
+
+      RSpec.configure do |config|
+        config.before(:suite) do
+          puts "RSpec_before_suite_hook"
+        end
+
+        config.when_first_matching_example_defined(type: :model) do
+          config.before(:suite) do
+            puts "RSpec_before_suite_hook_for_model"
+          end
+        end
+
+        config.when_first_matching_example_defined(type: :system) do
+          config.before(:suite) do
+            puts "RSpec_before_suite_hook_for_system"
+          end
+        end
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe "A_describe", type: :model do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe "B_describe", type: :system do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe "C_describe" do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+
+          it 'C1 test example', :model do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_d = SpecItem.new(
+        'd_spec.rb',
+        <<~SPEC
+        describe "D_describe", type: :system do
+          it 'D1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c,
+        spec_d,
+      ]) do
+        mock_batched_tests([
+          [spec_a.path],
+          [spec_b.path],
+          [spec_c.path],
+          [spec_d.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
+
+        # skips before(:suite) hooks that were defined too late in 1st & 2nd batch of tests after before(:suite) hook is already executed
+        expect(result.stdout.scan(/RSpec_before_suite_hook_for_model/).size).to eq 0
+        expect(result.stdout.scan(/RSpec_before_suite_hook_for_system/).size).to eq 0
+
+        expect(result.stdout.scan(/RSpec_custom_hook_called_once_for_model/).size).to eq 1
+        expect(result.stdout.scan(/RSpec_custom_hook_called_once_for_system/).size).to eq 1
+
+        expect(result.exit_code).to eq 0
+      end
+    end
   end
 
   context 'when the RSpec seed is used' do
