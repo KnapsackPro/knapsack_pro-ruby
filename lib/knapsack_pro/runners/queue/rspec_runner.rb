@@ -273,6 +273,8 @@ module KnapsackPro
 
           yield test_file_paths
 
+          KnapsackPro::Hooks::Queue.call_after_subset_queue
+
           if @rspec_runner.knapsack__wants_to_quit?
             KnapsackPro.logger.warn('RSpec wants to quit.')
             set_terminate_process
@@ -284,8 +286,6 @@ module KnapsackPro
 
           printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
           @function_core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
-
-          KnapsackPro::Hooks::Queue.call_after_subset_queue
         end
       end
     end
