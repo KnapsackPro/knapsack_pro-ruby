@@ -1776,25 +1776,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         SPEC
       )
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
-        describe 'C_describe' do
-          it 'C1 test example' do
-            expect(1).to eq 1
-          end
-        end
-        SPEC
-      )
-
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
         spec_b,
-        spec_c
       ]) do
         mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
+          [spec_a.path],
+          [spec_b.path],
         ])
 
         result = subject
