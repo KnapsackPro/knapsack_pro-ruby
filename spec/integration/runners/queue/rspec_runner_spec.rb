@@ -2623,7 +2623,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         result = subject
 
-        expect(result.stdout).to include('4 examples, 2 failures')
+        expect(result.stdout).to include('4 examples, 2 failures, 1 pending')
 
         expect(File.exist?(examples_file_path)).to be true
 
