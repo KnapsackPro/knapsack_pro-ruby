@@ -2555,4 +2555,87 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when the example_status_persistence_file_path option is used and multiple batches of tests are fetched from the Queue API and some tests are pending and failing' do
+    let(:examples_file_path) { "#{SPEC_DIRECTORY}/examples.txt" }
+
+    after do
+      File.delete(examples_file_path) if File.exist?(examples_file_path)
+    end
+
+    it 'runs tests and creates the example status persistence file' do
+      rspec_options = '--format d'
+
+      spec_helper_content = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      RSpec.configure do |config|
+        config.example_status_persistence_file_path = '#{examples_file_path}'
+      end
+      SPEC
+
+      spec_a = SpecItem.new(
+        'a_spec.rb',
+        <<~SPEC
+        describe 'A_describe' do
+          xit 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+        SPEC
+      )
+
+      spec_b = SpecItem.new(
+        'b_spec.rb',
+        <<~SPEC
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 0
+          end
+        end
+        SPEC
+      )
+
+      spec_c = SpecItem.new(
+        'c_spec.rb',
+        <<~SPEC
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 0
+          end
+        end
+        SPEC
+      )
+
+      run_specs(spec_helper_content, rspec_options, [
+        spec_a,
+        spec_b,
+        spec_c
+      ]) do
+        mock_batched_tests([
+          [spec_a.path, spec_b.path],
+          [spec_c.path],
+        ])
+
+        result = subject
+
+        expect(result.stdout).to include('4 examples, 2 failures')
+
+        expect(File.exist?(examples_file_path)).to be true
+
+        examples_file_content = File.read(examples_file_path)
+
+        expect(examples_file_content).to include './spec_integration/a_spec.rb[1:1] | pending'
+        expect(examples_file_content).to include './spec_integration/b_spec.rb[1:1] | failed'
+        expect(examples_file_content).to include './spec_integration/c_spec.rb[1:1] | passed'
+        expect(examples_file_content).to include './spec_integration/c_spec.rb[1:2] | failed'
+
+        expect(result.exit_code).to eq 1
+      end
+    end
+  end
 end

@@ -131,6 +131,8 @@ module KnapsackPro
 
                 node_examples_passed = false unless examples_passed
 
+                knapsack__persist_example_statuses
+
                 if reporter.fail_fast_limit_met?
                   queue_runner.log_fail_fast_limit_met
                   break
@@ -140,6 +142,12 @@ module KnapsackPro
 
             exit_code(node_examples_passed)
           end
+        end
+
+        # Based on:
+        # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L90
+        def knapsack__persist_example_statuses
+          persist_example_statuses
         end
       end
 

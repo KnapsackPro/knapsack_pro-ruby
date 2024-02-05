@@ -4,3 +4,4 @@ spec_helper.rb
 helper_with_exit.rb
 rspec.xml
 rspec.json
+examples.txt
