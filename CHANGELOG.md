@@ -45,14 +45,16 @@
 
     See [docs](https://docs.knapsackpro.com/ruby/circleci/) if you use CircleCI.
 
-  * If you use Queue Mode and the `percy-capybara` gem < 4, replace:
+  * Replace the following if you are using Queue Mode and have a version of the `percy-capybara` gem that is older than version `4`:
+
+    Before:
 
     ```ruby
     KnapsackPro::Hooks::Queue.before_queue { |queue_id| Percy::Capybara.initialize_build }
     KnapsackPro::Hooks::Queue.after_queue { |queue_id| Percy::Capybara.finalize_build }
     ```
 
-    with:
+    After:
 
     ```ruby
     # recommended
