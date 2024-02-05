@@ -4,6 +4,7 @@ require 'json'
 ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = SecureRandom.uuid
 ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC'] = 'fake-api-token'
 ENV['KNAPSACK_PRO_TEST_DIR'] = 'spec_integration'
+ENV['KNAPSACK_PRO_TEST_FILE_PATTERN'] = "spec_integration/**{,/*/**}/*_spec.rb"
 
 RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
