@@ -76,7 +76,7 @@ module KnapsackPro
           end
 
           # @param args Array[String]
-          def ensure_args_have_default_formatter(args)
+          def ensure_args_have_a_formatter(args)
             return args if ADAPTER_CLASS.has_format_option?(args)
 
             args + ['--format', 'progress']
@@ -222,7 +222,7 @@ module KnapsackPro
 
         def prepare_cli_args(args)
           cli_args = @function_core.to_cli_args(args)
-          cli_args = @function_core.ensure_args_have_default_formatter(cli_args)
+          cli_args = @function_core.ensure_args_have_a_formatter(cli_args)
           @function_core.args_with_default_options(cli_args, test_dir)
         end
 

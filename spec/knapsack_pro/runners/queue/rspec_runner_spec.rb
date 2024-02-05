@@ -172,8 +172,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
     end
 
-    describe '#ensure_args_have_default_formatter' do
-      subject { function_core.ensure_args_have_default_formatter(args) }
+    describe '#ensure_args_have_a_formatter' do
+      subject { function_core.ensure_args_have_a_formatter(args) }
 
       before do
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:has_format_option?).with(args).and_call_original
