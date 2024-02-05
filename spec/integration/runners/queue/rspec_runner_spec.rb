@@ -924,7 +924,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when a syntax error (an exception) in spec_helper.rb' do
-    it 'returns 1 as exit code because RSpec wants to quit and exit early without running tests' do
+    it 'exits early with 1 as the exit code without running tests because RSpec wants to quit' do
       rspec_options = '--format documentation'
 
       spec_helper_content = <<~SPEC
