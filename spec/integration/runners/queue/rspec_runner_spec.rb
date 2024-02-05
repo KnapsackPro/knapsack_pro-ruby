@@ -330,7 +330,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
     end
 
-    it 'uses a default progress formatter and shows dots for all test examples' do
+    it 'uses a default progress formatter AND shows dots for all test examples' do
       rspec_options = ''
 
       spec_a = SpecItem.new(
@@ -797,7 +797,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when a failing test raises an exception' do
-    it 'returns 1 as exit code and the exception does not leak outside of the RSpec runner context' do
+    it 'returns 1 as exit code AND the exception does not leak outside of the RSpec runner context' do
       rspec_options = '--format documentation'
 
       spec_a = SpecItem.new(
@@ -1107,7 +1107,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when a test file raises an exception that cannot be handle by RSpec' do
-    it 'stops running tests when unhandled exception happens and sets 1 as exit code and shows summary of unexecuted tests' do
+    it 'stops running tests when unhandled exception happens AND sets 1 as exit code AND shows summary of unexecuted tests' do
       rspec_options = '--format documentation'
 
       spec_a = SpecItem.new(
@@ -1335,7 +1335,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when a termination signal is received by the process AND --error-exit-code is set' do
-    it 'terminates the process and sets a custom exit code' do
+    it 'terminates the process AND sets a custom exit code' do
       rspec_options = '--format documentation --error-exit-code 3'
 
       spec_a = SpecItem.new(
@@ -1392,7 +1392,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when deprecated run_all_when_everything_filtered option is true' do
-    it 'shows an error message and sets 1 as exit code' do
+    it 'shows an error message AND sets 1 as exit code' do
       rspec_options = '--format documentation'
 
       spec_helper_content = <<~SPEC
@@ -1448,7 +1448,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when filter_run_when_matching is set to :focus and some tests are tagged with the focus tag' do
-    it 'shows an error message for :focus tagged tests and sets 1 as exit code (shows the error because the batch of tests that has no focus tagged tests will run tests instead of not running them)' do
+    it 'shows an error message for :focus tagged tests AND sets 1 as exit code (shows the error because the batch of tests that has no focus tagged tests will run tests instead of not running them)' do
       rspec_options = '--format documentation'
 
       spec_helper_content = <<~SPEC
@@ -1690,7 +1690,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when --profile is set' do
-    it 'shows top slowest examples and example groups' do
+    it 'shows top slowest examples AND top slowest example groups' do
       rspec_options = '--format d --profile'
 
       spec_a = SpecItem.new(
@@ -1751,7 +1751,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when an invalid RSpec option is set' do
-    it 'returns 1 as exit code and shows an error message to stderr' do
+    it 'returns 1 as exit code AND shows an error message to stderr' do
       rspec_options = '--format d --fake-rspec-option'
 
       spec_a = SpecItem.new(
@@ -2049,7 +2049,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
     end
 
-    it 'splits slow test files by examples and ensures the test examples are executed only once' do
+    it 'splits slow test files by examples AND ensures the test examples are executed only once' do
       rspec_options = '--format d'
 
       spec_a = SpecItem.new(
@@ -2157,7 +2157,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
     end
 
-    it 'sets 1 as exit code and raises an error (a test example path as a_spec.rb[1:1] would always be executed even when it does not have the tag that is set via the --tag option. We cannot run tests because it could lead to running unintentional tests)' do
+    it 'sets 1 as exit code AND raises an error (a test example path as a_spec.rb[1:1] would always be executed even when it does not have the tag that is set via the --tag option. We cannot run tests because it could lead to running unintentional tests)' do
       rspec_options = '--format d --tag my_tag'
 
       spec_a = SpecItem.new(
@@ -2560,7 +2560,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       File.delete(examples_file_path) if File.exist?(examples_file_path)
     end
 
-    it 'runs tests and creates the example status persistence file' do
+    it 'runs tests AND creates the example status persistence file' do
       rspec_options = '--format d'
 
       spec_helper_content = <<~SPEC
