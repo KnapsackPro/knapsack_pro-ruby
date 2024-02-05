@@ -413,7 +413,7 @@ class TestTimeTracker
 
   def run_specs(specs)
     paths = Array(specs).map.with_index do |spec, i|
-      path = "spec/knapsack_pro/formatters/#{i}_#{SecureRandom.uuid}_spec.rb"
+      path = "spec/knapsack_pro/formatters/time_tracker_#{i}_#{SecureRandom.uuid}_spec.rb"
       File.open(path, 'w') { |file| file.write(spec) }
       path
     end
