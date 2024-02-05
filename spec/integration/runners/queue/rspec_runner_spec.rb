@@ -976,6 +976,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
+  # Based on:
   # https://github.com/rspec/rspec-core/pull/2926/files
   context 'when RSpec is quitting' do
     let(:helper_with_exit_location) { "#{SPEC_DIRECTORY}/helper_with_exit.rb" }
