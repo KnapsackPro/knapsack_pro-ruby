@@ -71,7 +71,7 @@
     * It uses `1` as a default exit code when the process is terminated.
     * Or, it uses a custom exit code defined by the `--error-exit-code` option.
 
-  * Respect the `--error-exit-code` option. It overrides the exit code used when there are errors loading or running specs outside of examples.
+  * Respect the `--error-exit-code` option. It overrides the exit code when there are errors outside the test examples that RSpec cannot handle. For example, a lack of memory or a termination signal.
 
     ```bash
     bundle exec rake "knapsack_pro:queue:rspec[--error-exit-code 3]"
