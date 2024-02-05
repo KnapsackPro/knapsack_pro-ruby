@@ -21,7 +21,7 @@ module KnapsackProExtensions
       @@batch_index += 1
 
       if SHOW_DEBUG_LOG
-        puts "DEBUG: mocked tests from Queue API: #{tests.inspect}"
+        puts "DEBUG: mocked tests from the Queue API: #{tests.inspect}"
       end
 
       return tests
