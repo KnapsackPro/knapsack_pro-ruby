@@ -88,9 +88,7 @@ module KnapsackPro
         end
 
         # @param test_file_paths Array[String]
-        #   Examples:
-        #     a_spec.rb
-        #     a_spec.rb[1:1]
+        #   Example: ['a_spec.rb', 'b_spec.rb[1:1]']
         def knapsack__load_spec_files_batch(test_file_paths)
           world.reset
 
