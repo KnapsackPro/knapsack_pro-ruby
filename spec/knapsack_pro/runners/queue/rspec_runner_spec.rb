@@ -202,7 +202,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
       subject { function_core.args_with_default_options(args, test_dir) }
 
-      it 'adds default formatters' do
+      it 'adds default options and Knapsack Pro formatters' do
         expect(subject).to eq [
           '--color',
           '--format', 'documentation',
