@@ -52,7 +52,6 @@ module KnapsackProExtensions
   end
 end
 
-# START MOCK API
 KnapsackPro::QueueAllocator.prepend(KnapsackProExtensions::QueueAllocatorExtension)
 
 module KnapsackPro
@@ -72,7 +71,5 @@ module KnapsackPro
     end
   end
 end
-# END OF MOCK API
-
 
 KnapsackPro::Runners::Queue::RSpecRunner.run(RSPEC_OPTIONS)
