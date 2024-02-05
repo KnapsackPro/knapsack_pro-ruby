@@ -141,7 +141,7 @@ module KnapsackPro
       end
 
       def bind_queue_mode
-        # call the following method before `super` to ensure the after queue hook that runs in after(:suite) is called before after(:suite) hook defined by `bind_time_tracker`
+        # call the following method before `super` to ensure the `after_queue` hook that runs in after(:suite) is called before after(:suite) hook defined by `bind_time_tracker`
         bind_after_queue_hook
 
         super
