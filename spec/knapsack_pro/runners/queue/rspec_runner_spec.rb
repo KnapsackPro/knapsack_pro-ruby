@@ -53,8 +53,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
     end
 
-    describe '#error_exit_code' do
-      subject { function_core.error_exit_code(rspec_error_exit_code) }
+    describe '#set_error_exit_code' do
+      subject { function_core.set_error_exit_code(rspec_error_exit_code) }
 
       context 'when RSpec has no defined error exit code' do
         let(:rspec_error_exit_code) { nil }
