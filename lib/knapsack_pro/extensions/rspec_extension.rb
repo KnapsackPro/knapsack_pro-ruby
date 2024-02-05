@@ -39,7 +39,7 @@ module KnapsackPro
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L98
         def knapsack__setup(stream_error = $stderr, stream_out = $stdout)
           # Abstract from RSpec::Core::Runner#setup, since we do not need to set any filters or files at this point,
-          # and we do not want to let world.announce_filters to be called, since it will print
+          # and we do not want to let world.announce_filters be called, since it will print
           # out `No examples found.` message.
           configure(stream_error, stream_out)
 
