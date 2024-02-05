@@ -93,7 +93,7 @@ module KnapsackPro
           world.reset
 
           # Reset filters
-          # but we do not reset `configuration.static_config_filter_manager` to preserve the --tag option
+          # but do not reset `configuration.static_config_filter_manager` to preserve the --tag option
           filter_manager = RSpec::Core::FilterManager.new
           options.configure_filter_manager(filter_manager)
           configuration.filter_manager = filter_manager
