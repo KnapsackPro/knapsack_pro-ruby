@@ -92,8 +92,7 @@ module KnapsackPro
         def knapsack__load_spec_files_batch(test_file_paths)
           world.reset
 
-          # Reset filters
-          # but do not reset `configuration.static_config_filter_manager` to preserve the --tag option
+          # Reset filters, but do not reset `configuration.static_config_filter_manager` to preserve the --tag option
           filter_manager = RSpec::Core::FilterManager.new
           options.configure_filter_manager(filter_manager)
           configuration.filter_manager = filter_manager
