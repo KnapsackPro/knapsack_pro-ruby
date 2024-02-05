@@ -1049,7 +1049,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       spec_a = SpecItem.new(
         'a_spec.rb',
         <<~SPEC
-        describe "A_describe" do
+        describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
