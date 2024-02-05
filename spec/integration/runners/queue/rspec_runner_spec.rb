@@ -46,17 +46,17 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     return if ENV['TEST__SHOW_DEBUG_LOG'] != 'true'
 
     puts '='*50
-    puts 'STDOUT'
+    puts 'STDOUT:'
     puts stdout
     puts
 
     puts '='*50
-    puts 'STDERR'
+    puts 'STDERR:'
     puts stderr
     puts
 
     puts '='*50
-    puts 'Exit status code'
+    puts 'Exit status code:'
     puts status
     puts
   end
