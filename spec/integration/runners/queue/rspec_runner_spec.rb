@@ -816,7 +816,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         <<~SPEC
         describe 'B_describe' do
           it 'B1 test example' do
-            raise 'ACustomException'
+            raise 'A custom exception from a test'
           end
         end
         SPEC
@@ -846,7 +846,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         result = subject
 
         expect(result.stdout).to include('B1 test example (FAILED - 1)')
-        expect(result.stdout).to include("Failure/Error: raise 'ACustomException'")
+        expect(result.stdout).to include("Failure/Error: raise 'A custom exception from a test'")
         expect(result.stdout).to include('3 examples, 1 failure')
 
         expect(result.exit_code).to eq 1
