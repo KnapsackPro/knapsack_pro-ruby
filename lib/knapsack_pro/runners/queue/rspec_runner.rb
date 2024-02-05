@@ -10,7 +10,7 @@ module KnapsackPro
       # Preferably via methods with the  `knapsack__` prefix.
       # We want to isolate the imperative shell from the internals of RSpec.
       # It should be tested via integration tests if possible.
-      # Alternatively, it should be tested using E2E tests on CI that are running against a real Rails app with the RSpec test suite.
+      # Alternatively, it should be tested using E2E tests on CI that are running against a Rails app with the RSpec test suite.
       class RSpecRunner < BaseRunner
         # Functional Core.
         # Architecture based on: https://www.destroyallsoftware.com/talks/boundaries
