@@ -1448,7 +1448,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when filter_run_when_matching is set to :focus and some tests are tagged with the focus tag' do
-    it 'shows an error message for :focus tagged tests and sets 1 as exit code' do
+    it 'shows an error message for :focus tagged tests and sets 1 as exit code (shows the error because the batch of tests that has no focus tagged tests will run tests instead of not running them)' do
       rspec_options = '--format documentation'
 
       spec_helper_content = <<~SPEC
