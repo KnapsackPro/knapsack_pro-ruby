@@ -28,11 +28,11 @@ module KnapsackPro
 
     REGULAR_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_TRUE_AND_POSITIVE_RETRY_COUNT = "#{HOST}/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count"
 
+    RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED = "#{HOST}/perma/ruby/rspec-deprecated-run-all-when-everything-filtered"
+
     RSPEC__SKIPS_TESTS = "#{HOST}/perma/ruby/rspec-skips-tests"
 
     RSPEC__SPLIT_BY_TEST_EXAMPLES__TAG = "#{HOST}/perma/ruby/rspec-split-by-test-examples-tag"
-
-    RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED = "#{HOST}/perma/ruby/rspec-deprecated-run-all-when-everything-filtered"
 
     SPLIT_BY_TEST_EXAMPLES = "#{HOST}/perma/ruby/split-by-test-examples"
 
