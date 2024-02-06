@@ -12,6 +12,28 @@ module KnapsackPro
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files)
+      if ENV['MOCK_QUEUE_API_RESPONSE'] == 'true'
+        @@index ||= 0
+        batches = [
+          ['test/minitest_duplicated/meme_spec_test.rb'],
+          ['test/controllers/articles_controller_test.rb', 'test/controllers/welcome_controller_test.rb'],
+          [], # the last Queue API response is always an empty list of test files
+        ]
+
+        # example of an empty batch for a late CI node
+        batches = [
+          []
+        ]
+
+        tests = batches[@@index] || []
+        @@index += 1
+        puts '='*50
+        puts 'Tests (mocked API response):'
+        puts tests.inspect
+        puts '='*50
+        return tests
+      end
+
       return [] if @fallback_activated
       action = build_action(can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
