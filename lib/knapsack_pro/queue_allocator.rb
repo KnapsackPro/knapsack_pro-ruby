@@ -29,7 +29,8 @@ module KnapsackPro
 
         # pending tests that are not run - this causes Minitest 5.22.0 to fail with `Nothing ran for filter:` message
         batches = [
-          ['test/minitest_spec_rails/shared_examples_test.rb']
+          ['test/minitest_spec_rails/shared_examples_test.rb'],
+          ['test/controllers/pending_controller_test.rb'],
         ]
 
         tests = batches[@@index] || []
