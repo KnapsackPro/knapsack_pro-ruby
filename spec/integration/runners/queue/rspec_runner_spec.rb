@@ -1252,14 +1252,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         <<~SPEC
         describe 'B1_describe' do
           describe 'B1.1_describe' do
-            it 'B1.1.1 test example' do
+            xit 'B1.1.1 test example' do
               expect(1).to eq 1
             end
             it 'B1.1.2 test example' do
               Process.kill("INT", Process.pid)
             end
             it 'B1.1.3 test example' do
-              expect(1).to eq 1
+              expect(1).to eq 0
             end
           end
 
@@ -1314,10 +1314,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         result = subject
 
-        expect(result.stdout).to include('B1.1.1 test example')
+        expect(result.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
         expect(result.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
         expect(result.stdout).to include('B1.1.2 test example')
-        expect(result.stdout).to include('B1.1.3 test example')
+        expect(result.stdout).to include('B1.1.3 test example (FAILED - 1)')
         expect(result.stdout).to include('B1.2.1 test example')
 
         # next ExampleGroup within the same b_spec.rb is not executed
@@ -1328,6 +1328,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         # next batch of tests is not pulled from the Queue API and is not executed
         expect(result.stdout).to_not include('D1 test example')
+
+
+        expect(result.stdout).to include(
+          <<~OUTPUT
+          Pending: (Failures listed here are expected and do not affect your suite's status)
+
+            1) B1_describe B1.1_describe B1.1.1 test example
+          OUTPUT
+        )
+
+        expect(result.stdout).to include(
+          <<~OUTPUT
+          Failures:
+
+            1) B1_describe B1.1_describe B1.1.3 test example
+          OUTPUT
+        )
 
         expect(result.exit_code).to eq 1
       end
