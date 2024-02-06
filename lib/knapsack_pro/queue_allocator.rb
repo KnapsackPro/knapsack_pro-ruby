@@ -14,6 +14,8 @@ module KnapsackPro
     def test_file_paths(can_initialize_queue, executed_test_files)
       if ENV['MOCK_QUEUE_API_RESPONSE'] == 'true'
         @@index ||= 0
+
+        # green tests
         batches = [
           ['test/minitest_duplicated/meme_spec_test.rb'],
           ['test/controllers/articles_controller_test.rb', 'test/controllers/welcome_controller_test.rb'],
@@ -23,6 +25,11 @@ module KnapsackPro
         # example of an empty batch for a late CI node
         batches = [
           []
+        ]
+
+        # pending tests that are not run - this causes Minitest 5.22.0 to fail with `Nothing ran for filter:` message
+        batches = [
+          ['test/minitest_spec_rails/shared_examples_test.rb']
         ]
 
         tests = batches[@@index] || []
