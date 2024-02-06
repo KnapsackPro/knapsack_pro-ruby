@@ -54,10 +54,6 @@ module KnapsackPro
             Kernel.exit(rspec_error_exit_code || FAILURE_EXIT_CODE)
           end
 
-          def to_cli_args(args)
-            (args || '').split
-          end
-
           # @param args Array[String]
           def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
             order_option = ADAPTER_CLASS.order_option(args)
@@ -221,7 +217,7 @@ module KnapsackPro
         private
 
         def prepare_cli_args(args)
-          cli_args = @function_core.to_cli_args(args)
+          cli_args = (args || '').split
           cli_args = @function_core.ensure_args_have_a_formatter(cli_args)
           @function_core.args_with_default_options(cli_args, test_dir)
         end
