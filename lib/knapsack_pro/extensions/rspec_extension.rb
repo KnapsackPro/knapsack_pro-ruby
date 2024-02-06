@@ -19,7 +19,7 @@ module KnapsackPro
       end
 
       module World
-        # Based on `announce_filters`
+        # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L171
         def knapsack__setup
           fail_if_config_and_cli_options_invalid
