@@ -68,7 +68,6 @@ module KnapsackPro
 
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/configuration.rb#L546
-        # Set with --error-exit-code CODE - Override the exit code used when there are errors loading or running specs outside of examples.
         def knapsack__error_exit_code
           _default = nil || configuration.error_exit_code
         end
