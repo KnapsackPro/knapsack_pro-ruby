@@ -163,7 +163,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
         end
       end
 
-      context 'when system process did not finish (has not exited)' do
+      context 'when system process did not finish (it has not exited)' do
         let(:process_exited) { false }
 
         it 'raises an error' do
