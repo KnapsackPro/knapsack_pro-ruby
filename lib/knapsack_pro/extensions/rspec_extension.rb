@@ -115,8 +115,8 @@ module KnapsackPro
           ordering_strategy = configuration.ordering_registry.fetch(:global)
           node_examples_passed = true
 
-          configuration.with_suite_hooks do
-            exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
+          exit_status = configuration.reporter.report(_expected_example_count = 0) do |reporter|
+            configuration.with_suite_hooks do
               queue_runner.with_batched_tests_from_queue do |test_file_paths|
                 knapsack__load_spec_files_batch(test_file_paths)
 
