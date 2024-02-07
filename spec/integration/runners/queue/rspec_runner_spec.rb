@@ -262,6 +262,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when RSpec options are not set' do
+    before do
+      ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'info'
+    end
+
+    after do
+      ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
+    end
+
     it 'uses a default progress formatter' do
       rspec_options = ''
 

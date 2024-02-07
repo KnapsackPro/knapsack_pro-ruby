@@ -106,12 +106,10 @@ module KnapsackPro
       end
 
       def log_batch_duration
-        ::RSpec.configure do |config|
-          config.after(:suite) do
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            formatted = KnapsackPro::Presenter.global_time(time_tracker.batch_duration)
-            KnapsackPro.logger.debug(formatted)
-          end
+        KnapsackPro::Hooks::Queue.after_subset_queue do
+          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          formatted = KnapsackPro::Presenter.global_time(time_tracker.batch_duration)
+          KnapsackPro.logger.debug(formatted)
         end
       end
 

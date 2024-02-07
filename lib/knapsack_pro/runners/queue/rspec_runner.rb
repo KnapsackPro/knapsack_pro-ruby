@@ -265,6 +265,9 @@ module KnapsackPro
 
           KnapsackPro::Hooks::Queue.call_before_subset_queue
 
+          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          time_tracker&.batch_started
+
           yield test_file_paths
 
           KnapsackPro::Hooks::Queue.call_after_subset_queue

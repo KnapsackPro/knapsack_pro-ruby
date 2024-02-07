@@ -341,23 +341,11 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       end
 
       context 'with no focus' do
-        let(:logger) { instance_double(Logger) }
-        let(:duration) { 65 }
-        let(:global_time) { 'Global time execution for tests: 01m 05s' }
-        let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
-
         it 'records time for current test path' do
           expect(config).to receive(:around).with(:each).and_yield(current_example)
-          expect(config).to receive(:after).with(:suite).and_yield
-          expect(::RSpec).to receive(:configure).twice.and_yield(config)
+          expect(::RSpec).to receive(:configure).and_yield(config)
 
           expect(current_example).to receive(:run)
-
-          expect(time_tracker).to receive(:batch_duration).and_return(duration)
-          expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
-
-          expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:debug).with(global_time)
 
           subject.bind_time_tracker
         end

@@ -309,24 +309,6 @@ class TestTimeTracker
     end
   end
 
-  def test_duration
-    KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
-      false
-    end
-
-    spec = <<~SPEC
-      describe "KnapsackPro::Formatters::TimeTracker" do
-        it do
-          expect(1).to eq 1
-        end
-      end
-    SPEC
-
-    run_specs(spec) do |_, _, time_tracker|
-      raise unless time_tracker.duration > 0.0
-    end
-  end
-
   def test_batch_duration
     KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
       false
@@ -372,14 +354,6 @@ class TestTimeTracker
     KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
       false
     end
-    KnapsackPro::Formatters::TimeTracker.class_eval do
-      alias_method :original_stop, :stop
-
-      # In Regular Mode, #subset is called before #stop.
-      # This test makes #stop a noop to simulate that behavior.
-      define_method(:stop) do |_|
-      end
-    end
 
     spec = <<~SPEC
       describe "KnapsackPro::Formatters::TimeTracker" do
@@ -400,12 +374,6 @@ class TestTimeTracker
       raise unless files[0]["path"] == spec_paths.first
       raise unless files[0]["time_execution"] > 0.10
       raise unless files[0]["time_execution"] < 0.15
-    end
-
-  ensure
-    KnapsackPro::Formatters::TimeTracker.class_eval do
-      undef :stop
-      alias_method :stop, :original_stop
     end
   end
 
