@@ -4,6 +4,7 @@
 require 'rspec/core'
 require 'knapsack_pro'
 require 'stringio'
+require 'tempfile'
 require_relative '../../../lib/knapsack_pro/formatters/time_tracker'
 
 class TestTimeTracker
@@ -380,11 +381,14 @@ class TestTimeTracker
   private
 
   def run_specs(specs)
-    paths = Array(specs).map.with_index do |spec, i|
-      path = "spec/knapsack_pro/formatters/time_tracker_#{i}_#{SecureRandom.uuid}_spec.rb"
-      File.open(path, 'w') { |file| file.write(spec) }
-      path
+    files = Array(specs).map.with_index do |spec, i|
+      file = Tempfile.new([i.to_s, "_spec.rb"], "./spec/knapsack_pro/formatters/")
+      file.write(spec)
+      file.rewind
+      file
     end
+
+    paths = files.map(&:path).map { _1.sub("./", "") }
 
     options = ::RSpec::Core::ConfigurationOptions.new([
       "--format", KnapsackPro::Formatters::TimeTracker.to_s,
@@ -404,7 +408,6 @@ class TestTimeTracker
     yield(paths, times, time_tracker)
 
   ensure
-    paths.each { |path| File.delete(path) }
     # Need to reset because RSpec keeps reusing the same instance.
     time_tracker.instance_variable_set(:@queue, {}) if time_tracker
     time_tracker.instance_variable_set(:@started, time_tracker.send(:now)) if time_tracker
