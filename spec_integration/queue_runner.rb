@@ -13,11 +13,11 @@ BATCHED_TESTS = JSON.load(ENV.fetch('TEST__BATCHED_TESTS'))
 module KnapsackProExtensions
   module QueueAllocatorExtension
     def test_file_paths(can_initialize_queue, executed_test_files)
-      @@batch_index ||= 0
+      @batch_index ||= 0
       last_batch = []
       batches = [*BATCHED_TESTS, last_batch]
-      tests = batches[@@batch_index]
-      @@batch_index += 1
+      tests = batches[@batch_index]
+      @batch_index += 1
 
       if SHOW_DEBUG_LOG
         puts "DEBUG: mocked tests from the Queue API: #{tests.inspect}"
