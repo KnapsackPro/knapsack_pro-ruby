@@ -73,7 +73,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:rspec_error_exit_code) { 2 }
 
         it 'sets the custom exit code' do
-          expect(Kernel).to receive(:exit).with(2)
+          expect(Kernel).to receive(:exit).with(rspec_error_exit_code)
           subject
         end
       end
