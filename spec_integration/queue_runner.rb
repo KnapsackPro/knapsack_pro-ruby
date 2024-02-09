@@ -14,9 +14,8 @@ module KnapsackProExtensions
   module QueueAllocatorExtension
     def test_file_paths(can_initialize_queue, executed_test_files)
       @@batch_index ||= 0
-      batches = BATCHED_TESTS + [
-        [], # the last Queue API response is always an empty list of test files
-      ]
+      last_batch = []
+      batches = [*BATCHED_TESTS, last_batch]
       tests = batches[@@batch_index]
       @@batch_index += 1
 
