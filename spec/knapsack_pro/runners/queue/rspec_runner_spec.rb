@@ -32,26 +32,26 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     describe '#ensure_spec_opts_have_knapsack_pro_formatters' do
       subject { function_core.ensure_spec_opts_have_knapsack_pro_formatters(spec_opts) }
 
-      context 'when no spec opts' do
+      context 'when no spec_opts' do
         let(:spec_opts) { nil }
 
-        it 'returns no spec opts' do
+        it 'returns no spec_opts' do
           expect(subject).to be nil
         end
       end
 
-      context 'when spec opts have Knapsack Pro formatters' do
+      context 'when spec_opts have Knapsack Pro formatters' do
         let(:spec_opts) { '--color --format d --format KnapsackPro::Formatters::TimeTracker' }
 
-        it 'returns spec opts' do
+        it 'returns spec_opts' do
           expect(subject).to eq spec_opts
         end
       end
 
-      context 'when spec opts have no Knapsack Pro formatters' do
+      context 'when spec_opts have no Knapsack Pro formatters' do
         let(:spec_opts) { '--color --format d' }
 
-        it 'returns spec opts with added Knapsack Pro formatters' do
+        it 'returns spec_opts with added Knapsack Pro formatters' do
           expect(subject).to eq '--color --format d --format KnapsackPro::Formatters::TimeTracker'
         end
       end
