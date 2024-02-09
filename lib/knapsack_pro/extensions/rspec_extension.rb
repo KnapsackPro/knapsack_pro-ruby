@@ -27,14 +27,6 @@ module KnapsackPro
       end
 
       module Runner
-        def knapsack__mark_setup_as_done
-          @knapsack__setup_done = true
-        end
-
-        def knapsack__setup_done?
-          !!@knapsack__setup_done
-        end
-
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L98
         def knapsack__setup(stream_error = $stderr, stream_out = $stdout)
@@ -44,8 +36,6 @@ module KnapsackPro
           configure(stream_error, stream_out)
 
           world.knapsack__setup
-
-          knapsack__mark_setup_as_done
         end
 
         def knapsack__wants_to_quit?
@@ -72,9 +62,8 @@ module KnapsackPro
           _default = nil || configuration.error_exit_code
         end
 
+        # must be called after `Runner#knapsack__setup` when the `spec_helper.rb` configuration is loaded
         def knapsack__deprecated_run_all_when_everything_filtered_enabled?
-          raise "Cannot call the #{__method__} method because setup was not done." unless knapsack__setup_done?
-
           !!(configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered)
         end
 
