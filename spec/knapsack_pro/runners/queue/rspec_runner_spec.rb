@@ -35,7 +35,9 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       context 'when no spec opts' do
         let(:spec_opts) { nil }
 
-        it { expect(subject).to be nil }
+        it 'returns no spec opts' do
+          expect(subject).to be nil
+        end
       end
 
       context 'when spec opts have Knapsack Pro formatters' do
