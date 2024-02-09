@@ -108,8 +108,10 @@ module KnapsackPro
       def log_batch_duration
         KnapsackPro::Hooks::Queue.after_subset_queue do
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-          formatted = KnapsackPro::Presenter.global_time(time_tracker.batch_duration)
-          KnapsackPro.logger.debug(formatted)
+          if time_tracker
+            formatted = KnapsackPro::Presenter.global_time(time_tracker.batch_duration)
+            KnapsackPro.logger.debug(formatted)
+          end
         end
       end
 
