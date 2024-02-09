@@ -207,7 +207,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       context 'when logs the RSpec command for a subset of queue (a batch of tests fetched from the Queue API)' do
         let(:type) { :subset_queue }
 
-        it 'logs the RSpec copy & paste command' do
+        it 'logs the RSpec command' do
           expect(logger).to receive(:info).with('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
           expect(logger).to receive(:info).with('bundle exec rspec --format documentation "a_spec.rb" "b_spec.rb"')
 
@@ -218,7 +218,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       context 'when logs the RSpec command for all tests fetched from the Queue API' do
         let(:type) { :end_of_queue }
 
-        it 'logs the RSpec copy & paste command' do
+        it 'logs the RSpec command' do
           expect(logger).to receive(:info).with('To retry all the tests assigned to this CI node, please run the following command on your machine:')
           expect(logger).to receive(:info).with('bundle exec rspec --format documentation "a_spec.rb" "b_spec.rb"')
 
