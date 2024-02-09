@@ -17,7 +17,7 @@ module KnapsackProExtensions
       batches = BATCHED_TESTS + [
         [], # the last Queue API response is always an empty list of test files
       ]
-      tests = batches[@@batch_index] || []
+      tests = batches[@@batch_index]
       @@batch_index += 1
 
       if SHOW_DEBUG_LOG
