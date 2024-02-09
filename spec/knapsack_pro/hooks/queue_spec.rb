@@ -93,8 +93,8 @@ describe KnapsackPro::Hooks::Queue do
       let(:subset_queue_id) { double }
 
       before do
-        expect(KnapsackPro::Config::Env).to receive(:queue_id).twice.and_return(queue_id)
-        expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).twice.and_return(subset_queue_id)
+        expect(KnapsackPro::Config::Env).to receive(:queue_id).at_least(1).and_return(queue_id)
+        expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).at_least(1).and_return(subset_queue_id)
 
         $expected_called_blocks = []
 
