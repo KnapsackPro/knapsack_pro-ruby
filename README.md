@@ -42,10 +42,6 @@ The `knapsack_pro` gem supports all CIs and the following test runners:
 - Spinach
 - Turnip
 
-## Requirements
-
-`>= Ruby 3.0.0`
-
 ## Installation
 
 The [Installation Guide](https://docs.knapsackpro.com/knapsack_pro-ruby/guide/?utm_source=github&utm_medium=readme&utm_campaign=knapsack_pro-ruby_gem&utm_content=installation_guide) will ask you a few questions and generate instruction steps for your project:
