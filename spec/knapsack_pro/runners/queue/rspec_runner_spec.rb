@@ -63,7 +63,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       context 'when RSpec has no defined error exit code' do
         let(:rspec_error_exit_code) { nil }
 
-        it 'sets `1` as a default exit code' do
+        it 'sets 1 as the default exit code' do
           expect(Kernel).to receive(:exit).with(1)
           subject
         end
