@@ -21,7 +21,7 @@ module KnapsackPro
             can_initialize_queue: true,
             args: args,
             exitstatus: 0,
-            node_assigned_test_file_paths: [],
+            node_test_file_paths: [],
           }
           while accumulator[:status] == :next
             handle_signal!
@@ -36,15 +36,15 @@ module KnapsackPro
           can_initialize_queue = accumulator.fetch(:can_initialize_queue)
           args = accumulator.fetch(:args)
           exitstatus = accumulator.fetch(:exitstatus)
-          node_assigned_test_file_paths = accumulator.fetch(:node_assigned_test_file_paths)
+          node_test_file_paths = accumulator.fetch(:node_test_file_paths)
 
           test_file_paths = runner.test_file_paths(
             can_initialize_queue: can_initialize_queue,
-            executed_test_files: node_assigned_test_file_paths
+            executed_test_files: node_test_file_paths
           )
 
           if test_file_paths.empty?
-            unless node_assigned_test_file_paths.empty?
+            unless node_test_file_paths.empty?
               KnapsackPro::Adapters::CucumberAdapter.verify_bind_method_called
             end
 
@@ -65,7 +65,7 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_before_subset_queue
 
-            node_assigned_test_file_paths += test_file_paths
+            node_test_file_paths += test_file_paths
 
             result_exitstatus = cucumber_run(runner, test_file_paths, args)
             exitstatus = result_exitstatus if result_exitstatus != 0
@@ -80,7 +80,7 @@ module KnapsackPro
               can_initialize_queue: false,
               args: args,
               exitstatus: exitstatus,
-              node_assigned_test_file_paths: node_assigned_test_file_paths,
+              node_test_file_paths: node_test_file_paths,
             }
           end
         end

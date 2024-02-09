@@ -116,11 +116,11 @@ module KnapsackPro
             logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
           end
 
-          def log_exit_summary(node_assigned_test_file_paths)
+          def log_exit_summary(node_test_file_paths)
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             return unless time_tracker
 
-            unexecuted_test_files = time_tracker.unexecuted_test_files(node_assigned_test_file_paths)
+            unexecuted_test_files = time_tracker.unexecuted_test_files(node_test_file_paths)
             return if unexecuted_test_files.empty?
 
             logger.warn("Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}")
@@ -156,7 +156,7 @@ module KnapsackPro
           @cli_args = prepare_cli_args(args)
           @stream_error = stream_error
           @stream_out = stream_out
-          @node_assigned_test_file_paths = []
+          @node_test_file_paths = []
           @rspec_runner = nil # RSpec::Core::Runner is lazy initialized
         end
 
@@ -182,7 +182,7 @@ module KnapsackPro
             raise
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
-            @function_core.log_exit_summary(@node_assigned_test_file_paths)
+            @function_core.log_exit_summary(@node_test_file_paths)
             @function_core.set_error_exit_code(@rspec_runner.knapsack__error_exit_code)
             raise
           end
@@ -242,10 +242,10 @@ module KnapsackPro
           @adapter_class.verify_bind_method_called
 
           printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @function_core.log_rspec_command(printable_args, @node_assigned_test_file_paths, :end_of_queue)
+          @function_core.log_rspec_command(printable_args, @node_test_file_paths, :end_of_queue)
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_assigned_test_file_paths))
+          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
 
           Kernel.exit(exit_code)
         end
@@ -253,9 +253,9 @@ module KnapsackPro
         def pull_tests_from_queue(can_initialize_queue: false)
           test_file_paths = test_file_paths(
             can_initialize_queue: can_initialize_queue,
-            executed_test_files: @node_assigned_test_file_paths
+            executed_test_files: @node_test_file_paths
           )
-          @node_assigned_test_file_paths += test_file_paths
+          @node_test_file_paths += test_file_paths
           test_file_paths
         end
 

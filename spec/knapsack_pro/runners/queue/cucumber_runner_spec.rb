@@ -39,7 +39,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
           can_initialize_queue: true,
           args: args,
           exitstatus: 0,
-          node_assigned_test_file_paths: [],
+          node_test_file_paths: [],
         }
         expect(described_class).to receive(:handle_signal!)
         expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
@@ -65,7 +65,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
           can_initialize_queue: true,
           args: nil,
           exitstatus: 0,
-          node_assigned_test_file_paths: [],
+          node_test_file_paths: [],
         }
         expect(described_class).to receive(:handle_signal!)
         expect(described_class).to receive(:run_tests).with(accumulator).and_return(expected_accumulator)
@@ -85,21 +85,21 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
     let(:can_initialize_queue) { double(:can_initialize_queue) }
     let(:args) { '--retry 5 --no-strict-flaky' }
     let(:exitstatus) { 0 }
-    let(:node_assigned_test_file_paths) { [] }
+    let(:node_test_file_paths) { [] }
     let(:accumulator) do
       {
         runner: runner,
         can_initialize_queue: can_initialize_queue,
         args: args,
         exitstatus: exitstatus,
-        node_assigned_test_file_paths: node_assigned_test_file_paths,
+        node_test_file_paths: node_test_file_paths,
       }
     end
 
     subject { described_class.run_tests(accumulator) }
 
     before do
-      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: node_assigned_test_file_paths).and_return(test_file_paths)
+      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: node_test_file_paths).and_return(test_file_paths)
     end
 
     context 'when test files exist' do
@@ -142,7 +142,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
               can_initialize_queue: false,
               args: args,
               exitstatus: exitstatus,
-              node_assigned_test_file_paths: test_file_paths,
+              node_test_file_paths: test_file_paths,
             })
           end
         end
@@ -157,7 +157,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
               can_initialize_queue: false,
               args: args,
               exitstatus: 1, # tests failed
-              node_assigned_test_file_paths: test_file_paths,
+              node_test_file_paths: test_file_paths,
             })
           end
         end
@@ -175,8 +175,8 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
     context 'when test files do not exist' do
       let(:test_file_paths) { [] }
 
-      context 'when node_assigned_test_file_paths exists' do
-        let(:node_assigned_test_file_paths) { ['features/a.feature'] }
+      context 'when node_test_file_paths exists' do
+        let(:node_test_file_paths) { ['features/a.feature'] }
 
         it 'returns exit code 0' do
           expect(KnapsackPro::Adapters::CucumberAdapter).to receive(:verify_bind_method_called)
@@ -191,8 +191,8 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
         end
       end
 
-      context 'when node_assigned_test_file_paths do not exist' do
-        let(:node_assigned_test_file_paths) { [] }
+      context 'when node_test_file_paths do not exist' do
+        let(:node_test_file_paths) { [] }
 
         it 'returns exit code 0' do
           expect(KnapsackPro::Hooks::Queue).to receive(:call_after_queue)

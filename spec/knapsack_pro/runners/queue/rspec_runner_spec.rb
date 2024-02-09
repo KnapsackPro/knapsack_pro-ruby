@@ -235,9 +235,9 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
 
       describe '#log_exit_summary' do
-        let(:node_assigned_test_file_paths) { ['a_spec.rb', 'b_spec.rb', 'c_spec.rb'] }
+        let(:node_test_file_paths) { ['a_spec.rb', 'b_spec.rb', 'c_spec.rb'] }
 
-        subject { function_core.log_exit_summary(node_assigned_test_file_paths) }
+        subject { function_core.log_exit_summary(node_test_file_paths) }
 
         before do
           expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
@@ -255,7 +255,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
 
           before do
-            expect(time_tracker).to receive(:unexecuted_test_files).with(node_assigned_test_file_paths).and_return(unexecuted_test_files)
+            expect(time_tracker).to receive(:unexecuted_test_files).with(node_test_file_paths).and_return(unexecuted_test_files)
           end
 
           context 'when there are no unexecuted test files' do
