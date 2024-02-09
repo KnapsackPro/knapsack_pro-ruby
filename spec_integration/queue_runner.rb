@@ -10,6 +10,12 @@ RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
 BATCHED_TESTS = JSON.load(ENV.fetch('TEST__BATCHED_TESTS'))
 
+class IntegrationTestLogger
+  def self.log(message)
+    puts "[INTEGRATION TEST] #{message}"
+  end
+end
+
 module KnapsackProExtensions
   module QueueAllocatorExtension
     def test_file_paths(can_initialize_queue, executed_test_files)
@@ -20,7 +26,7 @@ module KnapsackProExtensions
       @batch_index += 1
 
       if SHOW_DEBUG_LOG
-        puts "DEBUG: mocked tests from the Queue API: #{tests.inspect}"
+        IntegrationTestLogger.log("Mocked tests from the Queue API: #{tests.inspect}")
       end
 
       return tests
@@ -31,17 +37,17 @@ module KnapsackProExtensions
     def create_build_subset(test_files)
       if ENV['TEST__LOG_EXECUTION_TIMES']
         have_execution_time = test_files.all? { _1.fetch('time_execution') > 0 }
-        puts "LOG_EXECUTION_TIMES: test_files: #{test_files.size}, test files have execution time: #{have_execution_time}"
+        IntegrationTestLogger.log("test_files: #{test_files.size}, test files have execution time: #{have_execution_time}")
       end
 
       return unless SHOW_DEBUG_LOG
-      puts "DEBUG: mocked the #{__method__} method"
+      IntegrationTestLogger.log("Mocked the #{__method__} method")
     end
   end
 
   module RSpecAdapter
     def test_file_cases_for(slow_test_files)
-      puts "DEBUG: mocked test file cases for slow test files: #{slow_test_files}"
+      IntegrationTestLogger.log("Mocked test file cases for slow test files: #{slow_test_files}")
 
       test_file_paths = JSON.load(ENV.fetch('TEST__TEST_FILE_CASES_FOR_SLOW_TEST_FILES'))
       test_file_paths.map do |path|

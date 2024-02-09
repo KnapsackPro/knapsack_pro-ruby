@@ -206,7 +206,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         result = subject
 
-        expect(result.stdout).to include('LOG_EXECUTION_TIMES: test_files: 3, test files have execution time: true')
+        expect(result.stdout).to include('[INTEGRATION TEST] test_files: 3, test files have execution time: true')
 
         expect(result.exit_code).to eq 0
       end
