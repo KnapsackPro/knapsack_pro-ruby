@@ -162,7 +162,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when has a format option' do
+      context 'when args has a format option' do
         let(:args) { ['--color', '--format', 'd'] }
 
         it 'returns args' do
