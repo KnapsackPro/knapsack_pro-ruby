@@ -154,7 +154,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:has_format_option?).with(args).and_call_original
       end
 
-      context 'when has no format option' do
+      context 'when args has no format option' do
         let(:args) { ['--color', '--profile'] }
 
         it 'adds the progress formatter to args' do
