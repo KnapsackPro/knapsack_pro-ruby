@@ -1,7 +1,0 @@
-# This directory contains dynamically generated specs that should not be committed.
-*_spec.rb
-spec_helper.rb
-helper_with_exit.rb
-rspec.xml
-rspec.json
-examples.txt
