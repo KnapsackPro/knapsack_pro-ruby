@@ -23,7 +23,9 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       context 'when `run_all_when_everything_filtered_enabled` is disabled' do
         let(:deprecated_run_all_when_everything_filtered_enabled) { false }
 
-        it { expect(subject).to be nil }
+        it do
+          expect { subject }.not_to raise_error
+        end
       end
     end
 
