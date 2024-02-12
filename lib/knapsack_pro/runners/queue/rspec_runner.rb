@@ -59,13 +59,10 @@ module KnapsackPro
             order_option = @adapter_class.order_option(args)
 
             if order_option
-              # Don't add the seed option for order other than random, e.g. `defined`
               return args unless order_option.include?('rand')
-              # Don't add the seed option if the seed is already set in args, e.g. `rand:12345`
               return args if order_option.to_s.split(':')[1]
             end
 
-            # Don't add the seed option if the seed was not used (i.e. a different order is being used, e.g. `defined`)
             return args unless is_seed_used
 
             args + ['--seed', seed]
