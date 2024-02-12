@@ -139,17 +139,17 @@ module KnapsackPro
 
             ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
 
-            function_core = FunctionalCore.new(logger)
+            functional_core = FunctionalCore.new(logger)
 
-            queue_runner = new(function_core.adapter_class, function_core, args, stream_error, stream_out)
+            queue_runner = new(functional_core.adapter_class, functional_core, args, stream_error, stream_out)
             queue_runner.run
           end
         end
 
-        def initialize(adapter_class, function_core, args, stream_error, stream_out)
+        def initialize(adapter_class, functional_core, args, stream_error, stream_out)
           super(adapter_class)
           @adapter_class = adapter_class
-          @function_core = function_core
+          @functional_core = functional_core
           @cli_args = prepare_cli_args(args)
           @stream_error = stream_error
           @stream_out = stream_out
@@ -175,12 +175,12 @@ module KnapsackPro
           begin
             exit_code = @rspec_runner.knapsack__run_specs(self)
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
-            exit_code = @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
+            exit_code = @functional_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             Kernel.exit(exit_code)
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
-            @function_core.log_exit_summary(@node_test_file_paths)
-            exit_code = @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
+            @functional_core.log_exit_summary(@node_test_file_paths)
+            exit_code = @functional_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             Kernel.exit(exit_code)
           end
 
@@ -208,15 +208,15 @@ module KnapsackPro
         end
 
         def log_fail_fast_limit_met
-          @function_core.log_fail_fast_limit_met
+          @functional_core.log_fail_fast_limit_met
         end
 
         private
 
         def prepare_cli_args(args)
           cli_args = (args || '').split
-          cli_args = @function_core.ensure_args_have_a_formatter(cli_args)
-          @function_core.args_with_default_options(cli_args, test_dir)
+          cli_args = @functional_core.ensure_args_have_a_formatter(cli_args)
+          @functional_core.args_with_default_options(cli_args, test_dir)
         end
 
         def pre_run_setup
@@ -225,21 +225,21 @@ module KnapsackPro
 
           KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
 
-          ENV['SPEC_OPTS'] = @function_core.ensure_spec_opts_have_knapsack_pro_formatters(ENV['SPEC_OPTS'])
+          ENV['SPEC_OPTS'] = @functional_core.ensure_spec_opts_have_knapsack_pro_formatters(ENV['SPEC_OPTS'])
           @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
           @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
           @rspec_runner.knapsack__setup(@stream_error, @stream_out)
 
-          @function_core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
+          @functional_core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
         end
 
         def post_run_tasks(exit_code)
           @adapter_class.verify_bind_method_called
 
-          printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @function_core.log_rspec_command(printable_args, @node_test_file_paths, :end_of_queue)
+          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :end_of_queue)
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
           KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
@@ -278,8 +278,8 @@ module KnapsackPro
             set_terminate_process
           end
 
-          printable_args = @function_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @function_core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
+          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          @functional_core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
         end
       end
     end
