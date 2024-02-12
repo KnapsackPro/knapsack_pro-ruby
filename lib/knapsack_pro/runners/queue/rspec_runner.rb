@@ -54,7 +54,6 @@ module KnapsackPro
             Kernel.exit(rspec_error_exit_code || FAILURE_EXIT_CODE)
           end
 
-          # @param args Array[String]
           def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
             order_option = ADAPTER_CLASS.order_option(args)
 
