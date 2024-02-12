@@ -19,14 +19,16 @@ module KnapsackPro
         # It should be easy to unit test it.
         # It should NOT contain direct calls to RSpec.
         class FunctionalCore
-          ADAPTER_CLASS = KnapsackPro::Adapters::RSpecAdapter
           FAILURE_EXIT_CODE = 1
           FORMATTERS = [
             'KnapsackPro::Formatters::TimeTracker',
           ]
 
-          def initialize(logger)
+          attr_reader :adapter_class
+
+          def initialize(logger, adapter_class = KnapsackPro::Adapters::RSpecAdapter)
             @logger = logger
+            @adapter_class = adapter_class
           end
 
           def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
@@ -54,7 +56,7 @@ module KnapsackPro
           end
 
           def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
-            order_option = ADAPTER_CLASS.order_option(args)
+            order_option = @adapter_class.order_option(args)
 
             if order_option
               # Don't add the seed option for order other than random, e.g. `defined`
@@ -71,7 +73,7 @@ module KnapsackPro
 
           # @param args Array[String]
           def ensure_args_have_a_formatter(args)
-            return args if ADAPTER_CLASS.has_format_option?(args)
+            return args if @adapter_class.has_format_option?(args)
 
             args + ['--format', 'progress']
           end
@@ -142,7 +144,7 @@ module KnapsackPro
 
             function_core = FunctionalCore.new(logger)
 
-            queue_runner = new(FunctionalCore::ADAPTER_CLASS, function_core, args, stream_error, stream_out)
+            queue_runner = new(function_core.adapter_class, function_core, args, stream_error, stream_out)
             queue_runner.run
           end
         end
