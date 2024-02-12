@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['ArturT']
   spec.email         = ['support@knapsackpro.com']
   spec.summary       = %q{Knapsack Pro splits tests across parallel CI nodes and ensures each parallel job finish work at a similar time.}
-  spec.description   = %q{Run tests in parallel across CI server nodes based on tests execution time. Split tests in a dynamic way to ensure parallel jobs are done at a similar time. Thanks to that your CI build time is as fast as possible. It works with many CI providers.}
+  spec.description   = %q{Run tests in parallel across CI server nodes based on test execution times. Split tests in a dynamic way to ensure parallel jobs are done at a similar time. Thanks to that your CI build time is as fast as possible. It works with many CI providers.}
   spec.homepage      = 'https://knapsackpro.com'
   spec.license       = 'MIT'
   spec.metadata    = {
