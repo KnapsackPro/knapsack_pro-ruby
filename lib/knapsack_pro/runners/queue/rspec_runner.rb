@@ -37,7 +37,6 @@ module KnapsackPro
             raise error_message
           end
 
-          # @param spec_opts ENV['SPEC_OPTS']
           def ensure_spec_opts_have_knapsack_pro_formatters(spec_opts)
             return spec_opts unless spec_opts
             return spec_opts if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
