@@ -49,8 +49,8 @@ module KnapsackPro
             spec_opts
           end
 
-          def set_error_exit_code(rspec_error_exit_code)
-            Kernel.exit(rspec_error_exit_code || FAILURE_EXIT_CODE)
+          def error_exit_code(rspec_error_exit_code)
+            rspec_error_exit_code || FAILURE_EXIT_CODE
           end
 
           def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
@@ -176,13 +176,13 @@ module KnapsackPro
           begin
             exit_code = @rspec_runner.knapsack__run_specs(self)
           rescue KnapsackPro::Runners::Queue::BaseRunner::TerminationError
-            @function_core.set_error_exit_code(@rspec_runner.knapsack__error_exit_code)
-            raise
+            exit_code = @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
+            Kernel.exit(exit_code)
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
             @function_core.log_exit_summary(@node_test_file_paths)
-            @function_core.set_error_exit_code(@rspec_runner.knapsack__error_exit_code)
-            raise
+            exit_code = @function_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
+            Kernel.exit(exit_code)
           end
 
           post_run_tasks(exit_code)

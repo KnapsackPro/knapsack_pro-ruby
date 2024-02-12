@@ -57,24 +57,22 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
     end
 
-    describe '#set_error_exit_code' do
-      subject { function_core.set_error_exit_code(rspec_error_exit_code) }
+    describe '#error_exit_code' do
+      subject { function_core.error_exit_code(rspec_error_exit_code) }
 
       context 'when RSpec has no defined error exit code' do
         let(:rspec_error_exit_code) { nil }
 
-        it 'sets 1 as the default exit code' do
-          expect(Kernel).to receive(:exit).with(1)
-          subject
+        it 'returns 1 as the default exit code' do
+          expect(subject).to eq 1
         end
       end
 
       context 'when RSpec has a defined error exit code' do
         let(:rspec_error_exit_code) { 2 }
 
-        it 'sets the custom exit code' do
-          expect(Kernel).to receive(:exit).with(rspec_error_exit_code)
-          subject
+        it 'returns the custom exit code' do
+          expect(subject).to eq rspec_error_exit_code
         end
       end
     end
