@@ -29,10 +29,10 @@ module KnapsackPro
       module Runner
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L98
+        #
+        # `@configuration.load_spec_files` is not called because we load tests in batches with `knapsack__load_spec_files_batch` later on.
+        # `@world.announce_filters` is not called because we do not load tests here. It would print `No examples found.`.
         def knapsack__setup(stream_error = $stderr, stream_out = $stdout)
-          # Abstract from RSpec::Core::Runner#setup, since we do not need to set any filters or files at this point,
-          # and we do not want to let world.announce_filters be called, since it will print
-          # out `No examples found.` message.
           configure(stream_error, stream_out)
 
           world.knapsack__setup
