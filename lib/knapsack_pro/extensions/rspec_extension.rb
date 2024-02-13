@@ -21,7 +21,9 @@ module KnapsackPro
       module World
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L171
-        def knapsack__setup
+        #
+        # Filters are not announced because we do not load tests during setup. It would print `No examples found.` and we don't want that.
+        def knapsack__announce_filters
           fail_if_config_and_cli_options_invalid
         end
       end
@@ -31,11 +33,10 @@ module KnapsackPro
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L98
         #
         # `@configuration.load_spec_files` is not called because we load tests in batches with `knapsack__load_spec_files_batch` later on.
-        # `@world.announce_filters` is not called because we do not load tests here. It would print `No examples found.`.
         def knapsack__setup(stream_error = $stderr, stream_out = $stdout)
           configure(stream_error, stream_out)
-
-          world.knapsack__setup
+        ensure
+          world.knapsack__announce_filters
         end
 
         def knapsack__wants_to_quit?
