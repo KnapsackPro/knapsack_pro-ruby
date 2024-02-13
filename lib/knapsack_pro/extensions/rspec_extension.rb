@@ -100,7 +100,7 @@ module KnapsackPro
 
           configuration.reporter.report(_expected_example_count = 0) do |reporter|
             configuration.with_suite_hooks do
-              queue_runner.with_batched_tests_from_queue do |test_file_paths|
+              queue_runner.with_batch do |test_file_paths|
                 knapsack__load_spec_files_batch(test_file_paths)
 
                 examples_passed = ordering_strategy.order(world.example_groups).map do |example_group|

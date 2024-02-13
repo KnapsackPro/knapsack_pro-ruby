@@ -187,7 +187,7 @@ module KnapsackPro
           post_run_tasks(exit_code)
         end
 
-        def with_batched_tests_from_queue
+        def with_batch
           can_initialize_queue = true
 
           loop do
