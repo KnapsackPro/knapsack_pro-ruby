@@ -26,8 +26,7 @@ module KnapsackPro
 
           attr_reader :adapter_class
 
-          def initialize(logger, adapter_class = KnapsackPro::Adapters::RSpecAdapter, time_tracker_fetcher = KnapsackPro::Formatters::TimeTrackerFetcher)
-            @logger = logger
+          def initialize(adapter_class = KnapsackPro::Adapters::RSpecAdapter, time_tracker_fetcher = KnapsackPro::Formatters::TimeTrackerFetcher)
             @adapter_class = adapter_class
             @time_tracker_fetcher = time_tracker_fetcher
           end
@@ -102,23 +101,19 @@ module KnapsackPro
             messages
           end
 
-          def log_exit_summary(node_test_file_paths)
+          def exit_summary(node_test_file_paths)
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             return unless time_tracker
 
             unexecuted_test_files = time_tracker.unexecuted_test_files(node_test_file_paths)
             return if unexecuted_test_files.empty?
 
-            logger.warn("Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}")
+            "Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}"
           end
-
-          private
-
-          attr_reader :logger
         end
 
         class << self
-          def run(args, stream_error = $stderr, stream_out = $stdout, logger = KnapsackPro.logger)
+          def run(args, stream_error = $stderr, stream_out = $stdout)
             require 'rspec/core'
             require_relative '../../extensions/rspec_extension'
             require_relative '../../formatters/time_tracker'
@@ -128,7 +123,7 @@ module KnapsackPro
 
             ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
 
-            functional_core = FunctionalCore.new(logger)
+            functional_core = FunctionalCore.new
 
             queue_runner = new(functional_core.adapter_class, functional_core, args, stream_error, stream_out)
             queue_runner.run
@@ -168,7 +163,10 @@ module KnapsackPro
             Kernel.exit(exit_code)
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
-            @functional_core.log_exit_summary(@node_test_file_paths)
+
+            message = @functional_core.exit_summary(@node_test_file_paths)
+            KnapsackPro.logger.warn(message) if message
+
             exit_code = @functional_core.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             Kernel.exit(exit_code)
           end

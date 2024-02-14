@@ -4,10 +4,9 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
   end
 
   describe described_class::FunctionalCore do
-    let(:logger) { instance_double(::Logger) }
     let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
     let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
-    let(:function_core) { described_class.new(logger, adapter_class) }
+    let(:function_core) { described_class.new(adapter_class) }
 
     describe '#ensure_spec_opts_have_knapsack_pro_formatters' do
       subject { function_core.ensure_spec_opts_have_knapsack_pro_formatters(spec_opts) }
@@ -202,10 +201,10 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      describe '#log_exit_summary' do
+      describe '#exit_summary' do
         let(:node_test_file_paths) { ['a_spec.rb', 'b_spec.rb', 'c_spec.rb'] }
 
-        subject { function_core.log_exit_summary(node_test_file_paths) }
+        subject { function_core.exit_summary(node_test_file_paths) }
 
         before do
           expect(time_tracker_fetcher).to receive(:call).and_return(time_tracker)
@@ -214,9 +213,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         context 'when the KnapsackPro::Formatters::TimeTracker formatter is not found' do
           let(:time_tracker) { nil }
 
-          it 'does nothing' do
-            expect(subject).to be_nil
-          end
+          it { expect(subject).to be_nil }
         end
 
         context 'when the KnapsackPro::Formatters::TimeTracker formatter is found' do
@@ -229,18 +226,14 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
           context 'when there are no unexecuted test files' do
             let(:unexecuted_test_files) { [] }
 
-            it 'does nothing' do
-              expect(subject).to be_nil
-            end
+            it { expect(subject).to be_nil }
           end
 
           context 'when there are unexecuted test files' do
             let(:unexecuted_test_files) { ['b_spec.rb', 'c_spec.rb'] }
 
-            it 'logs a warning' do
-              expect(logger).to receive(:warn).with('Unexecuted tests on this CI node (including pending tests): b_spec.rb c_spec.rb')
-
-              subject
+            it 'returns a warning' do
+              expect(subject).to eq 'Unexecuted tests on this CI node (including pending tests): b_spec.rb c_spec.rb'
             end
           end
         end
