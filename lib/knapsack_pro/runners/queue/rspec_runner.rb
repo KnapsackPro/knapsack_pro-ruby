@@ -102,10 +102,6 @@ module KnapsackPro
             messages
           end
 
-          def log_fail_fast_limit_met
-            logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
-          end
-
           def log_exit_summary(node_test_file_paths)
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
             return unless time_tracker
@@ -217,7 +213,7 @@ module KnapsackPro
         end
 
         def log_fail_fast_limit_met
-          @functional_core.log_fail_fast_limit_met
+          KnapsackPro.logger.warn('Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
         end
 
         private
