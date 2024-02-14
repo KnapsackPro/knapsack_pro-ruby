@@ -190,10 +190,10 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       let(:args) { ['--format', 'documentation'] }
       let(:test_file_paths) { ['a_spec.rb', 'b_spec.rb'] }
 
-      subject { function_core.log_rspec_command(args, test_file_paths, type) }
+      subject { function_core.log_rspec_command(args, test_file_paths, scope) }
 
       context 'when there are no test file paths' do
-        let(:type) { :end_of_queue }
+        let(:scope) { :queue_finished }
         let(:test_file_paths) { [] }
 
         it 'does not log' do
@@ -204,7 +204,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
 
       context 'when logs the RSpec command for a subset of queue (a batch of tests fetched from the Queue API)' do
-        let(:type) { :subset_queue }
+        let(:scope) { :batch_finished }
 
         it 'logs the RSpec command' do
           expect(logger).to receive(:info).with('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
@@ -215,7 +215,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
 
       context 'when logs the RSpec command for all tests fetched from the Queue API' do
-        let(:type) { :end_of_queue }
+        let(:scope) { :queue_finished }
 
         it 'logs the RSpec command' do
           expect(logger).to receive(:info).with('To retry all the tests assigned to this CI node, please run the following command on your machine:')

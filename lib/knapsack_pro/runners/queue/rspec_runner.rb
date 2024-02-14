@@ -88,13 +88,13 @@ module KnapsackPro
             new_args
           end
 
-          def log_rspec_command(args, test_file_paths, type)
+          def log_rspec_command(args, test_file_paths, scope)
             return if test_file_paths.empty?
 
-            case type
-            when :subset_queue
+            case scope
+            when :batch_finished
               logger.info('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
-            when :end_of_queue
+            when :queue_finished
               logger.info('To retry all the tests assigned to this CI node, please run the following command on your machine:')
             end
 
@@ -218,7 +218,7 @@ module KnapsackPro
               set_terminate_process
             end
 
-            log_batch_rspec_command(test_file_paths)
+            log_rspec_batch_command(test_file_paths)
           end
         end
 
@@ -257,7 +257,7 @@ module KnapsackPro
         def post_run_tasks(exit_code)
           @adapter_class.verify_bind_method_called
 
-          log_final_rspec_command
+          log_rspec_queue_command
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
           KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
@@ -274,14 +274,14 @@ module KnapsackPro
           test_file_paths
         end
 
-        def log_batch_rspec_command(test_file_paths)
+        def log_rspec_batch_command(test_file_paths)
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @functional_core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
+          @functional_core.log_rspec_command(printable_args, test_file_paths, :batch_finished)
         end
 
-        def log_final_rspec_command
+        def log_rspec_queue_command
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :end_of_queue)
+          @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :queue_finished)
         end
       end
     end
