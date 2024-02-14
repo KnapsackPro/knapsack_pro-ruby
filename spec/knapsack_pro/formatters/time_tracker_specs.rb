@@ -310,7 +310,7 @@ class TestTimeTracker
     end
   end
 
-  def test_batch_duration
+  def test_duration
     KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
       false
     end
@@ -324,7 +324,7 @@ class TestTimeTracker
     SPEC
 
     run_specs(spec) do |_, _, time_tracker|
-      raise unless time_tracker.batch_duration > 0.0
+      raise unless time_tracker.duration > 0.0
     end
   end
 

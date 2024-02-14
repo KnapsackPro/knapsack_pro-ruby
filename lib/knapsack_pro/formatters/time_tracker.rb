@@ -21,7 +21,6 @@ module KnapsackPro
         @group = {}
         @paths = {}
         @suite_started = now
-        @batch_started = now
       end
 
       def example_group_started(notification)
@@ -49,10 +48,6 @@ module KnapsackPro
         @group = {}
       end
 
-      def batch_started
-        @batch_started = now
-      end
-
       def queue(scheduled_paths)
         recorded_paths = @paths.values.map do |example|
           KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
@@ -73,8 +68,8 @@ module KnapsackPro
         end
       end
 
-      def batch_duration
-        now - @batch_started
+      def duration
+        now - @suite_started
       end
 
       def unexecuted_test_files(scheduled_paths)

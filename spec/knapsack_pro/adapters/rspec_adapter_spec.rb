@@ -343,7 +343,8 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       context 'with no focus' do
         it 'records time for current test path' do
           expect(config).to receive(:around).with(:each).and_yield(current_example)
-          expect(::RSpec).to receive(:configure).and_yield(config)
+          expect(config).to receive(:append_after).with(:suite)
+          expect(::RSpec).to receive(:configure).at_least(1).and_yield(config)
 
           expect(current_example).to receive(:run)
 
