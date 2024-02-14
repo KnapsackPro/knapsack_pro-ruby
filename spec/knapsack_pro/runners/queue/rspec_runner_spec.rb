@@ -9,28 +9,6 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
     let(:function_core) { described_class.new(logger, adapter_class) }
 
-    describe '#ensure_no_deprecated_run_all_when_everything_filtered_option!' do
-      subject { function_core.ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled) }
-
-      context 'when `run_all_when_everything_filtered_enabled` is enabled' do
-        let(:deprecated_run_all_when_everything_filtered_enabled) { true }
-
-        it do
-          error_message = 'The run_all_when_everything_filtered option is deprecated. See: https://knapsackpro.com/perma/ruby/rspec-deprecated-run-all-when-everything-filtered'
-          expect(logger).to receive(:error).with(error_message)
-          expect { subject }.to raise_error error_message
-        end
-      end
-
-      context 'when `run_all_when_everything_filtered_enabled` is disabled' do
-        let(:deprecated_run_all_when_everything_filtered_enabled) { false }
-
-        it do
-          expect { subject }.not_to raise_error
-        end
-      end
-    end
-
     describe '#ensure_spec_opts_have_knapsack_pro_formatters' do
       subject { function_core.ensure_spec_opts_have_knapsack_pro_formatters(spec_opts) }
 

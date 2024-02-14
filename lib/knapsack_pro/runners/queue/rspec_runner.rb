@@ -32,14 +32,6 @@ module KnapsackPro
             @time_tracker_fetcher = time_tracker_fetcher
           end
 
-          def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
-            return unless deprecated_run_all_when_everything_filtered_enabled
-
-            error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
-            logger.error(error_message)
-            raise error_message
-          end
-
           def ensure_spec_opts_have_knapsack_pro_formatters(spec_opts)
             return spec_opts unless spec_opts
             return spec_opts if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
@@ -249,7 +241,7 @@ module KnapsackPro
           @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)
           @rspec_runner.knapsack__setup(@stream_error, @stream_out)
 
-          @functional_core.ensure_no_deprecated_run_all_when_everything_filtered_option!(@rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?)
+          ensure_no_deprecated_run_all_when_everything_filtered_option!
         end
 
         def post_run_tasks(exit_code)
@@ -261,6 +253,14 @@ module KnapsackPro
           KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
 
           Kernel.exit(exit_code)
+        end
+
+        def ensure_no_deprecated_run_all_when_everything_filtered_option!
+          return unless @rspec_runner.knapsack__deprecated_run_all_when_everything_filtered_enabled?
+
+          error_message = "The run_all_when_everything_filtered option is deprecated. See: #{KnapsackPro::Urls::RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED}"
+          KnapsackPro.logger.error(error_message)
+          raise error_message
         end
 
         def pull_tests_from_queue(can_initialize_queue: false)
