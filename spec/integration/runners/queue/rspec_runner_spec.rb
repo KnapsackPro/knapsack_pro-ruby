@@ -135,7 +135,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         result = subject
 
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] Test suite time execution queue recording enabled.')
+        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] [Queue Mode] Test suite execution time recording enabled.')
 
         expect(result.stdout).to include('A1 test example')
         expect(result.stdout).to include('B1 test example')

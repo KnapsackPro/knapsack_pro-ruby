@@ -159,7 +159,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
       it do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with('Test suite time execution recording enabled.')
+        expect(logger).to receive(:debug).with('[Regular Mode] Test suite execution time recording enabled.')
       end
       it { expect(subject).to receive(:bind_time_tracker) }
       it { expect(subject).to receive(:bind_save_report) }
@@ -171,7 +171,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
       it 'calls queue hooks in proper order before binding time tracker' do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with('Test suite time execution queue recording enabled.')
+        expect(logger).to receive(:debug).with('[Queue Mode] Test suite execution time recording enabled.')
 
         expect(subject).to receive(:bind_before_queue_hook).ordered
         expect(subject).to receive(:bind_after_queue_hook).ordered
