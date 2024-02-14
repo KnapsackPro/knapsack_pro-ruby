@@ -153,7 +153,6 @@ module KnapsackPro
           if @rspec_runner.knapsack__wants_to_quit?
             exit_code = @rspec_runner.knapsack__exit_early
             Kernel.exit(exit_code)
-            return
           end
 
           begin
