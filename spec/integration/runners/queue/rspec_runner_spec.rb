@@ -150,7 +150,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         expect(result.stdout).to include('3 examples, 0 failures')
 
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] Global time execution for tests:')
+        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] Global test execution duration:')
 
         expect(result.exit_code).to eq 0
       end
