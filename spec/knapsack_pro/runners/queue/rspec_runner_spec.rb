@@ -175,32 +175,30 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         let(:scope) { :queue_finished }
         let(:test_file_paths) { [] }
 
-        it 'does not log' do
-          expect(logger).to_not receive(:info)
-
-          subject
+        it 'returns no messages' do
+          expect(subject).to eq []
         end
       end
 
       context 'when logs the RSpec command for a subset of queue (a batch of tests fetched from the Queue API)' do
         let(:scope) { :batch_finished }
 
-        it 'logs the RSpec command' do
-          expect(logger).to receive(:info).with('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
-          expect(logger).to receive(:info).with('bundle exec rspec --format documentation "a_spec.rb" "b_spec.rb"')
-
-          subject
+        it 'returns messages with the RSpec command' do
+          expect(subject).to eq([
+            'To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:',
+            'bundle exec rspec --format documentation "a_spec.rb" "b_spec.rb"',
+          ])
         end
       end
 
       context 'when logs the RSpec command for all tests fetched from the Queue API' do
         let(:scope) { :queue_finished }
 
-        it 'logs the RSpec command' do
-          expect(logger).to receive(:info).with('To retry all the tests assigned to this CI node, please run the following command on your machine:')
-          expect(logger).to receive(:info).with('bundle exec rspec --format documentation "a_spec.rb" "b_spec.rb"')
-
-          subject
+        it 'returns messages with the RSpec command' do
+          expect(subject).to eq([
+            'To retry all the tests assigned to this CI node, please run the following command on your machine:',
+            'bundle exec rspec --format documentation "a_spec.rb" "b_spec.rb"',
+          ])
         end
       end
 

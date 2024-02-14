@@ -82,13 +82,14 @@ module KnapsackPro
           end
 
           def log_rspec_command(args, test_file_paths, scope)
-            return if test_file_paths.empty?
+            messages = []
+            return messages if test_file_paths.empty?
 
             case scope
             when :batch_finished
-              logger.info('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
+              messages << 'To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:'
             when :queue_finished
-              logger.info('To retry all the tests assigned to this CI node, please run the following command on your machine:')
+              messages << 'To retry all the tests assigned to this CI node, please run the following command on your machine:'
             end
 
             stringified_cli_args = args.join(' ')
@@ -96,10 +97,9 @@ module KnapsackPro
               stringified_cli_args.sub!(" --format #{formatter}", '')
             end
 
-            logger.info(
-              "bundle exec rspec #{stringified_cli_args} " +
-              KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
-            )
+            messages << "bundle exec rspec #{stringified_cli_args} " + KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
+
+            messages
           end
 
           def log_fail_fast_limit_met
@@ -274,12 +274,20 @@ module KnapsackPro
 
         def log_rspec_batch_command(test_file_paths)
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @functional_core.log_rspec_command(printable_args, test_file_paths, :batch_finished)
+          messages = @functional_core.log_rspec_command(printable_args, test_file_paths, :batch_finished)
+          log_info_messages(messages)
         end
 
         def log_rspec_queue_command
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :queue_finished)
+          messages = @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :queue_finished)
+          log_info_messages(messages)
+        end
+
+        def log_info_messages(messages)
+          messages.each do |message|
+            KnapsackPro.logger.info(message)
+          end
         end
       end
     end
