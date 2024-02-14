@@ -197,9 +197,28 @@ module KnapsackPro
 
             break if test_file_paths.empty?
 
-            with_queue_hooks(test_file_paths) do |test_file_paths|
-              yield test_file_paths
+            subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
+            ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
+
+            KnapsackPro::Hooks::Queue.call_before_subset_queue
+
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            time_tracker&.batch_started
+
+            yield test_file_paths
+
+            KnapsackPro::Hooks::Queue.call_after_subset_queue
+
+            if @rspec_runner.knapsack__wants_to_quit?
+              KnapsackPro.logger.warn('RSpec wants to quit.')
+              set_terminate_process
             end
+            if @rspec_runner.knapsack__rspec_is_quitting?
+              KnapsackPro.logger.warn('RSpec is quitting.')
+              set_terminate_process
+            end
+
+            log_batch_rspec_command(test_file_paths)
           end
         end
 
@@ -238,8 +257,7 @@ module KnapsackPro
         def post_run_tasks(exit_code)
           @adapter_class.verify_bind_method_called
 
-          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :end_of_queue)
+          log_final_rspec_command
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
           KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
@@ -256,30 +274,14 @@ module KnapsackPro
           test_file_paths
         end
 
-        def with_queue_hooks(test_file_paths)
-          subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
-          ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
-
-          KnapsackPro::Hooks::Queue.call_before_subset_queue
-
-          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-          time_tracker&.batch_started
-
-          yield test_file_paths
-
-          KnapsackPro::Hooks::Queue.call_after_subset_queue
-
-          if @rspec_runner.knapsack__wants_to_quit?
-            KnapsackPro.logger.warn('RSpec wants to quit.')
-            set_terminate_process
-          end
-          if @rspec_runner.knapsack__rspec_is_quitting?
-            KnapsackPro.logger.warn('RSpec is quitting.')
-            set_terminate_process
-          end
-
+        def log_batch_rspec_command(test_file_paths)
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
           @functional_core.log_rspec_command(printable_args, test_file_paths, :subset_queue)
+        end
+
+        def log_final_rspec_command
+          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :end_of_queue)
         end
       end
     end
