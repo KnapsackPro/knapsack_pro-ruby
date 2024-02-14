@@ -165,11 +165,11 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
     end
 
-    describe '#log_rspec_command' do
+    describe '#rspec_command' do
       let(:args) { ['--format', 'documentation'] }
       let(:test_file_paths) { ['a_spec.rb', 'b_spec.rb'] }
 
-      subject { function_core.log_rspec_command(args, test_file_paths, scope) }
+      subject { function_core.rspec_command(args, test_file_paths, scope) }
 
       context 'when there are no test file paths' do
         let(:scope) { :queue_finished }
@@ -180,7 +180,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when logs the RSpec command for a subset of queue (a batch of tests fetched from the Queue API)' do
+      context 'when a subset of queue (a batch of tests fetched from the Queue API)' do
         let(:scope) { :batch_finished }
 
         it 'returns messages with the RSpec command' do
@@ -191,7 +191,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         end
       end
 
-      context 'when logs the RSpec command for all tests fetched from the Queue API' do
+      context 'when all tests fetched from the Queue API' do
         let(:scope) { :queue_finished }
 
         it 'returns messages with the RSpec command' do

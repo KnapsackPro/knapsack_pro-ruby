@@ -81,7 +81,7 @@ module KnapsackPro
             new_args
           end
 
-          def log_rspec_command(args, test_file_paths, scope)
+          def rspec_command(args, test_file_paths, scope)
             messages = []
             return messages if test_file_paths.empty?
 
@@ -270,13 +270,13 @@ module KnapsackPro
 
         def log_rspec_batch_command(test_file_paths)
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          messages = @functional_core.log_rspec_command(printable_args, test_file_paths, :batch_finished)
+          messages = @functional_core.rspec_command(printable_args, test_file_paths, :batch_finished)
           log_info_messages(messages)
         end
 
         def log_rspec_queue_command
           printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
-          messages = @functional_core.log_rspec_command(printable_args, @node_test_file_paths, :queue_finished)
+          messages = @functional_core.rspec_command(printable_args, @node_test_file_paths, :queue_finished)
           log_info_messages(messages)
         end
 
