@@ -6,6 +6,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
   describe described_class::FunctionalCore do
     let(:logger) { instance_double(::Logger) }
     let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
+    let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
     let(:function_core) { described_class.new(logger, adapter_class) }
 
     describe '#ensure_no_deprecated_run_all_when_everything_filtered_option!' do
@@ -242,7 +243,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
         subject { function_core.log_exit_summary(node_test_file_paths) }
 
         before do
-          expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
+          expect(time_tracker_fetcher).to receive(:call).and_return(time_tracker)
         end
 
         context 'when the KnapsackPro::Formatters::TimeTracker formatter is not found' do

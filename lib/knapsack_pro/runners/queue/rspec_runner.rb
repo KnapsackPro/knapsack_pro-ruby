@@ -26,9 +26,10 @@ module KnapsackPro
 
           attr_reader :adapter_class
 
-          def initialize(logger, adapter_class = KnapsackPro::Adapters::RSpecAdapter)
+          def initialize(logger, adapter_class = KnapsackPro::Adapters::RSpecAdapter, time_tracker_fetcher = KnapsackPro::Formatters::TimeTrackerFetcher)
             @logger = logger
             @adapter_class = adapter_class
+            @time_tracker_fetcher = time_tracker_fetcher
           end
 
           def ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled)
