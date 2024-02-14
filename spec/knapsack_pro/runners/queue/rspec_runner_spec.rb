@@ -5,7 +5,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
 
   describe described_class::FunctionalCore do
     let(:logger) { instance_double(::Logger) }
-    let(:function_core) { described_class.new(logger) }
+    let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
+    let(:function_core) { described_class.new(logger, adapter_class) }
 
     describe '#ensure_no_deprecated_run_all_when_everything_filtered_option!' do
       subject { function_core.ensure_no_deprecated_run_all_when_everything_filtered_option!(deprecated_run_all_when_everything_filtered_enabled) }
@@ -149,7 +150,7 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       subject { function_core.ensure_args_have_a_formatter(args) }
 
       before do
-        expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:has_format_option?).with(args).and_call_original
+        expect(adapter_class).to receive(:has_format_option?).with(args).and_call_original
       end
 
       context 'when args has no format option' do
