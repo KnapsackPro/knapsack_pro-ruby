@@ -83,8 +83,13 @@ module KnapsackPro
         raise NotImplementedError
       end
 
+      def bind_after_queue_hook
+        raise NotImplementedError
+      end
+
       def bind_queue_mode
         bind_before_queue_hook
+        bind_after_queue_hook
         bind_time_tracker
       end
     end

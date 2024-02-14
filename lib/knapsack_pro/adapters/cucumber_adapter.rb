@@ -65,9 +65,7 @@ module KnapsackPro
         end
       end
 
-      def bind_queue_mode
-        super
-
+      def bind_after_queue_hook
         ::Kernel.at_exit do
           KnapsackPro::Hooks::Queue.call_after_subset_queue
           KnapsackPro::Report.save_subset_queue_to_file
