@@ -124,43 +124,50 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
       end
     end
 
-    describe '#args_with_at_least_one_formatter' do
-      subject { function_core.args_with_at_least_one_formatter(args) }
+    describe '#prepare_cli_args' do
+      subject { function_core.prepare_cli_args(args, test_dir) }
 
-      before do
-        expect(adapter_class).to receive(:has_format_option?).with(args).and_call_original
-      end
+      context 'when no args' do
+        let(:args) { nil }
+        let(:test_dir) { 'spec' }
 
-      context 'when args has no format option' do
-        let(:args) { ['--color', '--profile'] }
-
-        it 'adds the progress formatter to args' do
-          expect(subject).to eq ['--color', '--profile', '--format', 'progress']
+        it 'adds the default progress formatter and the default path and the time tracker formatter' do
+          expect(subject).to eq [
+            '--format', 'progress',
+            '--default-path', 'spec',
+            '--format', 'KnapsackPro::Formatters::TimeTracker',
+          ]
         end
       end
 
-      context 'when args has a format option' do
-        let(:args) { ['--color', '--format', 'd'] }
+      context 'when args are present and a custom test directory is set' do
+        let(:args) { '--color --profile' }
+        let(:test_dir) { 'custom_spec_dir' }
 
-        it 'returns args' do
-          expect(subject).to eq ['--color', '--format', 'd']
+        it do
+          expect(subject).to eq [
+            '--color',
+            '--profile',
+            '--format', 'progress',
+            '--default-path', 'custom_spec_dir',
+            '--format', 'KnapsackPro::Formatters::TimeTracker',
+          ]
         end
       end
-    end
 
-    describe '#args_with_default_options' do
-      let(:args) { ['--color', '--format', 'documentation'] }
-      let(:test_dir) { 'spec' }
+      context 'when args are present and the format option is present' do
+        let(:args) { '--color --profile --format d' }
+        let(:test_dir) { 'spec' }
 
-      subject { function_core.args_with_default_options(args, test_dir) }
-
-      it 'adds default options and Knapsack Pro formatters' do
-        expect(subject).to eq [
-          '--color',
-          '--format', 'documentation',
-          '--default-path', 'spec',
-          '--format', 'KnapsackPro::Formatters::TimeTracker',
-        ]
+        it 'uses the format option instead of the default formatter' do
+          expect(subject).to eq [
+            '--color',
+            '--profile',
+            '--format', 'd',
+            '--default-path', 'spec',
+            '--format', 'KnapsackPro::Formatters::TimeTracker',
+          ]
+        end
       end
     end
 

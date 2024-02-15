@@ -60,24 +60,10 @@ module KnapsackPro
             args + ['--seed', seed]
           end
 
-          # @param args Array[String]
-          def args_with_at_least_one_formatter(args)
-            return args if @adapter_class.has_format_option?(args)
-
-            args + ['--format', 'progress']
-          end
-
-          # @param args Array[String]
-          def args_with_default_options(args, test_dir)
-            new_args = args + [
-              '--default-path', test_dir,
-            ]
-
-            FORMATTERS.each do |formatter|
-              new_args += ['--format', formatter]
-            end
-
-            new_args
+          def prepare_cli_args(args, test_dir)
+            (args || '').split
+              .yield_self { args_with_at_least_one_formatter(_1) }
+              .yield_self { args_with_default_options(_1, test_dir) }
           end
 
           def rspec_command(args, test_file_paths, scope)
@@ -110,6 +96,26 @@ module KnapsackPro
 
             "Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}"
           end
+
+          private
+
+          def args_with_at_least_one_formatter(cli_args)
+            return cli_args if @adapter_class.has_format_option?(cli_args)
+
+            cli_args + ['--format', 'progress']
+          end
+
+          def args_with_default_options(cli_args, test_dir)
+            new_cli_args = cli_args + [
+              '--default-path', test_dir,
+            ]
+
+            FORMATTERS.each do |formatter|
+              new_cli_args += ['--format', formatter]
+            end
+
+            new_cli_args
+          end
         end
 
         class << self
@@ -134,7 +140,7 @@ module KnapsackPro
           super(adapter_class)
           @adapter_class = adapter_class
           @functional_core = functional_core
-          @cli_args = prepare_cli_args(args)
+          @cli_args = functional_core.prepare_cli_args(args, test_dir)
           @stream_error = stream_error
           @stream_out = stream_out
           @node_test_file_paths = []
@@ -214,12 +220,6 @@ module KnapsackPro
         end
 
         private
-
-        def prepare_cli_args(args)
-          cli_args = (args || '').split
-          cli_args = @functional_core.args_with_at_least_one_formatter(cli_args)
-          @functional_core.args_with_default_options(cli_args, test_dir)
-        end
 
         def pre_run_setup
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
