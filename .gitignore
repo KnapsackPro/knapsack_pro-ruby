@@ -37,9 +37,4 @@ Gemfile.lock
 
 # dynamically generated specs
 spec/knapsack_pro/formatters/time_tracker*_spec.rb
-spec_integration/*_spec.rb
-spec_integration/spec_helper.rb
-spec_integration/helper_with_exit.rb
-spec_integration/rspec.xml
-spec_integration/rspec.json
-spec_integration/examples.txt
+spec_integration/

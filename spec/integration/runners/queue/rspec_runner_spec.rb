@@ -16,6 +16,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   # @param rspec_options String
   def run_specs(spec_helper_content, rspec_options, spec_items)
+    FileUtils.mkdir_p(SPEC_DIRECTORY)
+
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
 
     spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
@@ -28,8 +30,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
     yield
   ensure
-    File.delete(spec_helper_path)
-    paths.each { |path| File.delete(path) }
+    FileUtils.rm_rf(SPEC_DIRECTORY)
+    FileUtils.mkdir_p(SPEC_DIRECTORY)
   end
 
   def mock_batched_tests(batched_tests)
@@ -991,9 +993,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
     before do
       File.open(helper_with_exit_location, 'w') { |file| file.write('exit 123') }
-    end
-    after do
-      File.delete(helper_with_exit_location)
     end
 
     it 'returns non zero exit code because RSpec is quitting' do
@@ -2258,8 +2257,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
-
-      File.delete(json_file)
     end
 
     it 'produces a JSON report' do
@@ -2371,8 +2368,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
-
-      File.delete(xml_file)
     end
 
     it 'produces a JUnit XML report' do
