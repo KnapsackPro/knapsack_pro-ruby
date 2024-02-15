@@ -47,7 +47,7 @@ module KnapsackPro
             rspec_error_exit_code || FAILURE_EXIT_CODE
           end
 
-          def args_with_seed_option_added_when_viable(is_seed_used, seed, args)
+          def args_with_seed_option_added_when_viable(seed, args)
             order_option = @adapter_class.order_option(args)
 
             if order_option
@@ -55,9 +55,9 @@ module KnapsackPro
               return args if order_option.to_s.split(':')[1]
             end
 
-            return args unless is_seed_used
+            return args unless seed.used?
 
-            args + ['--seed', seed]
+            args + ['--seed', seed.value]
           end
 
           def prepare_cli_args(args, test_dir)
@@ -266,13 +266,13 @@ module KnapsackPro
         end
 
         def log_rspec_batch_command(test_file_paths)
-          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed, @cli_args)
           messages = @functional_core.rspec_command(printable_args, test_file_paths, :batch_finished)
           log_info_messages(messages)
         end
 
         def log_rspec_queue_command
-          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed_used?, @rspec_runner.knapsack__seed, @cli_args)
+          printable_args = @functional_core.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed, @cli_args)
           messages = @functional_core.rspec_command(printable_args, @node_test_file_paths, :queue_finished)
           log_info_messages(messages)
         end

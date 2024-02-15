@@ -12,6 +12,8 @@ module KnapsackPro
     # It should be easy to see a code difference when a new RSpec version is released.
     # Please use permalinks to RSpec source code in your comments when you create a new `knapsack__` method.
     module RSpecExtension
+      Seed = Struct.new(:value, :used?)
+
       def self.setup!
         RSpec::Core::World.prepend(World)
         RSpec::Core::Runner.prepend(Runner)
@@ -63,11 +65,7 @@ module KnapsackPro
         end
 
         def knapsack__seed
-          configuration.seed.to_s
-        end
-
-        def knapsack__seed_used?
-          configuration.seed_used?
+          Seed.new(configuration.seed.to_s, configuration.seed_used?)
         end
 
         # @param test_file_paths Array[String]
