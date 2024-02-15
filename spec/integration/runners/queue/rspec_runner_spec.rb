@@ -135,26 +135,26 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] [Queue Mode] Test suite execution time recording enabled.')
+        expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] [Queue Mode] Test suite execution time recording enabled.')
 
-        expect(result.stdout).to include('A1 test example')
-        expect(result.stdout).to include('B1 test example')
-        expect(result.stdout).to include('C1 test example')
+        expect(actual.stdout).to include('A1 test example')
+        expect(actual.stdout).to include('B1 test example')
+        expect(actual.stdout).to include('C1 test example')
 
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --format d --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb"')
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --format d --default-path spec_integration "spec_integration/c_spec.rb"')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --format d --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb"')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --format d --default-path spec_integration "spec_integration/c_spec.rb"')
 
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] To retry all the tests assigned to this CI node, please run the following command on your machine:')
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --format d --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb" "spec_integration/c_spec.rb"')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] To retry all the tests assigned to this CI node, please run the following command on your machine:')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --format d --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb" "spec_integration/c_spec.rb"')
 
-        expect(result.stdout).to include('3 examples, 0 failures')
+        expect(actual.stdout).to include('3 examples, 0 failures')
 
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] Global test execution duration:')
+        expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] Global test execution duration:')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
 
@@ -206,11 +206,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('[INTEGRATION TEST] test_files: 3, test files have execution time: true')
+        expect(actual.stdout).to include('[INTEGRATION TEST] test_files: 3, test files have execution time: true')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -254,11 +254,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_b.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('ERROR -- : [knapsack_pro] You forgot to call KnapsackPro::Adapters::RSpecAdapter.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly https://knapsackpro.com/perma/ruby/installation-guide')
+        expect(actual.stdout).to include('ERROR -- : [knapsack_pro] You forgot to call KnapsackPro::Adapters::RSpecAdapter.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly https://knapsackpro.com/perma/ruby/installation-guide')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -317,16 +317,16 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
         beginning_of_knapsack_pro_log_info_message = 'I, ['
 
         # shows dots for the 1st batch of tests
-        expect(result.stdout).to include('.....' + beginning_of_knapsack_pro_log_info_message)
+        expect(actual.stdout).to include('.....' + beginning_of_knapsack_pro_log_info_message)
         # shows dots for the 2nd batch of tests
-        expect(result.stdout).to include('...' + beginning_of_knapsack_pro_log_info_message)
+        expect(actual.stdout).to include('...' + beginning_of_knapsack_pro_log_info_message)
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -385,11 +385,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('.'*8)
+        expect(actual.stdout).to include('.'*8)
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -455,12 +455,12 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
-        expect(result.stdout.scan(/RSpec_after_suite_hook/).size).to eq 1
+        expect(actual.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
+        expect(actual.stdout.scan(/RSpec_after_suite_hook/).size).to eq 1
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
 
@@ -543,18 +543,18 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout.scan(/1st before_queue - run before the test suite/).size).to eq 1
-        expect(result.stdout.scan(/2nd before_queue - run before the test suite/).size).to eq 1
-        expect(result.stdout.scan(/1st before_subset_queue - run before the next subset of tests/).size).to eq 2
-        expect(result.stdout.scan(/2nd before_subset_queue - run before the next subset of tests/).size).to eq 2
-        expect(result.stdout.scan(/1st after_subset_queue - run after the previous subset of tests/).size).to eq 2
-        expect(result.stdout.scan(/2nd after_subset_queue - run after the previous subset of tests/).size).to eq 2
-        expect(result.stdout.scan(/1st after_queue - run after the test suite/).size).to eq 1
-        expect(result.stdout.scan(/2nd after_queue - run after the test suite/).size).to eq 1
+        expect(actual.stdout.scan(/1st before_queue - run before the test suite/).size).to eq 1
+        expect(actual.stdout.scan(/2nd before_queue - run before the test suite/).size).to eq 1
+        expect(actual.stdout.scan(/1st before_subset_queue - run before the next subset of tests/).size).to eq 2
+        expect(actual.stdout.scan(/2nd before_subset_queue - run before the next subset of tests/).size).to eq 2
+        expect(actual.stdout.scan(/1st after_subset_queue - run after the previous subset of tests/).size).to eq 2
+        expect(actual.stdout.scan(/2nd after_subset_queue - run after the previous subset of tests/).size).to eq 2
+        expect(actual.stdout.scan(/1st after_queue - run after the test suite/).size).to eq 1
+        expect(actual.stdout.scan(/2nd after_queue - run after the test suite/).size).to eq 1
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
 
@@ -668,18 +668,18 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_d.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
+        expect(actual.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
 
         # skips before(:suite) hooks that were defined too late in 1st & 2nd batch of tests after before(:suite) hook is already executed
-        expect(result.stdout.scan(/RSpec_before_suite_hook_for_model/).size).to eq 0
-        expect(result.stdout.scan(/RSpec_before_suite_hook_for_system/).size).to eq 0
+        expect(actual.stdout.scan(/RSpec_before_suite_hook_for_model/).size).to eq 0
+        expect(actual.stdout.scan(/RSpec_before_suite_hook_for_system/).size).to eq 0
 
-        expect(result.stdout.scan(/RSpec_custom_hook_called_once_for_model/).size).to eq 1
-        expect(result.stdout.scan(/RSpec_custom_hook_called_once_for_system/).size).to eq 1
+        expect(actual.stdout.scan(/RSpec_custom_hook_called_once_for_model/).size).to eq 1
+        expect(actual.stdout.scan(/RSpec_custom_hook_called_once_for_system/).size).to eq 1
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -731,19 +731,19 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('Randomized with seed 123')
+        expect(actual.stdout).to include('Randomized with seed 123')
 
         # 1st batch
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb"')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb"')
         # 2nd batch
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/c_spec.rb"')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/c_spec.rb"')
 
         # the final RSpec command with seed
-        expect(result.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb" "spec_integration/c_spec.rb"')
+        expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb" "spec_integration/c_spec.rb"')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -795,13 +795,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('B1 test example (FAILED - 1)')
-        expect(result.stdout).to include('Failure/Error: expect(1).to eq 0')
-        expect(result.stdout).to include('3 examples, 1 failure')
+        expect(actual.stdout).to include('B1 test example (FAILED - 1)')
+        expect(actual.stdout).to include('Failure/Error: expect(1).to eq 0')
+        expect(actual.stdout).to include('3 examples, 1 failure')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -853,13 +853,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('B1 test example (FAILED - 1)')
-        expect(result.stdout).to include("Failure/Error: raise 'A custom exception from a test'")
-        expect(result.stdout).to include('3 examples, 1 failure')
+        expect(actual.stdout).to include('B1 test example (FAILED - 1)')
+        expect(actual.stdout).to include("Failure/Error: raise 'A custom exception from a test'")
+        expect(actual.stdout).to include('3 examples, 1 failure')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -914,21 +914,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
         # 1st batch of tests executed correctly
-        expect(result.stdout).to include('A1 test example')
+        expect(actual.stdout).to include('A1 test example')
         # 2nd batch contains the test file that cannot be loaded and the test file is not executed
-        expect(result.stdout).to_not include('B1 test example')
+        expect(actual.stdout).to_not include('B1 test example')
         # 3rd batch is never executed
-        expect(result.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C1 test example')
 
-        expect(result.stdout).to include('An error occurred while loading ./spec_integration/failing_spec.rb')
-        expect(result.stdout).to include("undefined local variable or method `a_fake_method' for RSpec::ExampleGroups::BDescribe:Class")
-        expect(result.stdout).to include('WARN -- : [knapsack_pro] RSpec wants to quit')
-        expect(result.stdout).to include('1 example, 0 failures, 1 error occurred outside of examples')
+        expect(actual.stdout).to include('An error occurred while loading ./spec_integration/failing_spec.rb')
+        expect(actual.stdout).to include("undefined local variable or method `a_fake_method' for RSpec::ExampleGroups::BDescribe:Class")
+        expect(actual.stdout).to include('WARN -- : [knapsack_pro] RSpec wants to quit')
+        expect(actual.stdout).to include('1 example, 0 failures, 1 error occurred outside of examples')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -975,13 +975,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_b.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('An error occurred while loading spec_helper.')
-        expect(result.stdout).to include("undefined local variable or method `a_fake_method' for main:Object")
-        expect(result.stdout).to include('0 examples, 0 failures, 1 error occurred outside of examples')
+        expect(actual.stdout).to include('An error occurred while loading spec_helper.')
+        expect(actual.stdout).to include("undefined local variable or method `a_fake_method' for main:Object")
+        expect(actual.stdout).to include('0 examples, 0 failures, 1 error occurred outside of examples')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1034,14 +1034,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_b.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('While loading ./spec_integration/helper_with_exit.rb an `exit` / `raise SystemExit` occurred, RSpec will now quit.')
+        expect(actual.stdout).to include('While loading ./spec_integration/helper_with_exit.rb an `exit` / `raise SystemExit` occurred, RSpec will now quit.')
 
-        expect(result.stdout).to_not include('A1 test example')
-        expect(result.stdout).to_not include('B1 test example')
+        expect(actual.stdout).to_not include('A1 test example')
+        expect(actual.stdout).to_not include('B1 test example')
 
-        expect(result.exit_code).to eq 123
+        expect(actual.exit_code).to eq 123
       end
     end
   end
@@ -1097,18 +1097,18 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('B1 test example (PENDING: Temporarily skipped with xit)')
-        expect(result.stdout).to include('C2 test example (PENDING: Temporarily skipped with xit)')
+        expect(actual.stdout).to include('B1 test example (PENDING: Temporarily skipped with xit)')
+        expect(actual.stdout).to include('C2 test example (PENDING: Temporarily skipped with xit)')
 
-        expect(result.stdout).to include("Pending: (Failures listed here are expected and do not affect your suite's status)")
-        expect(result.stdout).to include('1) B_describe B1 test example')
-        expect(result.stdout).to include('2) C_describe C2 test example')
+        expect(actual.stdout).to include("Pending: (Failures listed here are expected and do not affect your suite's status)")
+        expect(actual.stdout).to include('1) B_describe B1 test example')
+        expect(actual.stdout).to include('2) C_describe C2 test example')
 
-        expect(result.stdout).to include('4 examples, 0 failures, 2 pending')
+        expect(actual.stdout).to include('4 examples, 0 failures, 2 pending')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -1163,23 +1163,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('A1 test example')
+        expect(actual.stdout).to include('A1 test example')
 
-        expect(result.stdout).to include('B_describe')
-        expect(result.stdout).to include('An unexpected exception happened. RSpec cannot handle it. The exception: #<NoMemoryError: NoMemoryError>')
-        expect(result.stdout).to_not include('B1 test example')
+        expect(actual.stdout).to include('B_describe')
+        expect(actual.stdout).to include('An unexpected exception happened. RSpec cannot handle it. The exception: #<NoMemoryError: NoMemoryError>')
+        expect(actual.stdout).to_not include('B1 test example')
 
-        expect(result.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C1 test example')
 
         # 2nd test example raised unhandled exception during runtime.
         # It breaks RSpec so it was not marked as failed.
-        expect(result.stdout).to include('2 examples, 0 failures')
+        expect(actual.stdout).to include('2 examples, 0 failures')
 
-        expect(result.stdout).to include('WARN -- : [knapsack_pro] Unexecuted tests on this CI node (including pending tests): spec_integration/b_spec.rb')
+        expect(actual.stdout).to include('WARN -- : [knapsack_pro] Unexecuted tests on this CI node (including pending tests): spec_integration/b_spec.rb')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1232,9 +1232,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.exit_code).to eq 2
+        expect(actual.exit_code).to eq 2
       end
     end
   end
@@ -1319,25 +1319,25 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_d.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
-        expect(result.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
-        expect(result.stdout).to include('B1.1.2 test example')
-        expect(result.stdout).to include('B1.1.3 test example (FAILED - 1)')
-        expect(result.stdout).to include('B1.2.1 test example')
+        expect(actual.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
+        expect(actual.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
+        expect(actual.stdout).to include('B1.1.2 test example')
+        expect(actual.stdout).to include('B1.1.3 test example (FAILED - 1)')
+        expect(actual.stdout).to include('B1.2.1 test example')
 
         # next ExampleGroup within the same b_spec.rb is not executed
-        expect(result.stdout).to_not include('B2.1 test example')
+        expect(actual.stdout).to_not include('B2.1 test example')
 
         # next test file from the same batch is not executed
-        expect(result.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C1 test example')
 
         # next batch of tests is not pulled from the Queue API and is not executed
-        expect(result.stdout).to_not include('D1 test example')
+        expect(actual.stdout).to_not include('D1 test example')
 
 
-        expect(result.stdout).to include(
+        expect(actual.stdout).to include(
           <<~OUTPUT
           Pending: (Failures listed here are expected and do not affect your suite's status)
 
@@ -1345,7 +1345,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           OUTPUT
         )
 
-        expect(result.stdout).to include(
+        expect(actual.stdout).to include(
           <<~OUTPUT
           Failures:
 
@@ -1353,7 +1353,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           OUTPUT
         )
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1406,11 +1406,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
+        expect(actual.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
 
-        expect(result.exit_code).to eq 3
+        expect(actual.exit_code).to eq 3
       end
     end
   end
@@ -1459,14 +1459,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_b.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('ERROR -- : [knapsack_pro] The run_all_when_everything_filtered option is deprecated. See: https://knapsackpro.com/perma/ruby/rspec-deprecated-run-all-when-everything-filtered')
+        expect(actual.stdout).to include('ERROR -- : [knapsack_pro] The run_all_when_everything_filtered option is deprecated. See: https://knapsackpro.com/perma/ruby/rspec-deprecated-run-all-when-everything-filtered')
 
-        expect(result.stdout).to_not include('A1 test example')
-        expect(result.stdout).to_not include('B1 test example')
+        expect(actual.stdout).to_not include('A1 test example')
+        expect(actual.stdout).to_not include('B1 test example')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1530,19 +1530,19 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
 
-        expect(result.stdout).to include('A1 test example')
+        expect(actual.stdout).to include('A1 test example')
 
-        expect(result.stdout).to include('B1 test example (FAILED - 1)')
-        expect(result.stdout).to_not include('B2 test example') # skips B2 test due to tagged B1
+        expect(actual.stdout).to include('B1 test example (FAILED - 1)')
+        expect(actual.stdout).to_not include('B2 test example') # skips B2 test due to tagged B1
 
-        expect(result.stdout).to include('C1 test example')
+        expect(actual.stdout).to include('C1 test example')
 
-        expect(result.stdout).to include('Knapsack Pro found an example tagged with focus in spec_integration/b_spec.rb, please remove it. See more: https://knapsackpro.com/perma/ruby/rspec-skips-tests')
+        expect(actual.stdout).to include('Knapsack Pro found an example tagged with focus in spec_integration/b_spec.rb, please remove it. See more: https://knapsackpro.com/perma/ruby/rspec-skips-tests')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1554,13 +1554,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       run_specs(spec_helper_with_knapsack, rspec_options, []) do
         mock_batched_tests([])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('0 examples, 0 failures')
-        expect(result.stdout).to include('WARN -- : [knapsack_pro] No test files were executed on this CI node.')
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
+        expect(actual.stdout).to include('0 examples, 0 failures')
+        expect(actual.stdout).to include('WARN -- : [knapsack_pro] No test files were executed on this CI node.')
+        expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -1581,13 +1581,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       run_specs(spec_helper_content, rspec_options, []) do
         mock_batched_tests([])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('0 examples, 0 failures')
-        expect(result.stdout).to include('WARN -- : [knapsack_pro] No test files were executed on this CI node.')
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
+        expect(actual.stdout).to include('0 examples, 0 failures')
+        expect(actual.stdout).to include('WARN -- : [knapsack_pro] No test files were executed on this CI node.')
+        expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -1646,11 +1646,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('2 examples, 0 failures')
+        expect(actual.stdout).to include('2 examples, 0 failures')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -1702,13 +1702,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('B1 test example (FAILED - 1)')
-        expect(result.stdout).to include('Failure/Error: expect(1).to eq 0')
-        expect(result.stdout).to include('3 examples, 1 failure')
+        expect(actual.stdout).to include('B1 test example (FAILED - 1)')
+        expect(actual.stdout).to include('Failure/Error: expect(1).to eq 0')
+        expect(actual.stdout).to include('3 examples, 1 failure')
 
-        expect(result.exit_code).to eq 4
+        expect(actual.exit_code).to eq 4
       end
     end
   end
@@ -1760,16 +1760,16 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('Top 3 slowest examples')
-        expect(result.stdout).to include('A_describe A1 test example')
-        expect(result.stdout).to include('B_describe B1 test example')
-        expect(result.stdout).to include('C_describe C1 test example')
+        expect(actual.stdout).to include('Top 3 slowest examples')
+        expect(actual.stdout).to include('A_describe A1 test example')
+        expect(actual.stdout).to include('B_describe B1 test example')
+        expect(actual.stdout).to include('C_describe C1 test example')
 
-        expect(result.stdout).to include('Top 3 slowest example groups')
+        expect(actual.stdout).to include('Top 3 slowest example groups')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -1809,11 +1809,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_b.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stderr).to include('invalid option: --fake-rspec-option')
+        expect(actual.stderr).to include('invalid option: --fake-rspec-option')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1868,18 +1868,18 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('A1 test example')
-        expect(result.stdout).to include('B1 test example')
-        expect(result.stdout).to_not include('C1 test example')
-        expect(result.stdout).to_not include('C2 test example')
+        expect(actual.stdout).to include('A1 test example')
+        expect(actual.stdout).to include('B1 test example')
+        expect(actual.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C2 test example')
 
-        expect(result.stdout).to include('WARN -- : [knapsack_pro] Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+        expect(actual.stdout).to include('WARN -- : [knapsack_pro] Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
 
-        expect(result.stdout).to include('2 examples, 1 failure')
+        expect(actual.stdout).to include('2 examples, 1 failure')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -1946,19 +1946,19 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('A1 test example (FAILED - 1)')
-        expect(result.stdout).to include('B1 test example')
-        expect(result.stdout).to include('B2 test example (FAILED - 2)')
-        expect(result.stdout).to_not include('C1 test example')
-        expect(result.stdout).to_not include('C2 test example')
+        expect(actual.stdout).to include('A1 test example (FAILED - 1)')
+        expect(actual.stdout).to include('B1 test example')
+        expect(actual.stdout).to include('B2 test example (FAILED - 2)')
+        expect(actual.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C2 test example')
 
-        expect(result.stdout).to include('WARN -- : [knapsack_pro] Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
+        expect(actual.stdout).to include('WARN -- : [knapsack_pro] Test execution has been canceled because the RSpec --fail-fast option is enabled. It will cause other CI nodes to run tests longer because they need to consume more tests from the Knapsack Pro Queue API.')
 
-        expect(result.stdout).to include('3 examples, 2 failures')
+        expect(actual.stdout).to include('3 examples, 2 failures')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -2029,21 +2029,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_d.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to_not include('A1 test example')
-        expect(result.stdout).to include('A2 test example')
+        expect(actual.stdout).to_not include('A1 test example')
+        expect(actual.stdout).to include('A2 test example')
 
-        expect(result.stdout).to include('B1 test example')
+        expect(actual.stdout).to include('B1 test example')
 
-        expect(result.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C1 test example')
 
-        expect(result.stdout).to_not include('D1 test example')
-        expect(result.stdout).to include('D2 test example')
+        expect(actual.stdout).to_not include('D1 test example')
+        expect(actual.stdout).to include('D2 test example')
 
-        expect(result.stdout).to include('3 examples, 0 failures')
+        expect(actual.stdout).to include('3 examples, 0 failures')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -2120,11 +2120,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('DEBUG -- : [knapsack_pro] Detected 1 slow test files: [{"path"=>"spec_integration/a_spec.rb"}]')
+        expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] Detected 1 slow test files: [{"path"=>"spec_integration/a_spec.rb"}]')
 
-        expect(result.stdout).to include(
+        expect(actual.stdout).to include(
           <<~OUTPUT
           A_describe
             A1 test example
@@ -2135,7 +2135,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           OUTPUT
         )
 
-        expect(result.stdout).to include(
+        expect(actual.stdout).to include(
           <<~OUTPUT
           A_describe
             A2 test example
@@ -2146,12 +2146,12 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           OUTPUT
         )
 
-        expect(result.stdout.scan(/A1 test example/).size).to eq 1
-        expect(result.stdout.scan(/A2 test example/).size).to eq 1
+        expect(actual.stdout.scan(/A1 test example/).size).to eq 1
+        expect(actual.stdout.scan(/A2 test example/).size).to eq 1
 
-        expect(result.stdout).to include('6 examples, 0 failures')
+        expect(actual.stdout).to include('6 examples, 0 failures')
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -2228,18 +2228,18 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('ERROR -- : [knapsack_pro] It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/perma/ruby/rspec-split-by-test-examples-tag')
+        expect(actual.stdout).to include('ERROR -- : [knapsack_pro] It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/perma/ruby/rspec-split-by-test-examples-tag')
 
-        expect(result.stdout).to_not include('A1 test example')
-        expect(result.stdout).to_not include('A2 test example')
-        expect(result.stdout).to_not include('B1 test example')
-        expect(result.stdout).to_not include('B2 test example')
-        expect(result.stdout).to_not include('C1 test example')
-        expect(result.stdout).to_not include('C2 test example')
+        expect(actual.stdout).to_not include('A1 test example')
+        expect(actual.stdout).to_not include('A2 test example')
+        expect(actual.stdout).to_not include('B1 test example')
+        expect(actual.stdout).to_not include('B2 test example')
+        expect(actual.stdout).to_not include('C1 test example')
+        expect(actual.stdout).to_not include('C2 test example')
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
@@ -2318,7 +2318,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
         file_content = File.read(json_file)
         json = JSON.load(file_content)
@@ -2350,7 +2350,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
         expect(json.fetch('summary_line')).to eq '6 examples, 0 failures'
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -2429,7 +2429,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
         file_content = File.read(xml_file)
         doc = Nokogiri::XML(file_content)
@@ -2458,7 +2458,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           'C_describe C2 test example',
         ])
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -2548,7 +2548,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
         file_content = File.read(coverage_file)
 
@@ -2556,7 +2556,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(file_content).to include(spec_b.path)
         expect(file_content).to include(spec_c.path)
 
-        expect(result.exit_code).to eq 0
+        expect(actual.exit_code).to eq 0
       end
     end
   end
@@ -2626,9 +2626,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           [spec_c.path],
         ])
 
-        result = subject
+        actual = subject
 
-        expect(result.stdout).to include('4 examples, 2 failures, 1 pending')
+        expect(actual.stdout).to include('4 examples, 2 failures, 1 pending')
 
         expect(File.exist?(examples_file_path)).to be true
 
@@ -2639,7 +2639,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(examples_file_content).to include './spec_integration/c_spec.rb[1:1] | passed'
         expect(examples_file_content).to include './spec_integration/c_spec.rb[1:2] | failed'
 
-        expect(result.exit_code).to eq 1
+        expect(actual.exit_code).to eq 1
       end
     end
   end
