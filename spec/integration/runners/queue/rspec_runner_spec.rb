@@ -69,7 +69,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   subject do
-    command = "ruby #{SPEC_DIRECTORY}/queue_runner.rb"
+    command = "ruby spec/queue_runner.rb"
     stdout, stderr, status = Open3.capture3(command)
     log_command_result(stdout, stderr, status)
     OpenStruct.new(stdout: stdout, stderr: stderr, exit_code: status.exitstatus)
