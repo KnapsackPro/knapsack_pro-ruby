@@ -59,7 +59,7 @@ module KnapsackPro
           configuration.error_exit_code # nil unless `--error-exit-code` is specified
         end
 
-        # must be called after `Runner#knapsack__setup` when the `spec_helper.rb` configuration is loaded
+        # must be called after `Runner#knapsack__setup` that loads the `spec_helper.rb` configuration
         def knapsack__deprecated_run_all_when_everything_filtered_enabled?
           !!(configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered)
         end
