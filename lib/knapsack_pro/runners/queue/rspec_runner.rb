@@ -88,7 +88,7 @@ module KnapsackPro
           end
 
           def exit_summary(node_test_file_paths)
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            time_tracker = @time_tracker_fetcher.call
             return unless time_tracker
 
             unexecuted_test_files = time_tracker.unexecuted_test_files(node_test_file_paths)
