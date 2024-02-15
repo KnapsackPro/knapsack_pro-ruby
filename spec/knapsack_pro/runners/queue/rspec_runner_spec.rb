@@ -8,8 +8,8 @@ describe KnapsackPro::Runners::Queue::RSpecRunner do
     let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
     let(:function_core) { described_class.new(adapter_class) }
 
-    describe '#ensure_spec_opts_have_knapsack_pro_formatters' do
-      subject { function_core.ensure_spec_opts_have_knapsack_pro_formatters(spec_opts) }
+    describe '#add_knapsack_pro_formatters_to' do
+      subject { function_core.add_knapsack_pro_formatters_to(spec_opts) }
 
       context 'when no spec_opts' do
         let(:spec_opts) { nil }

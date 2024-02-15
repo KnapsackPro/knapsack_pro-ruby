@@ -31,7 +31,7 @@ module KnapsackPro
             @time_tracker_fetcher = time_tracker_fetcher
           end
 
-          def ensure_spec_opts_have_knapsack_pro_formatters(spec_opts)
+          def add_knapsack_pro_formatters_to(spec_opts)
             return spec_opts unless spec_opts
             return spec_opts if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
 
@@ -227,7 +227,7 @@ module KnapsackPro
 
           KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
 
-          ENV['SPEC_OPTS'] = @functional_core.ensure_spec_opts_have_knapsack_pro_formatters(ENV['SPEC_OPTS'])
+          ENV['SPEC_OPTS'] = @functional_core.add_knapsack_pro_formatters_to(ENV['SPEC_OPTS'])
           @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
