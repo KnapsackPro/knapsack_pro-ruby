@@ -92,38 +92,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'runs tests' do
       rspec_options = '--format d'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -163,38 +154,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       rspec_options = '--format d'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -223,27 +205,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       require 'knapsack_pro'
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -275,37 +251,28 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'uses a default progress formatter' do
       rspec_options = ''
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it {}
           it {}
           it {}
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it {}
           it {}
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it {}
           it {}
           it {}
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -343,37 +310,28 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'uses a default progress formatter AND shows dots for all test examples' do
       rspec_options = ''
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it {}
           it {}
           it {}
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it {}
           it {}
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it {}
           it {}
           it {}
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -412,38 +370,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -500,38 +449,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -607,31 +547,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe', type: :model do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe', type: :system do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -641,19 +573,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_d = SpecItem.new(
-        'd_spec.rb',
-        <<~SPEC
+      spec_d = SpecItem.new('d_spec.rb', <<~SPEC)
         describe 'D_describe', type: :system do
           it 'D1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -688,38 +616,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it do
       rspec_options = '--order rand:123'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -752,38 +671,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'returns 1 as exit code (it remembers that one of the batches has a failing test)' do
       rspec_options = '--format documentation'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      failing_spec = SpecItem.new(
-        'failing_spec.rb',
-        <<~SPEC
+      failing_spec = SpecItem.new('failing_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -810,38 +720,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'returns 1 as exit code AND the exception does not leak outside of the RSpec runner context' do
       rspec_options = '--format documentation'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      failing_spec = SpecItem.new(
-        'failing_spec.rb',
-        <<~SPEC
+      failing_spec = SpecItem.new('failing_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             raise 'A custom exception from a test'
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -868,20 +769,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'stops running tests on the batch that has a test file with the syntax error AND returns 1 as exit code' do
       rspec_options = '--format documentation'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      failing_spec = SpecItem.new(
-        'failing_spec.rb',
-        <<~SPEC
+      failing_spec = SpecItem.new('failing_spec.rb', <<~SPEC)
         describe 'B_describe' do
           a_fake_method
 
@@ -889,19 +785,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -944,27 +836,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       a_fake_method
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -1003,27 +889,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       KnapsackPro::Adapters::RSpecAdapter.bind
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -1050,31 +930,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'shows the summary of pending tests' do
       rspec_options = '--format documentation'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           xit 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -1084,8 +956,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1117,40 +988,31 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'stops running tests when unhandled exception happens AND sets 1 as exit code AND shows summary of unexecuted tests' do
       rspec_options = '--format documentation'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       # list of unhandled exceptions:
       # RSpec::Support::AllExceptionsExceptOnesWeMustNotRescue::AVOID_RESCUING
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             raise NoMemoryError.new
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1188,38 +1050,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'sets a custom exit code' do
       rspec_options = '--format documentation --error-exit-code 2'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             raise NoMemoryError.new
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1243,20 +1096,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'terminates the process after tests from the current RSpec ExampleGroup are executed and sets 1 as exit code' do
       rspec_options = '--format documentation'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B1_describe' do
           describe 'B1.1_describe' do
             xit 'B1.1.1 test example' do
@@ -1282,30 +1130,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_d = SpecItem.new(
-        'd_spec.rb',
-        <<~SPEC
+      spec_d = SpecItem.new('d_spec.rb', <<~SPEC)
         describe 'D_describe' do
           it 'D1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1362,38 +1203,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'terminates the process AND sets a custom exit code' do
       rspec_options = '--format documentation --error-exit-code 3'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             Process.kill("INT", Process.pid)
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1428,27 +1260,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -1484,20 +1310,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example', :focus do
             expect(1).to eq 1
@@ -1506,19 +1327,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -1605,35 +1422,26 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b_with_no_examples = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b_with_no_examples = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -1659,38 +1467,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'returns a custom exit code' do
       rspec_options = '--format documentation --failure-exit-code 4'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      failing_spec = SpecItem.new(
-        'failing_spec.rb',
-        <<~SPEC
+      failing_spec = SpecItem.new('failing_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1717,38 +1516,29 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'shows top slowest examples AND top slowest example groups' do
       rspec_options = '--format d --profile'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1778,27 +1568,21 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'returns 1 as exit code AND shows an error message to stderr' do
       rspec_options = '--format d --fake-rspec-option'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1822,31 +1606,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'stops running tests on the failing test AND returns 1 as exit code AND shows a warning message' do
       rspec_options = '--format d --fail-fast'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -1855,8 +1631,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -1897,20 +1672,15 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
@@ -1919,12 +1689,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -1933,8 +1700,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -1967,9 +1733,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'runs only tagged test examples from multiple batches of tests fetched from the Queue API' do
       rspec_options = '--format d --tag my_tag'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
@@ -1978,34 +1742,25 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe', :my_tag do
           it 'B1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_d = SpecItem.new(
-        'd_spec.rb',
-        <<~SPEC
+      spec_d = SpecItem.new('d_spec.rb', <<~SPEC)
         describe 'D_describe' do
           it 'D1 test example' do
             expect(1).to eq 1
@@ -2014,8 +1769,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -2064,9 +1818,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'splits slow test files by examples AND ensures the test examples are executed only once' do
       rspec_options = '--format d'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
@@ -2075,12 +1827,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
@@ -2089,12 +1838,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -2103,8 +1849,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -2172,9 +1917,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'sets 1 as exit code AND raises an error (a test example path as a_spec.rb[1:1] would always be executed even when it does not have the tag that is set via the --tag option. We cannot run tests because it could lead to running unintentional tests)' do
       rspec_options = '--format d --tag my_tag'
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
@@ -2183,12 +1926,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe', :my_tag do
           it 'B1 test example' do
             expect(1).to eq 1
@@ -2197,12 +1937,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -2211,8 +1948,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -2262,9 +1998,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'produces a JSON report' do
       rspec_options = "--format documentation --format json --out ./#{json_file}"
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
@@ -2273,12 +2007,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
@@ -2287,12 +2018,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -2301,8 +2029,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -2373,9 +2100,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'produces a JUnit XML report' do
       rspec_options = "--format documentation --format RspecJunitFormatter --out ./#{xml_file}"
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
@@ -2384,12 +2109,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
@@ -2398,12 +2120,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -2412,8 +2131,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
         spec_a,
@@ -2492,9 +2210,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           it 'A1 test example' do
             expect(1).to eq 1
@@ -2503,12 +2219,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 1
@@ -2517,12 +2230,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -2531,8 +2241,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
@@ -2580,31 +2289,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      spec_a = SpecItem.new(
-        'a_spec.rb',
-        <<~SPEC
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
         describe 'A_describe' do
           xit 'A1 test example' do
             expect(1).to eq 1
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_b = SpecItem.new(
-        'b_spec.rb',
-        <<~SPEC
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
         describe 'B_describe' do
           it 'B1 test example' do
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
-      spec_c = SpecItem.new(
-        'c_spec.rb',
-        <<~SPEC
+      spec_c = SpecItem.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
@@ -2613,8 +2314,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 0
           end
         end
-        SPEC
-      )
+      SPEC
 
       run_specs(spec_helper_content, rspec_options, [
         spec_a,
