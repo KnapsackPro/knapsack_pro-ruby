@@ -2190,4 +2190,47 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when --options is set' do
+    let(:rspec_custom_options_file) { "#{SPEC_DIRECTORY}/.rspec_custom_options" }
+
+    it 'uses options from the custom rspec file' do
+      rspec_custom_options = <<~FILE
+      --require spec_helper
+      --profile
+      FILE
+      File.open(rspec_custom_options_file, 'w') { |file| file.write(rspec_custom_options) }
+
+      rspec_options = "--options ./#{rspec_custom_options_file}"
+
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_b = SpecItem.new('b_spec.rb', <<~SPEC)
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        [spec_a],
+        [spec_b],
+      ]) do
+        actual = subject
+
+        expect(actual.stdout).to include('2 examples, 0 failures')
+
+        expect(actual.stdout).to include('Top 2 slowest example groups')
+
+        expect(actual.exit_code).to eq 0
+      end
+    end
+  end
 end
