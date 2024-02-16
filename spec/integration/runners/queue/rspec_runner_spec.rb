@@ -805,11 +805,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   context 'when RSpec is quitting' do
     let(:helper_with_exit_location) { "#{SPEC_DIRECTORY}/helper_with_exit.rb" }
 
-    before do
-      File.open(helper_with_exit_location, 'w') { |file| file.write('exit 123') }
-    end
-
     it 'returns non zero exit code because RSpec is quitting' do
+      File.open(helper_with_exit_location, 'w') { |file| file.write('exit 123') }
+
       rspec_options = "--format documentation --require ./#{helper_with_exit_location}"
 
       spec_helper_content = <<~SPEC
