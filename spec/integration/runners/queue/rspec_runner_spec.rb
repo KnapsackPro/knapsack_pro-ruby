@@ -15,7 +15,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   # @param rspec_options String
-  def run_specs(spec_helper_content, rspec_options, spec_items)
+  # @param batched_spec_items Array[Array[String]]
+  def run_specs(spec_helper_content, rspec_options, batched_spec_items)
     FileUtils.mkdir_p(SPEC_DIRECTORY)
 
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
@@ -23,10 +24,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
     File.open(spec_helper_path, 'w') { |file| file.write(spec_helper_content) }
 
-    paths = spec_items.map do |spec_item|
+    paths = batched_spec_items.flatten.map do |spec_item|
       File.open(spec_item.path, 'w') { |file| file.write(spec_item.content) }
       spec_item.path
     end
+
+    mock_batched_tests(
+      batched_spec_items.map { _1.map(&:path) }
+    )
 
     yield
   ensure
@@ -117,15 +122,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] [Queue Mode] Test suite execution time recording enabled.')
@@ -179,15 +178,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('[INTEGRATION TEST] test_files: 3, test files have execution time: true')
@@ -222,14 +215,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
+        [spec_a],
+        [spec_b],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('ERROR -- : [knapsack_pro] You forgot to call KnapsackPro::Adapters::RSpecAdapter.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly https://knapsackpro.com/perma/ruby/installation-guide')
@@ -275,15 +263,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         beginning_of_knapsack_pro_log_info_message = 'I, ['
@@ -334,15 +316,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('.'*8)
@@ -395,15 +371,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
@@ -474,15 +444,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout.scan(/1st before_queue - run before the test suite/).size).to eq 1
@@ -584,18 +548,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
-        spec_d,
+        [spec_a],
+        [spec_b],
+        [spec_c],
+        [spec_d],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-          [spec_c.path],
-          [spec_d.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout.scan(/RSpec_before_suite_hook/).size).to eq 1
@@ -641,15 +598,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('Randomized with seed 123')
@@ -696,15 +647,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        failing_spec,
-        spec_c,
+        [spec_a, failing_spec],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, failing_spec.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('B1 test example (FAILED - 1)')
@@ -745,15 +690,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        failing_spec,
-        spec_c,
+        [spec_a, failing_spec],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, failing_spec.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('B1 test example (FAILED - 1)')
@@ -796,16 +735,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        failing_spec,
-        spec_c,
+        [spec_a],
+        [failing_spec],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [failing_spec.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         # 1st batch of tests executed correctly
@@ -853,14 +786,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
+        [spec_a],
+        [spec_b],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('An error occurred while loading spec_helper.')
@@ -906,14 +834,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
+        [spec_a],
+        [spec_b],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('While loading ./spec_integration/helper_with_exit.rb an `exit` / `raise SystemExit` occurred, RSpec will now quit.')
@@ -959,15 +882,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('B1 test example (PENDING: Temporarily skipped with xit)')
@@ -1015,16 +932,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a],
+        [spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('A1 test example')
@@ -1075,16 +986,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a],
+        [spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.exit_code).to eq 2
@@ -1149,17 +1054,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
-        spec_d,
+        [spec_a],
+        [spec_b, spec_c],
+        [spec_d],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path, spec_c.path],
-          [spec_d.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
@@ -1228,16 +1126,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a],
+        [spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
@@ -1277,14 +1169,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
+        [spec_a],
+        [spec_b],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('ERROR -- : [knapsack_pro] The run_all_when_everything_filtered option is deprecated. See: https://knapsackpro.com/perma/ruby/rspec-deprecated-run-all-when-everything-filtered')
@@ -1338,17 +1225,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a],
+        [spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path], [spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
-
 
         expect(actual.stdout).to include('A1 test example')
 
@@ -1369,8 +1250,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       rspec_options = '--format documentation'
 
       run_specs(spec_helper_with_knapsack, rspec_options, []) do
-        mock_batched_tests([])
-
         actual = subject
 
         expect(actual.stdout).to include('0 examples, 0 failures')
@@ -1396,8 +1275,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, []) do
-        mock_batched_tests([])
-
         actual = subject
 
         expect(actual.stdout).to include('0 examples, 0 failures')
@@ -1444,16 +1321,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b_with_no_examples,
-        spec_c,
+        [spec_a],
+        [spec_b_with_no_examples],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b_with_no_examples.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('2 examples, 0 failures')
@@ -1492,15 +1363,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        failing_spec,
-        spec_c,
+        [spec_a, failing_spec],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, failing_spec.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('B1 test example (FAILED - 1)')
@@ -1541,15 +1406,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('Top 3 slowest examples')
@@ -1585,14 +1444,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
+        [spec_a],
+        [spec_b],
       ]) do
-        mock_batched_tests([
-          [spec_a.path],
-          [spec_b.path],
-        ])
-
         actual = subject
 
         expect(actual.stderr).to include('invalid option: --fake-rspec-option')
@@ -1634,15 +1488,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('A1 test example')
@@ -1703,15 +1551,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('A1 test example (FAILED - 1)')
@@ -1772,17 +1614,10 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
-        spec_d,
+        [spec_a, spec_b],
+        [spec_c],
+        [spec_d],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-          [spec_d.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to_not include('A1 test example')
@@ -1852,9 +1687,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b, spec_c]
       ]) do
         mock_test_cases_for_slow_test_files([
           "#{spec_a.path}[1:1]",
@@ -1951,9 +1784,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b, spec_c]
       ]) do
         mock_test_cases_for_slow_test_files([
           "#{spec_a.path}[1:1]",
@@ -2032,9 +1863,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b, spec_c]
       ]) do
         mock_test_cases_for_slow_test_files([
           "#{spec_a.path}[1:1]",
@@ -2134,9 +1963,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_with_knapsack, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b, spec_c]
       ]) do
         mock_test_cases_for_slow_test_files([
           "#{spec_a.path}[1:1]",
@@ -2244,9 +2071,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c,
+        [spec_a, spec_b, spec_c]
       ]) do
         mock_test_cases_for_slow_test_files([
           "#{spec_a.path}[1:1]",
@@ -2317,15 +2142,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       run_specs(spec_helper_content, rspec_options, [
-        spec_a,
-        spec_b,
-        spec_c
+        [spec_a, spec_b],
+        [spec_c],
       ]) do
-        mock_batched_tests([
-          [spec_a.path, spec_b.path],
-          [spec_c.path],
-        ])
-
         actual = subject
 
         expect(actual.stdout).to include('4 examples, 2 failures, 1 pending')
