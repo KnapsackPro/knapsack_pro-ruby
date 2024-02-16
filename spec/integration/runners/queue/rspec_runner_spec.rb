@@ -2160,4 +2160,34 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     end
   end
+
+  context 'when the .rspec file has RSpec options' do
+    let(:dot_rspec_file) { "#{SPEC_DIRECTORY}/.rspec" }
+
+    it 'ignores options from the .rspec file' do
+      File.open(dot_rspec_file, 'w') { |file| file.write('--format documentation') }
+
+      rspec_options = ''
+
+      spec_a = SpecItem.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      run_specs(spec_helper_with_knapsack, rspec_options, [
+        [spec_a],
+      ]) do
+        actual = subject
+
+        expect(actual.stdout).not_to include('A1 test example')
+
+        expect(actual.stdout).to include('1 example, 0 failures')
+
+        expect(actual.exit_code).to eq 0
+      end
+    end
+  end
 end
