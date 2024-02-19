@@ -808,6 +808,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:helper_with_exit_location) { "#{SPEC_DIRECTORY}/helper_with_exit.rb" }
 
     it 'returns non zero exit code because RSpec is quitting' do
+      skip 'Not supported by this RSpec version' if RSpec::Core::Version::STRING == '3.10.2'
+
       File.open(helper_with_exit_location, 'w') { |file| file.write('exit 123') }
 
       rspec_options = "--format documentation --require ./#{helper_with_exit_location}"
