@@ -17,8 +17,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   # @param rspec_options String
   # @param batched_spec_items Array[Array[String]]
   def run_specs(spec_helper_content, rspec_options, batched_spec_items)
-    FileUtils.mkdir_p(SPEC_DIRECTORY)
-
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
 
     spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
@@ -34,9 +32,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     )
 
     yield
-  ensure
-    FileUtils.rm_rf(SPEC_DIRECTORY)
-    FileUtils.mkdir_p(SPEC_DIRECTORY)
   end
 
   def mock_batched_tests(batched_tests)
@@ -83,12 +78,17 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   before do
+    FileUtils.mkdir_p(SPEC_DIRECTORY)
+
     ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'debug'
     # Uncomment the following to show output from the Queue RSpec run for each test example.
     # This is useful when you create or edit a test.
     #ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
   after do
+    FileUtils.rm_rf(SPEC_DIRECTORY)
+    FileUtils.mkdir_p(SPEC_DIRECTORY)
+
     ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
     ENV.keys.select { _1.start_with?('TEST__') }.each do |key|
       ENV.delete(key)
