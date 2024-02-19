@@ -37,8 +37,8 @@ commands:
             fi
       - restore_cache:
           keys:
-          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>-<< parameters.rspec >>
-          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>
+          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-
           - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-
           - v1-bundler-rails-
       - run:
@@ -49,7 +49,7 @@ commands:
       - save_cache:
           paths:
             - << parameters.path >>/vendor/bundle
-          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>-<< parameters.rspec >>
+          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
 
 jobs:
   unit:
