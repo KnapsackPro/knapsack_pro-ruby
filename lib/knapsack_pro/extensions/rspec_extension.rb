@@ -46,7 +46,7 @@ module KnapsackPro
         end
 
         def knapsack__rspec_is_quitting?
-          world.respond_to?(:rspec_is_quitting) && world.rspec_is_quitting
+          world.rspec_is_quitting
         end
 
         def knapsack__exit_early
