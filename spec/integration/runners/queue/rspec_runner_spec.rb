@@ -83,11 +83,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   before do
+    ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'debug'
     # Uncomment the following to show output from the Queue RSpec run for each test example.
     # This is useful when you create or edit a test.
     #ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
   after do
+    ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
     ENV.keys.select { _1.start_with?('TEST__') }.each do |key|
       ENV.delete(key)
     end

@@ -3,6 +3,7 @@
 ### 7.0.0
 
 * __(breaking change)__ RSpec in Queue Mode:
+  * The default for `KNAPSACK_PRO_LOG_LEVEL` is `info` instead of `debug`.
   * The RSpec `before(:suite)` and `after(:suite)` hooks change:
 
     __Before:__<br>

@@ -941,7 +941,7 @@ describe KnapsackPro::Config::Env do
     end
 
     context "when ENV doesn't exist" do
-      it { should eql ::Logger::DEBUG }
+      it { should eql ::Logger::INFO }
     end
   end
 
