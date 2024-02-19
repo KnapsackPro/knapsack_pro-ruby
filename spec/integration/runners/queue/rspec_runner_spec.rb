@@ -751,7 +751,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         expect(actual.stdout).to_not include('C1 test example')
 
         expect(actual.stdout).to include('An error occurred while loading ./spec_integration/failing_spec.rb')
-        expect(actual.stdout).to match(/undefined local variable or method `a_fake_method' for.* RSpec::ExampleGroups::BDescribe:Class/)
+        expect(actual.stdout).to match(/undefined local variable or method `a_fake_method' for.* RSpec::ExampleGroups::BDescribe/)
         expect(actual.stdout).to include('WARN -- : [knapsack_pro] RSpec wants to quit')
         expect(actual.stdout).to include('1 example, 0 failures, 1 error occurred outside of examples')
 
