@@ -65,6 +65,47 @@ jobs:
       - run: bundle exec rspec spec
       - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
 
+  integration-rspec:
+    parallelism: 1
+    working_directory: ~/knapsack_pro-ruby
+    resource_class: small
+    parameters:
+      ruby:
+        type: string
+      rspec:
+        type: string
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>
+    steps:
+      - checkout
+      - run:
+          command: |
+            if [[ "<< parameters.rspec >>" != "" ]]; then
+              sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
+              echo "Updated RSpec version in Gemfile"
+            fi
+      - restore_cache:
+          keys:
+          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-
+          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-
+          - v1-bundler-gem-
+      - run:
+          command: |
+            bundle config set --local path './vendor/bundle'
+            bundle install --jobs=4 --retry=3
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+      - run:
+          command: |
+            ruby --version
+            bundle exec rspec --version
+            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
+            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+      - run: bundle exec rspec spec/integration/runners/queue/rspec_runner_spec.rb
+
   e2e-regular-rspec:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
@@ -321,6 +362,12 @@ workflows:
   tests:
     jobs:
       - unit
+      - integration-rspec:
+          name: integration__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
       - e2e-regular-rspec:
           name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
