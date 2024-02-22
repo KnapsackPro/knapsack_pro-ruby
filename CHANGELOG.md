@@ -90,7 +90,7 @@
     * A late CI node, started after all tests were executed by other nodes, is expected to receive an empty batch.
     * A batch could contain tests with no examples (e.g. commented out)
 
-  * Raise an exception if the deprecated `run_all_when_everything_filtered` option is detected. [See docs](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed).
+  * Raise an exception if the [deprecated `run_all_when_everything_filtered`](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed) option is detected.
 
 PR with the above changes: https://github.com/KnapsackPro/knapsack_pro-ruby/pull/237
 
