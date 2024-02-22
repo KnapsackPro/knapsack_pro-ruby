@@ -81,9 +81,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     FileUtils.mkdir_p(SPEC_DIRECTORY)
 
     ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'debug'
-    # Uncomment the following to show output from the Queue RSpec run for each test example.
-    # This is useful when you create or edit a test.
-    #ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
+    # Useful when creating or editing a test:
+    # ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
   after do
     FileUtils.rm_rf(SPEC_DIRECTORY)
