@@ -58,7 +58,7 @@
 
     Learn more about [using Knapsack Pro with Percy](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) in the docs.
 
-  * We are no longer modifying the default RSpec formatters in Queue Mode. The `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS` environment variable is removed. You can remove it from the CI config if you are using it.
+  * We are no longer modifying the default RSpec formatters in Queue Mode. You can remove the `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS` environment variable from your CI config if you are using it.
 
 * RSpec improvements in Queue Mode:
   * The processing of termination signals - HUP, INT, TERM, ABRT, QUIT, USR1, and USR2 - has been improved for increased speed. Now, the process will terminate promptly before the execution of the next top-level RSpec example group (defined by `describe` or `context` blocks) within a spec file.
