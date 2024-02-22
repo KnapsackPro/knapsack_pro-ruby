@@ -56,7 +56,7 @@
     after(:suite) { Percy::Capybara.finalize_build }
     ```
 
-    Reference in [docs](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) for the latest Percy version.
+    Learn more about [using Knapsack Pro with Percy](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) in the docs.
 
   * We are no longer modifying the default RSpec formatters in Queue Mode. The `KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS` environment variable is removed. You can remove it from the CI config if you are using it.
 
