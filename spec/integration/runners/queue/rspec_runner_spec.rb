@@ -16,11 +16,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   # @param rspec_options String
   # @param batched_spec_items Array[Array[String]]
-  def run_specs(spec_helper_content, rspec_options, batched_spec_items)
+  def run_specs(spec_helper, rspec_options, batched_spec_items)
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
 
     spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
-    File.open(spec_helper_path, 'w') { |file| file.write(spec_helper_content) }
+    File.open(spec_helper_path, 'w') { |file| file.write(spec_helper) }
 
     paths = batched_spec_items.flatten.map do |spec_item|
       File.open(spec_item.path, 'w') { |file| file.write(spec_item.content) }
@@ -196,7 +196,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it do
       rspec_options = ''
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       SPEC
 
@@ -216,7 +216,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b],
       ]) do
@@ -334,7 +334,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'calls RSpec before/after hooks only once for multiple batches of tests' do
       rspec_options = ''
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -372,7 +372,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a, spec_b],
         [spec_c],
       ]) do
@@ -388,7 +388,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'calls queue hooks for multiple batches of tests (queue hooks can be defined multiple times)' do
       rspec_options = ''
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -445,7 +445,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a, spec_b],
         [spec_c],
       ]) do
@@ -467,7 +467,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'calls hooks defined with when_first_matching_example_defined only once for multiple batches of tests' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -549,7 +549,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b],
         [spec_c],
@@ -764,7 +764,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'exits early with 1 as the exit code without running tests because RSpec wants to quit' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -787,7 +787,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b],
       ]) do
@@ -814,7 +814,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       rspec_options = "--format documentation --require ./#{helper_with_exit_location}"
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
       SPEC
@@ -835,7 +835,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b],
       ]) do
@@ -1145,7 +1145,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'shows an error message AND sets 1 as exit code' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -1170,7 +1170,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b],
       ]) do
@@ -1190,7 +1190,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'shows an error message for :focus tagged tests AND sets 1 as exit code (shows the error because the batch of tests that has no focus tagged tests will run tests instead of not running them)' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -1226,7 +1226,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b],
         [spec_c],
@@ -1267,7 +1267,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'sets 0 as exit code to ignore the fail_if_no_examples option' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -1276,7 +1276,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, []) do
+      run_specs(spec_helper, rspec_options, []) do
         actual = subject
 
         expect(actual.stdout).to include('0 examples, 0 failures')
@@ -1292,7 +1292,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'sets 0 as exit code to ignore the fail_if_no_examples option' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -1322,7 +1322,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a],
         [spec_b_with_no_examples],
         [spec_c],
@@ -1513,7 +1513,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'stops running tests on the 2nd failing test AND returns 1 as exit code AND shows a warning message when fail fast limit met' do
       rspec_options = '--format d'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -1552,7 +1552,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a, spec_b],
         [spec_c],
       ]) do
@@ -2029,7 +2029,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'produces a code coverage report' do
       rspec_options = '--format documentation'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -2072,7 +2072,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a, spec_b, spec_c]
       ]) do
         mock_test_cases_for_slow_test_files([
@@ -2107,7 +2107,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     it 'runs tests AND creates the example status persistence file' do
       rspec_options = '--format d'
 
-      spec_helper_content = <<~SPEC
+      spec_helper = <<~SPEC
       require 'knapsack_pro'
       KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -2143,7 +2143,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
-      run_specs(spec_helper_content, rspec_options, [
+      run_specs(spec_helper, rspec_options, [
         [spec_a, spec_b],
         [spec_c],
       ]) do
