@@ -37,12 +37,6 @@
     end
     ```
 
-    You can keep the Knapsack Pro command unchanged with the `--format RspecJunitFormatter --out tmp/rspec.xml` options.
-
-    ```bash
-    bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/rspec.xml]"
-    ```
-
     Reference in [docs](https://docs.knapsackpro.com/ruby/rspec/#formatters-rspec_junit_formatter-json).
 
     See [docs](https://docs.knapsackpro.com/ruby/circleci/) if you use CircleCI.
