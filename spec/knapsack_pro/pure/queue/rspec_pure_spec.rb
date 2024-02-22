@@ -1,3 +1,6 @@
+require(KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker')
+require(KnapsackPro.root + '/lib/knapsack_pro/extensions/rspec_extension')
+
 describe KnapsackPro::Pure::Queue::RSpecPure do
   let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
   let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
@@ -5,8 +8,6 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
   let(:rspec_pure) { described_class.new(adapter_class) }
 
   before do
-    require KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker'
-    require KnapsackPro.root + '/lib/knapsack_pro/extensions/rspec_extension'
   end
 
   describe '#add_knapsack_pro_formatters_to' do
