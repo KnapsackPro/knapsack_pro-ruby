@@ -60,13 +60,13 @@ module KnapsackPro
         File.write(self.class.adapter_bind_method_called_file, nil)
 
         if KnapsackPro::Config::Env.recording_enabled?
-          KnapsackPro.logger.debug('[Regular Mode] Test suite execution time recording enabled.')
+          KnapsackPro.logger.debug('Regular Mode enabled.')
           bind_time_tracker
           bind_save_report
         end
 
         if KnapsackPro::Config::Env.queue_recording_enabled?
-          KnapsackPro.logger.debug('[Queue Mode] Test suite execution time recording enabled.')
+          KnapsackPro.logger.debug('Queue Mode enabled.')
           bind_queue_mode
         end
       end
