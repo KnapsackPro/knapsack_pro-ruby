@@ -78,7 +78,7 @@
     bundle exec rake "knapsack_pro:queue:rspec[--error-exit-code 3]"
     ```
 
-  * Respect the `--failure-exit-code` option. It overrides the exit code used when there are failing specs.
+  * Respect the `--failure-exit-code` option. It sets a custom exit code for when any examples fail.
 
     ```bash
     bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
