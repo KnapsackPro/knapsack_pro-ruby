@@ -9,10 +9,6 @@ module KnapsackPro
           'KnapsackPro::Formatters::TimeTracker',
         ]
 
-        def initialize(time_tracker_fetcher = KnapsackPro::Formatters::TimeTrackerFetcher)
-          @time_tracker_fetcher = time_tracker_fetcher
-        end
-
         def add_knapsack_pro_formatters_to(spec_opts)
           return spec_opts unless spec_opts
           return spec_opts if FORMATTERS.all? { |formatter| spec_opts.include?(formatter) }
@@ -65,11 +61,7 @@ module KnapsackPro
           messages
         end
 
-        def exit_summary(node_test_file_paths)
-          time_tracker = @time_tracker_fetcher.call
-          return unless time_tracker
-
-          unexecuted_test_files = time_tracker.unexecuted_test_files(node_test_file_paths)
+        def exit_summary(unexecuted_test_files)
           return if unexecuted_test_files.empty?
 
           "Unexecuted tests on this CI node (including pending tests): #{unexecuted_test_files.join(' ')}"

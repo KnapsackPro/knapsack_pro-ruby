@@ -2,7 +2,6 @@ require(KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker')
 require(KnapsackPro.root + '/lib/knapsack_pro/extensions/rspec_extension')
 
 describe KnapsackPro::Pure::Queue::RSpecPure do
-  let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
   let(:rspec_pure) { described_class.new }
 
   describe '#add_knapsack_pro_formatters_to' do
@@ -205,39 +204,19 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
     end
 
     describe '#exit_summary' do
-      let(:node_test_file_paths) { ['a_spec.rb', 'b_spec.rb', 'c_spec.rb'] }
+      subject { rspec_pure.exit_summary(unexecuted_test_files) }
 
-      subject { rspec_pure.exit_summary(node_test_file_paths) }
-
-      before do
-        expect(time_tracker_fetcher).to receive(:call).and_return(time_tracker)
-      end
-
-      context 'when the KnapsackPro::Formatters::TimeTracker formatter is not found' do
-        let(:time_tracker) { nil }
+      context 'when there are no unexecuted test files' do
+        let(:unexecuted_test_files) { [] }
 
         it { expect(subject).to be_nil }
       end
 
-      context 'when the KnapsackPro::Formatters::TimeTracker formatter is found' do
-        let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
+      context 'when there are unexecuted test files' do
+        let(:unexecuted_test_files) { ['b_spec.rb', 'c_spec.rb'] }
 
-        before do
-          expect(time_tracker).to receive(:unexecuted_test_files).with(node_test_file_paths).and_return(unexecuted_test_files)
-        end
-
-        context 'when there are no unexecuted test files' do
-          let(:unexecuted_test_files) { [] }
-
-          it { expect(subject).to be_nil }
-        end
-
-        context 'when there are unexecuted test files' do
-          let(:unexecuted_test_files) { ['b_spec.rb', 'c_spec.rb'] }
-
-          it 'returns a warning' do
-            expect(subject).to eq 'Unexecuted tests on this CI node (including pending tests): b_spec.rb c_spec.rb'
-          end
+        it 'returns a warning message' do
+          expect(subject).to eq 'Unexecuted tests on this CI node (including pending tests): b_spec.rb c_spec.rb'
         end
       end
     end

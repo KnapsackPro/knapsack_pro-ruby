@@ -54,7 +54,9 @@ module KnapsackPro
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
 
-            message = @rspec_pure.exit_summary(@node_test_file_paths)
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            unexecuted_test_files = time_tracker&.unexecuted_test_files(@node_test_file_paths) || []
+            message = @rspec_pure.exit_summary(unexecuted_test_files)
             KnapsackPro.logger.warn(message) if message
 
             exit_code = @rspec_pure.error_exit_code(@rspec_runner.knapsack__error_exit_code)
