@@ -27,14 +27,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       spec_item.path
     end
 
-    mock_spec_batches(
+    stub_spec_batches(
       spec_batches.map { _1.map(&:path) }
     )
 
     yield
   end
 
-  def mock_spec_batches(batched_tests)
+  def stub_spec_batches(batched_tests)
     ENV['TEST__SPEC_BATCHES'] = batched_tests.to_json
   end
 
@@ -1694,7 +1694,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_spec_batches([
+        stub_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -1791,7 +1791,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_spec_batches([
+        stub_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -1870,7 +1870,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_spec_batches([
+        stub_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -1970,7 +1970,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_spec_batches([
+        stub_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -2078,7 +2078,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_spec_batches([
+        stub_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
