@@ -8,7 +8,7 @@ ENV['KNAPSACK_PRO_TEST_FILE_PATTERN'] = "spec_integration/**{,/*/**}/*_spec.rb"
 
 RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
-BATCHED_TESTS = JSON.load(ENV.fetch('TEST__SPEC_BATCHES'))
+SPEC_BATCHES = JSON.load(ENV.fetch('TEST__SPEC_BATCHES'))
 
 class IntegrationTestLogger
   def self.log(message)
@@ -21,7 +21,7 @@ module KnapsackProExtensions
     def test_file_paths(can_initialize_queue, executed_test_files)
       @batch_index ||= 0
       last_batch = []
-      batches = [*BATCHED_TESTS, last_batch]
+      batches = [*SPEC_BATCHES, last_batch]
       tests = batches[@batch_index]
       @batch_index += 1
 
