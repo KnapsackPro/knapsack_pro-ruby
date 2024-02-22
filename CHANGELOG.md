@@ -20,8 +20,8 @@
     __After:__<br>
     The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
 
-* RSpec recommended changes in your project:
-  * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports. The `KnapsackPro::Hooks::Queue.after_subset_queue` hook is no longer needed to generate a valid XML/JSON report.
+* Recommended RSpec changes in your project:
+  * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports:
 
     ```ruby
     # REMOVE THE FOLLOWING CODE
