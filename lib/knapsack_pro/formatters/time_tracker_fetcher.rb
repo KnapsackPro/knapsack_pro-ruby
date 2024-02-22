@@ -9,6 +9,12 @@ module KnapsackPro
           .formatters
           .find { |f| f.class.to_s == "KnapsackPro::Formatters::TimeTracker" }
       end
+
+      def self.unexecuted_test_files(scheduled_paths)
+        time_tracker = call
+        return [] unless time_tracker
+        time_tracker.unexecuted_test_files(scheduled_paths)
+      end
     end
   end
 end

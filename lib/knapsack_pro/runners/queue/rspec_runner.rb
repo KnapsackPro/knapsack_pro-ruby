@@ -171,7 +171,7 @@ module KnapsackPro
         end
 
         def unexecuted_test_files
-          KnapsackPro::Formatters::TimeTrackerFetcher.call&.unexecuted_test_files(@node_test_file_paths) || []
+          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_files(@node_test_file_paths)
         end
       end
     end
