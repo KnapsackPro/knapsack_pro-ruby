@@ -35,10 +35,8 @@ module KnapsackPro
         def args_with_seed_option_added_when_viable(seed, args)
           order_option = @adapter_class.order_option(args)
 
-          if order_option
-            return args unless order_option.include?('rand')
-            return args if order_option.to_s.split(':')[1]
-          end
+          return args if order_option && !order_option.include?('rand')
+          return args if order_option && order_option.to_s.split(':')[1]
 
           return args unless seed.used?
 
