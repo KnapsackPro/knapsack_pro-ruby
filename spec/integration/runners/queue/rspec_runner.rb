@@ -29,7 +29,7 @@ module KnapsackProExtensions
         IntegrationTestLogger.log("Mocked tests from the Queue API: #{tests.inspect}")
       end
 
-      return tests
+      tests
     end
   end
 
