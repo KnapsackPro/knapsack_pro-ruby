@@ -2,15 +2,8 @@
 
 module KnapsackPro
   module Extensions
-    # Knapsack extension on top of RSpec methods.
-    #
-    # You should use methods with the `knapsack__` prefix.
-    # The methods should hide public and private RSpec methods, as well as a complex chain of internal RSpec methods.
-    # You don't break the Law of Demeter when you use a `knapsack__` method. You can use complex or chained internal RSpec methods that are hidden inside of a `knapsack__` method.
-    #
-    # Often, the structure of the `knapsack__` method is inspired by an existing RSpec method. The `knapsack__` method should have a similar structure to the original RSpec method.
-    # It should be easy to see a code difference when a new RSpec version is released.
-    # Please use permalinks to RSpec source code in your comments when you create a new `knapsack__` method.
+    # Facade to abstract calls to internal RSpec methods.
+    # To allow comparing the monkey patch with the original RSpec code, keep a similar method structure and permalink to the source.
     module RSpecExtension
       Seed = Struct.new(:value, :used?)
 
