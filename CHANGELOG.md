@@ -37,9 +37,7 @@
     end
     ```
 
-    Reference in [docs](https://docs.knapsackpro.com/ruby/rspec/#formatters-rspec_junit_formatter-json).
-
-    See [docs](https://docs.knapsackpro.com/ruby/circleci/) if you use CircleCI.
+    Learn more about [using Knapsack Pro with RSpec formatters](https://docs.knapsackpro.com/ruby/rspec/#formatters-rspec_junit_formatter-json) and [using Knapsack Pro with CircleCI](https://docs.knapsackpro.com/ruby/circleci/) in the docs.
 
   * Replace the following if you are using Queue Mode and have a version of the `percy-capybara` gem that is older than version `4`:
 
