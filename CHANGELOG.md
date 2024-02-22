@@ -4,7 +4,7 @@
 
 * __(breaking change)__ RSpec in Queue Mode:
   * The default for `KNAPSACK_PRO_LOG_LEVEL` is `info` instead of `debug`.
-  * The RSpec `before(:suite)` and `after(:suite)` hooks change:
+  * The RSpec `before(:suite)` and `after(:suite)` hooks changed:
 
     __Before:__<br>
     The `before(:suite)` and `after(:suite)` hooks are executed multiple times. Each time for a set of tests fetched from Knapsack Pro Queue API.
