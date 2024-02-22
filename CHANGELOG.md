@@ -84,7 +84,7 @@
     bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
     ```
 
-  * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
+  * Respect the `--fail-fast` option and show a warning in the Knapsack Pro log.
 
   * Ignore the `fail_if_no_examples` option in Queue Mode:
     * A late CI node, started after all tests were executed by other nodes, is expected to receive an empty batch.
