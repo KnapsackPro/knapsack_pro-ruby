@@ -62,8 +62,6 @@
 
 * RSpec improvements in Queue Mode:
   * Termination signals (`HUP`, `INT`, `TERM`, `ABRT`, `QUIT`, `USR1`, and `USR2`) are handled earlier: the process will terminate before the next top-level example group (`describe` or `context`) instead of waiting for the next Knapsack Pro batch of tests.
-    * It uses `1` as a default exit code when the process is terminated.
-    * Or, it uses a custom exit code defined by the `--error-exit-code` option.
 
   * Respect the `--error-exit-code` option. It sets a custom exit code (instead of `1`) when RSpec fails outside an example (e.g. lack of memory, termination signal).
 
