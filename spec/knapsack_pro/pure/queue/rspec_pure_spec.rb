@@ -7,8 +7,6 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
 
   let(:rspec_pure) { described_class.new(adapter_class) }
 
-  before do
-  end
 
   describe '#add_knapsack_pro_formatters_to' do
     subject { rspec_pure.add_knapsack_pro_formatters_to(spec_opts) }
