@@ -86,9 +86,9 @@
 
   * Respect the `--fail-fast` option and show the warning in the Knapsack Pro log.
 
-  * Ignore the `fail_if_no_examples` option in Queue Mode due to the following reasons.
-    * A late CI node can start after other CI nodes already executed tests. It is expected no examples would run in such a scenario.
-    * RSpec should not fail if a batch of tests fetched from the Queue API contains test files without any test examples, such as when the contents of a spec file have been commented out. In such cases, another batch of tests should be fetched from the Queue API to continue test execution.
+  * Ignore the `fail_if_no_examples` option in Queue Mode:
+    * A late CI node, started after all tests were executed by other nodes, is expected to receive an empty batch.
+    * A batch could contain tests with no examples (e.g. commented out)
 
   * Raise an exception if the deprecated `run_all_when_everything_filtered` option is detected. [See docs](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed).
 
