@@ -8,7 +8,7 @@ ENV['KNAPSACK_PRO_TEST_FILE_PATTERN'] = "spec_integration/**{,/*/**}/*_spec.rb"
 
 RSPEC_OPTIONS = ENV.fetch('TEST__RSPEC_OPTIONS')
 SHOW_DEBUG_LOG = ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
-BATCHED_TESTS = JSON.load(ENV.fetch('TEST__BATCHED_TESTS'))
+BATCHED_TESTS = JSON.load(ENV.fetch('TEST__SPEC_BATCHES'))
 
 class IntegrationTestLogger
   def self.log(message)

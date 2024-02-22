@@ -15,27 +15,27 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   # @param rspec_options String
-  # @param batched_spec_items Array[Array[String]]
-  def run_specs(spec_helper, rspec_options, batched_spec_items)
+  # @param spec_batches Array[Array[String]]
+  def run_specs(spec_helper, rspec_options, spec_batches)
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
 
     spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
     File.open(spec_helper_path, 'w') { |file| file.write(spec_helper) }
 
-    paths = batched_spec_items.flatten.map do |spec_item|
+    paths = spec_batches.flatten.map do |spec_item|
       File.open(spec_item.path, 'w') { |file| file.write(spec_item.content) }
       spec_item.path
     end
 
-    mock_batched_tests(
-      batched_spec_items.map { _1.map(&:path) }
+    mock_spec_batches(
+      spec_batches.map { _1.map(&:path) }
     )
 
     yield
   end
 
-  def mock_batched_tests(batched_tests)
-    ENV['TEST__BATCHED_TESTS'] = batched_tests.to_json
+  def mock_spec_batches(batched_tests)
+    ENV['TEST__SPEC_BATCHES'] = batched_tests.to_json
   end
 
   # @param test_file_paths Array[String]
@@ -1695,7 +1695,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_batched_tests([
+        mock_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -1792,7 +1792,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_batched_tests([
+        mock_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -1871,7 +1871,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_batched_tests([
+        mock_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -1971,7 +1971,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_batched_tests([
+        mock_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
@@ -2079,7 +2079,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           "#{spec_a.path}[1:1]",
           "#{spec_a.path}[1:2]",
         ])
-        mock_batched_tests([
+        mock_spec_batches([
           ["#{spec_a.path}[1:1]", spec_b.path],
           ["#{spec_a.path}[1:2]", spec_c.path],
         ])
