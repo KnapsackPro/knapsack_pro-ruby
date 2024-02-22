@@ -2,11 +2,8 @@ require(KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker')
 require(KnapsackPro.root + '/lib/knapsack_pro/extensions/rspec_extension')
 
 describe KnapsackPro::Pure::Queue::RSpecPure do
-  let(:adapter_class) { KnapsackPro::Adapters::RSpecAdapter }
   let(:time_tracker_fetcher) { KnapsackPro::Formatters::TimeTrackerFetcher }
-
-  let(:rspec_pure) { described_class.new(adapter_class) }
-
+  let(:rspec_pure) { described_class.new }
 
   describe '#add_knapsack_pro_formatters_to' do
     subject { rspec_pure.add_knapsack_pro_formatters_to(spec_opts) }
@@ -57,8 +54,9 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
   end
 
   describe '#args_with_seed_option_added_when_viable' do
+    let(:order_option) { KnapsackPro::Adapters::RSpecAdapter.order_option(args) }
 
-    subject { rspec_pure.args_with_seed_option_added_when_viable(seed, args) }
+    subject { rspec_pure.args_with_seed_option_added_when_viable(order_option, seed, args) }
 
     context 'when the order option is not random' do
       let(:args) { ['--order', 'defined'] }
@@ -120,10 +118,11 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
   end
 
   describe '#prepare_cli_args' do
-    subject { rspec_pure.prepare_cli_args(args, test_dir) }
+    subject { rspec_pure.prepare_cli_args(args, has_format_option, test_dir) }
 
     context 'when no args' do
       let(:args) { nil }
+      let(:has_format_option) { false }
       let(:test_dir) { 'spec' }
 
       it 'adds the default progress formatter and the default path and the time tracker formatter' do
@@ -137,6 +136,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
 
     context 'when args are present and a custom test directory is set' do
       let(:args) { '--color --profile' }
+      let(:has_format_option) { false }
       let(:test_dir) { 'custom_spec_dir' }
 
       it do
@@ -150,11 +150,12 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
       end
     end
 
-    context 'when args are present and the format option is present' do
+    context 'when args are present and has format option' do
       let(:args) { '--color --profile --format d' }
+      let(:has_format_option) { true }
       let(:test_dir) { 'spec' }
 
-      it 'uses the format option instead of the default formatter' do
+      it 'uses the format option from args instead of the default formatter' do
         expect(subject).to eq [
           '--color',
           '--profile',

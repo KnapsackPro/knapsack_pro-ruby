@@ -16,7 +16,7 @@ module KnapsackPro
 
           rspec_pure = KnapsackPro::Pure::Queue::RSpecPure.new
 
-          queue_runner = new(rspec_pure.adapter_class, rspec_pure, args, stream_error, stream_out)
+          queue_runner = new(KnapsackPro::Adapters::RSpecAdapter, rspec_pure, args, stream_error, stream_out)
           queue_runner.run
         end
 
@@ -24,7 +24,8 @@ module KnapsackPro
           super(adapter_class)
           @adapter_class = adapter_class
           @rspec_pure = rspec_pure
-          @cli_args = rspec_pure.prepare_cli_args(args, test_dir)
+          has_format_option = @adapter_class.has_format_option?((args || '').split)
+          @cli_args = rspec_pure.prepare_cli_args(args, has_format_option, test_dir)
           @stream_error = stream_error
           @stream_out = stream_out
           @node_test_file_paths = []
@@ -150,13 +151,15 @@ module KnapsackPro
         end
 
         def log_rspec_batch_command(test_file_paths)
-          printable_args = @rspec_pure.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed, @cli_args)
+          order_option = @adapter_class.order_option(@cli_args)
+          printable_args = @rspec_pure.args_with_seed_option_added_when_viable(order_option, @rspec_runner.knapsack__seed, @cli_args)
           messages = @rspec_pure.rspec_command(printable_args, test_file_paths, :batch_finished)
           log_info_messages(messages)
         end
 
         def log_rspec_queue_command
-          printable_args = @rspec_pure.args_with_seed_option_added_when_viable(@rspec_runner.knapsack__seed, @cli_args)
+          order_option = @adapter_class.order_option(@cli_args)
+          printable_args = @rspec_pure.args_with_seed_option_added_when_viable(order_option, @rspec_runner.knapsack__seed, @cli_args)
           messages = @rspec_pure.rspec_command(printable_args, @node_test_file_paths, :queue_finished)
           log_info_messages(messages)
         end

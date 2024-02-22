@@ -9,10 +9,7 @@ module KnapsackPro
           'KnapsackPro::Formatters::TimeTracker',
         ]
 
-        attr_reader :adapter_class
-
-        def initialize(adapter_class = KnapsackPro::Adapters::RSpecAdapter, time_tracker_fetcher = KnapsackPro::Formatters::TimeTrackerFetcher)
-          @adapter_class = adapter_class
+        def initialize(time_tracker_fetcher = KnapsackPro::Formatters::TimeTrackerFetcher)
           @time_tracker_fetcher = time_tracker_fetcher
         end
 
@@ -32,9 +29,7 @@ module KnapsackPro
           rspec_error_exit_code || FAILURE_EXIT_CODE
         end
 
-        def args_with_seed_option_added_when_viable(seed, args)
-          order_option = @adapter_class.order_option(args)
-
+        def args_with_seed_option_added_when_viable(order_option, seed, args)
           return args if order_option && !order_option.include?('rand')
           return args if order_option && order_option.to_s.split(':')[1]
 
@@ -43,9 +38,9 @@ module KnapsackPro
           args + ['--seed', seed.value]
         end
 
-        def prepare_cli_args(args, test_dir)
+        def prepare_cli_args(args, has_format_option, test_dir)
           (args || '').split
-            .yield_self { args_with_at_least_one_formatter(_1) }
+            .yield_self { args_with_at_least_one_formatter(_1, has_format_option) }
             .yield_self { args_with_default_options(_1, test_dir) }
         end
 
@@ -82,8 +77,8 @@ module KnapsackPro
 
         private
 
-        def args_with_at_least_one_formatter(cli_args)
-          return cli_args if @adapter_class.has_format_option?(cli_args)
+        def args_with_at_least_one_formatter(cli_args, has_format_option)
+          return cli_args if has_format_option
 
           cli_args + ['--format', 'progress']
         end
