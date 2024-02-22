@@ -25,6 +25,7 @@
 
     ```ruby
     # REMOVE THE FOLLOWING CODE
+
     # spec_helper.rb or rails_helper.rb
     TMP_REPORT = "tmp/rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
     FINAL_REPORT = "tmp/final_rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
