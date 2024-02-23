@@ -36,5 +36,5 @@ Gemfile.lock
 .rvmrc
 
 # dynamically generated specs
-spec/knapsack_pro/formatters/time_tracker*_spec.rb
+spec/knapsack_pro/formatters/tmp_time_tracker*_spec.rb
 spec_integration/

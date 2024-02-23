@@ -382,7 +382,7 @@ class TestTimeTracker
 
   def run_specs(specs)
     files = Array(specs).map.with_index do |spec, i|
-      file = Tempfile.new(["time_tracker_#{i}", "_spec.rb"], "./spec/knapsack_pro/formatters/")
+      file = Tempfile.new(["tmp_time_tracker_#{i}", "_spec.rb"], "./spec/knapsack_pro/formatters/")
       file.write(spec)
       file.rewind
       file
