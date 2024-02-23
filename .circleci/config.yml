@@ -37,7 +37,8 @@ commands:
             fi
       - restore_cache:
           keys:
-          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>
+          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-
           - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-
           - v1-bundler-rails-
       - run:
@@ -48,12 +49,13 @@ commands:
       - save_cache:
           paths:
             - << parameters.path >>/vendor/bundle
-          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-<< parameters.ruby >>
+          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
 
 jobs:
   unit:
     parallelism: 1
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     docker:
       - image: cimg/ruby:3.2
     steps:
@@ -63,9 +65,51 @@ jobs:
       - run: bundle exec rspec spec
       - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
 
-  integration-regular-rspec:
+  integration-rspec:
+    parallelism: 1
+    working_directory: ~/knapsack_pro-ruby
+    resource_class: small
+    parameters:
+      ruby:
+        type: string
+      rspec:
+        type: string
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>
+    steps:
+      - checkout
+      - run:
+          command: |
+            if [[ "<< parameters.rspec >>" != "" ]]; then
+              sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
+              echo "Updated RSpec version in Gemfile"
+            fi
+      - restore_cache:
+          keys:
+          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-
+          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-
+          - v1-bundler-gem-
+      - run:
+          command: |
+            bundle config set --local path './vendor/bundle'
+            bundle install --jobs=4 --retry=3
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+      - run:
+          command: |
+            ruby --version
+            bundle exec rspec --version
+            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
+            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+      - run: bundle exec rspec spec/integration/runners/queue/rspec_runner_spec.rb
+
+  e2e-regular-rspec:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     parameters:
       ruby:
         type: string
@@ -122,8 +166,16 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake knapsack_pro:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split custom files by test examples ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/features/calculator_spec.rb"
+            bundle exec rake knapsack_pro:rspec
 
-  integration-queue-rspec:
+  e2e-queue-rspec:
     parameters:
       ruby:
         type: string
@@ -131,6 +183,7 @@ jobs:
         type: string
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
         environment:
@@ -216,9 +269,10 @@ jobs:
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
             bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
 
-  integration-regular-minitest:
+  e2e-regular-minitest:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     parameters:
       ruby:
         type: string
@@ -255,12 +309,13 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
             bundle exec rake knapsack_pro:minitest[--verbose]
 
-  integration-queue-minitest:
+  e2e-queue-minitest:
     parameters:
       ruby:
         type: string
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
+    resource_class: small
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
         environment:
@@ -307,25 +362,31 @@ workflows:
   tests:
     jobs:
       - unit
-      - integration-regular-rspec:
-          name: integration-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+      - integration-rspec:
+          name: integration__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.0", "3.1", "3.2", "3.3"]
               rspec: ["3.10.2", "3.11.0", "3.12.2"]
-      - integration-queue-rspec:
-          name: integration-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+      - e2e-regular-rspec:
+          name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.0", "3.1", "3.2", "3.3"]
               rspec: ["3.10.2", "3.11.0", "3.12.2"]
-      - integration-regular-minitest:
-          name: integration-regular__ruby-<< matrix.ruby >>__minitest
+      - e2e-queue-rspec:
+          name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.0", "3.1", "3.2", "3.3"]
-      - integration-queue-minitest:
-          name: integration-queue__ruby-<< matrix.ruby >>__minitest
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+      - e2e-regular-minitest:
+          name: e2e-regular__ruby-<< matrix.ruby >>__minitest
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
+      - e2e-queue-minitest:
+          name: e2e-queue__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
               ruby: ["3.0", "3.1", "3.2", "3.3"]

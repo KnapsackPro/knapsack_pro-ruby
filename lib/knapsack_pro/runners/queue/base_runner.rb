@@ -4,6 +4,7 @@ module KnapsackPro
   module Runners
     module Queue
       class BaseRunner
+        TerminationError = Class.new(StandardError)
         TERMINATION_SIGNALS = %w(HUP INT TERM ABRT QUIT USR1 USR2)
 
         @@terminate_process = false
@@ -42,11 +43,15 @@ module KnapsackPro
         end
 
         def self.handle_signal!
-          raise 'Knapsack Pro process was terminated!' if @@terminate_process
+          raise TerminationError.new('Knapsack Pro process was terminated!') if @@terminate_process
         end
 
         def self.set_terminate_process
           @@terminate_process = true
+        end
+
+        def set_terminate_process
+          self.class.set_terminate_process
         end
 
         def trap_signals

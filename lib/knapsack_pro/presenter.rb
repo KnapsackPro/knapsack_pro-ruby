@@ -6,7 +6,7 @@ module KnapsackPro
       def global_time(time = nil)
         time = KnapsackPro.tracker.global_time if time.nil?
         global_time = pretty_seconds(time)
-        "Global time execution for tests: #{global_time}"
+        "Global test execution duration: #{global_time}"
       end
 
       def pretty_seconds(seconds)

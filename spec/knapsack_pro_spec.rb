@@ -24,7 +24,7 @@ describe KnapsackPro do
           })
 
           expect(Logger).to receive(:new).with('log/knapsack_pro_node_1.log').and_return(logger)
-          expect(logger).to receive(:level=).with(Logger::DEBUG)
+          expect(logger).to receive(:level=).with(Logger::INFO)
           expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
         end
 
@@ -38,7 +38,7 @@ describe KnapsackPro do
           })
 
           expect(Logger).to receive(:new).with('log/knapsack_pro_node_0.log').and_return(logger)
-          expect(logger).to receive(:level=).with(Logger::DEBUG)
+          expect(logger).to receive(:level=).with(Logger::INFO)
           expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
         end
 
@@ -51,7 +51,7 @@ describe KnapsackPro do
 
       before do
         expect(Logger).to receive(:new).with(STDOUT).and_return(logger)
-        expect(logger).to receive(:level=).with(Logger::DEBUG)
+        expect(logger).to receive(:level=).with(Logger::INFO)
         expect(KnapsackPro::LoggerWrapper).to receive(:new).with(logger).and_return(logger_wrapper)
       end
 

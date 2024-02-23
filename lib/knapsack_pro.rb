@@ -82,6 +82,7 @@ require_relative 'knapsack_pro/crypto/encryptor'
 require_relative 'knapsack_pro/crypto/branch_encryptor'
 require_relative 'knapsack_pro/crypto/decryptor'
 require_relative 'knapsack_pro/crypto/digestor'
+require_relative 'knapsack_pro/pure/queue/rspec_pure'
 
 require 'knapsack_pro/railtie' if defined?(Rails::Railtie)
 

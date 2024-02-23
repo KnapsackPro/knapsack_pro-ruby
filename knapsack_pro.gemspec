@@ -6,10 +6,11 @@ require 'knapsack_pro/version'
 Gem::Specification.new do |spec|
   spec.name          = 'knapsack_pro'
   spec.version       = KnapsackPro::VERSION
+  spec.required_ruby_version = '>= 2.7.0'
   spec.authors       = ['ArturT']
   spec.email         = ['support@knapsackpro.com']
   spec.summary       = %q{Knapsack Pro splits tests across parallel CI nodes and ensures each parallel job finish work at a similar time.}
-  spec.description   = %q{Run tests in parallel across CI server nodes based on tests execution time. Split tests in a dynamic way to ensure parallel jobs are done at a similar time. Thanks to that your CI build time is as fast as possible. It works with many CI providers.}
+  spec.description   = %q{Knapsack Pro wraps your current test runner(s) and works with your existing CI infrastructure to parallelize tests optimally. It dynamically splits your tests based on up-to-date test execution data. It's designed from the ground up for CI and supports all of them.}
   spec.homepage      = 'https://knapsackpro.com'
   spec.license       = 'MIT'
   spec.metadata    = {

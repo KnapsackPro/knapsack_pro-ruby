@@ -159,7 +159,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
       it do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with('Test suite time execution recording enabled.')
+        expect(logger).to receive(:debug).with('Regular Mode enabled.')
       end
       it { expect(subject).to receive(:bind_time_tracker) }
       it { expect(subject).to receive(:bind_save_report) }
@@ -168,24 +168,22 @@ describe KnapsackPro::Adapters::BaseAdapter do
     context 'when queue recording enabled' do
       let(:queue_recording_enabled?) { true }
 
-      before do
-        allow(subject).to receive(:bind_before_queue_hook)
-        allow(subject).to receive(:bind_time_tracker)
-      end
-
-      it do
+      it 'calls queue hooks in proper order before binding time tracker' do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with('Test suite time execution queue recording enabled.')
+        expect(logger).to receive(:debug).with('Queue Mode enabled.')
+
+        expect(subject).to receive(:bind_before_queue_hook).ordered
+        expect(subject).to receive(:bind_after_queue_hook).ordered
+        expect(subject).to receive(:bind_time_tracker).ordered
       end
-      it { expect(subject).to receive(:bind_before_queue_hook) }
-      it { expect(subject).to receive(:bind_time_tracker) }
     end
 
     context 'when recording disabled' do
-      it { expect(subject).not_to receive(:bind_time_tracker) }
       it { expect(subject).not_to receive(:bind_save_report) }
       it { expect(subject).not_to receive(:bind_before_queue_hook) }
+      it { expect(subject).not_to receive(:bind_after_queue_hook) }
+      it { expect(subject).not_to receive(:bind_time_tracker) }
     end
   end
 
@@ -209,6 +207,14 @@ describe KnapsackPro::Adapters::BaseAdapter do
     it do
       expect {
         subject.bind_before_queue_hook
+      }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe '#bind_after_queue_hook' do
+    it do
+      expect {
+        subject.bind_after_queue_hook
       }.to raise_error(NotImplementedError)
     end
   end

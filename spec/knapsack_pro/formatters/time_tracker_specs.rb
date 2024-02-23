@@ -4,6 +4,7 @@
 require 'rspec/core'
 require 'knapsack_pro'
 require 'stringio'
+require 'tempfile'
 require_relative '../../../lib/knapsack_pro/formatters/time_tracker'
 
 class TestTimeTracker
@@ -327,24 +328,6 @@ class TestTimeTracker
     end
   end
 
-  def test_batch_duration
-    KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
-      false
-    end
-
-    spec = <<~SPEC
-      describe "KnapsackPro::Formatters::TimeTracker" do
-        it do
-          expect(1).to eq 1
-        end
-      end
-    SPEC
-
-    run_specs(spec) do |_, _, time_tracker|
-      raise unless time_tracker.batch_duration > 0.0
-    end
-  end
-
   def test_unexecuted_test_files
     KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
       false
@@ -372,14 +355,6 @@ class TestTimeTracker
     KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
       false
     end
-    KnapsackPro::Formatters::TimeTracker.class_eval do
-      alias_method :original_stop, :stop
-
-      # In Regular Mode, #subset is called before #stop.
-      # This test makes #stop a noop to simulate that behavior.
-      define_method(:stop) do |_|
-      end
-    end
 
     spec = <<~SPEC
       describe "KnapsackPro::Formatters::TimeTracker" do
@@ -401,22 +376,19 @@ class TestTimeTracker
       raise unless files[0]["time_execution"] > 0.10
       raise unless files[0]["time_execution"] < 0.15
     end
-
-  ensure
-    KnapsackPro::Formatters::TimeTracker.class_eval do
-      undef :stop
-      alias_method :stop, :original_stop
-    end
   end
 
   private
 
   def run_specs(specs)
-    paths = Array(specs).map.with_index do |spec, i|
-      path = "spec/knapsack_pro/formatters/#{i}_#{SecureRandom.uuid}_spec.rb"
-      File.open(path, 'w') { |file| file.write(spec) }
-      path
+    files = Array(specs).map.with_index do |spec, i|
+      file = Tempfile.new(["time_tracker_#{i}", "_spec.rb"], "./spec/knapsack_pro/formatters/")
+      file.write(spec)
+      file.rewind
+      file
     end
+
+    paths = files.map(&:path).map { _1.sub("./", "") }
 
     options = ::RSpec::Core::ConfigurationOptions.new([
       "--format", KnapsackPro::Formatters::TimeTracker.to_s,
@@ -436,7 +408,6 @@ class TestTimeTracker
     yield(paths, times, time_tracker)
 
   ensure
-    paths.each { |path| File.delete(path) }
     # Need to reset because RSpec keeps reusing the same instance.
     time_tracker.instance_variable_set(:@queue, {}) if time_tracker
     time_tracker.instance_variable_set(:@started, time_tracker.send(:now)) if time_tracker

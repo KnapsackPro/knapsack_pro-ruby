@@ -1,5 +1,92 @@
 # Changelog
 
+### 7.0.0
+
+* __(breaking change)__ RSpec in Queue Mode:
+  * The default for `KNAPSACK_PRO_LOG_LEVEL` is `info` instead of `debug`.
+  * The RSpec `before(:suite)` and `after(:suite)` hooks changed:
+
+    __Before:__<br>
+    The `before(:suite)` and `after(:suite)` hooks were executed multiple times. Each time for a batch of tests fetched from Knapsack Pro Queue API.
+
+    __After:__<br>
+    The `before(:suite)` and `after(:suite)` hooks are executed only once: `before(:suite)` is executed before starting tests, `after(:suite)` is executed after all tests are completed. (It is what you would expect from RSpec).
+
+  * The `KnapsackPro::Hooks::Queue.after_queue` hook change:
+
+    __Before:__<br>
+    The `KnapsackPro::Hooks::Queue.after_queue` hook is executed outside of the `after(:suite)` hook.
+
+    __After:__<br>
+    The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
+
+* Recommended RSpec changes in your project:
+  * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports:
+
+    ```ruby
+    # REMOVE THE FOLLOWING CODE
+
+    # spec_helper.rb or rails_helper.rb
+    TMP_REPORT = "tmp/rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
+    FINAL_REPORT = "tmp/final_rspec_#{ENV['KNAPSACK_PRO_CI_NODE_INDEX']}.xml"
+
+    KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+      if File.exist?(TMP_REPORT)
+        FileUtils.mv(TMP_REPORT, FINAL_REPORT)
+      end
+    end
+    ```
+
+    Learn more about [using Knapsack Pro with RSpec formatters](https://docs.knapsackpro.com/ruby/rspec/#formatters-rspec_junit_formatter-json) and [using Knapsack Pro with CircleCI](https://docs.knapsackpro.com/ruby/circleci/) in the docs.
+
+  * Replace the following code if you are using Queue Mode and the `percy-capybara` gem on a version older than 4:
+
+    Before:
+
+    ```ruby
+    KnapsackPro::Hooks::Queue.before_queue { |queue_id| Percy::Capybara.initialize_build }
+    KnapsackPro::Hooks::Queue.after_queue { |queue_id| Percy::Capybara.finalize_build }
+    ```
+
+    After:
+
+    ```ruby
+    # recommended
+    before(:suite) { Percy::Capybara.initialize_build }
+    after(:suite) { Percy::Capybara.finalize_build }
+    ```
+
+    Learn more about [using Knapsack Pro with Percy](https://docs.knapsackpro.com/ruby/hooks/#percy-capybara) in the docs.
+
+  * We are no longer modifying the default RSpec formatters in Queue Mode. You can remove the [`KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS`](https://docs.knapsackpro.com/ruby/reference/#knapsack_pro_modify_default_rspec_formatters-removed-rspec) environment variable from your CI config if you are using it.
+
+* RSpec improvements in Queue Mode:
+  * Termination signals (`HUP`, `INT`, `TERM`, `ABRT`, `QUIT`, `USR1`, and `USR2`) are handled earlier: the process will terminate before the next top-level example group (`describe` or `context`) instead of waiting for the next Knapsack Pro batch of tests.
+
+  * Respect the `--error-exit-code` option. It sets a custom exit code (instead of `1`) when RSpec fails outside an example (e.g. lack of memory, termination signal).
+
+    ```bash
+    bundle exec rake "knapsack_pro:queue:rspec[--error-exit-code 3]"
+    ```
+
+  * Respect the `--failure-exit-code` option. It sets a custom exit code for when any examples fail.
+
+    ```bash
+    bundle exec rake "knapsack_pro:queue:rspec[--failure-exit-code 2]"
+    ```
+
+  * Respect the `--fail-fast` option and show a warning in the Knapsack Pro log.
+
+  * Ignore the `fail_if_no_examples` option in Queue Mode:
+    * A late CI node, started after all tests were executed by other nodes, is expected to receive an empty batch.
+    * A batch could contain tests with no examples (e.g. commented out)
+
+  * Raise an exception if the [deprecated `run_all_when_everything_filtered`](https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed) option is detected.
+
+PR with the above changes: https://github.com/KnapsackPro/knapsack_pro-ruby/pull/237
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.4...v7.0.0
+
 ### 6.0.4
 
 * fix(minitest): avoid installing `at_exit` (that would result in an empty run of Minitest after Knapsack Pro is finished in Queue Mode)

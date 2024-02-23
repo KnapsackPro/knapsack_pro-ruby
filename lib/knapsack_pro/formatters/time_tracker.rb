@@ -9,24 +9,18 @@ module KnapsackPro
         :example_group_started,
         :example_started,
         :example_finished,
-        :example_group_finished,
-        :stop
+        :example_group_finished
 
       attr_reader :output # RSpec < v3.10.2
 
-      # Called at the beginning of each batch,
-      # but only the first instance of this class is used,
-      # so don't rely on the initializer to reset values.
       def initialize(_output)
         @output = StringIO.new
         @time_each = nil
         @time_all = nil
         @before_all = 0.0
         @group = {}
-        @batch = {}
-        @queue = {}
+        @paths = {}
         @suite_started = now
-        @batch_started = now
       end
 
       def example_group_started(notification)
@@ -47,21 +41,15 @@ module KnapsackPro
       def example_group_finished(notification)
         return unless top_level_group?(notification.group)
 
-        add_hooks_time(@group, @before_all, now - @time_all)
-        @batch = merge(@batch, @group)
+        after_all = @time_all.nil? ? 0.0 : now - @time_all
+        add_hooks_time(@group, @before_all, after_all)
         @before_all = 0.0
+        @paths = merge(@paths, @group)
         @group = {}
       end
 
-      # Called at the end of each batch
-      def stop(_notification)
-        @queue = merge(@queue, @batch)
-        @batch = {}
-        @batch_started = now
-      end
-
       def queue(scheduled_paths)
-        recorded_paths = @queue.values.map do |example|
+        recorded_paths = @paths.values.map do |example|
           KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
         end
 
@@ -69,13 +57,13 @@ module KnapsackPro
           object[path] = { path: path, time_execution: 0.0 }
         end
 
-        merge(@queue, missing).values.map do |example|
+        merge(@paths, missing).values.map do |example|
           example.transform_keys(&:to_s)
         end
       end
 
       def batch
-        @batch.values.map do |example|
+        @paths.values.map do |example|
           example.transform_keys(&:to_s)
         end
       end
@@ -84,17 +72,13 @@ module KnapsackPro
         now - @suite_started
       end
 
-      def batch_duration
-        now - @batch_started
-      end
-
       def unexecuted_test_files(scheduled_paths)
-        pending_paths = (@queue.values + @batch.values)
+        pending_paths = @paths.values
           .filter { |example| example[:time_execution] == 0.0 }
           .map { |example| example[:path] }
 
         not_run_paths = scheduled_paths -
-          (@queue.values + @batch.values)
+          @paths.values
           .map { |example| example[:path] }
 
         pending_paths + not_run_paths

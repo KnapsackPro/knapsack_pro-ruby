@@ -144,14 +144,6 @@ module KnapsackPro
           test_files_encrypted == 'true'
         end
 
-        def modify_default_rspec_formatters
-          ENV.fetch('KNAPSACK_PRO_MODIFY_DEFAULT_RSPEC_FORMATTERS', true)
-        end
-
-        def modify_default_rspec_formatters?
-          modify_default_rspec_formatters.to_s == 'true'
-        end
-
         def branch_encrypted
           ENV['KNAPSACK_PRO_BRANCH_ENCRYPTED']
         end
@@ -276,7 +268,7 @@ module KnapsackPro
         end
 
         def log_level
-          LOG_LEVELS[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::DEBUG
+          LOG_LEVELS[ENV['KNAPSACK_PRO_LOG_LEVEL'].to_s.downcase] || ::Logger::INFO
         end
 
         def log_dir
