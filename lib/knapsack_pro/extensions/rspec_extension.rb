@@ -54,7 +54,7 @@ module KnapsackPro
 
         # must be called after `Runner#knapsack__setup` that loads the `spec_helper.rb` configuration
         def knapsack__deprecated_run_all_when_everything_filtered_enabled?
-          !!(configuration.respond_to?(:run_all_when_everything_filtered) && configuration.run_all_when_everything_filtered)
+          configuration.respond_to?(:run_all_when_everything_filtered) && !!configuration.run_all_when_everything_filtered
         end
 
         def knapsack__seed
