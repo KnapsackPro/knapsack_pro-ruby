@@ -117,31 +117,52 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
   end
 
   describe '#prepare_cli_args' do
-    subject { rspec_pure.prepare_cli_args(args, has_format_option, test_dir) }
+    subject { rspec_pure.prepare_cli_args(args, has_format_option, has_require_rails_helper_option, rails_helper_exists, test_dir) }
 
     context 'when no args' do
       let(:args) { nil }
       let(:has_format_option) { false }
+      let(:has_require_rails_helper_option) { false }
       let(:test_dir) { 'spec' }
 
-      it 'adds the default progress formatter and the default path and the time tracker formatter' do
-        expect(subject).to eq [
-          '--format', 'progress',
-          '--default-path', 'spec',
-          '--format', 'KnapsackPro::Formatters::TimeTracker',
-        ]
+      context 'when rails_helper does not exist' do
+        let(:rails_helper_exists) { false }
+
+        it 'adds the default progress formatter, the default path and the time tracker formatter, does not add require rails_helper' do
+          expect(subject).to eq [
+            '--format', 'progress',
+            '--default-path', 'spec',
+            '--format', 'KnapsackPro::Formatters::TimeTracker',
+          ]
+        end
+      end
+
+      context 'when rails_helper exists' do
+        let(:rails_helper_exists) { true }
+
+        it 'adds the default progress formatter, require rails_helper, the default path and the time tracker formatter' do
+          expect(subject).to eq [
+            '--format', 'progress',
+            '--require', 'rails_helper',
+            '--default-path', 'spec',
+            '--format', 'KnapsackPro::Formatters::TimeTracker',
+          ]
+        end
       end
     end
 
     context 'when args are present and a custom test directory is set' do
-      let(:args) { '--color --profile' }
+      let(:args) { '--color --profile --require rails_helper' }
       let(:has_format_option) { false }
+      let(:has_require_rails_helper_option) { true }
+      let(:rails_helper_exists) { true }
       let(:test_dir) { 'custom_spec_dir' }
 
       it do
         expect(subject).to eq [
           '--color',
           '--profile',
+          '--require', 'rails_helper',
           '--format', 'progress',
           '--default-path', 'custom_spec_dir',
           '--format', 'KnapsackPro::Formatters::TimeTracker',
@@ -150,8 +171,10 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
     end
 
     context 'when args are present and has format option' do
-      let(:args) { '--color --profile --format d' }
+      let(:args) { '--color --profile --format d --require rails_helper' }
       let(:has_format_option) { true }
+      let(:has_require_rails_helper_option) { true }
+      let(:rails_helper_exists) { true }
       let(:test_dir) { 'spec' }
 
       it 'uses the format option from args instead of the default formatter' do
@@ -159,6 +182,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
           '--color',
           '--profile',
           '--format', 'd',
+          '--require', 'rails_helper',
           '--default-path', 'spec',
           '--format', 'KnapsackPro::Formatters::TimeTracker',
         ]

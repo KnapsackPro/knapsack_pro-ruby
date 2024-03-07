@@ -24,8 +24,11 @@ module KnapsackPro
           super(adapter_class)
           @adapter_class = adapter_class
           @rspec_pure = rspec_pure
-          has_format_option = @adapter_class.has_format_option?((args || '').split)
-          @cli_args = rspec_pure.prepare_cli_args(args, has_format_option, test_dir)
+          args_array = (args || '').split
+          has_format_option = @adapter_class.has_format_option?(args_array)
+          has_require_rails_helper_option = @adapter_class.has_require_rails_helper_option?(args_array)
+          rails_helper_exists = @adapter_class.rails_helper_exists?(test_dir)
+          @cli_args = rspec_pure.prepare_cli_args(args, has_format_option, has_require_rails_helper_option, rails_helper_exists, test_dir)
           @stream_error = stream_error
           @stream_out = stream_out
           @node_test_file_paths = []

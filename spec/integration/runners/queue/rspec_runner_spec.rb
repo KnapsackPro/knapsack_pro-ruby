@@ -32,6 +32,11 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     )
   end
 
+  def create_rails_helper_file(rails_helper)
+    rails_helper_path = "#{SPEC_DIRECTORY}/rails_helper.rb"
+    File.open(rails_helper_path, 'w') { |file| file.write(rails_helper) }
+  end
+
   def stub_spec_batches(batched_tests)
     ENV['TEST__SPEC_BATCHES'] = batched_tests.to_json
   end
@@ -322,6 +327,173 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('.'*8)
+
+      expect(actual.exit_code).to eq 0
+    end
+  end
+
+  context 'when rails_helper file does not exist' do
+    it 'does not require the rails_helper file when running RSpec' do
+      rspec_options = ''
+
+      spec_helper = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+      SPEC
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper, rspec_options, [
+        [spec_a, spec_b],
+        [spec_c],
+      ])
+
+      actual = subject
+
+      expect(actual.stdout.scan(/--require rails_helper/).size).to eq 0
+
+      expect(actual.exit_code).to eq 0
+    end
+  end
+
+  context 'when rails_helper file exists' do
+    it 'requires the rails_helper file when running RSpec and runs hooks defined within it' do
+      rspec_options = ''
+
+      spec_helper = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+      SPEC
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper, rspec_options, [
+        [spec_a, spec_b],
+        [spec_c],
+      ])
+
+      rails_helper = <<~SPEC
+      RSpec.configure do |config|
+        config.before(:suite) do
+          puts 'RSpec_before_suite_hook_from_rails_helper'
+        end
+        config.after(:suite) do
+          puts 'RSpec_after_suite_hook_from_rails_helper'
+        end
+      end
+      SPEC
+
+      create_rails_helper_file(rails_helper)
+
+      actual = subject
+
+      expect(actual.stdout.scan(/--require rails_helper/).size).to eq 3
+      expect(actual.stdout.scan(/RSpec_before_suite_hook_from_rails_helper/).size).to eq 1
+      expect(actual.stdout.scan(/RSpec_after_suite_hook_from_rails_helper/).size).to eq 1
+
+      expect(actual.exit_code).to eq 0
+    end
+
+    it 'runs suite hooks defined in rails_helper only once, even if file is required multiple times' do
+      rspec_options = ''
+
+      spec_helper = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+      SPEC
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        require 'rails_helper'
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        require 'rails_helper'
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper, rspec_options, [
+        [spec_a, spec_b],
+        [spec_c],
+      ])
+
+      rails_helper = <<~SPEC
+      RSpec.configure do |config|
+        config.before(:suite) do
+          puts 'RSpec_before_suite_hook_from_rails_helper'
+        end
+        config.after(:suite) do
+          puts 'RSpec_after_suite_hook_from_rails_helper'
+        end
+      end
+      SPEC
+
+      create_rails_helper_file(rails_helper)
+
+      actual = subject
+
+      expect(actual.stdout.scan(/RSpec_before_suite_hook_from_rails_helper/).size).to eq 1
+      expect(actual.stdout.scan(/RSpec_after_suite_hook_from_rails_helper/).size).to eq 1
 
       expect(actual.exit_code).to eq 0
     end
