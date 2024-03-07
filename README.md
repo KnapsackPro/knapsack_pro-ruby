@@ -74,30 +74,32 @@ Scripted tests can be found in the [Rails App With Knapsack Pro repository](http
 
 ### Publishing
 
-Update the version in `lib/knapsack_pro/version.rb` and `CHANGELOG.md`:
+1. Update the `CHANGELOG.md` as part of your PR.
+
+2. After your PR has been merged, update the gem version in `lib/knapsack_pro/version.rb` directly on the `master` branch:
 
 ```bash
 git commit -m "Bump version X.X.X"
 git push origin master
 ```
 
-Create a git tag for the release:
+3. Create a git tag for the release:
 
 ```bash
 git tag -a vX.X.X -m "Release vX.X.X"
 git push --tags
 ```
 
-Build the gem and publish it to RubyGems:
+4. Build the gem and publish it to RubyGems:
 
 ```bash
 gem build knapsack_pro.gemspec
 gem push knapsack_pro-X.X.X.gem
 ```
 
-Update the latest available gem version in `TestSuiteClientVersionChecker` for the Knapsack Pro API repository.
+5. Update the latest available gem version in `TestSuiteClientVersionChecker` for the Knapsack Pro API repository.
 
-Update the `knapsack_pro` gem version in:
+6. Update the `knapsack_pro` gem version in:
 
 - [Rails App With Knapsack Pro repository](https://github.com/KnapsackPro/rails-app-with-knapsack_pro)
 - Knapsack Pro API internal repository
