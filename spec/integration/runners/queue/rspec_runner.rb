@@ -26,7 +26,7 @@ module KnapsackProExtensions
       @batch_index += 1
 
       if SHOW_DEBUG_LOG
-        IntegrationTestLogger.log("Mocked tests from the Queue API: #{tests.inspect}")
+        IntegrationTestLogger.log("Stubbed tests from the Queue API: #{tests.inspect}")
       end
 
       tests
@@ -41,13 +41,13 @@ module KnapsackProExtensions
       end
 
       return unless SHOW_DEBUG_LOG
-      IntegrationTestLogger.log("Mocked the #{__method__} method")
+      IntegrationTestLogger.log("Stubbed the #{__method__} method")
     end
   end
 
   module RSpecAdapter
     def test_file_cases_for(slow_test_files)
-      IntegrationTestLogger.log("Mocked test file cases for slow test files: #{slow_test_files}")
+      IntegrationTestLogger.log("Stubbed test file cases for slow test files: #{slow_test_files}")
 
       test_file_paths = JSON.load(ENV.fetch('TEST__TEST_FILE_CASES_FOR_SLOW_TEST_FILES'))
       test_file_paths.map do |path|

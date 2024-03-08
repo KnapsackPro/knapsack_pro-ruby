@@ -38,7 +38,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   # @param test_file_paths Array[String]
   #   Example: ['spec_integration/a_spec.rb[1:1]']
-  def mock_test_cases_for_slow_test_files(test_file_paths)
+  def stub_test_cases_for_slow_test_files(test_file_paths)
     ENV['TEST__TEST_FILE_CASES_FOR_SLOW_TEST_FILES'] = test_file_paths.to_json
   end
 
@@ -1640,7 +1640,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
-      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
     end
@@ -1688,7 +1688,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       generate_specs(spec_helper_with_knapsack, rspec_options, [
         [spec_a, spec_b, spec_c]
       ])
-      mock_test_cases_for_slow_test_files([
+      stub_test_cases_for_slow_test_files([
         "#{spec_a.path}[1:1]",
         "#{spec_a.path}[1:2]",
       ])
@@ -1736,7 +1736,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
-      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
     end
@@ -1784,7 +1784,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       generate_specs(spec_helper_with_knapsack, rspec_options, [
         [spec_a, spec_b, spec_c]
       ])
-      mock_test_cases_for_slow_test_files([
+      stub_test_cases_for_slow_test_files([
         "#{spec_a.path}[1:1]",
         "#{spec_a.path}[1:2]",
       ])
@@ -1814,7 +1814,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
-      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
     end
@@ -1862,7 +1862,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       generate_specs(spec_helper_with_knapsack, rspec_options, [
         [spec_a, spec_b, spec_c]
       ])
-      mock_test_cases_for_slow_test_files([
+      stub_test_cases_for_slow_test_files([
         "#{spec_a.path}[1:1]",
         "#{spec_a.path}[1:2]",
       ])
@@ -1913,7 +1913,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
-      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
     end
@@ -1961,7 +1961,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       generate_specs(spec_helper_with_knapsack, rspec_options, [
         [spec_a, spec_b, spec_c]
       ])
-      mock_test_cases_for_slow_test_files([
+      stub_test_cases_for_slow_test_files([
         "#{spec_a.path}[1:1]",
         "#{spec_a.path}[1:2]",
       ])
@@ -2010,7 +2010,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
-      # remember to mock Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
     end
@@ -2068,7 +2068,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       generate_specs(spec_helper, rspec_options, [
         [spec_a, spec_b, spec_c]
       ])
-      mock_test_cases_for_slow_test_files([
+      stub_test_cases_for_slow_test_files([
         "#{spec_a.path}[1:1]",
         "#{spec_a.path}[1:2]",
       ])
