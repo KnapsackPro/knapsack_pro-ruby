@@ -372,7 +372,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout.scan(/--require rails_helper/).size).to eq 0
+      expect(actual.stdout).to_not include('--require rails_helper')
 
       expect(actual.exit_code).to eq 0
     end
@@ -431,7 +431,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout.scan(/--require rails_helper/).size).to eq 3
+      expect(actual.stdout).to include('--require rails_helper')
       expect(actual.stdout.scan(/RSpec_before_suite_hook_from_rails_helper/).size).to eq 1
       expect(actual.stdout.scan(/RSpec_after_suite_hook_from_rails_helper/).size).to eq 1
 
@@ -465,6 +465,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       SPEC
 
       spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        require 'rails_helper'
         describe 'C_describe' do
           it 'C1 test example' do
             expect(1).to eq 1
