@@ -52,6 +52,10 @@ module KnapsackPro
         !!parsed_options(cli_args)&.[](:formatters)
       end
 
+      def self.has_require_rails_helper_option?(cli_args)
+        (parsed_options(cli_args)&.[](:requires) || []).include?("rails_helper")
+      end
+
       def self.order_option(cli_args)
         parsed_options(cli_args)&.[](:order)
       end
@@ -74,6 +78,10 @@ module KnapsackPro
       def self.parse_file_path(id)
         # https://github.com/rspec/rspec-core/blob/1eeadce5aa7137ead054783c31ff35cbfe9d07cc/lib/rspec/core/example.rb#L122
         id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
+      end
+
+      def self.rails_helper_exists?(test_dir)
+        File.exist?("#{test_dir}/rails_helper.rb")
       end
 
       # private

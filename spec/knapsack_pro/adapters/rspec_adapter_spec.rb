@@ -187,6 +187,60 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
+  describe '.has_require_rails_helper_option?' do
+    subject { described_class.has_require_rails_helper_option?(cli_args) }
+
+    context 'when require option is provided as -r' do
+      let(:cli_args) { ['-r', 'rails_helper'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when require option is provided as --require' do
+      let(:cli_args) { ['--require', 'rails_helper'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when require option is provided without delimiter' do
+      let(:cli_args) { ['-rrails_helper'] }
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when require option is not provided' do
+      let(:cli_args) { ['--fake', 'value'] }
+
+      it { expect(subject).to be false }
+    end
+  end
+
+  describe '.rails_helper_exists?' do
+    subject { described_class.rails_helper_exists?(test_dir) }
+
+    let(:test_dir) { 'spec_fake' }
+
+    context 'when rails_helper exists' do
+      before do
+        File.open("#{test_dir}/rails_helper.rb", 'w')
+      end
+
+      after do
+        FileUtils.rm("#{test_dir}/rails_helper.rb")
+      end
+
+      it { expect(subject).to be true }
+    end
+
+    context 'when rails_helper does not exist' do
+      before do
+        FileUtils.rm_f("#{test_dir}/rails_helper.rb")
+      end
+
+      it { expect(subject).to be false }
+    end
+  end
+
   describe '.order_option' do
     subject { described_class.order_option(cli_args) }
 

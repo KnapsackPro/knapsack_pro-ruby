@@ -34,9 +34,10 @@ module KnapsackPro
           args + ['--seed', seed.value]
         end
 
-        def prepare_cli_args(args, has_format_option, test_dir)
+        def prepare_cli_args(args, has_format_option, has_require_rails_helper_option, rails_helper_exists, test_dir)
           (args || '').split
             .yield_self { args_with_at_least_one_formatter(_1, has_format_option) }
+            .yield_self { args_with_require_rails_helper_if_needed(_1, has_require_rails_helper_option, rails_helper_exists) }
             .yield_self { args_with_default_options(_1, test_dir) }
         end
 
@@ -73,6 +74,13 @@ module KnapsackPro
           return cli_args if has_format_option
 
           cli_args + ['--format', 'progress']
+        end
+
+        def args_with_require_rails_helper_if_needed(cli_args, has_require_rails_helper_option, rails_helper_exists)
+          return cli_args if has_require_rails_helper_option
+          return cli_args unless rails_helper_exists
+
+          cli_args + ['--require', 'rails_helper']
         end
 
         def args_with_default_options(cli_args, test_dir)

@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.0.1
+
+* fix(RSpec): conditionally adds `--require rails_helper` to cli arguments of `KnapsackPro::Runners::Queue::RSpecRunner`. Version 7.0.0 introduced some fundamental changes, namely fetching, loading and running batches of specs **after** executing suite hooks, so that such hooks are only ran once, not before every batch. As a result, if `rails_helper` is only required in spec files, which is the RSpec default, instead of e.g. in `.rspec`, then some `before(:suite)` hooks, e.g. defined by gems, are registered after suite hooks had already been executed by the test suite. By comparison, RSpec loads all the spec files **before** executing `before(:suite)` hooks.
+
+PR with the above changes: https://github.com/KnapsackPro/knapsack_pro-ruby/pull/243
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.0.0...v7.0.1
+
 ### 7.0.0
 
 * __(breaking change)__ RSpec in Queue Mode:
