@@ -411,9 +411,25 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
+      instance_double_spec = Spec.new('instance_double_spec.rb', <<~SPEC)
+        class MyModel
+          def is_happy
+            false
+          end
+        end
+
+        describe 'instance_double_describe' do
+          let(:my_happy_model) { instance_double(MyModel, is_happy: true) }
+
+          it 'instance_double test example' do
+            expect(my_happy_model.is_happy).to be_truthy
+          end
+        end
+      SPEC
+
       generate_specs(spec_helper, rspec_options, [
         [spec_a, spec_b],
-        [spec_c],
+        [spec_c, instance_double_spec],
       ])
 
       rails_helper = <<~SPEC
