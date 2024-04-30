@@ -1115,6 +1115,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       expect(actual.stdout).to include('B_describe')
       expect(actual.stdout).to include('An unexpected exception happened. RSpec cannot handle it. The exception: #<NoMemoryError: NoMemoryError>')
+      expect(actual.stdout).to include('Exception message: ')
+      expect(actual.stdout).to include('Exception backtrace: ')
       expect(actual.stdout).to_not include('B1 test example')
 
       expect(actual.stdout).to_not include('C1 test example')
