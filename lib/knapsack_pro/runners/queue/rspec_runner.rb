@@ -56,6 +56,8 @@ module KnapsackPro
             Kernel.exit(exit_code)
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
+            KnapsackPro.logger.error("Exception message: #{exception.message}")
+            KnapsackPro.logger.error("Exception backtrace: #{exception.backtrace.join("\n")}")
 
             message = @rspec_pure.exit_summary(unexecuted_test_files)
             KnapsackPro.logger.warn(message) if message
