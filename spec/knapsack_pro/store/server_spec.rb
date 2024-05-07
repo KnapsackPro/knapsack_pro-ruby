@@ -5,7 +5,7 @@ describe KnapsackPro::Store::Server do
       exit
     }
 
-    _server_uri = KnapsackPro::Store::Server.start_server
+    server_pid = KnapsackPro::Store::Server.start_server
     store = KnapsackPro::Store::Server.start_client
 
     sleep 2
@@ -16,5 +16,7 @@ describe KnapsackPro::Store::Server do
     sleep 10
     puts 'Almost done'
     sleep 1
+
+    Process.kill('QUIT', server_pid)
   end
 end

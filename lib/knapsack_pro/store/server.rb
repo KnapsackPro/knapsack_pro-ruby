@@ -6,18 +6,25 @@ module KnapsackPro
       def self.start_server
         DRb.start_service('druby://localhost:0', new)
         ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = DRb.uri
+        DRb.stop_service
 
-        #Signal.trap("INT") {
-          #puts 'INT handler'
-        #}
+        pid = fork do
+          server_is_running = true
 
-        fork do
-          Signal.trap("INT") {
-            puts 'INT handler in fork'
+          Signal.trap("QUIT") {
+            puts 'Forked process QUIT'
+            server_is_running = false
           }
+
           begin
+            DRb.start_service(ENV['KNAPSACK_PRO_STORE_SERVER_URI'], new)
+
             # Wait for the drb server thread to finish before exiting.
-            DRb.thread.join
+            #DRb.thread.join
+
+            while server_is_running
+              sleep 0.1
+            end
           rescue Interrupt
             puts "Interrupt signal catched."
           ensure
