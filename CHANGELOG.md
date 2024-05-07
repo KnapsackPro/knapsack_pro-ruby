@@ -36,6 +36,23 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.0.0...v7.0.1
     __After:__<br>
     The `KnapsackPro::Hooks::Queue.after_queue` hook is executed __inside__ of the `after(:suite)` hook.
 
+  * The RSpec `filter_run_excluding` option is not supported in Queue Mode.
+
+    __Before:__ The following option won't run tests tagged with `:manual`.<br>
+
+    ```ruby
+    # spec_helper.rb
+    RSpec.configure do |config|
+      config.filter_run_excluding :manual
+    end
+    ```
+
+    __After:__ The RSpec `filter_run_excluding` option is ignored in Queue Mode. You must manually pass the `--tag ~manual` option to the Knapsack Pro command to skip tests tagged with `:manual`.
+
+    ```
+    bundle exec rake "knapsack_pro:queue:rspec[--tag ~manual]"
+    ```
+
 * Recommended RSpec changes in your project:
   * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports:
 
