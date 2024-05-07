@@ -11,6 +11,12 @@ describe KnapsackPro::Store::Server do
     sleep 2
 
     puts store.get_current_time
+    puts store.get_current_time
+
+
+    store = KnapsackPro::Store::Server.start_client
+    puts store.get_current_time
+    puts store.get_current_time
 
     #sleep 200
     sleep 10
