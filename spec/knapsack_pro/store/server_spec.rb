@@ -5,7 +5,7 @@ describe KnapsackPro::Store::Server do
       exit
     }
 
-    KnapsackPro::Store::Server.start_server
+    KnapsackPro::Store::Server.start
 
     store = KnapsackPro::Store::Server.client
 

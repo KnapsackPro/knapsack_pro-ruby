@@ -3,18 +3,9 @@
 module KnapsackPro
   module Store
     class Server
-      def self.store_server_uri
-        ENV['KNAPSACK_PRO_STORE_SERVER_URI']
-      end
+      attr_reader :queue_batches
 
-      # must be set in the main/parent process to make the env var available to the child process
-      def self.assigns_port_for_store_server_uri
-        DRb.start_service('druby://localhost:0')
-        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = DRb.uri
-        DRb.stop_service
-      end
-
-      def self.start_server
+      def self.start
         assigns_port_for_store_server_uri
 
         server_pid = fork do
@@ -53,8 +44,6 @@ module KnapsackPro
           end
       end
 
-      attr_reader :queue_batches
-
       def initialize
         @queue_batches = []
       end
@@ -69,6 +58,19 @@ module KnapsackPro
         puts @i
 
         Time.now
+      end
+
+      private
+
+      def self.store_server_uri
+        ENV['KNAPSACK_PRO_STORE_SERVER_URI']
+      end
+
+      # must be set in the main/parent process to make the env var available to the child process
+      def self.assigns_port_for_store_server_uri
+        DRb.start_service('druby://localhost:0')
+        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = DRb.uri
+        DRb.stop_service
       end
     end
   end
