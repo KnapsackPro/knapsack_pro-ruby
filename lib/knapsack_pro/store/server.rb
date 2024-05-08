@@ -8,15 +8,14 @@ module KnapsackPro
       end
 
       # must be set in the main/parent process to make the env var available to the child process
-      def self.set_available_store_server_uri
+      def self.assigns_port_for_store_server_uri
         DRb.start_service('druby://localhost:0')
         ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = DRb.uri
         DRb.stop_service
       end
 
       def self.start_server
-        set_available_store_server_uri
-        puts "URI: #{store_server_uri}"
+        assigns_port_for_store_server_uri
 
         server_pid = fork do
           server_is_running = true
@@ -40,8 +39,6 @@ module KnapsackPro
         ::Kernel.at_exit do
           Process.kill('QUIT', server_pid)
         end
-
-        server_pid
       end
 
       def self.start_client

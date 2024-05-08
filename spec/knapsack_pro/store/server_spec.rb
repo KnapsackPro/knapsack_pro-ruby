@@ -5,8 +5,7 @@ describe KnapsackPro::Store::Server do
       exit
     }
 
-    server_pid = KnapsackPro::Store::Server.start_server
-    puts "fork PID: #{server_pid}"
+    KnapsackPro::Store::Server.start_server
 
     store = KnapsackPro::Store::Server.start_client
 
