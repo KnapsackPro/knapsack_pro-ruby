@@ -40,4 +40,8 @@ RSpec.configure do |config|
       FileUtils.rm_r(KNAPSACK_PRO_TMP_DIR) if File.exist?(KNAPSACK_PRO_TMP_DIR)
     end
   end
+
+  config.before(:each) do
+    allow_any_instance_of(KnapsackPro::Client::Connection).to receive(:net_http).and_return(Net::HTTP)
+  end
 end

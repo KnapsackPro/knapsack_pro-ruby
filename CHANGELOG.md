@@ -1,5 +1,24 @@
 # Changelog
 
+### 7.2.0
+
+* Always use the original `Net::HTTP` client, even when WebMock replaces it with its own
+    * No action is required on your side, but you can delete the following code that you may have used to configure Knapsack Pro with WebMock or VCR:
+    ```diff
+      WebMock.disable_net_connect!(
+        allow_localhost: true,
+    -   allow: ['api.knapsackpro.com']
+      )
+
+      # VCR
+    - config.ignore_hosts('localhost', '127.0.0.1', '0.0.0.0', 'api.knapsackpro.com')
+    + config.ignore_localhost = true
+    ```
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/251
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.1.0...v7.2.0
+
 ### 7.1.0
 
 * [RSpec] [Queue Mode] Log error message and backtrace when unexpected failure is raised
