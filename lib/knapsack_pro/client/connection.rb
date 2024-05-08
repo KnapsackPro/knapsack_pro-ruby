@@ -141,11 +141,19 @@ module KnapsackPro
       end
 
       def build_http(uri)
-        http = Net::HTTP.new(uri.host, uri.port)
+        http = net_http.new(uri.host, uri.port)
         http.use_ssl = (uri.scheme == 'https')
         http.open_timeout = TIMEOUT
         http.read_timeout = TIMEOUT
         http
+      end
+
+      def net_http
+        if defined?(WebMock::HttpLibAdapters::NetHttpAdapter::OriginalNetHTTP)
+          WebMock::HttpLibAdapters::NetHttpAdapter::OriginalNetHTTP
+        else
+          Net::HTTP
+        end
       end
 
       def post
