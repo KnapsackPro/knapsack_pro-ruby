@@ -53,6 +53,8 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.0.0...v7.0.1
     bundle exec rake "knapsack_pro:queue:rspec[--tag ~manual]"
     ```
 
+  * Please [update the datadog-ci gem to the latest version](https://github.com/DataDog/datadog-ci-rb/issues/147#issuecomment-2099997045) if you use DataDog. This allows DataDog to collect RSpec data correctly in Knapsack Pro Queue Mode.
+
 * Recommended RSpec changes in your project:
   * Remove the following code if you use Queue Mode and the `rspec_junit_formatter` gem to generate JUnit XML or JSON reports:
 
