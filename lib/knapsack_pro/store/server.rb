@@ -3,19 +3,30 @@
 module KnapsackPro
   module Store
     class Server
-      def self.start_server
-        DRb.start_service('druby://localhost:0', new)
+      def self.store_server_uri
+        ENV['KNAPSACK_PRO_STORE_SERVER_URI']
+      end
+
+      # must be set in the main/parent process to make the env var available to the child process
+      def self.set_available_store_server_uri
+        DRb.start_service('druby://localhost:0')
         ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = DRb.uri
+        DRb.stop_service
+      end
+
+      def self.start_server
+        set_available_store_server_uri
+        puts "URI: #{store_server_uri}"
 
         pid = fork do
           server_is_running = true
 
           Signal.trap("QUIT") {
-            puts 'Forked process QUIT'
+            puts "#{self} forked process got QUIT signal."
             server_is_running = false
           }
 
-          DRb.start_service(ENV['KNAPSACK_PRO_STORE_SERVER_URI'], new)
+          DRb.start_service(store_server_uri, new)
 
           while server_is_running
             sleep 0.1
@@ -39,9 +50,9 @@ module KnapsackPro
       def self.start_client
         # must be called at least once per process
         # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
-        DRb.start_service
+        #DRb.start_service
 
-        server_uri = ENV['KNAPSACK_PRO_STORE_SERVER_URI'] || raise("#{self} must be started first.")
+        server_uri = store_server_uri || raise("#{self} must be started first.")
         DRbObject.new_with_uri(server_uri)
       end
     end

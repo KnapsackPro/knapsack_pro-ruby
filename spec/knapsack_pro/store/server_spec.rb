@@ -5,24 +5,31 @@ describe KnapsackPro::Store::Server do
       exit
     }
 
-    server_pid = KnapsackPro::Store::Server.start_server
-    store = KnapsackPro::Store::Server.start_client
+    begin
+      server_pid = KnapsackPro::Store::Server.start_server
+      puts "fork PID: #{server_pid}"
 
-    sleep 2
+      store = KnapsackPro::Store::Server.start_client
 
-    puts store.get_current_time
-    puts store.get_current_time
+      #require 'pry'; binding.pry
+
+      sleep 2
+
+      puts store.get_current_time
+      puts store.get_current_time
 
 
-    store = KnapsackPro::Store::Server.start_client
-    puts store.get_current_time
-    puts store.get_current_time
+      store = KnapsackPro::Store::Server.start_client
+      puts store.get_current_time
+      puts store.get_current_time
 
-    #sleep 200
-    sleep 10
-    puts 'Almost done'
-    sleep 1
+      #sleep 200
+      #sleep 10
+      puts 'Almost done'
+      sleep 1
 
-    Process.kill('QUIT', server_pid)
+    ensure
+      Process.kill('QUIT', server_pid)
+    end
   end
 end
