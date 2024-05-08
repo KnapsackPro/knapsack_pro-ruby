@@ -39,14 +39,6 @@ module KnapsackPro
         end
       end
 
-      def get_current_time
-        @i ||= 0
-        @i += 1
-        puts @i
-
-        Time.now
-      end
-
       def self.start_client
         # must be called at least once per process
         # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
@@ -54,6 +46,14 @@ module KnapsackPro
 
         server_uri = store_server_uri || raise("#{self} must be started first.")
         DRbObject.new_with_uri(server_uri)
+      end
+
+      def get_current_time
+        @i ||= 0
+        @i += 1
+        puts @i
+
+        Time.now
       end
     end
   end
