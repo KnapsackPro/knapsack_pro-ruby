@@ -26,7 +26,9 @@ module KnapsackPro
         def test_file_paths(args)
           can_initialize_queue = args.fetch(:can_initialize_queue)
           executed_test_files = args.fetch(:executed_test_files)
-          allocator.test_file_paths(can_initialize_queue, executed_test_files)
+          test_file_paths = allocator.test_file_paths(can_initialize_queue, executed_test_files)
+          store.add_batch_of_tests(test_file_paths) unless test_file_paths.empty?
+          test_file_paths
         end
 
         def test_dir
@@ -37,6 +39,10 @@ module KnapsackPro
 
         attr_reader :allocator_builder,
           :allocator
+
+        def store
+          KnapsackPro::Store::Server.client
+        end
 
         def self.child_status
           $?

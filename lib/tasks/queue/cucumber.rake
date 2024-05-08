@@ -16,6 +16,7 @@ namespace :knapsack_pro do
     end
 
     task :cucumber_go, [:cucumber_args] do |_, args|
+      KnapsackPro::Store::Server.start
       KnapsackPro::Runners::Queue::CucumberRunner.run(args[:cucumber_args])
     end
   end
