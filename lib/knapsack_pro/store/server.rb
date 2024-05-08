@@ -42,10 +42,20 @@ module KnapsackPro
       def self.start_client
         # must be called at least once per process
         # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
-        #DRb.start_service
+        DRb.start_service
 
         server_uri = store_server_uri || raise("#{self} must be started first.")
         DRbObject.new_with_uri(server_uri)
+      end
+
+      attr_reader :queue_batches
+
+      def initialize
+        @queue_batches = []
+      end
+
+      def add_batch_of_tests(test_file_paths)
+        @queue_batches << test_file_paths
       end
 
       def get_current_time
