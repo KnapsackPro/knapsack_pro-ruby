@@ -41,7 +41,7 @@ module KnapsackPro
         end
       end
 
-      def self.start_client
+      def self.client
         @client ||=
           begin
             # must be called at least once per process

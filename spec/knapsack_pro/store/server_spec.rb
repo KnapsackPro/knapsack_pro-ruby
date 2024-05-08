@@ -7,7 +7,7 @@ describe KnapsackPro::Store::Server do
 
     KnapsackPro::Store::Server.start_server
 
-    store = KnapsackPro::Store::Server.start_client
+    store = KnapsackPro::Store::Server.client
 
     sleep 2
 
@@ -15,7 +15,7 @@ describe KnapsackPro::Store::Server do
     puts store.get_current_time
 
 
-    store = KnapsackPro::Store::Server.start_client
+    store = KnapsackPro::Store::Server.client
     puts store.get_current_time
     puts store.get_current_time
 
