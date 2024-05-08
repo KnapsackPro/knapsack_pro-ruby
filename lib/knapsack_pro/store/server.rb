@@ -18,11 +18,10 @@ module KnapsackPro
         set_available_store_server_uri
         puts "URI: #{store_server_uri}"
 
-        pid = fork do
+        server_pid = fork do
           server_is_running = true
 
           Signal.trap("QUIT") {
-            puts "#{self} forked process got QUIT signal."
             server_is_running = false
           }
 
@@ -37,6 +36,12 @@ module KnapsackPro
           # Wait for the drb server thread to finish before exiting.
           DRb.thread&.join
         end
+
+        ::Kernel.at_exit do
+          Process.kill('QUIT', server_pid)
+        end
+
+        server_pid
       end
 
       def self.start_client
