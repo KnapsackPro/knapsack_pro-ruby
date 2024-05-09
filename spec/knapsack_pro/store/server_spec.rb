@@ -1,38 +1,30 @@
 describe KnapsackPro::Store::Server do
   it do
-    Signal.trap("INT") {
-      puts 'INT handler in spec.'
-      exit
-    }
-
     KnapsackPro::Store::Server.start
 
     store = KnapsackPro::Store::Server.client
 
-    sleep 2
+    expect(store.queue_batches).to eq []
 
-    puts store.get_current_time
-    puts store.get_current_time
-
-
-    store = KnapsackPro::Store::Server.client
-    puts store.get_current_time
-    puts store.get_current_time
 
     batched_tests_1 = ['a_spec.rb', 'b_spec.rb']
-    store.add_batch_of_tests(batched_tests_1)
+    store.queue_batch_manager.add_batch(batched_tests_1)
+    store.add_files(batched_tests_1)
 
     batched_tests_2 = ['c_spec.rb', 'd_spec.rb']
-    store.add_batch_of_tests(batched_tests_2)
+    store.queue_batch_manager.add_batch(batched_tests_2)
+    store.add_files(batched_tests_2)
+
+    #require 'pry'; binding.pry
+
+    expect(store.files).to eq([
+      ['a_spec.rb', 'b_spec.rb'],
+      ['c_spec.rb', 'd_spec.rb']
+    ])
 
     expect(store.queue_batches).to eq([
       ['a_spec.rb', 'b_spec.rb'],
       ['c_spec.rb', 'd_spec.rb']
     ])
-
-    #sleep 200
-    #sleep 10
-    puts 'Almost done'
-    sleep 1
   end
 end

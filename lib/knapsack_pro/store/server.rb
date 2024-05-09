@@ -44,20 +44,24 @@ module KnapsackPro
           end
       end
 
+      attr_reader :queue_batch_manager
+
       def initialize
-        @queue_batches = []
+        @queue_batch_manager = KnapsackPro::Store::QueueBatchManager.new
+        puts @queue_batch_manager.inspect
+        @files = []
       end
 
-      def add_batch_of_tests(test_file_paths)
-        @queue_batches << test_file_paths
+      def add_files(files)
+        @files << files
       end
 
-      def get_current_time
-        @i ||= 0
-        @i += 1
-        puts @i
+      def files
+        @files
+      end
 
-        Time.now
+      def queue_batches
+        @queue_batch_manager.batches
       end
 
       private
