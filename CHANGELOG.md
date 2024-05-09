@@ -47,6 +47,25 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.0.0...v7.0.1
     __After:__<br>
     The `before(:suite)` and `after(:suite)` hooks are executed only once: `before(:suite)` is executed before starting tests, `after(:suite)` is executed after all tests are completed. (It is what you would expect from RSpec).
 
+  * It is recommended that you define your `before(:suite)` hooks in `spec_helper.rb` or `rails_helper.rb`. These files should be loaded before any test files so that the hook is registered by RSpec.
+
+    The `before(:suite)` hook is executed first. After that, test files are dynamically loaded in multiple batches from the Knapsack Pro Queue API. __The `before(:suite)` hooks defined in test files won't be executed because it is too late!__
+
+    If you need to have something that is similar to `before(:suite)` and you want to define it in a test file, then you can use this:
+
+    ```ruby
+    RSpec.configure do |config|
+      config.before(:context) do
+        unless ENV['MY_HOOK_NAME']
+          # your code to run in the hook
+        end
+        ENV['MY_HOOK_NAME'] = 'hook_called'
+      end
+    end
+    ```
+
+    Alternatively, if you need to [load code only once for a specific type of specs you can check this](https://docs.knapsackpro.com/ruby/rspec/#load-code-only-once-for-a-specific-type-of-specs).
+
   * The `KnapsackPro::Hooks::Queue.after_queue` hook change:
 
     __Before:__<br>
