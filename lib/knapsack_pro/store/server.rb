@@ -6,7 +6,7 @@ module KnapsackPro
       extend Forwardable
 
       def self.start(delay_before_start = 0)
-        assigns_port_for_store_server_uri
+        assign_store_server_uri
 
         @server_pid = fork do
           server_is_running = true
@@ -79,10 +79,15 @@ module KnapsackPro
       end
 
       # must be set in the main/parent process to make the env var available to the child process
-      def self.assigns_port_for_store_server_uri
-        DRb.start_service('druby://localhost:0')
-        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = DRb.uri
-        DRb.stop_service
+      def self.assign_store_server_uri
+        @uri ||=
+          begin
+            DRb.start_service('druby://localhost:0')
+            uri = DRb.uri
+            ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = uri
+            DRb.stop_service
+            uri
+          end
       end
     end
   end
