@@ -3,7 +3,7 @@
 module KnapsackPro
   module Store
     class Server
-      attr_reader :queue_batches
+      extend Forwardable
 
       def self.start
         assigns_port_for_store_server_uri
@@ -44,24 +44,10 @@ module KnapsackPro
           end
       end
 
-      attr_reader :queue_batch_manager
+      def_delegators :@queue_batch_manager, :add_batch, :last_batch_passed!, :last_batch_failed!, :batches
 
       def initialize
         @queue_batch_manager = KnapsackPro::Store::QueueBatchManager.new
-        puts @queue_batch_manager.inspect
-        @files = []
-      end
-
-      def add_files(files)
-        @files << files
-      end
-
-      def files
-        @files
-      end
-
-      def queue_batches
-        @queue_batch_manager.batches
       end
 
       private
