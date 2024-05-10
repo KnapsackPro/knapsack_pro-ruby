@@ -30,7 +30,6 @@ module KnapsackPro
         end
 
         ::Kernel.at_exit do
-          puts 'stop'
           stop
         end
       end
