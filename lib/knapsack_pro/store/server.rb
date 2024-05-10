@@ -8,7 +8,7 @@ module KnapsackPro
       def self.start(delay_before_start = 0)
         assigns_port_for_store_server_uri
 
-        server_pid = fork do
+        @server_pid = fork do
           server_is_running = true
 
           Signal.trap("QUIT") {
@@ -30,8 +30,14 @@ module KnapsackPro
         end
 
         ::Kernel.at_exit do
-          Process.kill('QUIT', server_pid)
+          puts 'stop'
+          stop
         end
+      end
+
+      def self.stop
+        Process.kill('QUIT', @server_pid)
+      rescue Errno::ESRCH # process does not exist
       end
 
       def self.client
