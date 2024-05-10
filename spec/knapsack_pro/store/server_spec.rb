@@ -16,7 +16,7 @@ describe KnapsackPro::Store::Server do
 
       expect {
         store.batches[0].passed?
-      }.to raise_error KnapsackPro::Store::TestsBatch::TestFilesNotExecutedError
+      }.to raise_error KnapsackPro::Store::TestBatch::TestFilesNotExecutedError
       expect(store.batches[0].executed?).to be false
 
       store.last_batch_passed!
@@ -34,7 +34,7 @@ describe KnapsackPro::Store::Server do
 
       expect {
         store.batches[1].passed?
-      }.to raise_error KnapsackPro::Store::TestsBatch::TestFilesNotExecutedError
+      }.to raise_error KnapsackPro::Store::TestBatch::TestFilesNotExecutedError
       expect(store.batches[1].executed?).to be false
 
       store.last_batch_failed!

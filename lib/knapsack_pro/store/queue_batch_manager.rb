@@ -10,7 +10,7 @@ module KnapsackPro
       end
 
       def add_batch(test_file_paths)
-        @batches << KnapsackPro::Store::TestsBatch.new(test_file_paths)
+        @batches << KnapsackPro::Store::TestBatch.new(test_file_paths)
       end
 
       def last_batch_passed!

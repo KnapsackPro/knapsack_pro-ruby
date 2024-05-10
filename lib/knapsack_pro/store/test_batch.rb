@@ -2,7 +2,7 @@
 
 module KnapsackPro
   module Store
-    class TestsBatch
+    class TestBatch
       TestFilesNotExecutedError = Class.new(StandardError)
 
       attr_reader :test_file_paths
