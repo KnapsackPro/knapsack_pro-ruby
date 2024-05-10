@@ -35,7 +35,9 @@ module KnapsackPro
       end
 
       def self.stop
+        return if @server_pid.nil?
         Process.kill('QUIT', @server_pid)
+        Process.waitpid2(@server_pid)
       rescue Errno::ESRCH # process does not exist
       end
 
@@ -64,6 +66,10 @@ module KnapsackPro
       def_delegators :@queue_batch_manager, :add_batch, :last_batch_passed!, :last_batch_failed!, :batches
 
       def initialize
+        reset
+      end
+
+      def reset
         @queue_batch_manager = KnapsackPro::Store::QueueBatchManager.new
       end
 

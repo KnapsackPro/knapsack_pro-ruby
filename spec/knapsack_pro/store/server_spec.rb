@@ -1,15 +1,12 @@
 describe KnapsackPro::Store::Server do
+  before do
+    KnapsackPro::Store::Server.stop
+  end
+
   describe 'Queue test batches' do
     context 'when the queue mode flow' do
-      before do
-        KnapsackPro::Store::Server.start
-      end
-
-      after do
-        KnapsackPro::Store::Server.stop
-      end
-
       it do
+        KnapsackPro::Store::Server.start
         store = KnapsackPro::Store::Server.client
 
         expect(store.batches).to eq []
@@ -54,10 +51,6 @@ describe KnapsackPro::Store::Server do
     context 'when there is a delay in starting service in a forked process' do
       before do
         KnapsackPro::Store::Server.start(delay_before_start)
-      end
-
-      after do
-        KnapsackPro::Store::Server.stop
       end
 
       context 'when the delay is below 3 seconds' do
