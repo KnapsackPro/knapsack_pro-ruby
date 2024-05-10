@@ -5,7 +5,7 @@ module KnapsackPro
     class Server
       extend Forwardable
 
-      def self.start
+      def self.start(delay_before_start = 0)
         assigns_port_for_store_server_uri
 
         server_pid = fork do
@@ -14,6 +14,8 @@ module KnapsackPro
           Signal.trap("QUIT") {
             server_is_running = false
           }
+
+          sleep delay_before_start unless delay_before_start.zero?
 
           DRb.start_service(store_server_uri, new)
 
@@ -35,12 +37,22 @@ module KnapsackPro
       def self.client
         @client ||=
           begin
+            retries ||= 0
+
             # must be called at least once per process
             # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
             DRb.start_service
 
             server_uri = store_server_uri || raise("#{self} must be started first.")
-            DRbObject.new_with_uri(server_uri)
+            client = DRbObject.new_with_uri(server_uri)
+            client.ping
+            client
+          rescue DRb::DRbConnError
+            wait_seconds = 0.1
+            retries += wait_seconds
+            sleep wait_seconds
+            retry if retries <= 3 # seconds
+            raise
           end
       end
 
@@ -48,6 +60,10 @@ module KnapsackPro
 
       def initialize
         @queue_batch_manager = KnapsackPro::Store::QueueBatchManager.new
+      end
+
+      def ping
+        true
       end
 
       private
