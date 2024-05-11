@@ -6,6 +6,8 @@ module KnapsackPro
       extend Forwardable
 
       def self.start(delay_before_start = 0)
+        return unless @server_pid.nil?
+
         assign_store_server_uri
 
         @server_pid = fork do
@@ -38,7 +40,9 @@ module KnapsackPro
         return if @server_pid.nil?
         Process.kill('QUIT', @server_pid)
         Process.waitpid2(@server_pid)
+        @server_pid = nil
       rescue Errno::ESRCH # process does not exist
+        @server_pid = nil
       end
 
       def self.client
