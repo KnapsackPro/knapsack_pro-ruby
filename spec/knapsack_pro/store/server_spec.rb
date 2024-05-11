@@ -49,21 +49,29 @@ describe KnapsackPro::Store::Server do
     end
 
     context 'when there is a delay in starting service in a forked process' do
-      before do
-        KnapsackPro::Store::Server.start(delay_before_start)
-      end
-
       context 'when the delay is below 3 seconds' do
-        let(:delay_before_start) { 2 }
+        before do
+          KnapsackPro::Store::Server.send(:assign_store_server_uri)
 
-        it do
+          Thread.new do
+            sleep 2
+            KnapsackPro::Store::Server.start
+          end
+        end
+        after do
+          KnapsackPro::Store::Server.stop
+        end
+
+        it 'connects with the store server correctly' do
           store = KnapsackPro::Store::Server.client
-          expect(store.batches).to eq []
+          expect(store.ping).to be true
         end
       end
 
       context 'when the delay is above 3 seconds' do
-        let(:delay_before_start) { 4 }
+        before do
+          KnapsackPro::Store::Server.send(:assign_store_server_uri)
+        end
 
         it do
           expect {

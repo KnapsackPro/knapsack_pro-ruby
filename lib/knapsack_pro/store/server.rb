@@ -5,7 +5,7 @@ module KnapsackPro
     class Server
       extend Forwardable
 
-      def self.start(delay_before_start = 0)
+      def self.start
         return unless @server_pid.nil?
 
         assign_store_server_uri
@@ -16,8 +16,6 @@ module KnapsackPro
           Signal.trap("TERM") {
             server_is_running = false
           }
-
-          sleep delay_before_start unless delay_before_start.zero?
 
           DRb.start_service(store_server_uri, new)
 
