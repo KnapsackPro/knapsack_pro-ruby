@@ -1,6 +1,11 @@
 describe KnapsackPro::Store::Server do
   before do
     KnapsackPro::Store::Server.stop
+    sleep 1
+  end
+  after do
+    KnapsackPro::Store::Server.stop
+    sleep 1
   end
 
   describe 'Queue test batches' do
@@ -57,9 +62,6 @@ describe KnapsackPro::Store::Server do
             sleep 2
             KnapsackPro::Store::Server.start
           end
-        end
-        after do
-          KnapsackPro::Store::Server.stop
         end
 
         it 'connects with the store server correctly' do
