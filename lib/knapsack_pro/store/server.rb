@@ -38,7 +38,7 @@ module KnapsackPro
 
       def self.stop
         return if @server_pid.nil?
-        Process.kill('QUIT', @server_pid)
+        Process.kill('KILL', @server_pid)
         Process.waitpid2(@server_pid)
         @server_pid = nil
       rescue Errno::ESRCH # process does not exist
