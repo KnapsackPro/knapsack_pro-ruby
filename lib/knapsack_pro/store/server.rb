@@ -13,7 +13,7 @@ module KnapsackPro
         @server_pid = fork do
           server_is_running = true
 
-          Signal.trap("QUIT") {
+          Signal.trap("TERM") {
             server_is_running = false
           }
 
@@ -38,7 +38,7 @@ module KnapsackPro
 
       def self.stop
         return if @server_pid.nil?
-        Process.kill('QUIT', @server_pid)
+        Process.kill('TERM', @server_pid)
         Process.waitpid2(@server_pid)
         @server_pid = nil
       rescue Errno::ESRCH # process does not exist
