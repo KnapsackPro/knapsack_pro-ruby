@@ -46,7 +46,24 @@ describe KnapsackPro::Runners::Queue::BaseRunner do
           expect(allocator).to receive(:test_file_paths).with(can_initialize_queue, executed_test_files).and_return(test_file_paths)
         end
 
-        it { should eq test_file_paths }
+        context 'when there are no test file paths' do
+          before do
+            expect(test_file_paths).to receive(:empty?).and_return(true)
+          end
+
+          it { should eq test_file_paths }
+        end
+
+        context 'when there are test file paths' do
+          before do
+            expect(test_file_paths).to receive(:empty?).and_return(false)
+            store = instance_double(KnapsackPro::Store::Server)
+            expect(KnapsackPro::Store::Server).to receive(:client).and_return(store)
+            expect(store).to receive(:add_batch).with(test_file_paths)
+          end
+
+          it { should eq test_file_paths }
+        end
       end
 
       context 'when can_initialize_queue flag has no value' do

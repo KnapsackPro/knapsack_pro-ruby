@@ -27,7 +27,7 @@ module KnapsackPro
           can_initialize_queue = args.fetch(:can_initialize_queue)
           executed_test_files = args.fetch(:executed_test_files)
           test_file_paths = allocator.test_file_paths(can_initialize_queue, executed_test_files)
-          store.add_batch_of_tests(test_file_paths) unless test_file_paths.empty?
+          store.add_batch(test_file_paths) unless test_file_paths.empty?
           test_file_paths
         end
 
