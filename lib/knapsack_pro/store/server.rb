@@ -42,25 +42,25 @@ module KnapsackPro
       end
 
       def self.client
-        @client ||=
-          begin
-            retries ||= 0
+        return @client unless @client.nil?
 
-            # must be called at least once per process
-            # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
-            DRb.start_service
+        # must be called at least once per process
+        # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
+        DRb.start_service
 
-            server_uri = store_server_uri
-            client = DRbObject.new_with_uri(server_uri)
-            client.ping
-            client
-          rescue DRb::DRbConnError
-            wait_seconds = 0.1
-            retries += wait_seconds
-            sleep wait_seconds
-            retry if retries <= 3 # seconds
-            raise
-          end
+        @client = DRbObject.new_with_uri(store_server_uri)
+
+        begin
+          retries ||= 0
+          @client.ping
+          @client
+        rescue DRb::DRbConnError
+          wait_seconds = 0.1
+          retries += wait_seconds
+          sleep wait_seconds
+          retry if retries <= 3 # seconds
+          raise
+        end
       end
 
       def_delegators :@queue_batch_manager, :add_batch, :last_batch_passed!, :last_batch_failed!, :batches
