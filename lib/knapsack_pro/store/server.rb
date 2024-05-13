@@ -50,7 +50,7 @@ module KnapsackPro
             # https://ruby-doc.org/stdlib-2.7.0/libdoc/drb/rdoc/DRb.html
             DRb.start_service
 
-            server_uri = store_server_uri || raise("#{self} must be started first.")
+            server_uri = store_server_uri
             client = DRbObject.new_with_uri(server_uri)
             client.ping
             client
@@ -93,7 +93,7 @@ module KnapsackPro
       end
 
       def self.store_server_uri
-        ENV['KNAPSACK_PRO_STORE_SERVER_URI']
+        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] || raise("KNAPSACK_PRO_STORE_SERVER_URI must be set to available DRb port.")
       end
 
       # must be set in the main/parent process to make the env var available to the child process

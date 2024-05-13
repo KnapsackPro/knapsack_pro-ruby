@@ -87,7 +87,7 @@ describe KnapsackPro::Store::Server do
       it do
         expect {
           KnapsackPro::Store::Server.client
-        }.to raise_error RuntimeError, 'KnapsackPro::Store::Server must be started first.'
+        }.to raise_error RuntimeError, 'KNAPSACK_PRO_STORE_SERVER_URI must be set to available DRb port.'
       end
     end
   end
