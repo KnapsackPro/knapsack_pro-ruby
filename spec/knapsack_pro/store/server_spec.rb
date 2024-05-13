@@ -48,7 +48,7 @@ describe KnapsackPro::Store::Server do
       end
     end
 
-    context 'when there is a delay in starting service in a forked process' do
+    context 'when there is a delay in starting server in a forked process' do
       before do
         KnapsackPro::Store::Server.send(:assign_store_server_uri)
       end
@@ -80,6 +80,14 @@ describe KnapsackPro::Store::Server do
 
           thread.join
         end
+      end
+    end
+
+    context 'when the server has not been started' do
+      it do
+        expect {
+          KnapsackPro::Store::Server.client
+        }.to raise_error RuntimeError, 'KnapsackPro::Store::Server must be started first.'
       end
     end
   end
