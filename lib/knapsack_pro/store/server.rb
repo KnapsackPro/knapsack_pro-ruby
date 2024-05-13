@@ -5,6 +5,13 @@ module KnapsackPro
     class Server
       extend Forwardable
 
+      def self.reset
+        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = nil
+        @uri = nil
+        @client = nil
+        stop
+      end
+
       def self.start
         return unless @server_pid.nil?
 

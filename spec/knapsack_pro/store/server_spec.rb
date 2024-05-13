@@ -1,9 +1,6 @@
 describe KnapsackPro::Store::Server do
   before do
-    KnapsackPro::Store::Server.stop
-  end
-  after do
-    KnapsackPro::Store::Server.stop
+    KnapsackPro::Store::Server.reset
   end
 
   describe 'Queue test batches' do
@@ -52,31 +49,36 @@ describe KnapsackPro::Store::Server do
     end
 
     context 'when there is a delay in starting service in a forked process' do
-      context 'when the delay is below 3 seconds' do
-        before do
-          KnapsackPro::Store::Server.send(:assign_store_server_uri)
+      before do
+        KnapsackPro::Store::Server.send(:assign_store_server_uri)
+      end
 
-          Thread.new do
+      context 'when the delay is below 3 seconds' do
+        it 'connects with the store server correctly' do
+          thread = Thread.new do
             sleep 2
             KnapsackPro::Store::Server.start
           end
-        end
 
-        it 'connects with the store server correctly' do
           store = KnapsackPro::Store::Server.client
           expect(store.ping).to be true
+
+          thread.join
         end
       end
 
       context 'when the delay is above 3 seconds' do
-        before do
-          KnapsackPro::Store::Server.send(:assign_store_server_uri)
-        end
-
         it do
+          thread = Thread.new do
+            sleep 4
+            KnapsackPro::Store::Server.start
+          end
+
           expect {
             KnapsackPro::Store::Server.client
           }.to raise_error DRb::DRbConnError
+
+          thread.join
         end
       end
     end
