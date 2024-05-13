@@ -7,15 +7,15 @@ module KnapsackPro
 
       def self.reset
         stop
-        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = nil
-        @uri = nil
+        set_store_server_uri(nil)
+        @assigned_store_server_uri = nil
         @client = nil
       end
 
       def self.start
         return unless @server_pid.nil?
 
-        assign_store_server_uri
+        assign_available_store_server_uri
 
         @server_pid = fork do
           server_is_running = true
@@ -88,20 +88,31 @@ module KnapsackPro
         @server_pid = nil
       end
 
+      def self.set_store_server_uri(uri)
+        ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = uri
+      end
+
       def self.store_server_uri
         ENV['KNAPSACK_PRO_STORE_SERVER_URI']
       end
 
       # must be set in the main/parent process to make the env var available to the child process
-      def self.assign_store_server_uri
-        @uri ||=
+      def self.assign_available_store_server_uri
+        @assigned_store_server_uri ||=
           begin
-            DRb.start_service('druby://localhost:0')
-            uri = DRb.uri
-            ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = uri
-            DRb.stop_service
-            uri
+            find_available_drb_port_for_dummy_service
+            set_store_server_uri(DRb.uri)
+            stop_dummy_service
+            true
           end
+      end
+
+      def self.find_available_drb_port_for_dummy_service
+        DRb.start_service('druby://localhost:0')
+      end
+
+      def self.stop_dummy_service
+        DRb.stop_service
       end
     end
   end

@@ -50,7 +50,7 @@ describe KnapsackPro::Store::Server do
 
     context 'when there is a delay in starting server in a forked process' do
       before do
-        KnapsackPro::Store::Server.send(:assign_store_server_uri)
+        KnapsackPro::Store::Server.send(:assign_available_store_server_uri)
       end
 
       context 'when the delay is below 3 seconds' do
