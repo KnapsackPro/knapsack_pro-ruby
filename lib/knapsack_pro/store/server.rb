@@ -6,10 +6,10 @@ module KnapsackPro
       extend Forwardable
 
       def self.reset
+        stop
         ENV['KNAPSACK_PRO_STORE_SERVER_URI'] = nil
         @uri = nil
         @client = nil
-        stop
       end
 
       def self.start
@@ -39,15 +39,6 @@ module KnapsackPro
         ::Kernel.at_exit do
           stop
         end
-      end
-
-      def self.stop
-        return if @server_pid.nil?
-        Process.kill('TERM', @server_pid)
-        Process.waitpid2(@server_pid)
-        @server_pid = nil
-      rescue Errno::ESRCH # process does not exist
-        @server_pid = nil
       end
 
       def self.client
@@ -87,6 +78,15 @@ module KnapsackPro
       end
 
       private
+
+      def self.stop
+        return if @server_pid.nil?
+        Process.kill('TERM', @server_pid)
+        Process.waitpid2(@server_pid)
+        @server_pid = nil
+      rescue Errno::ESRCH # process does not exist
+        @server_pid = nil
+      end
 
       def self.store_server_uri
         ENV['KNAPSACK_PRO_STORE_SERVER_URI']
