@@ -14,6 +14,8 @@ module KnapsackPro
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
 
+          KnapsackPro::Store::Server.start
+
           rspec_pure = KnapsackPro::Pure::Queue::RSpecPure.new
 
           queue_runner = new(KnapsackPro::Adapters::RSpecAdapter, rspec_pure, args, stream_error, stream_out)
