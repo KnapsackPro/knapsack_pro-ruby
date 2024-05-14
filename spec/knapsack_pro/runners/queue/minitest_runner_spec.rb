@@ -19,6 +19,8 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_RECORDING_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
 
+      expect(KnapsackPro::Store::Server).to receive(:start)
+
       expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::MinitestAdapter)
 
       expect(described_class).to receive(:new).with(KnapsackPro::Adapters::MinitestAdapter).and_return(runner)
@@ -103,6 +105,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
     context 'when test files exist' do
       let(:test_file_paths) { ['a_test.rb', 'b_test.rb', 'fake_path_test.rb'] }
+      let(:store) { instance_double(KnapsackPro::Store::Server) }
 
       before do
         subset_queue_id = 'fake-subset-queue-id'
@@ -130,6 +133,8 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
         expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
 
+        expect(KnapsackPro::Store::Server).to receive(:client).and_return(store)
+
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 
         expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
@@ -137,6 +142,10 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
       context 'when tests are passing' do
         let(:is_tests_green) { true }
+
+        before do
+          expect(store).to receive(:last_batch_passed!)
+        end
 
         it 'returns exit code 0' do
           expect(subject).to eq({
@@ -152,6 +161,10 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
       context 'when tests are failing' do
         let(:is_tests_green) { false }
+
+        before do
+          expect(store).to receive(:last_batch_failed!)
+        end
 
         it 'returns exit code 1' do
           expect(subject).to eq({

@@ -16,7 +16,6 @@ namespace :knapsack_pro do
     end
 
     task :minitest_go, [:minitest_args] do |_, args|
-      KnapsackPro::Store::Server.start
       KnapsackPro::Runners::Queue::MinitestRunner.run(args[:minitest_args])
     end
   end

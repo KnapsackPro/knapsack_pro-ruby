@@ -15,6 +15,8 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
+          KnapsackPro::Store::Server.start
+
           adapter_class = KnapsackPro::Adapters::MinitestAdapter
           KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
           runner = new(adapter_class)
@@ -79,7 +81,12 @@ module KnapsackPro
             node_test_file_paths += test_file_paths
 
             result = minitest_run(runner, test_file_paths, args)
-            exitstatus = 1 unless result
+            if result
+              store.last_batch_passed!
+            else
+              store.last_batch_failed!
+              exitstatus = 1
+            end
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
@@ -115,6 +122,10 @@ module KnapsackPro
           ::Minitest::Runnable.reset
 
           result
+        end
+
+        def self.store
+          KnapsackPro::Store::Server.client
         end
       end
     end
