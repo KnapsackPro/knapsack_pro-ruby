@@ -748,22 +748,32 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       KnapsackPro::Adapters::RSpecAdapter.bind
 
       KnapsackPro::Hooks::Queue.before_queue do |queue_id|
-        puts '1st before_queue - run before the test suite'
-        # TODO ME
-        puts '+'*50
+        print "Batches in before_queue: "
         puts KnapsackPro::Store::Client.batches.inspect
       end
 
       KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id|
-        puts '1st before_subset_queue - run before the next subset of tests'
+        print "Batches in before_subset_queue: "
+        puts KnapsackPro::Store::Client.batches.map(&:test_file_paths).inspect
+
+        print "Executed batches in before_subset_queue: "
+        puts KnapsackPro::Store::Client.batches.map(&:executed?).inspect
       end
 
       KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
-        puts '1st after_subset_queue - run after the previous subset of tests'
+        print "Batches in after_subset_queue: "
+        puts KnapsackPro::Store::Client.batches.map(&:test_file_paths).inspect
+
+        print "Executed batches in after_subset_queue: "
+        puts KnapsackPro::Store::Client.batches.map(&:executed?).inspect
       end
 
       KnapsackPro::Hooks::Queue.after_queue do |queue_id|
-        puts '1st after_queue - run after the test suite'
+        print "Batches in after_queue: "
+        puts KnapsackPro::Store::Client.batches.map(&:test_file_paths).inspect
+
+        print "Batch statuses in after_queue: "
+        puts KnapsackPro::Store::Client.batches.map(&:passed?).inspect
       end
       SPEC
 
@@ -791,19 +801,82 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         end
       SPEC
 
+      failing_spec_d = Spec.new('d_spec.rb', <<~SPEC)
+        describe 'D_describe' do
+          it 'D1 test example' do
+            expect(1).to eq 0
+          end
+        end
+      SPEC
+
+      spec_e = Spec.new('e_spec.rb', <<~SPEC)
+        describe 'E_describe' do
+          it 'E1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_f = Spec.new('f_spec.rb', <<~SPEC)
+        describe 'F_describe' do
+          it 'F1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      failing_spec_g = Spec.new('g_spec.rb', <<~SPEC)
+        describe 'G_describe' do
+          it 'G1 test example' do
+            expect(1).to eq 0
+          end
+        end
+      SPEC
+
+      spec_h = Spec.new('h_spec.rb', <<~SPEC)
+        describe 'h_describe' do
+          it 'H1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
       generate_specs(spec_helper, rspec_options, [
         [spec_a, spec_b],
-        [spec_c],
+        [spec_c, failing_spec_d],
+        [spec_e, spec_f],
+        [failing_spec_g, spec_h],
       ])
 
       actual = subject
 
-      expect(actual.stdout.scan(/1st before_queue - run before the test suite/).size).to eq 1
-      expect(actual.stdout.scan(/1st before_subset_queue - run before the next subset of tests/).size).to eq 2
-      expect(actual.stdout.scan(/1st after_subset_queue - run after the previous subset of tests/).size).to eq 2
-      expect(actual.stdout.scan(/1st after_queue - run after the test suite/).size).to eq 1
+      expect(actual.stdout).to include('Batches in before_queue: []')
 
-      expect(actual.exit_code).to eq 0
+      expect(actual.stdout).to include('Batches in before_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"]]')
+      expect(actual.stdout).to include('Batches in before_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"]]')
+      expect(actual.stdout).to include('Batches in before_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"], ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"]]')
+      expect(actual.stdout).to include('Batches in before_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"], ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"], ["spec_integration/g_spec.rb", "spec_integration/h_spec.rb"]]')
+
+      expect(actual.stdout).to include('Batches in after_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"]]')
+      expect(actual.stdout).to include('Batches in after_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"]]')
+      expect(actual.stdout).to include('Batches in after_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"], ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"]]')
+      expect(actual.stdout).to include('Batches in after_subset_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"], ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"], ["spec_integration/g_spec.rb", "spec_integration/h_spec.rb"]]')
+
+      expect(actual.stdout).to include('Batches in after_queue: [["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"], ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"], ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"], ["spec_integration/g_spec.rb", "spec_integration/h_spec.rb"]]')
+
+      expect(actual.stdout).to include('Executed batches in before_subset_queue: [false]')
+      expect(actual.stdout).to include('Executed batches in before_subset_queue: [true, false]')
+      expect(actual.stdout).to include('Executed batches in before_subset_queue: [true, true, false]')
+      expect(actual.stdout).to include('Executed batches in before_subset_queue: [true, true, true, false]')
+
+      expect(actual.stdout).to include('Executed batches in after_subset_queue: [true]')
+      expect(actual.stdout).to include('Executed batches in after_subset_queue: [true, true]')
+      expect(actual.stdout).to include('Executed batches in after_subset_queue: [true, true, true]')
+      expect(actual.stdout).to include('Executed batches in after_subset_queue: [true, true, true, true]')
+
+      expect(actual.stdout).to include('Batch statuses in after_queue: [true, false, true, false]')
+
+      expect(actual.exit_code).to eq 1
     end
   end
 
