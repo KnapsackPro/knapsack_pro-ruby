@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.3.0
+
+* Add access to batches of tests fetched from the Queue API in RSpec, Minitest, Cucumber
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/252
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.2.0...v7.3.0
+
 ### 7.2.0
 
 * Always use the original `Net::HTTP` client, even when WebMock replaces it with its own
