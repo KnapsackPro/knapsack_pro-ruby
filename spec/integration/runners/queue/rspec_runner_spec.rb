@@ -739,6 +739,72 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       expect(actual.exit_code).to eq 0
     end
+
+    it 'collects info about executed batches of tests in the store' do
+      rspec_options = ''
+
+      spec_helper = <<~SPEC
+      require 'knapsack_pro'
+      KnapsackPro::Adapters::RSpecAdapter.bind
+
+      KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+        puts '1st before_queue - run before the test suite'
+        # TODO ME
+        puts '+'*50
+        puts KnapsackPro::Store::Client.batches.inspect
+      end
+
+      KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id|
+        puts '1st before_subset_queue - run before the next subset of tests'
+      end
+
+      KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+        puts '1st after_subset_queue - run after the previous subset of tests'
+      end
+
+      KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+        puts '1st after_queue - run after the test suite'
+      end
+      SPEC
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper, rspec_options, [
+        [spec_a, spec_b],
+        [spec_c],
+      ])
+
+      actual = subject
+
+      expect(actual.stdout.scan(/1st before_queue - run before the test suite/).size).to eq 1
+      expect(actual.stdout.scan(/1st before_subset_queue - run before the next subset of tests/).size).to eq 2
+      expect(actual.stdout.scan(/1st after_subset_queue - run after the previous subset of tests/).size).to eq 2
+      expect(actual.stdout.scan(/1st after_queue - run after the test suite/).size).to eq 1
+
+      expect(actual.exit_code).to eq 0
+    end
   end
 
   context 'when the RSpec seed is used' do

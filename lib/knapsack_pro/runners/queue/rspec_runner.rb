@@ -86,7 +86,7 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_before_subset_queue
 
-            yield test_file_paths
+            yield test_file_paths, store
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
@@ -101,6 +101,10 @@ module KnapsackPro
 
             log_rspec_batch_command(test_file_paths)
           end
+        end
+
+        def store
+          KnapsackPro::Store::Server.client
         end
 
         def handle_signal!

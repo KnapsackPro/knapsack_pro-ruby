@@ -45,6 +45,12 @@ describe KnapsackPro::Store::Server do
 
         expect(store.batches[1].passed?).to be false
         expect(store.batches[1].executed?).to be true
+
+
+        # verify public API for the gem users works
+        expect(KnapsackPro::Store::Client.batches.size).to eq 2
+        expect(KnapsackPro::Store::Client.batches[0].test_file_paths).to eq(['a_spec.rb', 'b_spec.rb'])
+        expect(KnapsackPro::Store::Client.batches[1].test_file_paths).to eq(['c_spec.rb', 'd_spec.rb'])
       end
     end
 
