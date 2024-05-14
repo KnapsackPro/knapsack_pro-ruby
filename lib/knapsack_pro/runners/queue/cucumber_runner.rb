@@ -11,6 +11,8 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
+          KnapsackPro::Store::Server.start
+
           adapter_class = KnapsackPro::Adapters::CucumberAdapter
           KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
           runner = new(adapter_class)
@@ -68,7 +70,12 @@ module KnapsackPro
             node_test_file_paths += test_file_paths
 
             result_exitstatus = cucumber_run(runner, test_file_paths, args)
-            exitstatus = result_exitstatus if result_exitstatus != 0
+            if result_exitstatus == 0
+              store.last_batch_passed!
+            else
+              store.last_batch_failed!
+              exitstatus = result_exitstatus
+            end
 
             # KnapsackPro::Hooks::Queue.call_after_subset_queue
             # KnapsackPro::Report.save_subset_queue_to_file
@@ -110,6 +117,10 @@ module KnapsackPro
           end
 
           child_status.exitstatus
+        end
+
+        def self.store
+          KnapsackPro::Store::Server.client
         end
       end
     end

@@ -19,6 +19,8 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_RECORDING_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
 
+      expect(KnapsackPro::Store::Server).to receive(:start)
+
       expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::CucumberAdapter)
 
       expect(described_class).to receive(:new).with(KnapsackPro::Adapters::CucumberAdapter).and_return(runner)
@@ -131,9 +133,18 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
 
       context 'when system process finished (exited)' do
         let(:process_exited) { true }
+        let(:store) { instance_double(KnapsackPro::Store::Server) }
+
+        before do
+          expect(KnapsackPro::Store::Server).to receive(:client).and_return(store)
+        end
 
         context 'when tests are passing' do
           let(:exitstatus) { 0 }
+
+          before do
+            expect(store).to receive(:last_batch_passed!)
+          end
 
           it 'returns exit code 0' do
             expect(subject).to eq({
@@ -149,6 +160,10 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
 
         context 'when tests are failing' do
           let(:exitstatus) { 1 }
+
+          before do
+            expect(store).to receive(:last_batch_failed!)
+          end
 
           it 'returns exit code 1' do
             expect(subject).to eq({
