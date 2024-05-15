@@ -10,6 +10,7 @@ module KnapsackPro
       end
 
       def add_batch(test_file_paths)
+        return if test_file_paths.empty?
         @batches << KnapsackPro::Store::TestBatch.new(test_file_paths)
       end
 

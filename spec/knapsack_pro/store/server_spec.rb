@@ -46,6 +46,12 @@ describe KnapsackPro::Store::Server do
         expect(store.batches[1].passed?).to be false
         expect(store.batches[1].executed?).to be true
 
+        # last batch from the Queue API is always empty
+        batched_tests_3 = []
+        store.add_batch(batched_tests_3)
+
+        expect(store.batches.size).to eq 2
+
 
         # verify public API for the gem users works
         expect(KnapsackPro::Store::Client.batches.size).to eq 2
