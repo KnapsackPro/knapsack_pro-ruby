@@ -11,18 +11,14 @@ module KnapsackPro
         assign_available_store_server_uri
 
         @server_pid = fork do
-          server_is_running = true
+          queue = Queue.new
 
           Signal.trap("TERM") {
-            server_is_running = false
+            queue.push(nil)
           }
 
           DRb.start_service(store_server_uri, new)
-
-          while server_is_running
-            sleep 0.1
-          end
-
+          queue.pop
           DRb.stop_service
 
           # Wait for the drb server thread to finish before exiting.
