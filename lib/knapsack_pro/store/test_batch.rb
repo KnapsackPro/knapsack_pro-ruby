@@ -17,8 +17,8 @@ module KnapsackPro
       end
 
       def passed?
-        return @passed if executed?
-        raise TestFilesNotExecutedError.new
+        raise TestFilesNotExecutedError.new unless executed?
+        return @passed
       end
 
       private
