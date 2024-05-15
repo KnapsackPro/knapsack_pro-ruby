@@ -66,10 +66,6 @@ module KnapsackPro
       def_delegators :@queue_batch_manager, :add_batch, :last_batch_passed!, :last_batch_failed!, :batches
 
       def initialize
-        reset
-      end
-
-      def reset
         @queue_batch_manager = KnapsackPro::Store::QueueBatchManager.new
       end
 
