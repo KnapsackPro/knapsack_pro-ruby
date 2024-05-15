@@ -3,7 +3,7 @@
 module KnapsackPro
   module Store
     class TestBatch
-      TestFilesNotExecutedError = Class.new(StandardError)
+      BatchNotExecutedError = Class.new(StandardError)
 
       attr_reader :test_file_paths
 
@@ -17,7 +17,7 @@ module KnapsackPro
       end
 
       def passed?
-        raise TestFilesNotExecutedError.new unless executed?
+        raise BatchNotExecutedError.new unless executed?
         return @passed
       end
 
