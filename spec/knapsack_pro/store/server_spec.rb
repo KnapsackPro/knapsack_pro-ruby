@@ -1,13 +1,13 @@
 describe KnapsackPro::Store::Server do
   before do
-    KnapsackPro::Store::Server.reset
+    KnapsackPro::Store::TestableServer.reset
   end
 
   describe 'Queue test batches' do
     context 'when the queue mode flow' do
       it do
-        KnapsackPro::Store::Server.start
-        store = KnapsackPro::Store::Server.client
+        KnapsackPro::Store::TestableServer.start
+        store = KnapsackPro::Store::TestableServer.client
 
         expect(store.batches).to eq []
 
@@ -56,17 +56,17 @@ describe KnapsackPro::Store::Server do
 
     context 'when there is a delay in starting server in a forked process' do
       before do
-        KnapsackPro::Store::Server.send(:assign_available_store_server_uri)
+        KnapsackPro::Store::TestableServer.assign_available_store_server_uri
       end
 
       context 'when the delay is below 3 seconds' do
         it 'connects with the store server correctly' do
           thread = Thread.new do
             sleep 2
-            KnapsackPro::Store::Server.start
+            KnapsackPro::Store::TestableServer.start
           end
 
-          store = KnapsackPro::Store::Server.client
+          store = KnapsackPro::Store::TestableServer.client
           expect(store.ping).to be true
 
           thread.join
@@ -77,11 +77,11 @@ describe KnapsackPro::Store::Server do
         it do
           thread = Thread.new do
             sleep 4
-            KnapsackPro::Store::Server.start
+            KnapsackPro::Store::TestableServer.start
           end
 
           expect {
-            KnapsackPro::Store::Server.client
+            KnapsackPro::Store::TestableServer.client
           }.to raise_error DRb::DRbConnError
 
           thread.join
@@ -92,7 +92,7 @@ describe KnapsackPro::Store::Server do
     context 'when the server has not been started' do
       it do
         expect {
-          KnapsackPro::Store::Server.client
+          KnapsackPro::Store::TestableServer.client
         }.to raise_error RuntimeError, 'KNAPSACK_PRO_STORE_SERVER_URI must be set to available DRb port.'
       end
     end

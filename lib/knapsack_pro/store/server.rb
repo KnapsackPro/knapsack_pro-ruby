@@ -5,13 +5,6 @@ module KnapsackPro
     class Server
       extend Forwardable
 
-      def self.reset
-        stop
-        set_store_server_uri(nil)
-        @assigned_store_server_uri = nil
-        @client = nil
-      end
-
       def self.start
         return unless @server_pid.nil?
 
@@ -109,6 +102,19 @@ module KnapsackPro
 
       def self.stop_dummy_service
         DRb.stop_service
+      end
+    end
+
+    class TestableServer < Server
+      def self.assign_available_store_server_uri
+        super
+      end
+
+      def self.reset
+        stop
+        set_store_server_uri(nil)
+        @assigned_store_server_uri = nil
+        @client = nil
       end
     end
   end
