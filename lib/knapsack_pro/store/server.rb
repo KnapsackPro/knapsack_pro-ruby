@@ -87,13 +87,10 @@ module KnapsackPro
 
       # must be set in the main/parent process to make the env var available to the child process
       def self.assign_available_store_server_uri
-        @assigned_store_server_uri ||=
-          begin
-            find_available_drb_port_for_dummy_service
-            set_store_server_uri(DRb.uri)
-            stop_dummy_service
-            true
-          end
+        return if ENV['KNAPSACK_PRO_STORE_SERVER_URI']
+        find_available_drb_port_for_dummy_service
+        set_store_server_uri(DRb.uri)
+        stop_dummy_service
       end
 
       def self.find_available_drb_port_for_dummy_service
