@@ -8,10 +8,12 @@ module KnapsackPro
       @batches = []
     end
 
-    def each
-      @batches.each do |batch|
-        yield batch
-      end
+    def each(&block)
+      @batches.each(&block)
+    end
+
+    def map(&block)
+      @batches.map(&block)
     end
 
     def add_batch_for(test_file_paths)
