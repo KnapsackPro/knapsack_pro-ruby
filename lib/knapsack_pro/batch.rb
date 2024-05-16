@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class Batch
-    BatchNotExecutedError = Class.new(StandardError)
+    NotExecutedError = Class.new(StandardError)
 
     attr_reader :test_file_paths
 
@@ -16,7 +16,7 @@ module KnapsackPro
     end
 
     def passed?
-      raise BatchNotExecutedError.new unless executed?
+      raise NotExecutedError.new unless executed?
       return @passed
     end
 

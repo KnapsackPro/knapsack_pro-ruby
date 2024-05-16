@@ -15,6 +15,7 @@ module KnapsackPro
     end
 
     def add_batch_for(test_file_paths)
+      return if test_file_paths.empty?
       @batches << KnapsackPro::Batch.new(test_file_paths)
     end
 
@@ -26,10 +27,16 @@ module KnapsackPro
       current_batch._failed
     end
 
-    private
-
     def current_batch
       @batches.last
+    end
+
+    def size
+      @batches.size
+    end
+
+    def [](index)
+      @batches[index]
     end
   end
 end
