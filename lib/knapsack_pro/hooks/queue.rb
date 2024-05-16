@@ -54,22 +54,24 @@ module KnapsackPro
           end
         end
 
-        def call_before_subset_queue
+        def call_before_subset_queue(queue = nil)
           return unless before_subset_queue_store
           before_subset_queue_store.each do |block|
             block.call(
               KnapsackPro::Config::Env.queue_id,
-              KnapsackPro::Config::Env.subset_queue_id
+              KnapsackPro::Config::Env.subset_queue_id,
+              queue
             )
           end
         end
 
-        def call_after_subset_queue
+        def call_after_subset_queue(queue = nil)
           return unless after_subset_queue_store
           after_subset_queue_store.each do |block|
             block.call(
               KnapsackPro::Config::Env.queue_id,
-              KnapsackPro::Config::Env.subset_queue_id
+              KnapsackPro::Config::Env.subset_queue_id,
+              queue
             )
           end
         end

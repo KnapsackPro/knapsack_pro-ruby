@@ -40,7 +40,7 @@ describe KnapsackPro::Hooks::Queue do
   describe '.call_before_subset_queue' do
     subject { described_class.call_before_subset_queue }
 
-    context 'when callback is not set' do
+    context 'when no callback is set' do
       before do
         described_class.reset_before_subset_queue
       end
@@ -48,7 +48,7 @@ describe KnapsackPro::Hooks::Queue do
       it { should be_nil }
     end
 
-    context 'when callback is set multiple times' do
+    context 'when multiple callbacks are set' do
       let(:queue_id) { double }
       let(:subset_queue_id) { double }
 
@@ -75,12 +75,39 @@ describe KnapsackPro::Hooks::Queue do
         ])
       end
     end
+
+    context 'when a callback is set AND the queue is passed' do
+      let(:queue_id) { double }
+      let(:subset_queue_id) { double }
+      let(:queue) { instance_double(KnapsackPro::Queue) }
+
+      subject { described_class.call_before_subset_queue(queue) }
+
+      before do
+        expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
+        expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
+
+        $expected_called_blocks = []
+
+        described_class.before_subset_queue do |q_id, subset_q_id, queue|
+          $expected_called_blocks << [:block_1_called, q_id, subset_q_id, queue]
+        end
+      end
+
+      it 'each block is called' do
+        subject
+
+        expect($expected_called_blocks).to eq([
+          [:block_1_called, queue_id, subset_queue_id, queue],
+        ])
+      end
+    end
   end
 
   describe '.call_after_subset_queue' do
     subject { described_class.call_after_subset_queue }
 
-    context 'when callback is not set' do
+    context 'when no callback is set' do
       before do
         described_class.reset_after_subset_queue
       end
@@ -88,7 +115,7 @@ describe KnapsackPro::Hooks::Queue do
       it { should be_nil }
     end
 
-    context 'when callback is set multiple times' do
+    context 'when multiple callbacks are set' do
       let(:queue_id) { double }
       let(:subset_queue_id) { double }
 
@@ -112,6 +139,33 @@ describe KnapsackPro::Hooks::Queue do
         expect($expected_called_blocks).to eq([
           [:block_1_called, queue_id, subset_queue_id],
           [:block_2_called, queue_id, subset_queue_id],
+        ])
+      end
+    end
+
+    context 'when a callback is set AND the queue is passed' do
+      let(:queue_id) { double }
+      let(:subset_queue_id) { double }
+      let(:queue) { instance_double(KnapsackPro::Queue) }
+
+      subject { described_class.call_after_subset_queue(queue) }
+
+      before do
+        expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
+        expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
+
+        $expected_called_blocks = []
+
+        described_class.after_subset_queue do |q_id, subset_q_id, queue|
+          $expected_called_blocks << [:block_1_called, q_id, subset_q_id, queue]
+        end
+      end
+
+      it 'each block is called' do
+        subject
+
+        expect($expected_called_blocks).to eq([
+          [:block_1_called, queue_id, subset_queue_id, queue],
         ])
       end
     end
