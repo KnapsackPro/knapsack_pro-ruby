@@ -11,7 +11,7 @@ module KnapsackPro
         assign_available_store_server_uri
 
         @server_pid = fork do
-          queue = Queue.new
+          queue = Thread::Queue.new
 
           Signal.trap("TERM") {
             queue.push(nil)
