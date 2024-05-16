@@ -1,5 +1,57 @@
 # Changelog
 
+### 7.3.0
+
+* [Queue Mode][RSpec] Add info about batch of tests in queue hooks: `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue`
+
+  The `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue` hooks get a 3rd variable - the `queue`.
+
+  The `queue` variable stores info about each batch of tests fetched from the Queue API:
+
+  * a list of test file paths (an array like `['a_spec.rb', 'b_spec.rb']`)
+  * info if a given batch of tests passed (`queue#passed?` returns `true`, `false` or the `KnapsackPro::Batch::NotExecutedError` exception when tests were not executed yet)
+  * info whether tests were executed `queue.executed?` returns `true`, or `false`.
+
+  Example usage:
+
+  ```ruby
+  # spec_helper.rb
+
+  KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id, queue|
+    print "Tests from all batches fetched from the Queue API so far:  "
+    puts queue.map(&:test_file_paths).inspect
+
+    queue.each(&:test_file_paths) # you can use each as well
+
+    print "Current batch tests: "
+    puts queue.current_batch.test_file_paths.inspect
+
+    print "Current batch executed: "
+    puts queue.current_batch.executed? # returns false in the `before_subset_queue` hook
+
+    print "Current batch passed: "
+    puts queue.current_batch.passed? # raises the `KnapsackPro::Batch::NotExecutedError` exception in the `before_subset_queue` hook
+  end
+
+  KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id, queue|
+    print "Tests from all batches fetched from the Queue API so far: "
+    puts queue.map(&:test_file_paths).inspect
+  
+    print "Current batch tests: "
+    puts queue.current_batch.test_file_paths.inspect
+
+    print "Current batch executed: "
+    puts queue.current_batch.executed? # returns true in the `after_subset_queue` hook
+
+    print "Current batch passed: "
+    puts queue.current_batch.passed? # returns true if all test cases passed in the current batch
+  end
+  ```
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/253
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.2.0...v7.3.0
+
 ### 7.2.0
 
 * Always use the original `Net::HTTP` client, even when WebMock replaces it with its own
