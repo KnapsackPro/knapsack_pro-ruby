@@ -760,6 +760,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         puts queue.map(&:test_file_paths).inspect
         print "Executed batches in after_subset_queue: "
         puts queue.map(&:executed?).inspect
+
+        # call public API methods that must be backward compatible
+        print "Current batch tests: "
+        puts queue.current_batch.test_file_paths.inspect
+        print "Current batch executed: "
+        puts queue.current_batch.executed?
+        print "Current batch passed: "
+        puts queue.current_batch.passed?
       end
       SPEC
 
@@ -856,6 +864,14 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       expect(actual.stdout).to include('Executed batches in after_subset_queue: [true, true]')
       expect(actual.stdout).to include('Executed batches in after_subset_queue: [true, true, true]')
       expect(actual.stdout).to include('Executed batches in after_subset_queue: [true, true, true, true]')
+
+      expect(actual.stdout).to include('Current batch tests: ["spec_integration/a_spec.rb", "spec_integration/b_spec.rb"]')
+      expect(actual.stdout).to include('Current batch tests: ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"]')
+      expect(actual.stdout).to include('Current batch tests: ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"]')
+      expect(actual.stdout).to include('Current batch tests: ["spec_integration/g_spec.rb", "spec_integration/h_spec.rb"]')
+      expect(actual.stdout).to include('Current batch executed: true')
+      expect(actual.stdout).to include('Current batch passed: true')
+      expect(actual.stdout).to include('Current batch passed: false')
 
       expect(actual.exit_code).to eq 1
     end
