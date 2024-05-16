@@ -40,11 +40,11 @@ describe KnapsackPro::Hooks::Queue do
   describe '.call_before_subset_queue' do
     subject { described_class.call_before_subset_queue }
 
-    context 'when no callback is set' do
-      before do
-        described_class.reset_before_subset_queue
-      end
+    before do
+      described_class.reset_before_subset_queue
+    end
 
+    context 'when no callback is set' do
       it { should be_nil }
     end
 
@@ -107,11 +107,11 @@ describe KnapsackPro::Hooks::Queue do
   describe '.call_after_subset_queue' do
     subject { described_class.call_after_subset_queue }
 
-    context 'when no callback is set' do
-      before do
-        described_class.reset_after_subset_queue
-      end
+    before do
+      described_class.reset_after_subset_queue
+    end
 
+    context 'when no callback is set' do
       it { should be_nil }
     end
 
