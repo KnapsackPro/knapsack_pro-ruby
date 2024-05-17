@@ -2,7 +2,7 @@
 
 ### 7.3.0
 
-* [Queue Mode][RSpec] Add info about batch of tests in queue hooks: `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue`
+* [Queue Mode][RSpec] Pass each batch of tests to the queue hooks: `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue`
 
   The `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue` hooks get a 3rd variable - the `queue`.
 
