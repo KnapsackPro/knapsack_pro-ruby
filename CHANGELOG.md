@@ -26,25 +26,19 @@
     print "Current batch tests: "
     puts queue.current_batch.test_file_paths.inspect
 
-    print "Current batch executed: "
-    puts queue.current_batch.executed? # returns false in the `before_subset_queue` hook
-
-    print "Current batch passed: "
-    puts queue.current_batch.passed? # raises the `KnapsackPro::Batch::NotExecutedError` exception in the `before_subset_queue` hook
+    print "Current batch status: "
+    puts queue.current_batch.status # returns :not_executed in the `before_subset_queue` hook
   end
 
   KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id, queue|
     print "Tests from all batches fetched from the Queue API so far: "
     puts queue.map(&:test_file_paths).inspect
-  
+
     print "Current batch tests: "
     puts queue.current_batch.test_file_paths.inspect
 
-    print "Current batch executed: "
-    puts queue.current_batch.executed? # returns true in the `after_subset_queue` hook
-
-    print "Current batch passed: "
-    puts queue.current_batch.passed? # returns true if all test cases passed in the current batch
+    print "Current batch status: "
+    puts queue.current_batch.status # returns :passed or :failed in the `after_subset_queue` hook
   end
   ```
 

@@ -2,30 +2,19 @@
 
 module KnapsackPro
   class Batch
-    NotExecutedError = Class.new(StandardError)
-
-    attr_reader :test_file_paths
+    attr_reader :test_file_paths, :status
 
     def initialize(test_file_paths)
       @test_file_paths = test_file_paths
-      @passed = nil
-    end
-
-    def executed?
-      !@passed.nil?
-    end
-
-    def passed?
-      raise NotExecutedError.new unless executed?
-      return @passed
+      @status = :not_executed
     end
 
     def _passed
-      @passed = true
+      @status = :passed
     end
 
     def _failed
-      @passed = false
+      @status = :failed
     end
   end
 end
