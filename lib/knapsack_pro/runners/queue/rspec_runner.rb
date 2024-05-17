@@ -33,6 +33,7 @@ module KnapsackPro
           @stream_out = stream_out
           @node_test_file_paths = []
           @rspec_runner = nil # RSpec::Core::Runner is lazy initialized
+          @queue = KnapsackPro::Queue.new
         end
 
         # Based on:
@@ -82,11 +83,13 @@ module KnapsackPro
             subset_queue_id = KnapsackPro::Config::EnvGenerator.set_subset_queue_id
             ENV['KNAPSACK_PRO_SUBSET_QUEUE_ID'] = subset_queue_id
 
-            KnapsackPro::Hooks::Queue.call_before_subset_queue
+            @queue.add_batch_for(test_file_paths)
 
-            yield test_file_paths
+            KnapsackPro::Hooks::Queue.call_before_subset_queue(@queue)
 
-            KnapsackPro::Hooks::Queue.call_after_subset_queue
+            yield test_file_paths, @queue
+
+            KnapsackPro::Hooks::Queue.call_after_subset_queue(@queue)
 
             if @rspec_runner.knapsack__wants_to_quit?
               KnapsackPro.logger.warn('RSpec wants to quit.')

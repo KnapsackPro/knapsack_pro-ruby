@@ -1,5 +1,50 @@
 # Changelog
 
+### 7.3.0
+
+* [Queue Mode][RSpec] Pass each batch of tests to the queue hooks: `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue`
+
+  The `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue` hooks get a 3rd variable - the `queue`.
+
+  The `queue` variable stores an enumerable collection with each batch of tests fetched from the Queue API. The batch has:
+
+  * a list of test file paths (`KnapsackPro::Batch#test_file_paths` returns an array like `['a_spec.rb', 'b_spec.rb']`)
+  * a status of the given set of tests in the batch (`KnapsackPro::Batch#status` returns `:not_executed`, `:passed` or `:failed`)
+
+  Example usage:
+
+  ```ruby
+  # spec_helper.rb
+
+  KnapsackPro::Hooks::Queue.before_subset_queue do |queue_id, subset_queue_id, queue|
+    print "Tests from all batches fetched from the Queue API so far:  "
+    puts queue.map(&:test_file_paths).inspect
+
+    queue.each(&:test_file_paths) # you can use each as well
+
+    print "Current batch tests: "
+    puts queue.current_batch.test_file_paths.inspect
+
+    print "Current batch status: "
+    puts queue.current_batch.status # returns :not_executed in the `before_subset_queue` hook
+  end
+
+  KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id, queue|
+    print "Tests from all batches fetched from the Queue API so far: "
+    puts queue.map(&:test_file_paths).inspect
+
+    print "Current batch tests: "
+    puts queue.current_batch.test_file_paths.inspect
+
+    print "Current batch status: "
+    puts queue.current_batch.status # returns :passed or :failed in the `after_subset_queue` hook
+  end
+  ```
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/253
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.2.0...v7.3.0
+
 ### 7.2.0
 
 * Always use the original `Net::HTTP` client, even when WebMock replaces it with its own
