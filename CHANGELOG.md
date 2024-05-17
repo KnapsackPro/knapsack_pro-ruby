@@ -6,10 +6,10 @@
 
   The `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue` hooks get a 3rd variable - the `queue`.
 
-  The `queue` variable stores info about each batch of tests fetched from the Queue API:
+  The `queue` variable stores an enumerable collection with each batch of tests fetched from the Queue API. The batch has:
 
-  * a list of test file paths (`queue#test_file_paths` returns an array like `['a_spec.rb', 'b_spec.rb']`)
-  * a status of a given batch of tests (`queue#status` returns `:not_executed`, `:passed` or `:failed`)
+  * a list of test file paths (`KnapsackPro::Batch#test_file_paths` returns an array like `['a_spec.rb', 'b_spec.rb']`)
+  * a status of the given set of tests in the batch (`KnapsackPro::Batch#status` returns `:not_executed`, `:passed` or `:failed`)
 
   Example usage:
 
