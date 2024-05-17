@@ -869,9 +869,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       expect(actual.stdout).to include('Current batch tests: ["spec_integration/c_spec.rb", "spec_integration/d_spec.rb"]')
       expect(actual.stdout).to include('Current batch tests: ["spec_integration/e_spec.rb", "spec_integration/f_spec.rb"]')
       expect(actual.stdout).to include('Current batch tests: ["spec_integration/g_spec.rb", "spec_integration/h_spec.rb"]')
-      expect(actual.stdout).to include('Current batch executed: true')
-      expect(actual.stdout).to include('Current batch passed: true')
-      expect(actual.stdout).to include('Current batch passed: false')
+      expect(actual.stdout).to include('Current batch executed: true').exactly(4).times
+      expect(actual.stdout).to include('Current batch passed: true').twice
+      expect(actual.stdout).to include('Current batch passed: false').twice
 
       expect(actual.exit_code).to eq 1
     end
