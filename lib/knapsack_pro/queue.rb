@@ -12,10 +12,6 @@ module KnapsackPro
       @batches.each(&block)
     end
 
-    def map(&block)
-      @batches.map(&block)
-    end
-
     def add_batch_for(test_file_paths)
       return if test_file_paths.empty?
       @batches << KnapsackPro::Batch.new(test_file_paths)
