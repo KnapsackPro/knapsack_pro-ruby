@@ -54,6 +54,7 @@ module KnapsackPro
           end
         end
 
+        # `queue` is always present for RSpec
         def call_before_subset_queue(queue = nil)
           return unless before_subset_queue_store
           before_subset_queue_store.each do |block|
