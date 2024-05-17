@@ -1,5 +1,5 @@
 describe KnapsackPro::Queue do
-  it 'simulates a Queue Mode flow' do
+  it 'simulates a Queue Mode build' do
     queue = described_class.new
 
     expect(queue.current_batch).to be_nil
