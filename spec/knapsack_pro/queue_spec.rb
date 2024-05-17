@@ -5,8 +5,8 @@ describe KnapsackPro::Queue do
     expect(queue.current_batch).to be_nil
 
     # 1st batch
-    batched_tests_1 = ['a_spec.rb', 'b_spec.rb']
-    queue.add_batch_for(batched_tests_1)
+    test_files_paths_1 = ['a_spec.rb', 'b_spec.rb']
+    queue.add_batch_for(test_files_paths_1)
 
     expect(queue.current_batch.test_file_paths).to eq(['a_spec.rb', 'b_spec.rb'])
 
@@ -21,8 +21,8 @@ describe KnapsackPro::Queue do
 
 
     # 2nd batch
-    batched_tests_2 = ['c_spec.rb', 'd_spec.rb']
-    queue.add_batch_for(batched_tests_2)
+    test_files_paths_2 = ['c_spec.rb', 'd_spec.rb']
+    queue.add_batch_for(test_files_paths_2)
     expect(queue.current_batch.test_file_paths).to eq(['c_spec.rb', 'd_spec.rb'])
     queue.mark_batch_failed
     expect(queue.current_batch.executed?).to be true
@@ -30,8 +30,8 @@ describe KnapsackPro::Queue do
 
 
     # last batch from the Queue API is always empty
-    batched_tests_3 = []
-    queue.add_batch_for(batched_tests_3)
+    test_files_paths_3 = []
+    queue.add_batch_for(test_files_paths_3)
 
     expect(queue.size).to eq 2
     expect(queue[0].passed?).to be true
