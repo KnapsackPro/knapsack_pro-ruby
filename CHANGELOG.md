@@ -8,9 +8,8 @@
 
   The `queue` variable stores info about each batch of tests fetched from the Queue API:
 
-  * a list of test file paths (an array like `['a_spec.rb', 'b_spec.rb']`)
-  * info if a given batch of tests passed (`queue#passed?` returns `true`, `false` or the `KnapsackPro::Batch::NotExecutedError` exception when tests were not executed yet)
-  * info whether tests were executed `queue.executed?` returns `true`, or `false`.
+  * a list of test file paths (`queue#test_file_paths` returns an array like `['a_spec.rb', 'b_spec.rb']`)
+  * a status of a given batch of tests (`queue#status` returns `:not_executed`, `:passed` or `:failed`)
 
   Example usage:
 
