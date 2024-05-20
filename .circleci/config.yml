@@ -285,6 +285,7 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
+          KNAPSACK_PRO_RSPEC_DISABLED: true
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
@@ -325,6 +326,7 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: $KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST
+          KNAPSACK_PRO_RSPEC_DISABLED: true
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
