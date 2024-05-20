@@ -13,30 +13,21 @@ module KnapsackPro
 
       class << self
         def ci_node_total
-          (ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] ||
-            ci_env_for(:node_total) ||
-            1).to_i
+          (env_for('KNAPSACK_PRO_CI_NODE_TOTAL', :node_total) || 1).to_i
         end
 
         def ci_node_index
-          (ENV['KNAPSACK_PRO_CI_NODE_INDEX'] ||
-            ci_env_for(:node_index) ||
-            0).to_i
+          (env_for('KNAPSACK_PRO_CI_NODE_INDEX', :node_index) || 0).to_i
         end
 
         def ci_node_build_id
           env_name = 'KNAPSACK_PRO_CI_NODE_BUILD_ID'
-          ENV[env_name] ||
-            ci_env_for(:node_build_id) ||
+          env_for(env_name, :node_build_id) ||
             raise("Missing environment variable #{env_name}. Read more at #{KnapsackPro::Urls::KNAPSACK_PRO_CI_NODE_BUILD_ID}")
         end
 
         def ci_node_retry_count
-          (
-            ENV['KNAPSACK_PRO_CI_NODE_RETRY_COUNT'] ||
-            ci_env_for(:node_retry_count) ||
-            0
-          ).to_i
+          (env_for('KNAPSACK_PRO_CI_NODE_RETRY_COUNT', :node_retry_count) || 0).to_i
         end
 
         def max_request_retries
@@ -47,23 +38,19 @@ module KnapsackPro
         end
 
         def commit_hash
-          ENV['KNAPSACK_PRO_COMMIT_HASH'] ||
-            ci_env_for(:commit_hash)
+          env_for('KNAPSACK_PRO_COMMIT_HASH', :commit_hash)
         end
 
         def branch
-          ENV['KNAPSACK_PRO_BRANCH'] ||
-            ci_env_for(:branch)
+          env_for('KNAPSACK_PRO_BRANCH', :branch)
         end
 
         def project_dir
-          ENV['KNAPSACK_PRO_PROJECT_DIR'] ||
-            ci_env_for(:project_dir)
+          env_for('KNAPSACK_PRO_PROJECT_DIR', :project_dir)
         end
 
         def user_seat
-          ENV['KNAPSACK_PRO_USER_SEAT'] ||
-            ci_env_for(:user_seat)
+          env_for('KNAPSACK_PRO_USER_SEAT', :user_seat)
         end
 
         def masked_user_seat
@@ -183,7 +170,7 @@ module KnapsackPro
         def fixed_queue_split
           @fixed_queue_split ||= begin
             env_name = 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT'
-            computed = ENV.fetch(env_name, ci_env_for(:fixed_queue_split)).to_s
+            computed = env_for(env_name, :fixed_queue_split).to_s
 
             if !ENV.key?(env_name)
               KnapsackPro.logger.info("#{env_name} is not set. Using default value: #{computed}. Learn more at #{KnapsackPro::Urls::FIXED_QUEUE_SPLIT}")
@@ -249,10 +236,6 @@ module KnapsackPro
           end
         end
 
-        def ci_env_for(env_name)
-          detected_ci.new.send(env_name)
-        end
-
         def detected_ci
           detected = KnapsackPro::Config::CI.constants.map do |constant|
             Object.const_get("KnapsackPro::Config::CI::#{constant}").new.detected
@@ -292,6 +275,21 @@ module KnapsackPro
 
         def required_env(env_name)
           ENV[env_name] || raise("Missing environment variable #{env_name}")
+        end
+
+        def env_for(knapsack_env_name, ci_env_method)
+          knapsack_env_value = ENV[knapsack_env_name]
+          ci_env_value = ci_env_for(ci_env_method)
+
+          if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
+            KnapsackPro.logger.info("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
+          end
+
+          knapsack_env_value != nil ? knapsack_env_value : ci_env_value
+        end
+
+        def ci_env_for(env_name)
+          detected_ci.new.send(env_name)
         end
       end
     end
