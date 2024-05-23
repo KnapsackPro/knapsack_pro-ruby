@@ -1,5 +1,12 @@
 # Changelog
 
+### 7.4.0
+* Warn when `KNAPSACK_PRO_*` environment variables are set manually if their values could be automatically determined from supported CI environments.
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/254
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.3.0...v7.4.0
+
 ### 7.3.0
 
 * [Queue Mode][RSpec] Pass each batch of tests to the queue hooks: `KnapsackPro::Hooks::Queue.before_subset_queue` and `KnapsackPro::Hooks::Queue.after_subset_queue`
