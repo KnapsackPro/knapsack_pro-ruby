@@ -13,11 +13,17 @@ module KnapsackPro
 
       class << self
         def ci_node_total
-          (env_for('KNAPSACK_PRO_CI_NODE_TOTAL', :node_total) || 1).to_i
+          env_name = 'KNAPSACK_PRO_CI_NODE_TOTAL'
+          env_value = env_for(env_name, :node_total)
+
+          env_value ? env_value.to_i : raise_missing_env_for(env_name)
         end
 
         def ci_node_index
-          (env_for('KNAPSACK_PRO_CI_NODE_INDEX', :node_index) || 0).to_i
+          env_name = 'KNAPSACK_PRO_CI_NODE_INDEX'
+          env_value = env_for(env_name, :node_index)
+
+          env_value ? env_value.to_i : raise_missing_env_for(env_name)
         end
 
         def ci_node_build_id
@@ -274,7 +280,7 @@ module KnapsackPro
         private
 
         def required_env(env_name)
-          ENV[env_name] || raise("Missing environment variable #{env_name}")
+          ENV[env_name] || raise_missing_env_for(env_name)
         end
 
         def env_for(knapsack_env_name, ci_env_method)
@@ -290,6 +296,10 @@ module KnapsackPro
 
         def ci_env_for(env_name)
           detected_ci.new.send(env_name)
+        end
+
+        def raise_missing_env_for(env_name)
+          raise("Missing environment variable #{env_name}")
         end
       end
     end

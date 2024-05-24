@@ -1,5 +1,12 @@
 # Changelog
 
+### 7.5.0
+* Raise when `KNAPSACK_PRO_CI_NODE_TOTAL` or `KNAPSACK_PRO_CI_NODE_INDEX` is missing and can't be determined from supported CI environments, instead of defaulting to arbitrary numbers.
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/256
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.4.0...v7.5.0
+
 ### 7.4.0
 * Warn when `KNAPSACK_PRO_*` environment variables are set manually if their values could be automatically determined from supported CI environments.
 
