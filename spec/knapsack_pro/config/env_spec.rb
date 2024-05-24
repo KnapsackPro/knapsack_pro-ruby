@@ -54,7 +54,9 @@ describe KnapsackPro::Config::Env do
     end
 
     context "when ENV doesn't exist" do
-      it { should eq 1 }
+      it 'raises' do
+        expect { subject }.to raise_error(/Missing environment variable KNAPSACK_PRO_CI_NODE_TOTAL/)
+      end
     end
   end
 
@@ -118,7 +120,9 @@ describe KnapsackPro::Config::Env do
     end
 
     context "when ENV doesn't exist" do
-      it { should eq 0 }
+      it 'raises' do
+        expect { subject }.to raise_error(/Missing environment variable KNAPSACK_PRO_CI_NODE_INDEX/)
+      end
     end
   end
 
