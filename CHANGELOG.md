@@ -1,5 +1,7 @@
 # Changelog
 
+### UNRELEASED
+
 ### 7.5.0
 * Raise when `KNAPSACK_PRO_CI_NODE_TOTAL` or `KNAPSACK_PRO_CI_NODE_INDEX` is missing and can't be determined from supported CI environments, instead of defaulting to arbitrary numbers.
 
