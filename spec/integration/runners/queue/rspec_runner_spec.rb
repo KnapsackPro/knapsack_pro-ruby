@@ -18,18 +18,23 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   # @param spec_batches Array[Array[String]]
   def generate_specs(spec_helper, rspec_options, spec_batches)
     ENV['TEST__RSPEC_OPTIONS'] = rspec_options
-
-    spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
-    File.open(spec_helper_path, 'w') { |file| file.write(spec_helper) }
-
-    paths = spec_batches.flatten.map do |spec_item|
-      File.open(spec_item.path, 'w') { |file| file.write(spec_item.content) }
-      spec_item.path
-    end
-
+    generate_spec_helper(spec_helper)
+    paths = generate_spec_files(spec_batches.flatten)
     stub_spec_batches(
       spec_batches.map { _1.map(&:path) }
     )
+  end
+
+  def generate_spec_helper(spec_helper)
+    spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
+    File.open(spec_helper_path, 'w') { |file| file.write(spec_helper) }
+  end
+
+  def generate_spec_files(specs)
+    specs.map do |spec_item|
+      File.open(spec_item.path, 'w') { |file| file.write(spec_item.content) }
+      spec_item.path
+    end
   end
 
   def create_rails_helper_file(rails_helper)
@@ -73,8 +78,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     SPEC
   end
 
+  let(:command) { 'ruby spec/integration/runners/queue/rspec_runner.rb' }
+
   subject do
-    command = 'ruby spec/integration/runners/queue/rspec_runner.rb'
     stdout, stderr, status = Open3.capture3(command)
     log_command_result(stdout, stderr, status)
     OpenStruct.new(stdout: stdout, stderr: stderr, exit_code: status.exitstatus)
@@ -2534,6 +2540,30 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       expect(actual.stdout).to include('Top 2 slowest example groups')
 
+      expect(actual.exit_code).to eq 0
+    end
+  end
+
+  context 'when rspec is run without knapsack_pro' do
+    let(:spec) { Spec.new('a_spec.rb', <<~SPEC) }
+      require_relative "spec_helper.rb"
+
+      describe 'A_describe' do
+        it 'A1 test example' do
+          expect(1).to eq 1
+        end
+      end
+    SPEC
+
+    let(:command) { "bundle exec rspec #{spec.path}" }
+
+    it 'runs successfully' do
+      generate_spec_helper(spec_helper_with_knapsack)
+      generate_spec_files([spec])
+
+      actual = subject
+
+      expect(actual.stdout).to include('1 example, 0 failures')
       expect(actual.exit_code).to eq 0
     end
   end
