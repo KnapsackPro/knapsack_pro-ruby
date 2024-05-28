@@ -35,6 +35,7 @@ commands:
               sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
               echo "Updated RSpec version in Gemfile"
             fi
+      - run: bundler -v
       - restore_cache:
           keys:
           - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
@@ -375,8 +376,32 @@ jobs:
 workflows:
   tests:
     jobs:
+      - unit
+      - integration-rspec:
+          name: integration__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+      - e2e-regular-rspec:
+          name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+      - e2e-queue-rspec:
+          name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
+              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+      - e2e-regular-minitest:
+          name: e2e-regular__ruby-<< matrix.ruby >>__minitest
+          matrix:
+            parameters:
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
       - e2e-queue-minitest:
           name: e2e-queue__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
-              ruby: ["3.0", "3.1"]
+              ruby: ["3.0", "3.1", "3.2", "3.3"]
