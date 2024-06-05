@@ -233,6 +233,34 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.4...v7.0.0
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/236
 
+    __(breaking change)__ for SimpleCov and Minitest in Knapsack Pro Queue Mode users.
+
+    Please add the following to your configuration:
+
+    ```ruby
+    KnapsackPro::Hooks::Queue.after_queue do
+      SimpleCov.result.format!
+    end
+    ```
+
+    The full example:
+
+    ```ruby
+    # test/test_helper.rb
+    require 'knapsack_pro'
+    require 'simplecov'
+
+    SimpleCov.start
+
+    KnapsackPro::Hooks::Queue.before_queue do |queue_id|
+      SimpleCov.command_name("minitest_ci_node_#{KnapsackPro::Config::Env.ci_node_index}")
+    end
+
+    KnapsackPro::Hooks::Queue.after_queue do
+      SimpleCov.result.format!
+    end
+    ```
+
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v6.0.3...v6.0.4
 
 ### 6.0.3
