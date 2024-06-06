@@ -12,6 +12,22 @@ module KnapsackPro
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files)
+      if ENV['MOCK_QUEUE_API_RESPONSE'] == 'true'
+        @@index ||= 0
+
+        batches = [
+          ['test/1_test.rb', 'test/2_test.rb'],
+        ]
+
+        tests = batches[@@index] || []
+        @@index += 1
+        puts '='*50
+        puts 'Tests (mocked API response):'
+        puts tests.inspect
+        puts '='*50
+        return tests
+      end
+
       return [] if @fallback_activated
       action = build_action(can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
