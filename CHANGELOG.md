@@ -2,6 +2,16 @@
 
 ### UNRELEASED
 
+### 7.6.0
+
+* Avoid starting an unnecessary process in Queue Mode.
+  * Fix: the terminal is returned to the user correctly (output looks good) when you use CTRL+C
+  * Improvement: the backtrace looks better when something fails (for example, the gem handles an OS signal)
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/260
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.5.1...v7.6.0
+
 ### 7.5.1
 
 * Revert to 7.4.0.
