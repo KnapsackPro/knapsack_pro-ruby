@@ -4,7 +4,9 @@
 
 ### 7.5.1
 
-Revert to 7.4.0.
+* Revert to 7.4.0.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.5.0...v7.5.1
 
 ### 7.5.0
 
