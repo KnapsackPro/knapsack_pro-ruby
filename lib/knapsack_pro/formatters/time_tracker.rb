@@ -145,7 +145,7 @@ module KnapsackPro
       end
 
       def now
-        Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        KnapsackPro::Utils.now
       end
     end
   end

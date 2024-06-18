@@ -5,5 +5,14 @@ module KnapsackPro
     def self.unsymbolize(obj)
       JSON.parse(obj.to_json)
     end
+
+    def self.now
+      # support for timecop 0.9.9
+      if defined?(Timecop) && Process.respond_to?(:clock_gettime_without_mock)
+        Process.clock_gettime_without_mock(Process::CLOCK_MONOTONIC)
+      else
+        Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      end
+    end
   end
 end

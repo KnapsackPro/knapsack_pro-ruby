@@ -155,7 +155,7 @@ module KnapsackPro
     end
 
     def now_without_mock_time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      KnapsackPro::Utils.now
     end
   end
 end
