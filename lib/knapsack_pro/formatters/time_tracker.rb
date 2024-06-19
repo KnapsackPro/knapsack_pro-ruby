@@ -145,7 +145,7 @@ module KnapsackPro
       end
 
       def now
-        KnapsackPro::Utils.now
+        KnapsackPro::Utils.time_now
       end
     end
   end

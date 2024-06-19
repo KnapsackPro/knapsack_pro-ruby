@@ -17,8 +17,8 @@ describe KnapsackPro::Utils do
     end
   end
 
-  describe '.now' do
-    subject { described_class.now }
+  describe '.time_now' do
+    subject { described_class.time_now }
 
     context 'when Timecop does not mock the time' do
       it do

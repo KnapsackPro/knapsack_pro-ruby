@@ -155,7 +155,7 @@ module KnapsackPro
     end
 
     def now_without_mock_time
-      KnapsackPro::Utils.now
+      KnapsackPro::Utils.time_now
     end
   end
 end
