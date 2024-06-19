@@ -2,6 +2,14 @@
 
 ### UNRELEASED
 
+### 7.6.1
+
+* Add support for the Timecop 0.9.9 gem version so that we could track proper tests' execution time when `Process.clock_gettime` is mocked.
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/262
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.6.0...v7.6.1
+
 ### 7.6.0
 
 * Avoid starting an unnecessary process in Queue Mode.
