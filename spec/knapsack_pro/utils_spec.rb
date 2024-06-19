@@ -16,4 +16,38 @@ describe KnapsackPro::Utils do
       ])
     end
   end
+
+  describe '.now' do
+    subject { described_class.now }
+
+    context 'when Timecop does not mock the time' do
+      it do
+        now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        expect(subject).to be_within(0.001).of(now)
+      end
+    end
+
+    context 'when Timecop does mock the process clock' do
+      before do
+        unless Gem::Version.new(Timecop::VERSION) >= Gem::Version.new('0.9.10')
+          raise 'Timecop >= 0.9.10 is required to run this test. Please run: bundle update'
+        end
+
+        Timecop.mock_process_clock = true
+      end
+
+      after do
+        Timecop.mock_process_clock = false
+      end
+
+      it do
+        now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+        time = Time.local(2020, 1, 31)
+        Timecop.travel(time) do
+          expect(subject).to be_within(0.001).of(now)
+        end
+      end
+    end
+  end
 end
