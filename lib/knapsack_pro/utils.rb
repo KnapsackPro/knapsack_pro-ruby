@@ -7,7 +7,7 @@ module KnapsackPro
     end
 
     def self.now
-      # support for timecop 0.9.9
+      # support for timecop >= 0.9.9
       if defined?(Timecop) && Process.respond_to?(:clock_gettime_without_mock)
         Process.clock_gettime_without_mock(Process::CLOCK_MONOTONIC)
       else
