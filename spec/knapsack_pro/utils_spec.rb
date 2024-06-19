@@ -33,11 +33,15 @@ describe KnapsackPro::Utils do
           raise 'Timecop >= 0.9.9 is required to run this test. Please run: bundle update'
         end
 
-        Timecop.mock_process_clock = true if Timecop.respond_to?(:mock_process_clock=)
+        if Gem::Version.new(Timecop::VERSION) >= Gem::Version.new('0.9.10')
+          Timecop.mock_process_clock = true
+        end
       end
 
       after do
-        Timecop.mock_process_clock = false if Timecop.respond_to?(:mock_process_clock=)
+        if Gem::Version.new(Timecop::VERSION) >= Gem::Version.new('0.9.10')
+          Timecop.mock_process_clock = false
+        end
       end
 
       it do
