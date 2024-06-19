@@ -28,19 +28,17 @@ describe KnapsackPro::Utils do
     end
 
     context 'when Timecop does mock the process clock' do
-      before do
+      around(:example) do |ex|
         unless Gem::Version.new(Timecop::VERSION) >= Gem::Version.new('0.9.9')
           raise 'Timecop >= 0.9.9 is required to run this test. Please run: bundle update'
         end
 
         if Gem::Version.new(Timecop::VERSION) >= Gem::Version.new('0.9.10')
           Timecop.mock_process_clock = true
-        end
-      end
-
-      after do
-        if Gem::Version.new(Timecop::VERSION) >= Gem::Version.new('0.9.10')
+          ex.run
           Timecop.mock_process_clock = false
+        else
+          ex.run
         end
       end
 
