@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'stringio'
-#require_relative '../utils' # this should cause CI integration test to fail
+require_relative '../utils'
 
 module KnapsackPro
   module Formatters
