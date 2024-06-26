@@ -2,6 +2,14 @@
 
 ### UNRELEASED
 
+### 7.6.2
+
+* Fix an error for the `KnapsackPro::Formatters::TimeTracker` formatter in RSpec when using Knapsack Pro Regular Mode and the `.rspec` file is not present.
+
+  https://github.com/KnapsackPro/knapsack_pro-ruby/pull/265
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.6.1...v7.6.2
+
 ### 7.6.1
 
 * Add support for the Timecop 0.9.9 gem version so that we could track proper tests' execution time when `Process.clock_gettime` is mocked.
