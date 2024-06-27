@@ -78,7 +78,7 @@ Scripted tests can be found in the [Rails App With Knapsack Pro repository](http
 
 2. Update the gem version in `lib/knapsack_pro/version.rb`
 
-3. `git commit -am "chore: prepare release"`
+3. `git commit -am "Bump version x.x.x"`
 
 4. Build, tag, push, release: `bundle exec rake release`
 
