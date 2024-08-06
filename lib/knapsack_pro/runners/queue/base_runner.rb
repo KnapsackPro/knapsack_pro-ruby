@@ -69,7 +69,6 @@ module KnapsackPro
 
           puts
           puts '=' * 80
-          puts "Process pid: #{Process.pid}"
           puts "Start logging #{threads.count} detected threads."
           puts 'See the following backtrace and the line of code that is stuck if your CI node hangs.'
 
