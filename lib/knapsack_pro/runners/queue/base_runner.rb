@@ -59,8 +59,37 @@ module KnapsackPro
             Signal.trap(signal) {
               puts "#{signal} signal has been received. Terminating Knapsack Pro..."
               @@terminate_process = true
+              log_threads
             }
           end
+        end
+
+        def log_threads
+          threads = Thread.list
+
+          puts
+          puts '=' * 80
+          puts "Process pid: #{Process.pid}"
+          puts "Start logging #{threads.count} detected threads."
+          puts 'See the following backtrace and the line of code that is stuck if your CI node hangs.'
+
+          threads.each do |thr|
+            puts
+            if thr == Thread.main
+              puts "Main thread and its backtrace:"
+            else
+              puts "Non-main thread inspect: #{thr.inspect}"
+              puts "Non-main thread backtrace:"
+            end
+            puts thr.backtrace.join("\n")
+            puts
+          end
+
+          puts
+          puts 'End logging threads.'
+          puts '=' * 80
+
+          $stdout.flush
         end
       end
     end
