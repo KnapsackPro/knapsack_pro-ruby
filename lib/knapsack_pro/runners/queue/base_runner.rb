@@ -72,15 +72,15 @@ module KnapsackPro
           puts "Start logging #{threads.count} detected threads."
           puts 'Use the following backtrace to find the line of code that got stuck if the CI node hung and terminated your tests.'
 
-          threads.each do |thr|
+          threads.each do |thread|
             puts
-            if thr == Thread.main
+            if thread == Thread.main
               puts "Main thread and its backtrace:"
             else
-              puts "Non-main thread inspect: #{thr.inspect}"
+              puts "Non-main thread inspect: #{thread.inspect}"
               puts "Non-main thread backtrace:"
             end
-            puts thr.backtrace.join("\n")
+            puts thread.backtrace.join("\n")
             puts
           end
 
