@@ -1320,10 +1320,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             expect(1).to eq 1
 
             Thread.new do
-              10.times do |i|
-                puts "Non-main thread counter: " + i.to_s
-                sleep 1
-              end
+              sleep 10
             end
           end
         end
@@ -1418,7 +1415,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       expect(actual.stdout).to include('Main thread backtrace:')
       expect(actual.stdout).to include("spec_integration/b_spec.rb:7:in `kill'")
       expect(actual.stdout).to include('Non-main thread backtrace:')
-      expect(actual.stdout).to include("spec_integration/a_spec.rb:8:in `sleep'")
+      expect(actual.stdout).to include("spec_integration/a_spec.rb:6:in `sleep'")
 
 
       expect(actual.exit_code).to eq 1
