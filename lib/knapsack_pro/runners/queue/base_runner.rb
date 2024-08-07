@@ -70,7 +70,7 @@ module KnapsackPro
           puts
           puts '=' * 80
           puts "Start logging #{threads.count} detected threads."
-          puts 'Use the following backtrace to find the line of code that got stuck if the CI node hung and terminated your tests.'
+          puts 'Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.'
 
           threads.each do |thread|
             puts
