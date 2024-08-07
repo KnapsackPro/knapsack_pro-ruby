@@ -2,6 +2,14 @@
 
 ### UNRELEASED
 
+### 7.7.0
+
+* Log threads when the OS signal is received to simplify debugging, especially when a CI node hangs.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/266
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.6.2...v7.7.0
+
 ### 7.6.2
 
 * Fix an error for the `KnapsackPro::Formatters::TimeTracker` formatter in RSpec when using Knapsack Pro Regular Mode and the `.rspec` file is not present.
