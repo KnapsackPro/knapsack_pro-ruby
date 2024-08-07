@@ -75,7 +75,7 @@ module KnapsackPro
           threads.each do |thread|
             puts
             if thread == Thread.main
-              puts "Main thread and its backtrace:"
+              puts "Main thread backtrace:"
             else
               puts "Non-main thread inspect: #{thread.inspect}"
               puts "Non-main thread backtrace:"
