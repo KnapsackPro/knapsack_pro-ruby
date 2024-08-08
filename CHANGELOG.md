@@ -4,7 +4,7 @@
 
 ### 7.8.0
 
-* Add link to how to read the backtrace.
+* Add a link to help you read the backtrace.
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/267
 
