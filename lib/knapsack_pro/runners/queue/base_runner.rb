@@ -71,6 +71,7 @@ module KnapsackPro
           puts '=' * 80
           puts "Start logging #{threads.count} detected threads."
           puts 'Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.'
+          puts 'How to read the backtrace: https://knapsackpro.com/perma/ruby/backtrace-debugging'
 
           threads.each do |thread|
             puts
