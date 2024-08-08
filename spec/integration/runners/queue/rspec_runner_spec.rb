@@ -1322,6 +1322,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
             Thread.new do
               sleep 10
             end
+
+            sleep 1 # wait for the above async thread to start
           end
         end
       SPEC
