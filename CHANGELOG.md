@@ -2,6 +2,14 @@
 
 ### UNRELEASED
 
+### 7.8.0
+
+* Add link to how to read the backtrace.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/267
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.7.0...v7.8.0
+
 ### 7.7.0
 
 * Log threads when the OS signal is received to simplify debugging, especially when a CI node hangs.
