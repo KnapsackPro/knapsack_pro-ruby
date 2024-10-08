@@ -1,6 +1,12 @@
 # Changelog
 
-### UNRELEASED
+### UNRELEASED (7.8.1)
+
+* Handle `nil` in `Thread#backtrace` and `Exception#backtrace`.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/272
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.8.0...v7.8.1
 
 ### 7.8.0
 
