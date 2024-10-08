@@ -1,6 +1,6 @@
 # Changelog
 
-### UNRELEASED (7.8.1)
+### 7.8.1
 
 * Handle `nil` in `Thread#backtrace` and `Exception#backtrace`.
 
