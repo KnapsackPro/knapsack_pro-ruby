@@ -81,7 +81,7 @@ module KnapsackPro
               puts "Non-main thread inspect: #{thread.inspect}"
               puts "Non-main thread backtrace:"
             end
-            puts thread.backtrace.join("\n")
+            puts thread.backtrace&.join("\n")
             puts
           end
 
