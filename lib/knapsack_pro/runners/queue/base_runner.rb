@@ -59,7 +59,7 @@ module KnapsackPro
             Signal.trap(signal) {
               puts "#{signal} signal has been received. Terminating Knapsack Pro..."
               @@terminate_process = true
-              RSpec.world.wants_to_quit = true if signal == 'INT'
+              RSpec.world.wants_to_quit = true
               log_threads
             }
           end
