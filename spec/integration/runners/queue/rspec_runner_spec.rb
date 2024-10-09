@@ -1383,8 +1383,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       expect(actual.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
       expect(actual.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
       expect(actual.stdout).to include('B1.1.2 test example')
-      expect(actual.stdout).to include('B1.1.3 test example (FAILED - 1)')
-      expect(actual.stdout).to include('B1.2.1 test example')
+      expect(actual.stdout).to_not include('B1.1.3 test example (FAILED - 1)')
+      expect(actual.stdout).to_not include('B1.2.1 test example')
 
       # next ExampleGroup within the same b_spec.rb is not executed
       expect(actual.stdout).to_not include('B2.1 test example')
@@ -1401,14 +1401,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         Pending: (Failures listed here are expected and do not affect your suite's status)
 
           1) B1_describe B1.1_describe B1.1.1 test example
-        OUTPUT
-      )
-
-      expect(actual.stdout).to include(
-        <<~OUTPUT
-        Failures:
-
-          1) B1_describe B1.1_describe B1.1.3 test example
         OUTPUT
       )
 
