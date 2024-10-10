@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.8.2
+
+* Set `RSpec.world.wants_to_quit` to true when any signal is received by the knapsack_pro gem to allow graceful exit.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/273
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.8.1...v7.8.2
+
 ### 7.8.1
 
 * Handle `nil` in `Thread#backtrace` and `Exception#backtrace`.
