@@ -27,6 +27,7 @@ module KnapsackPro
 
         cli_args = cli_format + [
           '--dry-run',
+          '--no-color',
           '--out', report_path,
           '--default-path', test_dir,
         ] + KnapsackPro::TestFilePresenter.paths(test_file_entities)
