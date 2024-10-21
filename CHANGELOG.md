@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.9.0
+
+* A more readable error message for the RSpec split by examples JSON report (remove ANSI codes that are not human-readable)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/275
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.8.2...v7.9.0
+
 ### 7.8.2
 
 * Set `RSpec.world.wants_to_quit` to true when any signal is received by the knapsack_pro gem to allow graceful exit.
