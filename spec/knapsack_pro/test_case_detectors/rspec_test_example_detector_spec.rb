@@ -48,6 +48,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           expect(RSpec::Core::ConfigurationOptions).to receive(:new).with([
             '--format', expected_format,
             '--dry-run',
+            '--no-color',
             '--out', report_path,
             '--default-path', test_dir,
             'spec/a_spec.rb', 'spec/b_spec.rb',
