@@ -23,6 +23,15 @@ describe KnapsackPro::SlowTestFileFinder do
         test_files_existing_on_disk = double
         expect(KnapsackPro::TestFileFinder).to receive(:select_test_files_that_can_be_run).with(adapter_class, merged_test_files_from_api).and_return(test_files_existing_on_disk)
 
+        test_file_paths_existing_on_disk = double
+        expect(KnapsackPro::TestFilePresenter).to receive(:paths).with(test_files_existing_on_disk).and_return(test_file_paths_existing_on_disk)
+
+        test_files_in_subset = double
+        expect(test_files_from_api).to receive(:select).and_return(test_files_in_subset)
+
+        time_execution = double
+        expect(test_files_in_subset).to receive(:sum).and_return(time_execution)
+
         slow_test_files = double
         expect(KnapsackPro::SlowTestFileDeterminer).to receive(:call).with(test_files_existing_on_disk, time_execution).and_return(slow_test_files)
 
