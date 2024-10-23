@@ -14,12 +14,25 @@ module KnapsackPro
       # get list of recorded test files for last CI Build
       build_distribution_entity = KnapsackPro::BuildDistributionFetcher.call
       test_files_from_api = build_distribution_entity.test_files
+      KnapsackPro.logger.debug("Test Files From API: #{test_files_from_api}")
 
       merged_test_files_from_api = KnapsackPro::TestCaseMergers::BaseMerger.call(adapter_class, test_files_from_api)
 
       test_files_existing_on_disk = KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(adapter_class, merged_test_files_from_api)
+      test_file_paths_existing_on_disk = KnapsackPro::TestFilePresenter.paths(test_files_existing_on_disk)
+      KnapsackPro.logger.debug("Test Files Existing On Disk: #{test_files_existing_on_disk}")
 
-      slow_test_files = KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk, build_distribution_entity.time_execution)
+      # select only test files that are present on the disk
+      test_files_in_subset = test_files_from_api.select do |test_file_entity|
+        test_file_paths_existing_on_disk.include?(test_file_entity.fetch('path'))
+      end
+      KnapsackPro.logger.debug("Test Files In Subset: #{test_files_in_subset}")
+
+      time_execution = test_files_in_subset.sum { |test_file| test_file.fetch('time_execution') }
+      KnapsackPro.logger.debug("Time Execution: #{time_execution}")
+
+      slow_test_files = KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk, time_execution)
+      KnapsackPro.logger.debug("Slow Test Files: #{slow_test_files}")
 
       KnapsackPro::SlowTestFileDeterminer.save_to_json_report(slow_test_files)
 
