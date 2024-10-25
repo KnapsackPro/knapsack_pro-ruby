@@ -4,6 +4,10 @@ describe KnapsackPro::Adapters::BaseAdapter do
   end
 
   shared_examples '.slow_test_file? method' do
+    before do
+      allow(KnapsackPro::SlowTestFileDeterminer).to receive(:read_from_json_report).and_return(slow_test_files)
+    end
+
     context 'when test_file_path is in slow test file paths' do
       # add ./ before path to ensure KnapsackPro::TestFileCleaner.clean will clean it
       let(:test_file_path) { './spec/models/user_spec.rb' }
@@ -76,6 +80,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
           'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN' => '{spec/models/*_spec.rb}',
         })
         expect(KnapsackPro::TestFileFinder).to receive(:slow_test_files_by_pattern).with(adapter_class).and_return(slow_test_files)
+        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:read_from_json_report).and_return(slow_test_files)
       end
 
       it_behaves_like '.slow_test_file? method'
