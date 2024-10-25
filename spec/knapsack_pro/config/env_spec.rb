@@ -1,6 +1,20 @@
 describe KnapsackPro::Config::Env do
   before { stub_const("ENV", {}) }
 
+  describe '.slow_test_time_threshold_per_ci_node' do
+    subject { described_class.slow_test_time_threshold_per_ci_node }
+
+    context 'when KNAPSACK_PRO_SLOW_TEST_TIME_THRESHOLD_PER_CI_NODE has value' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_SLOW_TEST_TIME_THRESHOLD_PER_CI_NODE' => '0.9' }) }
+
+      it { should eq 0.9 }
+    end
+
+    context 'when KNAPSACK_PRO_SLOW_TEST_TIME_THRESHOLD_PER_CI_NODE does not have value' do
+      it { should eq 0.7 }
+    end
+  end
+
   describe '.ci_node_total' do
     subject { described_class.ci_node_total }
 

@@ -67,6 +67,10 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN']
         end
 
+        def slow_test_time_threshold_per_ci_node
+          ENV.fetch('KNAPSACK_PRO_SLOW_TEST_TIME_THRESHOLD_PER_CI_NODE', 0.7).to_f
+        end
+
         def test_file_exclude_pattern
           ENV['KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN']
         end
