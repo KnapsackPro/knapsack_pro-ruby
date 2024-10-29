@@ -13,8 +13,7 @@ describe KnapsackPro::SlowTestFileFinder do
 
       it do
         test_files_from_api = double
-        time_execution = double
-        build_distribution_entity = instance_double(KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity, test_files: test_files_from_api, time_execution: time_execution)
+        build_distribution_entity = instance_double(KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity, test_files: test_files_from_api)
         expect(KnapsackPro::BuildDistributionFetcher).to receive(:call).and_return(build_distribution_entity)
 
         merged_test_files_from_api = double
@@ -24,7 +23,7 @@ describe KnapsackPro::SlowTestFileFinder do
         expect(KnapsackPro::TestFileFinder).to receive(:select_test_files_that_can_be_run).with(adapter_class, merged_test_files_from_api).and_return(test_files_existing_on_disk)
 
         slow_test_files = double
-        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:call).with(test_files_existing_on_disk, time_execution).and_return(slow_test_files)
+        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:call).with(test_files_existing_on_disk).and_return(slow_test_files)
 
         expect(KnapsackPro::SlowTestFileDeterminer).to receive(:save_to_json_report).with(slow_test_files)
 

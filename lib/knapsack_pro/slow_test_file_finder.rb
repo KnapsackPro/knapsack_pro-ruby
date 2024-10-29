@@ -19,7 +19,7 @@ module KnapsackPro
 
       test_files_existing_on_disk = KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(adapter_class, merged_test_files_from_api)
 
-      slow_test_files = KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk, build_distribution_entity.time_execution)
+      slow_test_files = KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk)
 
       KnapsackPro::SlowTestFileDeterminer.save_to_json_report(slow_test_files)
 

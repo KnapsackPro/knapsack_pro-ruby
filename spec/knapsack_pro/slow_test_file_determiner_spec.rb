@@ -6,7 +6,7 @@ describe KnapsackPro::SlowTestFileDeterminer do
       expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
     end
 
-    subject { described_class.call(test_files, time_execution) }
+    subject { described_class.call(test_files) }
 
     context 'when test files have recorded time execution' do
       let(:time_execution) { 20.0 }
@@ -14,28 +14,34 @@ describe KnapsackPro::SlowTestFileDeterminer do
         [
           { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
           { 'path' => 'b_spec.rb', 'time_execution' => 3.4 },
-          # slow tests are above 3.5s threshold (20.0 / 4 * 0.7 = 3.5)
           { 'path' => 'c_spec.rb', 'time_execution' => 3.5 },
-          { 'path' => 'd_spec.rb', 'time_execution' => 5.9 },
+          { 'path' => 'd_spec.rb', 'time_execution' => 12.1 },
         ]
       end
 
-      it do
+      it 'detects slow tests above 3.5s threshold (20.0 / 4 nodes * 70% threshold = 3.5)' do
         expect(subject).to eq([
           { 'path' => 'c_spec.rb', 'time_execution' => 3.5 },
-          { 'path' => 'd_spec.rb', 'time_execution' => 5.9 },
+          { 'path' => 'd_spec.rb', 'time_execution' => 12.1 },
         ])
       end
     end
 
     context 'when test files have no recorded time execution' do
-      let(:time_execution) { 0.0 }
       let(:test_files) do
         [
           { 'path' => 'a_spec.rb', 'time_execution' => 0.0 },
           { 'path' => 'b_spec.rb', 'time_execution' => 0.0 },
         ]
       end
+
+      it do
+        expect(subject).to eq([])
+      end
+    end
+
+    context 'when there are no test files' do
+      let(:test_files) { [] }
 
       it do
         expect(subject).to eq([])
