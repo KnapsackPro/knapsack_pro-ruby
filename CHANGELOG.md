@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.10.0
+
+* Improve the RSpec split by examples feature. Use test file execution times for existing test files on the disk to determine slow test files. This fixes issue with detecting slow test files when API token is shared between multiple test suites.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/277
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.9.0...v7.10.0
+
 ### 7.9.0
 
 * A more readable error message for the RSpec split by examples JSON report (remove ANSI codes that are not human-readable)
