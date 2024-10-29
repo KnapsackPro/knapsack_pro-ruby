@@ -1,6 +1,7 @@
 require 'open3'
 require 'json'
 require 'nokogiri'
+require 'ostruct'
 
 describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :clear_tmp do
   SPEC_DIRECTORY = 'spec_integration'
