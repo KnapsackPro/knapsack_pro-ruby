@@ -39,4 +39,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr', '>= 6.0'
   spec.add_development_dependency 'webmock', '>= 3.13'
   spec.add_development_dependency 'timecop', '>= 0.9.9'
+  spec.add_development_dependency 'ostruct', '>= 0.6.0'
 end
