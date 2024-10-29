@@ -1408,9 +1408,9 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       expect(actual.stdout).to include('Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.')
       expect(actual.stdout).to include('Main thread backtrace:')
-      expect(actual.stdout).to include("spec_integration/b_spec.rb:7:in `kill'")
+      expect(actual.stdout).to match(/spec_integration\/b_spec\.rb:7:in .*kill/)
       expect(actual.stdout).to include('Non-main thread backtrace:')
-      expect(actual.stdout).to include("spec_integration/a_spec.rb:6:in `sleep'")
+      expect(actual.stdout).to match(/spec_integration\/a_spec\.rb:6:in .*sleep/)
 
 
       expect(actual.exit_code).to eq 1
