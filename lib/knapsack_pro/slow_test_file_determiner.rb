@@ -8,6 +8,12 @@ module KnapsackPro
     def self.call(test_files)
       total_execution_time = test_files.sum { |test_file| test_file.fetch('time_execution') }
       time_threshold = (total_execution_time / KnapsackPro::Config::Env.ci_node_total) * TIME_THRESHOLD_PER_CI_NODE
+      puts '+' * 100
+      puts "Total execution time of tests on the disk: #{total_execution_time}s"
+      puts "Slow test files time threshold: #{time_threshold}s"
+      puts "Test files on the disk with estimated mean execution time:"
+      puts test_files.inspect
+      puts '+' * 100
 
       test_files.select do |test_file|
         time_execution = test_file.fetch('time_execution')
