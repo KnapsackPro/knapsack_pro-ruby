@@ -129,13 +129,11 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
     end
 
-    context 'when split by test cases enabled AND less than 2 CI nodes' do
+    context 'when split by test cases enabled' do
       let(:test_files_to_run) { double }
 
       before  do
         expect(adapter_class).to receive(:split_by_test_cases_enabled?).and_return(true)
-
-        expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(1)
 
         test_file_pattern = double
         expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
@@ -143,54 +141,50 @@ describe KnapsackPro::BaseAllocatorBuilder do
         expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files_to_run)
       end
 
-      it 'returns test files without test cases' do
-        logger = instance_double(Logger)
-        expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:warn).with('Skipping split of test files by test cases because you are running tests on a single CI node (no parallelism)')
-        expect(subject).to eq test_files_to_run
-      end
-    end
-
-    context 'when split by test cases enabled AND at least 2 CI nodes' do
-      let(:test_files_to_run) { double }
-
-      before  do
-        expect(adapter_class).to receive(:split_by_test_cases_enabled?).and_return(true)
-
-        expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(2)
-
-        test_file_pattern = double
-        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
-
-        expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files_to_run)
-
-        expect(allocator_builder).to receive(:get_slow_test_files).and_return(slow_test_files)
-      end
-
-      context 'when slow test files are detected' do
-        let(:slow_test_files) do
-          [
-            '1_spec.rb',
-            '2_spec.rb',
-          ]
+      context 'when less than 2 CI nodes' do
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(1)
         end
-
-        it 'returns test files with test cases' do
-          test_file_cases = double
-          expect(adapter_class).to receive(:test_file_cases_for).with(slow_test_files).and_return(test_file_cases)
-
-          test_files_with_test_cases = double
-          expect(KnapsackPro::TestFilesWithTestCasesComposer).to receive(:call).with(test_files_to_run, slow_test_files, test_file_cases).and_return(test_files_with_test_cases)
-
-          expect(subject).to eq test_files_with_test_cases
-        end
-      end
-
-      context 'when slow test files are not detected' do
-        let(:slow_test_files) { [] }
 
         it 'returns test files without test cases' do
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:warn).with('Skipping split of test files by test cases because you are running tests on a single CI node (no parallelism)')
           expect(subject).to eq test_files_to_run
+        end
+      end
+
+      context 'when at least 2 CI nodes' do
+        before do
+          expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(2)
+          expect(allocator_builder).to receive(:get_slow_test_files).and_return(slow_test_files)
+        end
+
+        context 'when slow test files are detected' do
+          let(:slow_test_files) do
+            [
+              '1_spec.rb',
+              '2_spec.rb',
+            ]
+          end
+
+          it 'returns test files with test cases' do
+            test_file_cases = double
+            expect(adapter_class).to receive(:test_file_cases_for).with(slow_test_files).and_return(test_file_cases)
+
+            test_files_with_test_cases = double
+            expect(KnapsackPro::TestFilesWithTestCasesComposer).to receive(:call).with(test_files_to_run, slow_test_files, test_file_cases).and_return(test_files_with_test_cases)
+
+            expect(subject).to eq test_files_with_test_cases
+          end
+        end
+
+        context 'when slow test files are not detected' do
+          let(:slow_test_files) { [] }
+
+          it 'returns test files without test cases' do
+            expect(subject).to eq test_files_to_run
+          end
         end
       end
     end
