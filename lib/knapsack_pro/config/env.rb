@@ -200,6 +200,14 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX', 'bundle exec')
         end
 
+        def slow_test_file_threshold
+          ENV.fetch('KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD', nil)&.to_f
+        end
+
+        def slow_test_file_threshold?
+          !!slow_test_file_threshold
+        end
+
         def test_suite_token
           env_name = 'KNAPSACK_PRO_TEST_SUITE_TOKEN'
           ENV[env_name] || raise("Missing environment variable #{env_name}. You should set environment variable like #{env_name}_RSPEC (note there is suffix _RSPEC at the end). knapsack_pro gem will set #{env_name} based on #{env_name}_RSPEC value. If you use other test runner than RSpec then use proper suffix.")

@@ -1964,10 +1964,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+
+      ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+      ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
     it 'splits slow test files by examples AND ensures the test examples are executed only once' do
@@ -2060,10 +2063,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+
+      ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+      ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
     it 'sets 1 as exit code AND raises an error (a test example path as a_spec.rb[1:1] would always be executed even when it does not have the tag that is set via the --tag option. We cannot run tests because it could lead to running unintentional tests)' do
@@ -2138,10 +2144,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+
+      ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+      ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
     it 'produces a JSON report' do
@@ -2237,10 +2246,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+
+      ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+      ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
     it 'produces a JUnit XML report' do
@@ -2334,10 +2346,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+
+      ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
       ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+      ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
     it 'produces a code coverage report' do

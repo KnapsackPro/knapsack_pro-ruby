@@ -8,8 +8,7 @@ describe KnapsackPro::SlowTestFileDeterminer do
 
     subject { described_class.call(test_files) }
 
-    context 'when test files have recorded time execution' do
-      let(:time_execution) { 20.0 }
+    context 'when test files have recorded execution time' do
       let(:test_files) do
         [
           { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
@@ -27,7 +26,30 @@ describe KnapsackPro::SlowTestFileDeterminer do
       end
     end
 
-    context 'when test files have no recorded time execution' do
+    context 'when test files have recorded execution time AND slow test files threshold is set' do
+      let(:test_files) do
+        [
+          { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
+          { 'path' => 'b_spec.rb', 'time_execution' => 3.4 },
+          { 'path' => 'c_spec.rb', 'time_execution' => 3.5 },
+          { 'path' => 'd_spec.rb', 'time_execution' => 12.1 },
+        ]
+      end
+
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD' => '2' })
+      end
+
+      it 'detects slow tests above 2.0s threshold' do
+        expect(subject).to eq([
+          { 'path' => 'b_spec.rb', 'time_execution' => 3.4 },
+          { 'path' => 'c_spec.rb', 'time_execution' => 3.5 },
+          { 'path' => 'd_spec.rb', 'time_execution' => 12.1 },
+        ])
+      end
+    end
+
+    context 'when test files have no recorded execution time' do
       let(:test_files) do
         [
           { 'path' => 'a_spec.rb', 'time_execution' => 0.0 },

@@ -1062,6 +1062,37 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.slow_test_file_threshold' do
+    subject { described_class.slow_test_file_threshold }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD' => '2' }) }
+      it 'returns seconds' do
+        expect(subject).to eq 2.0
+        expect(subject).to be_a Float
+      end
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be_nil }
+    end
+  end
+
+  describe '.slow_test_file_threshold?' do
+    subject { described_class.slow_test_file_threshold? }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD' => '2' }) }
+      it { should be true }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
   describe '.test_suite_token' do
     subject { described_class.test_suite_token }
 
