@@ -11,7 +11,11 @@ module KnapsackPro
 
       test_files.select do |test_file|
         time_execution = test_file.fetch('time_execution')
-        time_execution >= time_threshold && time_execution > 0
+        next false if time_execution.zero?
+        next true if time_execution >= time_threshold
+        next false unless KnapsackPro::Config::Env.slow_test_file_threshold?
+
+        time_execution >= KnapsackPro::Config::Env.slow_test_file_threshold
       end
     end
 
