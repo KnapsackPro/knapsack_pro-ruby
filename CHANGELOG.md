@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.12.0
+
+* Add `KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD` to improve the RSpec split by examples feature with many skipped tests
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/282
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.11.0...v7.12.0
+
 ### 7.11.0
 
 * fix(RSpec split by examples): Properly determine slow test files when test example execution times and full test file execution time are both known
