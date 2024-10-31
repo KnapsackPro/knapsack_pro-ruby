@@ -1067,7 +1067,10 @@ describe KnapsackPro::Config::Env do
 
     context 'when ENV exists' do
       before { stub_const("ENV", { 'KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD' => '2' }) }
-      it { should eq 2.0 }
+      it 'returns seconds' do
+        expect(subject).to eq 2.0
+        expect(subject).to be_a Float
+      end
     end
 
     context "when ENV doesn't exist" do
