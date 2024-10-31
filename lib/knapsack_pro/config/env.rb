@@ -201,12 +201,11 @@ module KnapsackPro
         end
 
         def slow_test_file_threshold
-          value = ENV.fetch('KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD', nil)
-          value.to_f unless value.nil?
+          ENV.fetch('KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD', nil)&.to_f
         end
 
         def slow_test_file_threshold?
-          !slow_test_file_threshold.nil?
+          !!slow_test_file_threshold
         end
 
         def test_suite_token
