@@ -134,6 +134,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
 
       before  do
         expect(adapter_class).to receive(:split_by_test_cases_enabled?).and_return(true)
+        expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
 
         test_file_pattern = double
         expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
@@ -142,9 +143,7 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
 
       context 'when less than 2 CI nodes' do
-        before do
-          expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(1)
-        end
+        let(:node_total) { 1 }
 
         it 'returns test files without test cases' do
           logger = instance_double(Logger)
@@ -155,8 +154,9 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
 
       context 'when at least 2 CI nodes' do
+        let(:node_total) { 2 }
+
         before do
-          expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(2)
           expect(allocator_builder).to receive(:get_slow_test_files).and_return(slow_test_files)
         end
 
