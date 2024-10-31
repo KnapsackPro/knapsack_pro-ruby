@@ -129,11 +129,35 @@ describe KnapsackPro::BaseAllocatorBuilder do
       end
     end
 
-    context 'when split by test cases enabled' do
+    context 'when split by test cases enabled AND less than 2 CI nodes' do
       let(:test_files_to_run) { double }
 
       before  do
         expect(adapter_class).to receive(:split_by_test_cases_enabled?).and_return(true)
+
+        expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(1)
+
+        test_file_pattern = double
+        expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
+
+        expect(KnapsackPro::TestFileFinder).to receive(:call).with(test_file_pattern).and_return(test_files_to_run)
+      end
+
+      it 'returns test files without test cases' do
+        logger = instance_double(Logger)
+        expect(KnapsackPro).to receive(:logger).and_return(logger)
+        expect(logger).to receive(:warn).with('Skipping split of test files by test cases because you are running tests on a single CI node (no parallelism)')
+        expect(subject).to eq test_files_to_run
+      end
+    end
+
+    context 'when split by test cases enabled AND at least 2 CI nodes' do
+      let(:test_files_to_run) { double }
+
+      before  do
+        expect(adapter_class).to receive(:split_by_test_cases_enabled?).and_return(true)
+
+        expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(2)
 
         test_file_pattern = double
         expect(KnapsackPro::TestFilePattern).to receive(:call).with(adapter_class).and_return(test_file_pattern)
