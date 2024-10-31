@@ -10,12 +10,12 @@ module KnapsackPro
       time_threshold = (total_execution_time / KnapsackPro::Config::Env.ci_node_total) * TIME_THRESHOLD_PER_CI_NODE
 
       test_files.select do |test_file|
-        time_execution = test_file.fetch('time_execution')
-        next false if time_execution.zero?
-        next true if time_execution >= time_threshold
+        execution_time = test_file.fetch('time_execution')
+        next false if execution_time.zero?
+        next true if execution_time >= time_threshold
         next false unless KnapsackPro::Config::Env.slow_test_file_threshold?
 
-        time_execution >= KnapsackPro::Config::Env.slow_test_file_threshold
+        execution_time >= KnapsackPro::Config::Env.slow_test_file_threshold
       end
     end
 
