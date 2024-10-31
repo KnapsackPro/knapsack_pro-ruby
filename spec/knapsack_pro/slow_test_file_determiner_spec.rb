@@ -3,7 +3,7 @@ describe KnapsackPro::SlowTestFileDeterminer do
     let(:node_total) { 4 }
 
     before do
-      expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(node_total)
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_total).at_least(:once).and_return(node_total)
     end
 
     subject { described_class.call(test_files) }
@@ -46,6 +46,22 @@ describe KnapsackPro::SlowTestFileDeterminer do
           { 'path' => 'c_spec.rb', 'time_execution' => 3.5 },
           { 'path' => 'd_spec.rb', 'time_execution' => 12.1 },
         ])
+      end
+    end
+
+    context 'when test files have recorded execution time AND a single CI node' do
+      let(:node_total) { 1 }
+      let(:test_files) do
+        [
+          { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
+          { 'path' => 'b_spec.rb', 'time_execution' => 3.4 },
+          { 'path' => 'c_spec.rb', 'time_execution' => 3.5 },
+          { 'path' => 'd_spec.rb', 'time_execution' => 12.1 },
+        ]
+      end
+
+      it 'returns an empty array because there is only a single CI node, so there is no point in splitting by test cases' do
+        expect(subject).to eq([])
       end
     end
 
