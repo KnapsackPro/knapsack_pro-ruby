@@ -3,6 +3,7 @@
 ### 7.12.0
 
 * Add `KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD` to improve the RSpec split by examples feature with many skipped tests
+* Do not split test files by test cases if you run tests on a single CI node to run Knapsack Pro faster.
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/282
 
