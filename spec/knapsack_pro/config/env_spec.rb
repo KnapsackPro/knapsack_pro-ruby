@@ -1045,7 +1045,7 @@ describe KnapsackPro::Config::Env do
       it { should be false }
 
       context 'when called twice' do
-        it 'logs debug message only once' do
+        it 'logs a debug message only once' do
           logger = instance_double(Logger)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
           expect(logger).to receive(:debug).with('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
