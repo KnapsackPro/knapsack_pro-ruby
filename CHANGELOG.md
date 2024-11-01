@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.12.1
+
+* fix(RSpec split by examples): properly disable split by test examples on a single node to speed up tests
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/283
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.12.0...v7.12.1
+
 ### 7.12.0
 
 * Add `KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD` to improve the RSpec split by examples feature with many skipped tests
