@@ -1016,6 +1016,11 @@ describe KnapsackPro::Config::Env do
   describe '.rspec_split_by_test_examples?' do
     subject { described_class.rspec_split_by_test_examples? }
 
+    before do
+      described_class.remove_instance_variable(:@rspec_split_by_test_examples)
+    rescue NameError
+    end
+
     context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL >= 2' do
       before do
         stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '2' })
@@ -1036,10 +1041,6 @@ describe KnapsackPro::Config::Env do
 
     context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL < 2' do
       before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '1' }) }
-
-      before do
-        described_class.instance_variable_set(:@logged_rspec_split_by_test_examples_message, nil)
-      end
 
       it { should be false }
 
