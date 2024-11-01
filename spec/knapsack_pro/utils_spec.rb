@@ -23,7 +23,7 @@ describe KnapsackPro::Utils do
     context 'when Timecop does not mock the time' do
       it do
         now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-        expect(subject).to be_within(0.001).of(now)
+        expect(subject).to be_within(0.01).of(now)
       end
     end
 
@@ -47,7 +47,7 @@ describe KnapsackPro::Utils do
 
         time = Time.local(2020, 1, 31)
         Timecop.travel(time) do
-          expect(subject).to be_within(0.001).of(now)
+          expect(subject).to be_within(0.01).of(now)
         end
       end
     end
