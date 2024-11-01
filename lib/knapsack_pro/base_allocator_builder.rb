@@ -36,11 +36,6 @@ module KnapsackPro
       test_files_to_run = all_test_files_to_run
 
       if adapter_class.split_by_test_cases_enabled?
-        if KnapsackPro::Config::Env.ci_node_total < 2
-          KnapsackPro.logger.warn('Skipping split of test files by test cases because you are running tests on a single CI node (no parallelism)')
-          return test_files_to_run
-        end
-
         slow_test_files = get_slow_test_files
         return test_files_to_run if slow_test_files.empty?
 

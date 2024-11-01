@@ -280,6 +280,16 @@ jobs:
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
+            # split by test examples AND a single CI node ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split--single-node"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export KNAPSACK_PRO_CI_NODE_TOTAL=1
+            export KNAPSACK_PRO_CI_NODE_INDEX=0
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
             # turnip ||
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--turnip"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
