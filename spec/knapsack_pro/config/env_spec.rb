@@ -1013,37 +1013,53 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.rspec_split_by_test_examples' do
-    subject { described_class.rspec_split_by_test_examples }
-
-    context 'when ENV exists' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => true }) }
-      it { should eq true }
-    end
-
-    context "when ENV doesn't exist" do
-      before { stub_const("ENV", {}) }
-      it { should be false }
-    end
-  end
-
   describe '.rspec_split_by_test_examples?' do
     subject { described_class.rspec_split_by_test_examples? }
 
-    context 'when ENV exists' do
-      context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true' }) }
-        it { should be true }
+    context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL >= 2' do
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '2' })
+        expect(KnapsackPro).not_to receive(:logger)
       end
 
-      context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=false' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'false' }) }
-        it { should be false }
+      it { should be true }
+    end
+
+    context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=false AND KNAPSACK_PRO_CI_NODE_TOTAL >= 2' do
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'false', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '2' })
+        expect(KnapsackPro).not_to receive(:logger)
+      end
+
+      it { should be false }
+    end
+
+    context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL < 2' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '1' }) }
+
+      before do
+        described_class.instance_variable_set(:@logged_rspec_split_by_test_examples_message, nil)
+      end
+
+      it { should be false }
+
+      context 'when called twice' do
+        it 'logs debug message only once' do
+          logger = instance_double(Logger)
+          expect(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:debug).with('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
+
+          2.times { described_class.rspec_split_by_test_examples? }
+        end
       end
     end
 
     context "when ENV doesn't exist" do
-      before { stub_const("ENV", {}) }
+      before do
+        stub_const("ENV", {})
+        expect(KnapsackPro).not_to receive(:logger)
+      end
+
       it { should be false }
     end
   end

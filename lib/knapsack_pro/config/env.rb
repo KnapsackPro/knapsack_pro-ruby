@@ -188,21 +188,19 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX', 'bundle exec')
         end
 
-        def rspec_split_by_test_examples
-          return @rspec_split_by_test_examples if defined?(@rspec_split_by_test_examples)
+        def rspec_split_by_test_examples?
+          split = ENV.fetch('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES', false)
 
-          @rspec_split_by_test_examples = ENV.fetch('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES', false)
-
-          if @rspec_split_by_test_examples.to_s == 'true' && ci_node_total < 2
-            KnapsackPro.logger.debug('Skipping split of test files by test cases because you are running tests on a single CI node (no parallelism)')
-            @rspec_split_by_test_examples = false
+          if split.to_s == 'true' && ci_node_total < 2
+            @logged_rspec_split_by_test_examples_message ||=
+              begin
+                KnapsackPro.logger.debug('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
+                true
+              end
+            return false
           end
 
-          @rspec_split_by_test_examples
-        end
-
-        def rspec_split_by_test_examples?
-          rspec_split_by_test_examples.to_s == 'true'
+          split.to_s == 'true'
         end
 
         def rspec_test_example_detector_prefix
