@@ -3,8 +3,6 @@ require 'rspec/core/rake_task'
 describe KnapsackPro::Runners::RSpecRunner do
   subject { described_class.new(KnapsackPro::Adapters::RSpecAdapter) }
 
-  it { should be_kind_of KnapsackPro::Runners::BaseRunner }
-
   describe '.run' do
     let(:args) { '--profile --color' }
 

@@ -23,43 +23,63 @@ describe KnapsackPro::Allocator do
 
     shared_examples_for 'when connection to API failed (fallback mode)' do
       context 'when fallback mode is disabled' do
-        before do
+        before(:each) do
           expect(KnapsackPro::Config::Env).to receive(:fallback_mode_enabled?).and_return(false)
         end
 
-        it do
-          expect { subject }.to raise_error(RuntimeError, 'Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://knapsackpro.com/perma/ruby/regular-mode-connection-error-with-fallback-enabled-false')
+        it 'logs the error and exits' do
+          logger = instance_double(Logger)
+          allow(KnapsackPro).to receive(:logger).and_return(logger)
+          expect(logger).to receive(:error).with(
+            'Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://knapsackpro.com/perma/ruby/regular-mode-connection-error-with-fallback-enabled-false'
+          )
+
+          expect { subject }.to raise_error(SystemExit)
         end
       end
 
       context 'when CI node retry count > 0' do
-        before do
+        before(:each) do
           expect(KnapsackPro::Config::Env).to receive(:ci_node_retry_count).and_return(1)
         end
 
         context 'when fixed_test_suite_split=true' do
-          before do
+          before(:each) do
             expect(KnapsackPro::Config::Env).to receive(:fixed_test_suite_split).and_return(true)
           end
 
-          it do
-            expect { subject }.to raise_error(RuntimeError, 'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count')
+          it 'logs the error and exits' do
+            logger = instance_double(Logger)
+            allow(KnapsackPro).to receive(:logger).and_return(logger)
+
+            expect(logger).to receive(:error).with(
+              'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count'
+            )
+
+            expect { subject }.to raise_error(SystemExit)
           end
         end
 
         context 'when fixed_test_suite_split=false' do
-          before do
+          before(:each) do
             expect(KnapsackPro::Config::Env).to receive(:fixed_test_suite_split).and_return(false)
           end
 
-          it do
-            expect { subject }.to raise_error(RuntimeError, 'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count Please ensure you have set KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true to allow Knapsack Pro API remember the recorded CI node tests so when you retry failed tests on the CI node then the same set of tests will be executed. See more https://knapsackpro.com/perma/ruby/fixed-test-suite-split')
+          it 'logs the error and exits' do
+            logger = instance_double(Logger)
+            allow(KnapsackPro).to receive(:logger).and_return(logger)
+
+            expect(logger).to receive(:error).with(
+              'knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count Please ensure you have set KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=true to allow Knapsack Pro API remember the recorded CI node tests so when you retry failed tests on the CI node then the same set of tests will be executed. See more https://knapsackpro.com/perma/ruby/fixed-test-suite-split'
+            )
+
+            expect { subject }.to raise_error(SystemExit)
           end
         end
       end
 
       context 'when fallback mode started' do
-        before do
+        before(:each) do
           test_flat_distributor = instance_double(KnapsackPro::TestFlatDistributor)
           expect(KnapsackPro::TestFlatDistributor).to receive(:new).with(fallback_mode_test_files, ci_node_total).and_return(test_flat_distributor)
           expect(test_flat_distributor).to receive(:test_files_for_node).with(ci_node_index).and_return([
@@ -72,7 +92,7 @@ describe KnapsackPro::Allocator do
       end
     end
 
-    before do
+    before(:each) do
       encrypted_branch = double
       expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
 
@@ -118,7 +138,7 @@ describe KnapsackPro::Allocator do
             }
           end
 
-          before do
+          before(:each) do
             expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response['test_files']).and_call_original
           end
 
@@ -131,7 +151,7 @@ describe KnapsackPro::Allocator do
           end
           let(:api_code) { 'TEST_SUITE_SPLIT_CACHE_MISS' }
 
-          before do
+          before(:each) do
             encrypted_branch = double
             expect(KnapsackPro::Crypto::BranchEncryptor).to receive(:call).with(repository_adapter.branch).and_return(encrypted_branch)
 
@@ -183,7 +203,7 @@ describe KnapsackPro::Allocator do
                   }
                 end
 
-                before do
+                before(:each) do
                   expect(KnapsackPro::Crypto::Decryptor).to receive(:call).with(fast_and_slow_test_files_to_run, response2['test_files']).and_call_original
                 end
 

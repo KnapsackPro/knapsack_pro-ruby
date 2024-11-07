@@ -40,6 +40,9 @@ module KnapsackPro
           end
 
           Kernel.exit(accumulator[:exitstatus])
+        rescue KnapsackPro::QueueAllocator::FallbackModeError
+          exit_code = KnapsackPro::Config::Env.fallback_mode_error_exit_code_or(1)
+          Kernel.exit(exit_code)
         end
 
         def self.run_tests(accumulator)
