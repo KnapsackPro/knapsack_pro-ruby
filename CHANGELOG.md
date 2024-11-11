@@ -1,10 +1,12 @@
 # Changelog
 
-### Unreleased (minor)
+### 7.13.0
 
 * Add `KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE` to specify a custom exit code whenever Knapsack Pro fails because Fallback Mode cannot be used
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/284
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.12.1...v7.13.0
 
 ### 7.12.1
 
