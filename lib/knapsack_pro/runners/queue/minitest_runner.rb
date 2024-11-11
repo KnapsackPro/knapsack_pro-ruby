@@ -41,7 +41,7 @@ module KnapsackPro
 
           Kernel.exit(accumulator[:exitstatus])
         rescue KnapsackPro::QueueAllocator::FallbackModeError
-          exit_code = KnapsackPro::Config::Env.fallback_mode_error_exit_code_or(1)
+          exit_code = KnapsackPro::Config::Env.fallback_mode_error_exit_code
           Kernel.exit(exit_code)
         end
 

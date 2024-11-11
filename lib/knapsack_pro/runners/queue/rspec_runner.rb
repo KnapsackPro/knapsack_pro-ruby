@@ -56,7 +56,7 @@ module KnapsackPro
             exit_code = @rspec_pure.error_exit_code(@rspec_runner.knapsack__error_exit_code)
             Kernel.exit(exit_code)
           rescue KnapsackPro::QueueAllocator::FallbackModeError
-            exit_code = KnapsackPro::Config::Env.fallback_mode_error_exit_code_or(1)
+            exit_code = KnapsackPro::Config::Env.fallback_mode_error_exit_code
             Kernel.exit(exit_code)
           rescue Exception => exception
             KnapsackPro.logger.error("An unexpected exception happened. RSpec cannot handle it. The exception: #{exception.inspect}")
