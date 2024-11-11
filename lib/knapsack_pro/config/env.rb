@@ -284,6 +284,10 @@ module KnapsackPro
             detected_ci != KnapsackPro::Config::CI::Base
         end
 
+        def fallback_mode_error_exit_code
+          ENV.fetch('KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE', 1).to_i
+        end
+
         private
 
         def required_env(env_name)

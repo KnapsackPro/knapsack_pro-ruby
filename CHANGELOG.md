@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased (minor)
+
+* Add `KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE` to specify a custom exit code whenever Knapsack Pro fails because Fallback Mode cannot be used
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/284
+
 ### 7.12.1
 
 * fix(RSpec split by examples): properly disable split by test examples on a single node to speed up tests

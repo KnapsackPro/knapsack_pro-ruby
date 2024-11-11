@@ -53,9 +53,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     ENV['TEST__TEST_FILE_CASES_FOR_SLOW_TEST_FILES'] = test_file_paths.to_json
   end
 
-  def log_command_result(stdout, stderr, status)
-    return if ENV['TEST__SHOW_DEBUG_LOG'] != 'true'
-
+  def log(stdout, stderr, status)
     puts '='*50
     puts 'STDOUT:'
     puts stdout
@@ -83,7 +81,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   subject do
     stdout, stderr, status = Open3.capture3(command)
-    log_command_result(stdout, stderr, status)
+    log(stdout, stderr, status) if ENV['TEST__SHOW_DEBUG_LOG'] == 'true'
     OpenStruct.new(stdout: stdout, stderr: stderr, exit_code: status.exitstatus)
   end
 

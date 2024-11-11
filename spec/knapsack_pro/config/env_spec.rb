@@ -1016,9 +1016,8 @@ describe KnapsackPro::Config::Env do
   describe '.rspec_split_by_test_examples?' do
     subject { described_class.rspec_split_by_test_examples? }
 
-    before do
+    after(:each) do
       described_class.remove_instance_variable(:@rspec_split_by_test_examples)
-    rescue NameError
     end
 
     context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL >= 2' do
