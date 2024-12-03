@@ -117,6 +117,10 @@ module KnapsackPro
 
         private
 
+        def post_trap_signals
+          RSpec.world.wants_to_quit = true
+        end
+
         def pre_run_setup
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
