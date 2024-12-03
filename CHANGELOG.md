@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.13.1
+
+* Fix handling signals for non-RSpec test runners
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/286
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.13.0...v7.13.1
+
 ### 7.13.0
 
 * Add `KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE` to specify a custom exit code whenever Knapsack Pro fails because Fallback Mode cannot be used
