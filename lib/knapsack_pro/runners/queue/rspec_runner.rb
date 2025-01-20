@@ -157,8 +157,6 @@ module KnapsackPro
           @rspec_runner.knapsack__setup(@stream_error, @stream_out)
 
           ensure_no_deprecated_run_all_when_everything_filtered_option!
-
-          KnapsackPro::Extensions::RSpecExtension.print_seed(@rspec_runner.knapsack__seed)
         end
 
         def post_run_tasks(exit_code)

@@ -13,15 +13,6 @@ module KnapsackPro
         RSpec::Core::Configuration.prepend(Configuration)
       end
 
-      # Based on:
-      # https://github.com/rspec/rspec/blob/5946b3c9aa61279bf52363bfde4d850810daaa3a/rspec-core/lib/rspec/core/notifications.rb#L283
-      def self.print_seed(seed)
-        puts '+'*50
-        puts seed.inspect
-        return unless seed.used?
-        puts "\nRandomized with seed #{seed.value}\n"
-      end
-
       module World
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/world.rb#L171
