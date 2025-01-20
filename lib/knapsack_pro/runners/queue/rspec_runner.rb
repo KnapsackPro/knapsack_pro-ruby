@@ -119,6 +119,8 @@ module KnapsackPro
 
         def post_trap_signals
           RSpec.world.wants_to_quit = true
+
+          print_current_rspec_batch_command
         end
 
         def post_log_threads(threads)
@@ -183,6 +185,21 @@ module KnapsackPro
           )
           @node_test_file_paths += test_file_paths
           test_file_paths
+        end
+
+        def print_current_rspec_batch_command
+          test_file_paths = @queue.current_batch&.test_file_paths
+          return unless test_file_paths
+
+          puts
+          puts '=' * 80
+
+          order_option = @adapter_class.order_option(@cli_args)
+          printable_args = @rspec_pure.args_with_seed_option_added_when_viable(order_option, @rspec_runner.knapsack__seed, @cli_args)
+          messages = @rspec_pure.rspec_command(printable_args, test_file_paths, :batch_finished)
+          messages.each do |message|
+            puts message
+          end
         end
 
         def log_rspec_batch_command(test_file_paths)
