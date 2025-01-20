@@ -90,7 +90,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
     ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'debug'
     # Useful when creating or editing a test:
-    # ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
+     ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
   after do
     FileUtils.rm_rf(SPEC_DIRECTORY)
@@ -914,7 +914,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout).to include('Randomized with seed 123')
+      expect(actual.stdout.scan(/Randomized with seed 123/).size).to eq 2
 
       # 1st batch
       expect(actual.stdout).to include('INFO -- : [knapsack_pro] bundle exec rspec --order rand:123 --format progress --default-path spec_integration "spec_integration/a_spec.rb" "spec_integration/b_spec.rb"')
