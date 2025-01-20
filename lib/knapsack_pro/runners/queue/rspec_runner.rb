@@ -121,6 +121,26 @@ module KnapsackPro
           RSpec.world.wants_to_quit = true
         end
 
+        def post_log_threads(threads)
+          threads.each do |thread|
+            next unless thread.backtrace
+
+            spec_file_lines = thread.backtrace.select { |line| line.include?('_spec.rb') }
+
+            unless spec_file_lines.empty?
+              puts
+              if thread == Thread.main
+                puts "Hanging specs in the main thread:"
+              else
+                puts "Non-main thread inspect: #{thread.inspect}"
+                puts "Hanging specs in non-main thread:"
+              end
+              puts spec_file_lines.join("\n")
+              puts
+            end
+          end
+        end
+
         def pre_run_setup
           ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
