@@ -128,18 +128,17 @@ module KnapsackPro
             next unless thread.backtrace
 
             spec_file_lines = thread.backtrace.select { |line| line.include?('_spec.rb') }
+            next if spec_file_lines.empty?
 
-            unless spec_file_lines.empty?
-              puts
-              if thread == Thread.main
-                puts "Hanging specs in the main thread:"
-              else
-                puts "Non-main thread inspect: #{thread.inspect}"
-                puts "Hanging specs in non-main thread:"
-              end
-              puts spec_file_lines.join("\n")
-              puts
+            puts
+            if thread == Thread.main
+              puts "Hanging specs in the main thread:"
+            else
+              puts "Non-main thread inspect: #{thread.inspect}"
+              puts "Hanging specs in non-main thread:"
             end
+            puts spec_file_lines.join("\n")
+            puts
           end
         end
 
