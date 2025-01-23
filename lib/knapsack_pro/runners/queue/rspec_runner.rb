@@ -123,7 +123,7 @@ module KnapsackPro
           print_current_rspec_batch_command
         end
 
-        def post_log_threads(threads)
+        def log_current_tests(threads)
           threads.each do |thread|
             next unless thread.backtrace
 
