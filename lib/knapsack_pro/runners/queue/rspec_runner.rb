@@ -132,10 +132,10 @@ module KnapsackPro
 
             puts
             if thread == Thread.main
-              puts "Hanging specs in the main thread:"
+              puts "Running specs in the main thread:"
             else
               puts "Non-main thread inspect: #{thread.inspect}"
-              puts "Hanging specs in non-main thread:"
+              puts "Running specs in non-main thread:"
             end
             puts spec_file_lines.join("\n")
             puts
