@@ -120,7 +120,7 @@ module KnapsackPro
         def post_trap_signals
           RSpec.world.wants_to_quit = true
 
-          print_current_batch_rspec_command
+          log_current_batch_rspec_command
         end
 
         def log_current_tests(threads)
@@ -186,7 +186,7 @@ module KnapsackPro
           test_file_paths
         end
 
-        def print_current_batch_rspec_command
+        def log_current_batch_rspec_command
           test_file_paths = @queue.current_batch&.test_file_paths
           return unless test_file_paths
 
