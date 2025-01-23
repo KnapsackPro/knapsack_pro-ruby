@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.14.0
+
+* Improve debugging for hanging CI nodes: show hanging spec files in the RSpec output and a command to reproduce the current batch of tests.
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/287
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.13.1...v7.14.0
+
 ### 7.13.1
 
 * Fix handling signals for non-RSpec test runners

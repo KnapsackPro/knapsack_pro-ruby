@@ -1403,12 +1403,16 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         OUTPUT
       )
 
+      expect(actual.stdout).to include('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
+      expect(actual.stdout).to include('bundle exec rspec --format documentation --default-path spec_integration "spec_integration/b_spec.rb" "spec_integration/c_spec.rb"')
 
       expect(actual.stdout).to include('Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.')
+      expect(actual.stdout).to include('Running specs in the main thread:')
+      expect(actual.stdout).to include('Running specs in non-main thread:')
       expect(actual.stdout).to include('Main thread backtrace:')
-      expect(actual.stdout).to match(/spec_integration\/b_spec\.rb:7:in .*kill/)
+      expect(actual.stdout.scan(/spec_integration\/b_spec\.rb:7:in .*kill/).size).to eq 2
       expect(actual.stdout).to include('Non-main thread backtrace:')
-      expect(actual.stdout).to match(/spec_integration\/a_spec\.rb:6:in .*sleep/)
+      expect(actual.stdout.scan(/spec_integration\/a_spec\.rb:6:in .*sleep/).size).to eq 2
 
 
       expect(actual.exit_code).to eq 1
