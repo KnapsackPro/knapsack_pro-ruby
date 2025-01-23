@@ -98,7 +98,8 @@ module KnapsackPro
           $stdout.flush
         end
 
-        def post_log_threads
+        def post_log_threads(threads)
+          # implement in a child class if you need to log more info
         end
       end
     end
