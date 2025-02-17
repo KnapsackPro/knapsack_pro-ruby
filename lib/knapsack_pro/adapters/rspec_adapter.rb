@@ -80,6 +80,12 @@ module KnapsackPro
         id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
       end
 
+      def self.rspec_id_path?(path)
+        path_with_id_regex = /.+_spec\.rb\[.+\]$/
+
+        path&.match?(path_with_id_regex)
+      end
+
       def self.rails_helper_exists?(test_dir)
         File.exist?("#{test_dir}/rails_helper.rb")
       end

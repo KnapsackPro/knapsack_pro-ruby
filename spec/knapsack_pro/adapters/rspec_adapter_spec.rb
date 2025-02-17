@@ -215,6 +215,28 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
+  describe '.rspec_id_path?' do
+    subject { described_class.rspec_id_path?(path) }
+
+    context 'when the path resembles the RSpec path with id' do
+      let(:path) { 'spec/features/a_spec.rb[1:1:7:1]' }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when the path resembles the RSpec path with multiple ids' do
+      let(:path) { 'spec/features/a_spec.rb[1:1:7:1, 1:2]' }
+
+      it { is_expected.to be true }
+    end
+
+    context "when the path doesn't resemble the RSpec path with id" do
+      let(:path) { 'spec/features/a_spec.rb' }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe '.rails_helper_exists?' do
     subject { described_class.rails_helper_exists?(test_dir) }
 
