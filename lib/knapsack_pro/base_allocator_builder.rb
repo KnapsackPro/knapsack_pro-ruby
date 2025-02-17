@@ -23,15 +23,15 @@ module KnapsackPro
       KnapsackPro::Config::Env.test_dir || TestFilePattern.test_dir(adapter_class)
     end
 
-    # in fallback mode we always want to run the whole test files
-    # (not split by test cases) to guarantee that each test will be executed
-    # at least once across parallel CI nodes
+    # In Fallback Mode, we always want to run whole test files (not split by
+    # test cases) to guarantee that each test will be executed at least once
+    # across parallel CI nodes.
     def fallback_mode_test_files
       all_test_files_to_run
     end
 
-    # detect test files present on the disk that should be run
-    # this may include some fast test files + slow test files split by test cases
+    # Detect test files present on the disk that should be run.
+    # This may include fast test files + slow test files split by test cases.
     def fast_and_slow_test_files_to_run
       test_files_to_run = all_test_files_to_run
 
