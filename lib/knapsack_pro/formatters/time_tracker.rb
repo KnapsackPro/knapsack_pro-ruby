@@ -22,6 +22,7 @@ module KnapsackPro
         @group = {}
         @paths = {}
         @suite_started = now
+        @scheduled_with_id_paths = Set.new
       end
 
       def example_group_started(notification)
@@ -85,6 +86,15 @@ module KnapsackPro
         pending_paths + not_run_paths
       end
 
+      def upsert_scheduled_with_id_paths(test_file_paths)
+        test_file_paths.each do |test_file_path|
+          if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(test_file_path)
+            test_file_path_without_id = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(test_file_path)
+            @scheduled_with_id_paths << test_file_path_without_id
+          end
+        end
+      end
+
       private
 
       def top_level_group?(group)
@@ -114,14 +124,16 @@ module KnapsackPro
         file = file_path_for(example)
         return nil if file == ""
 
-        path = rspec_split_by_test_example?(file) ? example.id : file
-        KnapsackPro::TestFileCleaner.clean(path)
+        test_file_path = KnapsackPro::TestFileCleaner.clean(file)
+        if rspec_split_by_test_example?(test_file_path)
+          KnapsackPro::TestFileCleaner.clean(example.id)
+        else
+          test_file_path
+        end
       end
 
-      def rspec_split_by_test_example?(file)
-        return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
-        return false unless KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(KnapsackPro::Adapters::RSpecAdapter, file)
-        true
+      def rspec_split_by_test_example?(test_file_path)
+        @scheduled_with_id_paths.include?(test_file_path)
       end
 
       def file_path_for(example)

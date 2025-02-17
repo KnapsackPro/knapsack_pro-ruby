@@ -183,6 +183,10 @@ module KnapsackPro
             executed_test_files: @node_test_file_paths
           )
           @node_test_file_paths += test_file_paths
+
+          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          time_tracker.upsert_scheduled_with_id_paths(test_file_paths)
+
           test_file_paths
         end
 
