@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'stringio'
+require 'set'
 require_relative '../utils'
 
 module KnapsackPro
