@@ -164,7 +164,7 @@ module KnapsackPro
           log_rspec_queue_command
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
+          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue)
 
           Kernel.exit(exit_code)
         end
@@ -185,6 +185,7 @@ module KnapsackPro
           @node_test_file_paths += test_file_paths
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          time_tracker.scheduled_test_file_paths = @node_test_file_paths
           time_tracker.upsert_scheduled_with_id_paths(test_file_paths)
 
           test_file_paths
@@ -226,7 +227,7 @@ module KnapsackPro
         end
 
         def unexecuted_test_files
-          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_files(@node_test_file_paths)
+          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_files
         end
       end
     end

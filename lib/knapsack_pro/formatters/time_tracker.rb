@@ -24,6 +24,11 @@ module KnapsackPro
         @paths = {}
         @suite_started = now
         @scheduled_with_id_paths = Set.new
+        @scheduled_test_file_paths = []
+      end
+
+      def scheduled_test_file_paths=(scheduled_test_file_paths)
+        @scheduled_test_file_paths = scheduled_test_file_paths
       end
 
       def example_group_started(notification)
@@ -51,12 +56,12 @@ module KnapsackPro
         @group = {}
       end
 
-      def queue(scheduled_paths)
+      def queue
         recorded_paths = @paths.values.map do |example|
           KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
         end
 
-        missing = (scheduled_paths - recorded_paths).each_with_object({}) do |path, object|
+        missing = (@scheduled_test_file_paths - recorded_paths).each_with_object({}) do |path, object|
           object[path] = { path: path, time_execution: 0.0 }
         end
 
@@ -75,12 +80,12 @@ module KnapsackPro
         now - @suite_started
       end
 
-      def unexecuted_test_files(scheduled_paths)
+      def unexecuted_test_files
         pending_paths = @paths.values
           .filter { |example| example[:time_execution] == 0.0 }
           .map { |example| example[:path] }
 
-        not_run_paths = scheduled_paths -
+        not_run_paths = @scheduled_test_file_paths -
           @paths.values
           .map { |example| example[:path] }
 
