@@ -106,10 +106,7 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.append_before(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            if time_tracker
-              test_file_paths = RSpec.configuration.instance_variable_get(:@files_or_directories_to_run)
-              time_tracker.upsert_scheduled_with_id_paths(test_file_paths)
-            end
+            time_tracker&.upsert_scheduled_with_id_paths(KnapsackPro::Adapters::RSpecAdapter.scheduled_test_file_paths)
           end
         end
       end
@@ -178,6 +175,10 @@ module KnapsackPro
         ::RSpec::Core::Parser.parse(cli_args)
       rescue SystemExit
         nil
+      end
+
+      def self.scheduled_test_file_paths
+        rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
       end
     end
 
