@@ -1016,7 +1016,10 @@ describe KnapsackPro::Config::Env do
   describe '.rspec_split_by_test_examples?' do
     subject { described_class.rspec_split_by_test_examples? }
 
-    after(:each) do
+    before do
+      described_class.remove_instance_variable(:@rspec_split_by_test_examples) if described_class.instance_variable_defined?(:@rspec_split_by_test_examples)
+    end
+    after do
       described_class.remove_instance_variable(:@rspec_split_by_test_examples)
     end
 
