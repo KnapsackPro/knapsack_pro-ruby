@@ -183,7 +183,7 @@ module KnapsackPro
       end
 
       def self.scheduled_test_file_paths
-        rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
+        rspec_configuration.instance_variable_get(:@files_or_directories_to_run)
       end
     end
 
