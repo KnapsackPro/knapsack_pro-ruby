@@ -102,6 +102,16 @@ module KnapsackPro
       def bind_time_tracker
         ensure_no_focus!
         log_tests_duration
+
+        ::RSpec.configure do |config|
+          config.append_before(:suite) do
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            if time_tracker
+              test_file_paths = RSpec.configuration.instance_variable_get(:@files_or_directories_to_run)
+              time_tracker.upsert_scheduled_with_id_paths(test_file_paths)
+            end
+          end
+        end
       end
 
       def ensure_no_focus!
