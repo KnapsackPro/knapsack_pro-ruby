@@ -23,12 +23,13 @@ module KnapsackPro
         @group = {}
         @paths = {}
         @suite_started = now
-        @scheduled_with_id_paths = Set.new
         @scheduled_test_file_paths = []
+        @scheduled_with_id_paths = Set.new
       end
 
       def scheduled_test_file_paths=(scheduled_test_file_paths)
         @scheduled_test_file_paths = scheduled_test_file_paths
+        upsert_scheduled_with_id_paths
       end
 
       def example_group_started(notification)
@@ -92,16 +93,16 @@ module KnapsackPro
         pending_paths + not_run_paths
       end
 
-      def upsert_scheduled_with_id_paths(test_file_paths)
-        test_file_paths.each do |test_file_path|
+      private
+
+      def upsert_scheduled_with_id_paths
+        @scheduled_test_file_paths.each do |test_file_path|
           if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(test_file_path)
             test_file_path_without_id = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(test_file_path)
             @scheduled_with_id_paths << test_file_path_without_id
           end
         end
       end
-
-      private
 
       def top_level_group?(group)
         group.metadata[:parent_example_group].nil?

@@ -101,14 +101,8 @@ module KnapsackPro
 
       def bind_time_tracker
         ensure_no_focus!
+        bind_regular_mode_time_tracker
         log_tests_duration
-
-        ::RSpec.configure do |config|
-          config.append_before(:suite) do
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            time_tracker&.upsert_scheduled_with_id_paths(KnapsackPro::Adapters::RSpecAdapter.scheduled_test_file_paths)
-          end
-        end
       end
 
       def ensure_no_focus!
@@ -134,6 +128,17 @@ module KnapsackPro
               formatted = KnapsackPro::Presenter.global_time(time_tracker.duration)
               KnapsackPro.logger.debug(formatted)
             end
+          end
+        end
+      end
+
+      def bind_regular_mode_time_tracker
+        return unless KnapsackPro::Config::Env.recording_enabled?
+
+        ::RSpec.configure do |config|
+          config.append_before(:suite) do
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            time_tracker&.scheduled_test_file_paths = KnapsackPro::Adapters::RSpecAdapter.scheduled_test_file_paths
           end
         end
       end
