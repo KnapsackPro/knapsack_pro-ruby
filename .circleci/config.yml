@@ -295,6 +295,7 @@ jobs:
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             export KNAPSACK_PRO_TEST_DIR=turnip
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
@@ -304,6 +305,7 @@ jobs:
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             export KNAPSACK_PRO_TEST_DIR=turnip
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake "knapsack_pro:queue:rspec[-r turnip/rspec]"
 
   e2e-regular-minitest:
