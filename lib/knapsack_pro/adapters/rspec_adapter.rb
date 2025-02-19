@@ -124,10 +124,8 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.append_after(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            if time_tracker
-              formatted = KnapsackPro::Presenter.global_time(time_tracker.duration)
-              KnapsackPro.logger.debug(formatted)
-            end
+            formatted = KnapsackPro::Presenter.global_time(time_tracker.duration)
+            KnapsackPro.logger.debug(formatted)
           end
         end
       end
