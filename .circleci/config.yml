@@ -60,11 +60,11 @@ jobs:
       - image: cimg/ruby:3.3
     steps:
       - setup_knapsack_pro_ruby
+      - run: gem install rubocop
+      - run: rubocop --fail-level A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
       - run:
           name: Use the latest RSpec version to verify unit tests still work
           command: bundle update rspec
-      - run: gem install rubocop
-      - run: rubocop --fail-level A --only Style/FrozenStringLiteralComment,Layout/EmptyLineAfterMagicComment lib/
       - run: bundle exec rspec --version
       - run: bundle exec rspec spec
       - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
