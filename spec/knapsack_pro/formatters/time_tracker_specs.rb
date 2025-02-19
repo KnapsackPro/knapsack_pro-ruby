@@ -343,8 +343,9 @@ class TestTimeTracker
     run_specs(spec) do |spec_paths, _, time_tracker|
       unexecuted_test_files = ["foo_spec.rb", "bar_spec.rb"]
       # Need to filter because RSpec keeps accumulating state.
+      time_tracker.scheduled_test_file_paths = spec_paths + unexecuted_test_files
       files = time_tracker
-        .unexecuted_test_files(spec_paths + unexecuted_test_files)
+        .unexecuted_test_files
         .filter { |file| spec_paths.include?(file) || unexecuted_test_files.include?(file) }
 
       raise unless files.size == 3
@@ -399,8 +400,9 @@ class TestTimeTracker
 
     time_tracker = runner.configuration.formatters.find { |f| f.class.to_s == KnapsackPro::Formatters::TimeTracker.to_s }
     # Need to filter because RSpec keeps accumulating state.
+    time_tracker.scheduled_test_file_paths = paths
     times = time_tracker
-      .queue(paths)
+      .queue
       .sort_by { |time| time["path"] }
       .filter do |time|
         paths.any? { |path| time["path"].start_with?(path) }
