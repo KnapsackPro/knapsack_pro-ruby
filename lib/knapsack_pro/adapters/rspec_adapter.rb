@@ -166,6 +166,10 @@ module KnapsackPro
         end
       end
 
+      def self.scheduled_test_file_paths
+        rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
+      end
+
       private
 
       # Hide RSpec configuration so that we could mock it in the spec.
@@ -178,10 +182,6 @@ module KnapsackPro
         ::RSpec::Core::Parser.parse(cli_args)
       rescue SystemExit
         nil
-      end
-
-      def self.scheduled_test_file_paths
-        rspec_configuration.instance_variable_get(:@files_or_directories_to_run)
       end
     end
 
