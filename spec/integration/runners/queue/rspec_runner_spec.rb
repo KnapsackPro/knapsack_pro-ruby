@@ -2427,7 +2427,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND test files are split by test examples AND slow test files are not detected (for example, the user could have passed test examples to Knapsack Pro directly using KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE or KNAPSACK_PRO_TEST_FILE_LIST)' do
+  context 'when the RSpec split by examples is enabled AND test files are split by test examples AND slow test files are not detected (for example, the user could have passed test examples like a_spec.rb[1:1] directly using KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE or KNAPSACK_PRO_TEST_FILE_LIST)' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = ""
