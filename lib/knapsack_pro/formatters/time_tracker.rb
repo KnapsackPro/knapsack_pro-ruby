@@ -24,12 +24,12 @@ module KnapsackPro
         @paths = {}
         @suite_started = now
         @scheduled_test_file_paths = []
-        @scheduled_with_id_paths = Set.new
+        @split_by_example_test_file_paths = Set.new
       end
 
       def scheduled_test_file_paths=(scheduled_test_file_paths)
         @scheduled_test_file_paths = scheduled_test_file_paths
-        upsert_scheduled_with_id_paths
+        upsert_split_by_example_test_file_paths
       end
 
       def example_group_started(notification)
@@ -95,11 +95,11 @@ module KnapsackPro
 
       private
 
-      def upsert_scheduled_with_id_paths
+      def upsert_split_by_example_test_file_paths
         @scheduled_test_file_paths.each do |test_file_path|
           if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(test_file_path)
             test_file_path_without_id = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(test_file_path)
-            @scheduled_with_id_paths << test_file_path_without_id
+            @split_by_example_test_file_paths << test_file_path_without_id
           end
         end
       end
@@ -140,7 +140,7 @@ module KnapsackPro
       end
 
       def rspec_split_by_test_example?(test_file_path)
-        @scheduled_with_id_paths.include?(test_file_path)
+        @split_by_example_test_file_paths.include?(test_file_path)
       end
 
       def file_path_for(example)
