@@ -1,5 +1,12 @@
 # Changelog
 
+### Unreleased (Major)
+
+* Enable [`KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES`](https://docs.knapsackpro.com/ruby/split-by-test-examples/) by default
+    * This should improve the speed of your builds, but you can disable it with [`KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=false`](https://docs.knapsackpro.com/ruby/reference/#knapsack_pro_rspec_split_by_test_examples-rspec)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/288
+
 ### 7.14.1
 
 * Improve execution time tracking for RSpec individual test examples

@@ -977,47 +977,41 @@ describe KnapsackPro::Config::Env do
       described_class.remove_instance_variable(:@rspec_split_by_test_examples)
     end
 
-    context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL >= 2' do
-      before do
-        stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '2' })
-        expect(KnapsackPro).not_to receive(:logger)
-      end
+    [
+      ['false', '2', :turnip, false],
+      ['false', '2', nil,     false],
+      ['true',  '2', :turnip, true],
+      ['true',  '2', nil,     true],
+      [nil,     '2', :turnip, false, :warn, "The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: https://knapsackpro.com/perma/ruby/split-by-test-examples"],
+      [nil,     '2', nil,     true],
+      ['false', '1', :turnip, false],
+      ['false', '1', nil,     false],
+      ['true',  '1', :turnip, false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
+      ['true',  '1', nil,     false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
+      [nil,     '1', :turnip, false, :warn, "The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: https://knapsackpro.com/perma/ruby/split-by-test-examples"],
+      [nil,     '1', nil,     false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
+    ].each do |sbte, node_total, turnip, expected, log_level, log_message|
+      context "KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect} AND :Turnip is #{turnip ? "defined" : "not defined"}" do
+        before do
+          stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => sbte, 'KNAPSACK_PRO_CI_NODE_TOTAL' => node_total }.compact)
+          module Turnip; end if turnip
 
-      it { should be true }
-    end
+          if log_level && log_message
+            logger = instance_double(Logger)
+            expect(KnapsackPro).to receive(:logger).and_return(logger)
+            expect(logger).to receive(log_level).once.with(log_message)
+          end
+        end
 
-    context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=false AND KNAPSACK_PRO_CI_NODE_TOTAL >= 2' do
-      before do
-        stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'false', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '2' })
-        expect(KnapsackPro).not_to receive(:logger)
-      end
+        after do
+          Object.send(:remove_const, :Turnip) if turnip
+        end
 
-      it { should be false }
-    end
-
-    context 'when KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true AND KNAPSACK_PRO_CI_NODE_TOTAL < 2' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => 'true', 'KNAPSACK_PRO_CI_NODE_TOTAL' => '1' }) }
-
-      it { should be false }
-
-      context 'when called twice' do
-        it 'logs a debug message only once' do
-          logger = instance_double(Logger)
-          expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:debug).with('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
-
-          2.times { described_class.rspec_split_by_test_examples? }
+        it do
+          expect(described_class.rspec_split_by_test_examples?).to eq(expected)
+          expect(described_class.rspec_split_by_test_examples?).to eq(expected)
         end
       end
-    end
-
-    context "when ENV doesn't exist" do
-      before do
-        stub_const("ENV", {})
-        expect(KnapsackPro).not_to receive(:logger)
-      end
-
-      it { should be false }
     end
   end
 
