@@ -91,12 +91,8 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_RECORDING_ENABLED']
         end
 
-        def recording_enabled?
-          recording_enabled == 'true'
-        end
-
         def regular_mode?
-          recording_enabled?
+          recording_enabled == 'true'
         end
 
         def queue_recording_enabled

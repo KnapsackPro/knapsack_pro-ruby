@@ -603,55 +603,23 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.recording_enabled' do
-    subject { described_class.recording_enabled }
-
-    context 'when ENV exists' do
-      let(:recording_enabled) { 'true' }
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
-      it { should eq recording_enabled }
-    end
-
-    context "when ENV doesn't exist" do
-      it { should be_nil }
-    end
-  end
-
   describe '.regular_mode?' do
     subject { described_class.regular_mode? }
 
-    before do
-      expect(described_class).to receive(:recording_enabled?).and_return(recording_enabled)
-    end
-
-    context 'when recording is enabled' do
-      let(:recording_enabled) { true }
-      it { should be true }
-    end
-
-    context 'when recording is not enabled' do
-      let(:recording_enabled) { false }
-      it { should be false }
-    end
-  end
-
-  describe '.recording_enabled?' do
-    subject { described_class.recording_enabled? }
-
-    before do
-      expect(described_class).to receive(:recording_enabled).and_return(recording_enabled)
-    end
-
-    context 'when enabled' do
+    context 'when ENV exists and recording is enabled' do
       let(:recording_enabled) { 'true' }
-
-      it { should be true }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
+      it { should eq true }
     end
 
-    context 'when disabled' do
-      let(:recording_enabled) { nil }
+    context 'when ENV exists and recording is disabled' do
+      let(:recording_enabled) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
+      it { should eq false }
+    end
 
-      it { should be false }
+    context "when ENV doesn't exist" do
+      it { should false }
     end
   end
 
