@@ -44,7 +44,7 @@ describe KnapsackPro::Runners::TestUnitRunner do
         subject
 
         expect(ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']).to eq 'test-unit-token'
-        expect(ENV['KNAPSACK_PRO_RECORDING_ENABLED']).to eq 'true'
+        expect(ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED']).to eq 'true'
       end
     end
 

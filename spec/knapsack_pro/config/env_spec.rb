@@ -606,15 +606,15 @@ describe KnapsackPro::Config::Env do
   describe '.regular_mode?' do
     subject { described_class.regular_mode? }
 
-    context 'when ENV exists and recording is enabled' do
-      let(:recording_enabled) { 'true' }
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
+    context 'when recording is enabled' do
+      let(:regular_mode_enabled) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => regular_mode_enabled }) }
       it { should eq true }
     end
 
-    context 'when ENV exists and recording is disabled' do
-      let(:recording_enabled) { 'false' }
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
+    context 'when recording is disabled' do
+      let(:regular_mode_enabled) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => regular_mode_enabled }) }
       it { should eq false }
     end
 
