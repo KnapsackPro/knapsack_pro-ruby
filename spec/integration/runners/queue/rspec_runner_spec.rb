@@ -1959,7 +1959,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled' do
+  context 'when the RSpec split by test examples is enabled' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
@@ -1975,7 +1975,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
-    it 'splits slow test files by examples AND ensures the test examples are executed only once' do
+    it 'splits slow test files by test examples AND ensures the test examples are executed only once' do
       rspec_options = '--format d'
 
       spec_a = Spec.new('a_spec.rb', <<~SPEC)
@@ -2058,7 +2058,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND --tag is set' do
+  context 'when the RSpec split by test examples is enabled AND --tag is set' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
@@ -2137,7 +2137,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND JSON formatter is used' do
+  context 'when the RSpec split by test examples is enabled AND JSON formatter is used' do
     let(:json_file) { "#{SPEC_DIRECTORY}/rspec.json" }
 
     before do
@@ -2239,7 +2239,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND JUnit XML formatter is used' do
+  context 'when the RSpec split by test examples is enabled AND JUnit XML formatter is used' do
     let(:xml_file) { "#{SPEC_DIRECTORY}/rspec.xml" }
 
     before do
@@ -2338,7 +2338,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND simplecov is used' do
+  context 'when the RSpec split by test examples is enabled AND simplecov is used' do
     let(:coverage_dir) { "#{KNAPSACK_PRO_TMP_DIR}/coverage" }
     let(:coverage_file) { "#{coverage_dir}/index.html" }
 
@@ -2427,7 +2427,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND test files are split by test examples AND slow test files are not detected (for example, the user could have passed test examples like a_spec.rb[1:1] directly using KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE or KNAPSACK_PRO_TEST_FILE_LIST)' do
+  context 'when the RSpec split by test examples is enabled AND test files are split by test examples AND slow test files are not detected (for example, the user could have passed test examples like a_spec.rb[1:1] directly using KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE or KNAPSACK_PRO_TEST_FILE_LIST)' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = ""
