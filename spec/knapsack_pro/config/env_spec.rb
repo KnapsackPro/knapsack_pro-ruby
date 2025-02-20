@@ -606,13 +606,13 @@ describe KnapsackPro::Config::Env do
   describe '.regular_mode?' do
     subject { described_class.regular_mode? }
 
-    context 'when recording is enabled' do
+    context 'when regular mode is enabled' do
       let(:regular_mode_enabled) { 'true' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => regular_mode_enabled }) }
       it { should eq true }
     end
 
-    context 'when recording is disabled' do
+    context 'when regular mode is disabled' do
       let(:regular_mode_enabled) { 'false' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => regular_mode_enabled }) }
       it { should eq false }
@@ -623,37 +623,23 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.queue_recording_enabled' do
-    subject { described_class.queue_recording_enabled }
+  describe '.queue_mode?' do
+    subject { described_class.queue_mode? }
 
-    context 'when ENV exists' do
+    context 'when queue mode is enabled' do
       let(:queue_mode_enabled) { 'true' }
       before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_MODE_ENABLED' => queue_mode_enabled }) }
-      it { should eq queue_mode_enabled }
+      it { should eq true }
+    end
+
+    context 'when queue mode is disabled' do
+      let(:queue_mode_enabled) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_MODE_ENABLED' => queue_mode_enabled }) }
+      it { should eq false }
     end
 
     context "when ENV doesn't exist" do
-      it { should be_nil }
-    end
-  end
-
-  describe '.queue_recording_enabled?' do
-    subject { described_class.queue_recording_enabled? }
-
-    before do
-      expect(described_class).to receive(:queue_recording_enabled).and_return(queue_recording_enabled)
-    end
-
-    context 'when enabled' do
-      let(:queue_recording_enabled) { 'true' }
-
-      it { should be true }
-    end
-
-    context 'when disabled' do
-      let(:queue_recording_enabled) { nil }
-
-      it { should be false }
+      it { should false }
     end
   end
 

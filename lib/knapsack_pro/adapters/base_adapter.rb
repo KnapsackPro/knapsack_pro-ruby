@@ -65,7 +65,7 @@ module KnapsackPro
           bind_save_report
         end
 
-        if KnapsackPro::Config::Env.queue_recording_enabled?
+        if KnapsackPro::Config::Env.queue_mode?
           KnapsackPro.logger.debug('Queue Mode enabled.')
           bind_queue_mode
         end
