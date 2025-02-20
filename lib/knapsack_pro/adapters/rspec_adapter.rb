@@ -6,6 +6,7 @@ module KnapsackPro
   module Adapters
     class RSpecAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
+      ID_PATH_REGEX = /.+_spec\.rb\[.+\]$/
 
       def self.split_by_test_cases_enabled?
         return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
@@ -81,9 +82,7 @@ module KnapsackPro
       end
 
       def self.rspec_id_path?(path)
-        path_with_id_regex = /.+_spec\.rb\[.+\]$/
-
-        path&.match?(path_with_id_regex)
+        ID_PATH_REGEX.match?(path)
       end
 
       def self.rails_helper_exists?(test_dir)
