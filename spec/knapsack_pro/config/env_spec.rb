@@ -627,9 +627,9 @@ describe KnapsackPro::Config::Env do
     subject { described_class.queue_recording_enabled }
 
     context 'when ENV exists' do
-      let(:queue_recording_enabled) { 'true' }
-      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_RECORDING_ENABLED' => queue_recording_enabled }) }
-      it { should eq queue_recording_enabled }
+      let(:queue_mode_enabled) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_MODE_ENABLED' => queue_mode_enabled }) }
+      it { should eq queue_mode_enabled }
     end
 
     context "when ENV doesn't exist" do

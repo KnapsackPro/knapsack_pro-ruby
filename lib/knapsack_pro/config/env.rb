@@ -92,7 +92,7 @@ module KnapsackPro
         end
 
         def queue_recording_enabled
-          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED']
+          ENV['KNAPSACK_PRO_QUEUE_MODE_ENABLED']
         end
 
         def queue_recording_enabled?
