@@ -29,7 +29,12 @@ module KnapsackPro
 
       def scheduled_test_file_paths=(scheduled_test_file_paths)
         @scheduled_test_file_paths = scheduled_test_file_paths
-        upsert_split_by_example_test_file_paths
+        @scheduled_test_file_paths.each do |test_file_path|
+          if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(test_file_path)
+            test_file_path_without_id = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(test_file_path)
+            @split_by_example_test_file_paths << test_file_path_without_id
+          end
+        end
       end
 
       def example_group_started(notification)
@@ -94,15 +99,6 @@ module KnapsackPro
       end
 
       private
-
-      def upsert_split_by_example_test_file_paths
-        @scheduled_test_file_paths.each do |test_file_path|
-          if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(test_file_path)
-            test_file_path_without_id = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(test_file_path)
-            @split_by_example_test_file_paths << test_file_path_without_id
-          end
-        end
-      end
 
       def top_level_group?(group)
         group.metadata[:parent_example_group].nil?
