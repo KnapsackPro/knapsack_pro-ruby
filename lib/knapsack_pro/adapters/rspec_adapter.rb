@@ -135,7 +135,7 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.append_before(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            time_tracker.scheduled_test_file_paths = KnapsackPro::Adapters::RSpecAdapter.scheduled_test_file_paths
+            time_tracker.scheduled_paths = KnapsackPro::Adapters::RSpecAdapter.scheduled_paths
           end
         end
       end
@@ -173,7 +173,7 @@ module KnapsackPro
         ::RSpec.configuration
       end
 
-      def self.scheduled_test_file_paths
+      def self.scheduled_paths
         rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
       end
 

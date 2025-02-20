@@ -185,7 +185,7 @@ module KnapsackPro
           @node_test_file_paths += test_file_paths
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-          time_tracker.scheduled_test_file_paths = @node_test_file_paths
+          time_tracker.scheduled_paths = @node_test_file_paths
 
           test_file_paths
         end

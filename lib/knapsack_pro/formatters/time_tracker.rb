@@ -23,16 +23,16 @@ module KnapsackPro
         @group = {}
         @paths = {}
         @suite_started = now
-        @scheduled_test_file_paths = []
-        @split_by_example_test_file_paths = Set.new
+        @scheduled_paths = []
+        @split_by_example_paths = Set.new
       end
 
-      def scheduled_test_file_paths=(scheduled_test_file_paths)
-        @scheduled_test_file_paths = scheduled_test_file_paths
-        @scheduled_test_file_paths.each do |test_file_path|
+      def scheduled_paths=(scheduled_paths)
+        @scheduled_paths = scheduled_paths
+        @scheduled_paths.each do |test_file_path|
           if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(test_file_path)
             test_file_path_without_id = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(test_file_path)
-            @split_by_example_test_file_paths << test_file_path_without_id
+            @split_by_example_paths << test_file_path_without_id
           end
         end
       end
@@ -67,7 +67,7 @@ module KnapsackPro
           KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
         end
 
-        missing = (@scheduled_test_file_paths - recorded_paths).each_with_object({}) do |path, object|
+        missing = (@scheduled_paths - recorded_paths).each_with_object({}) do |path, object|
           object[path] = { path: path, time_execution: 0.0 }
         end
 
@@ -91,7 +91,7 @@ module KnapsackPro
           .filter { |example| example[:time_execution] == 0.0 }
           .map { |example| example[:path] }
 
-        not_run_paths = @scheduled_test_file_paths -
+        not_run_paths = @scheduled_paths -
           @paths.values
           .map { |example| example[:path] }
 
@@ -136,7 +136,7 @@ module KnapsackPro
       end
 
       def rspec_split_by_test_example?(test_file_path)
-        @split_by_example_test_file_paths.include?(test_file_path)
+        @split_by_example_paths.include?(test_file_path)
       end
 
       def file_path_for(example)
