@@ -2439,7 +2439,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
-    it 'detects test execution times correctly for individual test examples even though they are not considered as slow test files' do
+    it 'detects test execution times correctly for individual test examples even though they are not considered slow test files' do
       ENV['TEST__LOG_EXECUTION_TIMES'] = 'true'
       rspec_options = '--format d'
 
