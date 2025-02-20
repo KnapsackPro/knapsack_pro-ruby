@@ -392,8 +392,8 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.scheduled_test_file_paths' do
-    subject { described_class.scheduled_test_file_paths }
+  describe 'private .scheduled_test_file_paths' do
+    subject { described_class.send(:scheduled_test_file_paths) }
 
     context 'when the RSpec configuration has files or directories to run' do
       it 'returns list of test files passed to RSpec (if this fails then the internal RSpec API changed and we must start supporting a new RSpec version as well)' do

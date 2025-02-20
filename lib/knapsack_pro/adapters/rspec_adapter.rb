@@ -166,16 +166,16 @@ module KnapsackPro
         end
       end
 
-      def self.scheduled_test_file_paths
-        rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
-      end
-
       private
 
       # Hide RSpec configuration so that we could mock it in the spec.
       # Mocking existing RSpec configuration could impact test's runtime.
       def self.rspec_configuration
         ::RSpec.configuration
+      end
+
+      def self.scheduled_test_file_paths
+        rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
       end
 
       def self.parsed_options(cli_args)
