@@ -124,14 +124,13 @@ module KnapsackPro
       end
 
       def path_for(example)
-        file = file_path_for(example)
-        return nil if file == ""
+        file_path = file_path_for(example)
+        return nil if file_path == ""
 
-        test_file_path = KnapsackPro::TestFileCleaner.clean(file)
-        if rspec_split_by_test_example?(test_file_path)
+        if rspec_split_by_test_example?(file_path)
           KnapsackPro::TestFileCleaner.clean(example.id)
         else
-          test_file_path
+          file_path
         end
       end
 
@@ -140,7 +139,7 @@ module KnapsackPro
       end
 
       def file_path_for(example)
-        KnapsackPro::Adapters::RSpecAdapter.file_path_for(example)
+        KnapsackPro::TestFileCleaner.clean(KnapsackPro::Adapters::RSpecAdapter.file_path_for(example))
       end
 
       def time_execution_for(example, started_at)
