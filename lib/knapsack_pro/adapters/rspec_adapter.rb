@@ -131,7 +131,7 @@ module KnapsackPro
       end
 
       def bind_regular_mode_time_tracker
-        return unless KnapsackPro::Config::Env.recording_enabled?
+        return unless KnapsackPro::Config::Env.regular_mode?
 
         ::RSpec.configure do |config|
           config.append_before(:suite) do

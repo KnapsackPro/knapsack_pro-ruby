@@ -135,21 +135,21 @@ describe KnapsackPro::Adapters::BaseAdapter do
 
   describe '#bind' do
     let(:temp_directory_path) { '.knapsack_pro' }
-    let(:recording_enabled?) { false }
+    let(:regular_mode?) { false }
     let(:queue_recording_enabled?) { false }
 
     before do
       expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
       expect(File).to receive(:write).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt', nil)
 
-      expect(KnapsackPro::Config::Env).to receive(:recording_enabled?).and_return(recording_enabled?)
+      expect(KnapsackPro::Config::Env).to receive(:regular_mode?).and_return(regular_mode?)
       expect(KnapsackPro::Config::Env).to receive(:queue_recording_enabled?).and_return(queue_recording_enabled?)
     end
 
     after { subject.bind }
 
     context 'when recording enabled' do
-      let(:recording_enabled?) { true }
+      let(:regular_mode?) { true }
 
       before do
         allow(subject).to receive(:bind_time_tracker)
