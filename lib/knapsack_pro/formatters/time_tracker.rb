@@ -24,7 +24,7 @@ module KnapsackPro
         @paths = {}
         @suite_started = now
         @scheduled_paths = []
-        @split_by_example_file_paths = Set.new
+        @split_by_test_example_file_paths = Set.new
       end
 
       def scheduled_paths=(scheduled_paths)
@@ -32,7 +32,7 @@ module KnapsackPro
         @scheduled_paths.each do |path|
           if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(path)
             file_path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(path)
-            @split_by_example_file_paths << file_path
+            @split_by_test_example_file_paths << file_path
           end
         end
       end
@@ -135,7 +135,7 @@ module KnapsackPro
       end
 
       def rspec_split_by_test_example?(test_file_path)
-        @split_by_example_file_paths.include?(test_file_path)
+        @split_by_test_example_file_paths.include?(test_file_path)
       end
 
       def file_path_for(example)
