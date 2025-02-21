@@ -186,10 +186,10 @@ module KnapsackPro
 
           env = ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES']
 
-          if defined?(::Turnip) && env.nil?
-            KnapsackPro.logger.warn("The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
-            return (@rspec_split_by_test_examples = false)
-          end
+          # if defined?(::Turnip) && env.nil?
+          #   KnapsackPro.logger.warn("The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
+          #   return (@rspec_split_by_test_examples = false)
+          # end
 
           split = (env || true).to_s == 'true'
 
