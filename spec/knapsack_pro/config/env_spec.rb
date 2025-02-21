@@ -982,8 +982,8 @@ describe KnapsackPro::Config::Env do
       ['true',  '2', true],
       [nil,     '2', true],
       ['false', '1', false],
-      ['true',  '1', false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
-      [nil,     '1', false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
+      ['true',  '1', false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
+      [nil,     '1', false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
     ].each do |sbte, node_total, expected, log_level, log_message|
       context "KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect}" do
         before do
