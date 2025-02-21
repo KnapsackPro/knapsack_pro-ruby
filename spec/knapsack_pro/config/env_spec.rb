@@ -978,33 +978,22 @@ describe KnapsackPro::Config::Env do
     end
 
     [
-      ['false', '2', :turnip, false],
-      ['false', '2', nil,     false],
-      ['true',  '2', :turnip, true],
-      ['true',  '2', nil,     true],
-      [nil,     '2', :turnip, false, :warn, "The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: https://knapsackpro.com/perma/ruby/split-by-test-examples"],
-      [nil,     '2', nil,     true],
-      ['false', '1', :turnip, false],
-      ['false', '1', nil,     false],
-      ['true',  '1', :turnip, false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
-      ['true',  '1', nil,     false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
-      [nil,     '1', :turnip, false, :warn, "The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: https://knapsackpro.com/perma/ruby/split-by-test-examples"],
-      [nil,     '1', nil,     false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
-    ].each do |sbte, node_total, turnip, expected, log_level, log_message|
-      context "KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect} AND :Turnip is #{turnip ? "defined" : "not defined"}" do
+      ['false', '2', false],
+      ['true',  '2', true],
+      [nil,     '2', true],
+      ['false', '1', false],
+      ['true',  '1', false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
+      [nil,     '1', false, :debug, 'Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)'],
+    ].each do |sbte, node_total, expected, log_level, log_message|
+      context "KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect}" do
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => sbte, 'KNAPSACK_PRO_CI_NODE_TOTAL' => node_total }.compact)
-          module Turnip; end if turnip
 
           if log_level && log_message
             logger = instance_double(Logger)
             expect(KnapsackPro).to receive(:logger).and_return(logger)
             expect(logger).to receive(log_level).once.with(log_message)
           end
-        end
-
-        after do
-          Object.send(:remove_const, :Turnip) if turnip
         end
 
         it do
