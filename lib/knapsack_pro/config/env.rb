@@ -176,22 +176,10 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_CUCUMBER_QUEUE_PREFIX', 'bundle exec')
         end
 
-        # To detect `::Turnip`, the gem must be present in the gemfile
-        # with autorequire (default) and have been required.
-        # Since `rspec_split_by_test_examples?` is called via the
-        # Rails' `Rakefile`, `config/application.rb` should have
-        # performed the require.
         def rspec_split_by_test_examples?
           return @rspec_split_by_test_examples if defined?(@rspec_split_by_test_examples)
 
-          env = ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES']
-
-          # if defined?(::Turnip) && env.nil?
-          #   KnapsackPro.logger.warn("The turnip gem was required, so split by test examples is disabled. If you don't use turnip for this test run, you can enable split by test examples with KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true. Read more: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
-          #   return (@rspec_split_by_test_examples = false)
-          # end
-
-          split = (env || true).to_s == 'true'
+          split = (ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] || true).to_s == 'true'
 
           if split && ci_node_total < 2
             KnapsackPro.logger.debug('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
