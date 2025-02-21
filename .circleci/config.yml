@@ -302,7 +302,7 @@ jobs:
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="turnip/acceptance/foo.feature"
             bundle exec rake knapsack_pro:queue:rspec
             RSPEC_EXIT_CODE=$?
-            rm .rspec.turnip
+            rm .rspec
             mv .rspec.off .rspec
             exit $RSPEC_EXIT_CODE
       - run:
@@ -318,7 +318,7 @@ jobs:
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="turnip/acceptance/foo.feature"
             bundle exec rake knapsack_pro:queue:rspec
             RSPEC_EXIT_CODE=$?
-            rm .rspec.turnip
+            rm .rspec
             mv .rspec.off .rspec
             exit $RSPEC_EXIT_CODE
 
