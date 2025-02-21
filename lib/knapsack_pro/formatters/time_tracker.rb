@@ -134,8 +134,8 @@ module KnapsackPro
         end
       end
 
-      def rspec_split_by_test_example?(test_file_path)
-        @split_by_test_example_file_paths.include?(test_file_path)
+      def rspec_split_by_test_example?(file_path)
+        @split_by_test_example_file_paths.include?(file_path)
       end
 
       def file_path_for(example)
