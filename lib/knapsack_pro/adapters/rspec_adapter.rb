@@ -6,6 +6,7 @@ module KnapsackPro
   module Adapters
     class RSpecAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
+      ID_PATH_REGEX = /.+_spec\.rb\[.+\]$/
 
       def self.split_by_test_cases_enabled?
         return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
@@ -80,6 +81,10 @@ module KnapsackPro
         id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
       end
 
+      def self.id_path?(path)
+        ID_PATH_REGEX.match?(path)
+      end
+
       def self.rails_helper_exists?(test_dir)
         File.exist?("#{test_dir}/rails_helper.rb")
       end
@@ -95,6 +100,7 @@ module KnapsackPro
 
       def bind_time_tracker
         ensure_no_focus!
+        bind_regular_mode_time_tracker
         log_tests_duration
       end
 
@@ -117,10 +123,19 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.append_after(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            if time_tracker
-              formatted = KnapsackPro::Presenter.global_time(time_tracker.duration)
-              KnapsackPro.logger.debug(formatted)
-            end
+            formatted = KnapsackPro::Presenter.global_time(time_tracker.duration)
+            KnapsackPro.logger.debug(formatted)
+          end
+        end
+      end
+
+      def bind_regular_mode_time_tracker
+        return unless KnapsackPro::Config::Env.regular_mode?
+
+        ::RSpec.configure do |config|
+          config.append_before(:suite) do
+            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            time_tracker.scheduled_paths = KnapsackPro::Adapters::RSpecAdapter.scheduled_paths
           end
         end
       end
@@ -156,6 +171,10 @@ module KnapsackPro
       # Mocking existing RSpec configuration could impact test's runtime.
       def self.rspec_configuration
         ::RSpec.configuration
+      end
+
+      def self.scheduled_paths
+        rspec_configuration.instance_variable_get(:@files_or_directories_to_run) || []
       end
 
       def self.parsed_options(cli_args)

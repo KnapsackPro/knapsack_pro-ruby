@@ -135,21 +135,21 @@ describe KnapsackPro::Adapters::BaseAdapter do
 
   describe '#bind' do
     let(:temp_directory_path) { '.knapsack_pro' }
-    let(:recording_enabled?) { false }
-    let(:queue_recording_enabled?) { false }
+    let(:regular_mode?) { false }
+    let(:queue_mode?) { false }
 
     before do
       expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
       expect(File).to receive(:write).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt', nil)
 
-      expect(KnapsackPro::Config::Env).to receive(:recording_enabled?).and_return(recording_enabled?)
-      expect(KnapsackPro::Config::Env).to receive(:queue_recording_enabled?).and_return(queue_recording_enabled?)
+      expect(KnapsackPro::Config::Env).to receive(:regular_mode?).and_return(regular_mode?)
+      expect(KnapsackPro::Config::Env).to receive(:queue_mode?).and_return(queue_mode?)
     end
 
     after { subject.bind }
 
-    context 'when recording enabled' do
-      let(:recording_enabled?) { true }
+    context 'when regular mode enabled' do
+      let(:regular_mode?) { true }
 
       before do
         allow(subject).to receive(:bind_time_tracker)
@@ -165,8 +165,8 @@ describe KnapsackPro::Adapters::BaseAdapter do
       it { expect(subject).to receive(:bind_save_report) }
     end
 
-    context 'when queue recording enabled' do
-      let(:queue_recording_enabled?) { true }
+    context 'when queue mode enabled' do
+      let(:queue_mode?) { true }
 
       it 'calls queue hooks in proper order before binding time tracker' do
         logger = instance_double(Logger)
@@ -179,7 +179,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
       end
     end
 
-    context 'when recording disabled' do
+    context 'when regular mode and queue mode disabled' do
       it { expect(subject).not_to receive(:bind_save_report) }
       it { expect(subject).not_to receive(:bind_before_queue_hook) }
       it { expect(subject).not_to receive(:bind_after_queue_hook) }

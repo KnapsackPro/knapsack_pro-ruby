@@ -1959,7 +1959,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled' do
+  context 'when the RSpec split by test examples is enabled' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
@@ -1975,7 +1975,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
-    it 'splits slow test files by examples AND ensures the test examples are executed only once' do
+    it 'splits slow test files by test examples AND ensures the test examples are executed only once' do
       rspec_options = '--format d'
 
       spec_a = Spec.new('a_spec.rb', <<~SPEC)
@@ -2058,7 +2058,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND --tag is set' do
+  context 'when the RSpec split by test examples is enabled AND --tag is set' do
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
 
@@ -2137,7 +2137,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND JSON formatter is used' do
+  context 'when the RSpec split by test examples is enabled AND JSON formatter is used' do
     let(:json_file) { "#{SPEC_DIRECTORY}/rspec.json" }
 
     before do
@@ -2239,7 +2239,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND JUnit XML formatter is used' do
+  context 'when the RSpec split by test examples is enabled AND JUnit XML formatter is used' do
     let(:xml_file) { "#{SPEC_DIRECTORY}/rspec.xml" }
 
     before do
@@ -2338,7 +2338,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when the RSpec split by examples is enabled AND simplecov is used' do
+  context 'when the RSpec split by test examples is enabled AND simplecov is used' do
     let(:coverage_dir) { "#{KNAPSACK_PRO_TMP_DIR}/coverage" }
     let(:coverage_file) { "#{coverage_dir}/index.html" }
 
@@ -2422,6 +2422,104 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       expect(file_content).to include(spec_a.path)
       expect(file_content).to include(spec_b.path)
       expect(file_content).to include(spec_c.path)
+
+      expect(actual.exit_code).to eq 0
+    end
+  end
+
+  context 'when the RSpec split by test examples is enabled AND test files are split by test examples AND slow test files are not detected (for example, the user could have passed test examples like a_spec.rb[1:1] directly using KNAPSACK_PRO_TEST_FILE_LIST_SOURCE_FILE or KNAPSACK_PRO_TEST_FILE_LIST)' do
+    before do
+      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = ""
+      ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
+    end
+    after do
+      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
+      ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
+      ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
+    end
+
+    it 'detects test execution times correctly for individual test examples even though they are not considered slow test files' do
+      ENV['TEST__LOG_EXECUTION_TIMES'] = 'true'
+      rspec_options = '--format d'
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+          end
+          it 'A2 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        describe 'B_describe' do
+          it 'B1 test example' do
+            expect(1).to eq 1
+          end
+          it 'B2 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+          it 'C2 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper_with_knapsack, rspec_options, [
+        [spec_a, spec_b, spec_c]
+      ])
+      stub_test_cases_for_slow_test_files([
+        "#{spec_a.path}[1:1]",
+        "#{spec_a.path}[1:2]",
+      ])
+      stub_spec_batches([
+        ["#{spec_a.path}[1:1]", spec_b.path],
+        ["#{spec_a.path}[1:2]", spec_c.path],
+      ])
+
+      actual = subject
+
+      expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] Detected 0 slow test files: []')
+
+      expect(actual.stdout).to include(
+        <<~OUTPUT
+        A_describe
+          A1 test example
+
+        B_describe
+          B1 test example
+          B2 test example
+        OUTPUT
+      )
+
+      expect(actual.stdout).to include(
+        <<~OUTPUT
+        A_describe
+          A2 test example
+
+        C_describe
+          C1 test example
+          C2 test example
+        OUTPUT
+      )
+
+      expect(actual.stdout.scan(/A1 test example/).size).to eq 1
+      expect(actual.stdout.scan(/A2 test example/).size).to eq 1
+
+      expect(actual.stdout).to include('6 examples, 0 failures')
+
+      expect(actual.stdout).to include('[INTEGRATION TEST] test_files: 4, test files have execution time: true')
 
       expect(actual.exit_code).to eq 0
     end

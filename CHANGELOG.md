@@ -1,5 +1,13 @@
 # Changelog
 
+### 7.14.1
+
+* Improve execution time tracking for RSpec individual test examples
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/289
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v7.14.0...v7.14.1
+
 ### 7.14.0
 
 * Improve debugging for hanging CI nodes: show hanging spec files in the RSpec output and a command to reproduce the current batch of tests.

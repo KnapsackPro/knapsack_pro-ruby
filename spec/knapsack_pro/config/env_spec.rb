@@ -603,89 +603,43 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.recording_enabled' do
-    subject { described_class.recording_enabled }
-
-    context 'when ENV exists' do
-      let(:recording_enabled) { 'true' }
-      before { stub_const("ENV", { 'KNAPSACK_PRO_RECORDING_ENABLED' => recording_enabled }) }
-      it { should eq recording_enabled }
-    end
-
-    context "when ENV doesn't exist" do
-      it { should be_nil }
-    end
-  end
-
   describe '.regular_mode?' do
     subject { described_class.regular_mode? }
 
-    before do
-      expect(described_class).to receive(:recording_enabled?).and_return(recording_enabled)
+    context 'when regular mode is enabled' do
+      let(:regular_mode_enabled) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => regular_mode_enabled }) }
+      it { should eq true }
     end
 
-    context 'when recording is enabled' do
-      let(:recording_enabled) { true }
-      it { should be true }
-    end
-
-    context 'when recording is not enabled' do
-      let(:recording_enabled) { false }
-      it { should be false }
-    end
-  end
-
-  describe '.recording_enabled?' do
-    subject { described_class.recording_enabled? }
-
-    before do
-      expect(described_class).to receive(:recording_enabled).and_return(recording_enabled)
-    end
-
-    context 'when enabled' do
-      let(:recording_enabled) { 'true' }
-
-      it { should be true }
-    end
-
-    context 'when disabled' do
-      let(:recording_enabled) { nil }
-
-      it { should be false }
-    end
-  end
-
-  describe '.queue_recording_enabled' do
-    subject { described_class.queue_recording_enabled }
-
-    context 'when ENV exists' do
-      let(:queue_recording_enabled) { 'true' }
-      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_RECORDING_ENABLED' => queue_recording_enabled }) }
-      it { should eq queue_recording_enabled }
+    context 'when regular mode is disabled' do
+      let(:regular_mode_enabled) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => regular_mode_enabled }) }
+      it { should eq false }
     end
 
     context "when ENV doesn't exist" do
-      it { should be_nil }
+      it { should false }
     end
   end
 
-  describe '.queue_recording_enabled?' do
-    subject { described_class.queue_recording_enabled? }
+  describe '.queue_mode?' do
+    subject { described_class.queue_mode? }
 
-    before do
-      expect(described_class).to receive(:queue_recording_enabled).and_return(queue_recording_enabled)
+    context 'when queue mode is enabled' do
+      let(:queue_mode_enabled) { 'true' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_MODE_ENABLED' => queue_mode_enabled }) }
+      it { should eq true }
     end
 
-    context 'when enabled' do
-      let(:queue_recording_enabled) { 'true' }
-
-      it { should be true }
+    context 'when queue mode is disabled' do
+      let(:queue_mode_enabled) { 'false' }
+      before { stub_const("ENV", { 'KNAPSACK_PRO_QUEUE_MODE_ENABLED' => queue_mode_enabled }) }
+      it { should eq false }
     end
 
-    context 'when disabled' do
-      let(:queue_recording_enabled) { nil }
-
-      it { should be false }
+    context "when ENV doesn't exist" do
+      it { should false }
     end
   end
 
@@ -1016,7 +970,10 @@ describe KnapsackPro::Config::Env do
   describe '.rspec_split_by_test_examples?' do
     subject { described_class.rspec_split_by_test_examples? }
 
-    after(:each) do
+    before do
+      described_class.remove_instance_variable(:@rspec_split_by_test_examples) if described_class.instance_variable_defined?(:@rspec_split_by_test_examples)
+    end
+    after do
       described_class.remove_instance_variable(:@rspec_split_by_test_examples)
     end
 

@@ -7,7 +7,7 @@ module KnapsackPro
         require 'rspec/core'
 
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-        ENV['KNAPSACK_PRO_RECORDING_ENABLED'] = 'true'
+        ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] = 'true'
 
         adapter_class = KnapsackPro::Adapters::RSpecAdapter
         KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)

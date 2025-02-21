@@ -215,6 +215,28 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
+  describe '.id_path?' do
+    subject { described_class.id_path?(path) }
+
+    context 'when the path resembles the RSpec path with id' do
+      let(:path) { 'spec/features/a_spec.rb[1:1:7:1]' }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when the path resembles the RSpec path with multiple ids' do
+      let(:path) { 'spec/features/a_spec.rb[1:1:7:1, 1:2]' }
+
+      it { is_expected.to be true }
+    end
+
+    context "when the path doesn't resemble the RSpec path with id" do
+      let(:path) { 'spec/features/a_spec.rb' }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe '.rails_helper_exists?' do
     subject { described_class.rails_helper_exists?(test_dir) }
 
@@ -366,6 +388,26 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         allow(current_example).to receive(:metadata).and_return(file_path: "./foo.feature")
 
         expect(subject).to eq("./foo.feature")
+      end
+    end
+  end
+
+  describe 'private .scheduled_paths' do
+    subject { described_class.send(:scheduled_paths) }
+
+    context 'when the RSpec configuration has files or directories to run' do
+      it 'returns list of test files passed to RSpec (if this fails then the internal RSpec API changed and we must start supporting a new RSpec version as well)' do
+        expect(subject).not_to be_empty
+      end
+    end
+
+    context "when the RSpec configuration has no files or directories to run (when the internal RSpec API changed and we don't support the new RSpec version yet)" do
+      before do
+        expect(described_class).to receive(:rspec_configuration).and_return(double(:object_with_no_instance_variables))
+      end
+
+      it 'fallbacks to an empty array to not blow up Knapsack Pro' do
+        expect(subject).to eq([])
       end
     end
   end

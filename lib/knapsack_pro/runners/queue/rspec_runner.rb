@@ -143,7 +143,7 @@ module KnapsackPro
         end
 
         def pre_run_setup
-          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED'] = 'true'
+          ENV['KNAPSACK_PRO_QUEUE_MODE_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
 
           KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
@@ -164,7 +164,7 @@ module KnapsackPro
           log_rspec_queue_command
 
           time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue(@node_test_file_paths))
+          KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue)
 
           Kernel.exit(exit_code)
         end
@@ -183,6 +183,10 @@ module KnapsackPro
             executed_test_files: @node_test_file_paths
           )
           @node_test_file_paths += test_file_paths
+
+          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          time_tracker.scheduled_paths = @node_test_file_paths
+
           test_file_paths
         end
 
@@ -222,7 +226,7 @@ module KnapsackPro
         end
 
         def unexecuted_test_files
-          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_files(@node_test_file_paths)
+          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_files
         end
       end
     end

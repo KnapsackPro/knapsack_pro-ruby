@@ -11,7 +11,7 @@ module KnapsackPro
           path = test_file.fetch('path')
           test_file_path = extract_test_file_path(path)
 
-          if rspec_id_path?(path)
+          if KnapsackPro::Adapters::RSpecAdapter.id_path?(path)
             merged_test_file_examples_hash[test_file_path] ||= 0.0
             merged_test_file_examples_hash[test_file_path] += test_file.fetch('time_execution')
           else
@@ -40,12 +40,6 @@ module KnapsackPro
       # or test example path: spec/a_spec.rb[1:1]
       def extract_test_file_path(path)
         path.gsub(/\.rb\[.+\]$/, '.rb')
-      end
-
-      def rspec_id_path?(path)
-        path_with_id_regex = /.+_spec\.rb\[.+\]$/
-
-        path&.match?(path_with_id_regex)
       end
     end
   end

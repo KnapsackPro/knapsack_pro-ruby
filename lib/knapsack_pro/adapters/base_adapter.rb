@@ -59,13 +59,13 @@ module KnapsackPro
         KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
         File.write(self.class.adapter_bind_method_called_file, nil)
 
-        if KnapsackPro::Config::Env.recording_enabled?
+        if KnapsackPro::Config::Env.regular_mode?
           KnapsackPro.logger.debug('Regular Mode enabled.')
           bind_time_tracker
           bind_save_report
         end
 
-        if KnapsackPro::Config::Env.queue_recording_enabled?
+        if KnapsackPro::Config::Env.queue_mode?
           KnapsackPro.logger.debug('Queue Mode enabled.')
           bind_queue_mode
         end

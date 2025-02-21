@@ -87,24 +87,12 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_REPOSITORY_ADAPTER']
         end
 
-        def recording_enabled
-          ENV['KNAPSACK_PRO_RECORDING_ENABLED']
-        end
-
-        def recording_enabled?
-          recording_enabled == 'true'
-        end
-
         def regular_mode?
-          recording_enabled?
+          ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] == 'true'
         end
 
-        def queue_recording_enabled
-          ENV['KNAPSACK_PRO_QUEUE_RECORDING_ENABLED']
-        end
-
-        def queue_recording_enabled?
-          queue_recording_enabled == 'true'
+        def queue_mode?
+          ENV['KNAPSACK_PRO_QUEUE_MODE_ENABLED'] == 'true'
         end
 
         def queue_id

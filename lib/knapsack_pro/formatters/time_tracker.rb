@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'stringio'
+require 'set'
 require_relative '../utils'
 
 module KnapsackPro
@@ -22,6 +23,18 @@ module KnapsackPro
         @group = {}
         @paths = {}
         @suite_started = now
+        @scheduled_paths = []
+        @split_by_test_example_file_paths = Set.new
+      end
+
+      def scheduled_paths=(scheduled_paths)
+        @scheduled_paths = scheduled_paths
+        @scheduled_paths.each do |path|
+          if KnapsackPro::Adapters::RSpecAdapter.id_path?(path)
+            file_path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(path)
+            @split_by_test_example_file_paths << file_path
+          end
+        end
       end
 
       def example_group_started(notification)
@@ -49,12 +62,12 @@ module KnapsackPro
         @group = {}
       end
 
-      def queue(scheduled_paths)
+      def queue
         recorded_paths = @paths.values.map do |example|
           KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
         end
 
-        missing = (scheduled_paths - recorded_paths).each_with_object({}) do |path, object|
+        missing = (@scheduled_paths - recorded_paths).each_with_object({}) do |path, object|
           object[path] = { path: path, time_execution: 0.0 }
         end
 
@@ -73,12 +86,12 @@ module KnapsackPro
         now - @suite_started
       end
 
-      def unexecuted_test_files(scheduled_paths)
+      def unexecuted_test_files
         pending_paths = @paths.values
           .filter { |example| example[:time_execution] == 0.0 }
           .map { |example| example[:path] }
 
-        not_run_paths = scheduled_paths -
+        not_run_paths = @scheduled_paths -
           @paths.values
           .map { |example| example[:path] }
 
@@ -111,21 +124,22 @@ module KnapsackPro
       end
 
       def path_for(example)
-        file = file_path_for(example)
-        return nil if file == ""
+        file_path = file_path_for(example)
+        return nil if file_path == ""
 
-        path = rspec_split_by_test_example?(file) ? example.id : file
-        KnapsackPro::TestFileCleaner.clean(path)
+        if rspec_split_by_test_example?(file_path)
+          KnapsackPro::TestFileCleaner.clean(example.id)
+        else
+          file_path
+        end
       end
 
-      def rspec_split_by_test_example?(file)
-        return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
-        return false unless KnapsackPro::Adapters::RSpecAdapter.slow_test_file?(KnapsackPro::Adapters::RSpecAdapter, file)
-        true
+      def rspec_split_by_test_example?(file_path)
+        @split_by_test_example_file_paths.include?(file_path)
       end
 
       def file_path_for(example)
-        KnapsackPro::Adapters::RSpecAdapter.file_path_for(example)
+        KnapsackPro::TestFileCleaner.clean(KnapsackPro::Adapters::RSpecAdapter.file_path_for(example))
       end
 
       def time_execution_for(example, started_at)
