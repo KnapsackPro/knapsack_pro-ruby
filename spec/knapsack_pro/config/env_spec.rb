@@ -978,16 +978,22 @@ describe KnapsackPro::Config::Env do
     end
 
     [
-      ['false', '2', false],
-      ['true',  '2', true],
-      [nil,     '2', true],
-      ['false', '1', false],
-      ['true',  '1', false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
-      [nil,     '1', false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
-    ].each do |sbte, node_total, expected, log_level, log_message|
-      context "KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect}" do
+      ['false', '2', nil, false],
+      ['true',  '2', nil, true],
+      [nil,     '2', nil, true],
+      ['false', '1', nil, false],
+      ['true',  '1', nil, false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
+      [nil,     '1', nil, false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
+      ['false', '2', 'true', false],
+      ['true',  '2', 'true', true],
+      [nil,     '2', 'true', false, :warn, "Skipping split by test examples because test file names encryption is enabled:\nhttps://knapsackpro.com/perma/ruby/encryption\nhttps://knapsackpro.com/perma/ruby/split-by-test-examples"],
+      ['false', '1', 'true', false],
+      ['true',  '1', 'true', false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
+      [nil,     '1', 'true', false, :warn, "Skipping split by test examples because test file names encryption is enabled:\nhttps://knapsackpro.com/perma/ruby/encryption\nhttps://knapsackpro.com/perma/ruby/split-by-test-examples"],
+    ].each do |sbte, node_total, encrypted, expected, log_level, log_message|
+      context "KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect} AND KNAPSACK_PRO_TEST_FILES_ENCRYPTED=#{encrypted.inspect}" do
         before do
-          stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => sbte, 'KNAPSACK_PRO_CI_NODE_TOTAL' => node_total }.compact)
+          stub_const("ENV", { 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES' => sbte, 'KNAPSACK_PRO_CI_NODE_TOTAL' => node_total, 'KNAPSACK_PRO_TEST_FILES_ENCRYPTED' => encrypted }.compact)
 
           if log_level && log_message
             logger = instance_double(Logger)
