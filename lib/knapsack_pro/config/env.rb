@@ -179,7 +179,7 @@ module KnapsackPro
         def rspec_split_by_test_examples?
           return @rspec_split_by_test_examples if defined?(@rspec_split_by_test_examples)
 
-          split = (ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] || true).to_s == 'true'
+          split = ENV.fetch('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES', true).to_s == 'true'
 
           if split && ci_node_total < 2
             KnapsackPro.logger.debug('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
