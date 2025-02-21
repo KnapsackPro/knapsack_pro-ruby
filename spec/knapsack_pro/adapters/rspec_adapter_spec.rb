@@ -215,8 +215,8 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.rspec_id_path?' do
-    subject { described_class.rspec_id_path?(path) }
+  describe '.id_path?' do
+    subject { described_class.id_path?(path) }
 
     context 'when the path resembles the RSpec path with id' do
       let(:path) { 'spec/features/a_spec.rb[1:1:7:1]' }

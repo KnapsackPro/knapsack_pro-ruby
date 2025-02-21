@@ -30,7 +30,7 @@ module KnapsackPro
       def scheduled_paths=(scheduled_paths)
         @scheduled_paths = scheduled_paths
         @scheduled_paths.each do |path|
-          if KnapsackPro::Adapters::RSpecAdapter.rspec_id_path?(path)
+          if KnapsackPro::Adapters::RSpecAdapter.id_path?(path)
             file_path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(path)
             @split_by_test_example_file_paths << file_path
           end

@@ -81,7 +81,7 @@ module KnapsackPro
         id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
       end
 
-      def self.rspec_id_path?(path)
+      def self.id_path?(path)
         ID_PATH_REGEX.match?(path)
       end
 
