@@ -194,6 +194,14 @@ jobs:
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/features/calculator_spec.rb"
             bundle exec rake knapsack_pro:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split custom files by test examples AND the --tag option passed ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files--tag-option"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
+            bundle exec rake "knapsack_pro:rspec[--tag tag_x -t ~@tag_y]"
 
   e2e-queue-rspec:
     parameters:
@@ -289,6 +297,14 @@ jobs:
             export KNAPSACK_PRO_CI_NODE_TOTAL=1
             export KNAPSACK_PRO_CI_NODE_INDEX=0
             bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split custom files by test examples AND the --tag option passed ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split-custom-files--tag-option"
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
+            bundle exec rake "knapsack_pro:queue:rspec[--tag tag_x -t ~@tag_y]"
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
