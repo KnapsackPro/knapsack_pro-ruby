@@ -61,6 +61,17 @@ module KnapsackPro
         parsed_options(cli_args)&.[](:order)
       end
 
+      def self.remove_formatters(cli_args)
+        formatter_options = Set.new(['-f', '--format', '-o', '--out'])
+        cli_args.each_with_index do |arg, index|
+          if formatter_options.include?(arg)
+            cli_args[index] = nil
+            cli_args[index + 1] = nil
+          end
+        end
+        cli_args.compact
+      end
+
       def self.file_path_for(example)
         [
           -> { parse_file_path(example.id) },

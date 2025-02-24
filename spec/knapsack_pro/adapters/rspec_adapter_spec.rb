@@ -315,6 +315,18 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
+  describe '.remove_formatters' do
+    subject { described_class.remove_formatters(cli_args) }
+
+    context "when CLI args include formatters" do
+      let(:cli_args) { ['-t', 'awesome_tag', '-f', 'documentation', '-o', '/tmp/documentation.txt', '--tag', 'mytag', '--format', 'json', '--out', '/tmp/file.json', '--no-color'] }
+
+      it 'removes formatters and the related output file options' do
+        expect(subject).to eq ['-t', 'awesome_tag', '--tag', 'mytag', '--no-color']
+      end
+    end
+  end
+
   describe '.file_path_for' do
     let(:current_example) { ::RSpec.describe.example }
 
