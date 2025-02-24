@@ -17,6 +17,7 @@ describe KnapsackPro::Runners::RSpecRunner do
 
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_rspec)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_REGULAR_MODE_ENABLED', 'true')
+      expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_RSPEC_OPTIONS', args)
 
       expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::RSpecAdapter)
 
@@ -40,7 +41,6 @@ describe KnapsackPro::Runners::RSpecRunner do
 
       before do
         expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:verify_bind_method_called).ordered
-        expect(KnapsackPro::Adapters::RSpecAdapter).to receive(:ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!).with(['--profile', '--color']).ordered
 
         expect(Rake::Task).to receive(:[]).with('knapsack_pro:rspec_run').at_least(1).and_return(task)
 

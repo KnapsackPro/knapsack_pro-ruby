@@ -8,6 +8,7 @@ module KnapsackPro
 
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
         ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] = 'true'
+        ENV['KNAPSACK_PRO_RSPEC_OPTIONS'] = args
 
         adapter_class = KnapsackPro::Adapters::RSpecAdapter
         KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
@@ -15,9 +16,6 @@ module KnapsackPro
 
         if runner.test_files_to_execute_exist?
           adapter_class.verify_bind_method_called
-
-          cli_args = (args || '').split
-          adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
 
           require 'rspec/core/rake_task'
 
