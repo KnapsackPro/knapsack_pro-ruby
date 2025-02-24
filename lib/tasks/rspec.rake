@@ -13,6 +13,6 @@ namespace :knapsack_pro do
     ENV.delete('SPEC_OPTS')
 
     detector = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new
-    detector.generate_json_report
+    detector.generate_json_report(ENV['KNAPSACK_PRO_RSPEC_OPTIONS'])
   end
 end

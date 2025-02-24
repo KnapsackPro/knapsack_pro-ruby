@@ -3,7 +3,7 @@
 module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
-      def generate_json_report
+      def generate_json_report(args)
         require 'rspec/core'
 
         cli_format =
@@ -25,7 +25,10 @@ module KnapsackPro
           return
         end
 
-        cli_args = cli_format + [
+        raw_cli_args = (args || '').split
+        cli_args_without_formatters = KnapsackPro::Adapters::RSpecAdapter.remove_formatters(raw_cli_args)
+
+        cli_args = cli_args_without_formatters + cli_format + [
           '--dry-run',
           '--no-color',
           '--out', report_path,
