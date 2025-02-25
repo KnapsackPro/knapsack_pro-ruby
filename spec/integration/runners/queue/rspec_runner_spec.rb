@@ -1961,8 +1961,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   context 'when the RSpec split by test examples is enabled' do
     before do
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
@@ -2134,8 +2134,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:json_file) { "#{SPEC_DIRECTORY}/rspec.json" }
 
     before do
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
@@ -2233,8 +2233,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:xml_file) { "#{SPEC_DIRECTORY}/rspec.xml" }
 
     before do
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
@@ -2330,8 +2330,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:coverage_file) { "#{coverage_dir}/index.html" }
 
     before do
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
