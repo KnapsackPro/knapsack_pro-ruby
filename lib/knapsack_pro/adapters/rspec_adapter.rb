@@ -37,18 +37,6 @@ module KnapsackPro
         KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new.test_file_example_paths
       end
 
-      def self.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args)
-        if KnapsackPro::Config::Env.rspec_split_by_test_examples? && has_tag_option?(cli_args)
-          error_message = "It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: #{KnapsackPro::Urls::RSPEC__SPLIT_BY_TEST_EXAMPLES__TAG}"
-          KnapsackPro.logger.error(error_message)
-          raise error_message
-        end
-      end
-
-      def self.has_tag_option?(cli_args)
-        !!parsed_options(cli_args)&.[](:inclusion_filter)
-      end
-
       def self.has_format_option?(cli_args)
         !!parsed_options(cli_args)&.[](:formatters)
       end
@@ -59,6 +47,17 @@ module KnapsackPro
 
       def self.order_option(cli_args)
         parsed_options(cli_args)&.[](:order)
+      end
+
+      def self.remove_formatters(cli_args)
+        formatter_options = ['-f', '--format', '-o', '--out']
+        cli_args.dup.each_with_index do |arg, index|
+          if formatter_options.include?(arg)
+            cli_args[index] = nil
+            cli_args[index + 1] = nil
+          end
+        end
+        cli_args.compact
       end
 
       def self.file_path_for(example)

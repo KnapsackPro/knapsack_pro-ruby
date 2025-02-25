@@ -179,10 +179,17 @@ module KnapsackPro
         def rspec_split_by_test_examples?
           return @rspec_split_by_test_examples if defined?(@rspec_split_by_test_examples)
 
-          split = ENV.fetch('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES', false).to_s == 'true'
+          env = ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES']
+
+          if test_files_encrypted? && env.nil?
+            KnapsackPro.logger.warn("Skipping split by test examples because test file names encryption is enabled:\n#{KnapsackPro::Urls::ENCRYPTION}\n#{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
+            return (@rspec_split_by_test_examples = false)
+          end
+
+          split = (env || true).to_s == 'true'
 
           if split && ci_node_total < 2
-            KnapsackPro.logger.debug('Skipping split of test files by test examples because you are running tests on a single CI node (no parallelism)')
+            KnapsackPro.logger.debug('Skipping split by test examples because tests are running on a single CI node (no parallelism)')
             @rspec_split_by_test_examples = false
           else
             @rspec_split_by_test_examples = split

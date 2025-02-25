@@ -21,6 +21,7 @@ module KnapsackPro
         end
 
         def initialize(adapter_class, rspec_pure, args, stream_error, stream_out)
+          ENV['KNAPSACK_PRO_RSPEC_OPTIONS'] = args.to_s
           super(adapter_class)
           @adapter_class = adapter_class
           @rspec_pure = rspec_pure
@@ -149,7 +150,6 @@ module KnapsackPro
           KnapsackPro::Config::Env.set_test_runner_adapter(@adapter_class)
 
           ENV['SPEC_OPTS'] = @rspec_pure.add_knapsack_pro_formatters_to(ENV['SPEC_OPTS'])
-          @adapter_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(@cli_args)
 
           rspec_configuration_options = ::RSpec::Core::ConfigurationOptions.new(@cli_args)
           @rspec_runner = ::RSpec::Core::Runner.new(rspec_configuration_options)

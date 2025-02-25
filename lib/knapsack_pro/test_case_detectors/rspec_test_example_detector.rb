@@ -3,7 +3,9 @@
 module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
-      def generate_json_report
+      def generate_json_report(rspec_args)
+        raise "The internal KNAPSACK_PRO_RSPEC_OPTIONS environment variable is unset. Ensure it is not overridden accidentally. Otherwise, please report this as a bug: #{KnapsackPro::Urls::SUPPORT}" if rspec_args.nil?
+
         require 'rspec/core'
 
         cli_format =
@@ -25,7 +27,11 @@ module KnapsackPro
           return
         end
 
-        cli_args = cli_format + [
+        args = (rspec_args || '').split
+        cli_args_without_formatters = KnapsackPro::Adapters::RSpecAdapter.remove_formatters(args)
+
+        # Apply a --format option which overrides formatters from the RSpec custom option files like `.rspec`.
+        cli_args = cli_args_without_formatters + cli_format + [
           '--dry-run',
           '--no-color',
           '--out', report_path,

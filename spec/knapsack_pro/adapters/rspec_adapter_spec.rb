@@ -89,76 +89,6 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!' do
-    let(:cli_args) { double }
-
-    subject { described_class.ensure_no_tag_option_when_rspec_split_by_test_examples_enabled!(cli_args) }
-
-    before do
-      expect(KnapsackPro::Config::Env).to receive(:rspec_split_by_test_examples?).and_return(rspec_split_by_test_examples_enabled)
-    end
-
-    context 'when RSpec split by test examples enabled' do
-      let(:rspec_split_by_test_examples_enabled) { true }
-
-      before do
-        expect(described_class).to receive(:has_tag_option?).with(cli_args).and_return(has_tag_option)
-      end
-
-      context 'when RSpec tag option is provided' do
-        let(:has_tag_option) { true }
-
-        it do
-          expect { subject }.to raise_error(/It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature/)
-        end
-      end
-
-      context 'when RSpec tag option is not provided' do
-        let(:has_tag_option) { false }
-
-        it 'does nothing' do
-          expect(subject).to be_nil
-        end
-      end
-    end
-
-    context 'when RSpec split by test examples disabled' do
-      let(:rspec_split_by_test_examples_enabled) { false }
-
-      it 'does nothing' do
-        expect(subject).to be_nil
-      end
-    end
-  end
-
-  describe '.has_tag_option?' do
-    subject { described_class.has_tag_option?(cli_args) }
-
-    context 'when tag option is provided as -t' do
-      let(:cli_args) { ['-t', 'mytag'] }
-
-      it { expect(subject).to be true }
-    end
-
-    context 'when tag option is provided as --tag' do
-      let(:cli_args) { ['--tag', 'mytag'] }
-
-      it { expect(subject).to be true }
-    end
-
-    context 'when tag option is provided without delimiter' do
-      let(:cli_args) { ['-tmytag'] }
-
-      it { expect(subject).to be true }
-    end
-
-    context 'when tag option is not provided' do
-      let(:cli_args) { ['--fake', 'value'] }
-
-      it { expect(subject).to be false }
-    end
-  end
-
   describe '.has_format_option?' do
     subject { described_class.has_format_option?(cli_args) }
 
@@ -312,6 +242,18 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:cli_args) { ['--seed', '123456'] }
 
       it { expect(subject).to eq 'rand:123456' }
+    end
+  end
+
+  describe '.remove_formatters' do
+    subject { described_class.remove_formatters(cli_args) }
+
+    context "when CLI args include formatters" do
+      let(:cli_args) { ['-t', 'awesome_tag', '-f', 'documentation', '-o', '/tmp/documentation.txt', '--tag', 'mytag', '--format', 'json', '--out', '/tmp/file.json', '--no-color'] }
+
+      it 'removes formatters and the related output file options' do
+        expect(subject).to eq ['-t', 'awesome_tag', '--tag', 'mytag', '--no-color']
+      end
     end
   end
 

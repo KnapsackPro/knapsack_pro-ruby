@@ -1961,16 +1961,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   context 'when the RSpec split by test examples is enabled' do
     before do
-      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
-
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
-      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
@@ -2060,21 +2057,18 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   context 'when the RSpec split by test examples is enabled AND --tag is set' do
     before do
-      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
-
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:2])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
-      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
 
-    it 'sets 1 as exit code AND raises an error (a test example path as a_spec.rb[1:1] would always be executed even when it does not have the tag that is set via the --tag option. We cannot run tests because it could lead to running unintentional tests)' do
+    it 'splits slow test files by test examples AND ensures the test examples are executed only once' do
       rspec_options = '--format d --tag my_tag'
 
       spec_a = Spec.new('a_spec.rb', <<~SPEC)
@@ -2082,7 +2076,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
           it 'A1 test example' do
             expect(1).to eq 1
           end
-          it 'A2 test example' do
+          it 'A2 test example', :my_tag do
             expect(1).to eq 1
           end
         end
@@ -2101,7 +2095,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       spec_c = Spec.new('c_spec.rb', <<~SPEC)
         describe 'C_describe' do
-          it 'C1 test example' do
+          it 'C1 test example', :my_tag do
             expect(1).to eq 1
           end
           it 'C2 test example' do
@@ -2114,26 +2108,25 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         [spec_a, spec_b, spec_c]
       ])
       stub_test_cases_for_slow_test_files([
-        "#{spec_a.path}[1:1]",
-        "#{spec_a.path}[1:2]",
+        "#{spec_a.path}[1:2]", # only this test example is tagged
       ])
       stub_spec_batches([
-        ["#{spec_a.path}[1:1]", spec_b.path],
+        [spec_b.path],
         ["#{spec_a.path}[1:2]", spec_c.path],
       ])
 
       actual = subject
 
-      expect(actual.stdout).to include('ERROR -- : [knapsack_pro] It is not allowed to use the RSpec tag option together with the RSpec split by test examples feature. Please see: https://knapsackpro.com/perma/ruby/rspec-split-by-test-examples-tag')
-
       expect(actual.stdout).to_not include('A1 test example')
-      expect(actual.stdout).to_not include('A2 test example')
-      expect(actual.stdout).to_not include('B1 test example')
-      expect(actual.stdout).to_not include('B2 test example')
-      expect(actual.stdout).to_not include('C1 test example')
+      expect(actual.stdout).to include('A2 test example')
+      expect(actual.stdout).to include('B1 test example')
+      expect(actual.stdout).to include('B2 test example')
+      expect(actual.stdout).to include('C1 test example')
       expect(actual.stdout).to_not include('C2 test example')
 
-      expect(actual.exit_code).to eq 1
+      expect(actual.stdout).to include('4 examples, 0 failures')
+
+      expect(actual.exit_code).to eq 0
     end
   end
 
@@ -2141,16 +2134,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:json_file) { "#{SPEC_DIRECTORY}/rspec.json" }
 
     before do
-      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
-
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
-      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
@@ -2243,16 +2233,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:xml_file) { "#{SPEC_DIRECTORY}/rspec.xml" }
 
     before do
-      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
-
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
-      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
@@ -2343,16 +2330,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     let(:coverage_file) { "#{coverage_dir}/index.html" }
 
     before do
-      ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
-
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:1])
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
     after do
-      ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
       ENV.delete('KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN')
       ENV.delete('KNAPSACK_PRO_CI_NODE_TOTAL')
     end
