@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../formatters/time_tracker_fetcher'
-require 'set'
 
 module KnapsackPro
   module Adapters
@@ -51,7 +50,7 @@ module KnapsackPro
       end
 
       def self.remove_formatters(cli_args)
-        formatter_options = Set.new(['-f', '--format', '-o', '--out'])
+        formatter_options = ['-f', '--format', '-o', '--out']
         cli_args.each_with_index do |arg, index|
           if formatter_options.include?(arg)
             cli_args[index] = nil
