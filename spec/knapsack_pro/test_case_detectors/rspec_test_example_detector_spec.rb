@@ -4,7 +4,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   let(:rspec_test_example_detector) { described_class.new }
 
   describe '#generate_json_report' do
-    subject { rspec_test_example_detector.generate_json_report(args) }
+    subject { rspec_test_example_detector.generate_json_report(rspec_args) }
 
     before do
       expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
@@ -85,7 +85,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
     end
 
     context 'when RSpec >= 3.6.0' do
-      let(:args) { ['', nil].sample }
+      let(:rspec_args) { ['', nil].sample }
       let(:expected_raw_cli_args) { [] }
       let(:expected_format) { 'json' }
 
@@ -93,7 +93,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
     end
 
     context 'when RSpec < 3.6.0' do
-      let(:args) { ['', nil].sample }
+      let(:rspec_args) { ['', nil].sample }
       let(:expected_raw_cli_args) { [] }
       let(:expected_format) { 'KnapsackPro::Formatters::RSpecJsonFormatter' }
 
@@ -104,12 +104,12 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
       it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
     end
 
-    context 'when CLI args are present including format option' do
-      let(:args) { '-t mytag --format documentation --out /tmp/documentation.txt --tag ~@skip --example-matches regexp --example string' }
+    context 'when RSpec CLI args are present including format option' do
+      let(:rspec_args) { '-t mytag --format documentation --out /tmp/documentation.txt --tag ~@skip --example-matches regexp --example string' }
       let(:expected_raw_cli_args) { ['-t', 'mytag', '--tag', '~@skip', '--example-matches', 'regexp', '--example', 'string'] }
       let(:expected_format) { 'json' }
 
-      describe 'removes formatters from CLI args' do
+      describe 'removes formatters from RSpec CLI args' do
         it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
       end
     end
