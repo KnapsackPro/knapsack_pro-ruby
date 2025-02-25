@@ -201,7 +201,8 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files--tag-option"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
-            bundle exec rake "knapsack_pro:rspec[--tag tag_x -t ~@tag_y]"
+            export SKIP_ME_OR_I_WILL_FAIL=true
+            bundle exec rake "knapsack_pro:rspec[--tag tag_x -t ~@tag_y --tag ~@skip_me_or_i_will_fail --format documentation]"
 
   e2e-queue-rspec:
     parameters:
@@ -304,7 +305,8 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split-custom-files--tag-option"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
-            bundle exec rake "knapsack_pro:queue:rspec[--tag tag_x -t ~@tag_y]"
+            export SKIP_ME_OR_I_WILL_FAIL=true
+            bundle exec rake "knapsack_pro:queue:rspec[--tag tag_x -t ~@tag_y --tag ~@skip_me_or_i_will_fail --format documentation]"
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
