@@ -28,6 +28,7 @@ module KnapsackPro
         args = (rspec_args || '').split
         cli_args_without_formatters = KnapsackPro::Adapters::RSpecAdapter.remove_formatters(args)
 
+        # Apply a --format option which overrides formatters from the RSpec custom option files like `.rspec`.
         cli_args = cli_args_without_formatters + cli_format + [
           '--dry-run',
           '--no-color',
