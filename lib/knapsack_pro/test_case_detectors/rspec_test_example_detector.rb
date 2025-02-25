@@ -4,6 +4,8 @@ module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
       def generate_json_report(rspec_args)
+        raise "The internal KNAPSACK_PRO_RSPEC_OPTIONS environment variable is unset. Ensure it is not overridden accidentally. Otherwise, please report this as a bug: #{KnapsackPro::Urls::SUPPORT}" if rspec_args.nil?
+
         require 'rspec/core'
 
         cli_format =

@@ -21,7 +21,7 @@ module KnapsackPro
         end
 
         def initialize(adapter_class, rspec_pure, args, stream_error, stream_out)
-          ENV['KNAPSACK_PRO_RSPEC_OPTIONS'] = args
+          ENV['KNAPSACK_PRO_RSPEC_OPTIONS'] = args.to_s
           super(adapter_class)
           @adapter_class = adapter_class
           @rspec_pure = rspec_pure

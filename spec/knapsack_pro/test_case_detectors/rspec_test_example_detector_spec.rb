@@ -6,19 +6,19 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   describe '#generate_json_report' do
     subject { rspec_test_example_detector.generate_json_report(rspec_args) }
 
-    before do
-      expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
-
-      expect(FileUtils).to receive(:mkdir_p).with(report_dir)
-
-      allow(File).to receive(:exist?)
-      expect(File).to receive(:exist?).at_least(:once).with(report_path).and_return(true)
-      expect(File).to receive(:delete).with(report_path)
-
-      expect(rspec_test_example_detector).to receive(:slow_test_files).and_return(test_file_entities)
-    end
-
     shared_examples 'generate_json_report runs RSpec::Core::Runner' do
+      before do
+        expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
+
+        expect(FileUtils).to receive(:mkdir_p).with(report_dir)
+
+        allow(File).to receive(:exist?)
+        expect(File).to receive(:exist?).at_least(:once).with(report_path).and_return(true)
+        expect(File).to receive(:delete).with(report_path)
+
+        expect(rspec_test_example_detector).to receive(:slow_test_files).and_return(test_file_entities)
+      end
+
       context 'when there are no slow test files' do
         let(:test_file_entities) { [] }
 
@@ -85,7 +85,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
     end
 
     context 'when RSpec >= 3.6.0' do
-      let(:rspec_args) { ['', nil].sample }
+      let(:rspec_args) { '' }
       let(:expected_args) { [] }
       let(:expected_format) { 'json' }
 
@@ -93,7 +93,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
     end
 
     context 'when RSpec < 3.6.0' do
-      let(:rspec_args) { ['', nil].sample }
+      let(:rspec_args) { '' }
       let(:expected_args) { [] }
       let(:expected_format) { 'KnapsackPro::Formatters::RSpecJsonFormatter' }
 
@@ -111,6 +111,16 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       describe 'removes formatters from RSpec CLI args' do
         it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
+      end
+    end
+
+    context 'when RSpec CLI args are not set' do
+      let(:rspec_args) { nil }
+      let(:expected_args) { [] }
+      let(:expected_format) { 'json' }
+
+      it do
+        expect { subject }.to raise_error("The internal KNAPSACK_PRO_RSPEC_OPTIONS environment variable is unset. Ensure it is not overridden accidentally. Otherwise, please report this as a bug: https://knapsackpro.com/perma/ruby/support")
       end
     end
   end
