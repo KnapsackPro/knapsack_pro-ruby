@@ -4,7 +4,7 @@
 
 * Enable [`KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES`](https://docs.knapsackpro.com/ruby/split-by-test-examples/) by default
     * This should improve the speed of your builds, but you can disable it with [`KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=false`](https://docs.knapsackpro.com/ruby/reference/#knapsack_pro_rspec_split_by_test_examples-rspec)
-* RSpec tags are supported from now on in the [RSpec split by examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/) feature.
+* Support RSpec tags when using [RSpec split by examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/).
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/288
 

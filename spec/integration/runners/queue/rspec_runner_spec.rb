@@ -2057,8 +2057,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   context 'when the RSpec split by test examples is enabled AND --tag is set' do
     before do
-      # remember to stub Queue API batches to include test examples (example: a_spec.rb[1:2)
-      # for the following slow test files
+      # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:2])
+      # for the following slow test files.
       ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
@@ -2108,7 +2108,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         [spec_a, spec_b, spec_c]
       ])
       stub_test_cases_for_slow_test_files([
-        "#{spec_a.path}[1:2]", # only this test example has is tagged with mytag
+        "#{spec_a.path}[1:2]", # only this test example is tagged
       ])
       stub_spec_batches([
         [spec_b.path],
