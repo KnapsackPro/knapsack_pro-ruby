@@ -51,7 +51,7 @@ module KnapsackPro
 
       def self.remove_formatters(cli_args)
         formatter_options = ['-f', '--format', '-o', '--out']
-        cli_args.each_with_index do |arg, index|
+        cli_args.dup.each_with_index do |arg, index|
           if formatter_options.include?(arg)
             cli_args[index] = nil
             cli_args[index + 1] = nil
