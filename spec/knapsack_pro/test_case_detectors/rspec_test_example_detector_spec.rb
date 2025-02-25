@@ -45,7 +45,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           expect(KnapsackPro::TestFilePattern).to receive(:test_dir).with(KnapsackPro::Adapters::RSpecAdapter).and_return(test_dir)
 
           options = double
-          expect(RSpec::Core::ConfigurationOptions).to receive(:new).with(expected_raw_cli_args + [
+          expect(RSpec::Core::ConfigurationOptions).to receive(:new).with(expected_args + [
             '--format', expected_format,
             '--dry-run',
             '--no-color',
@@ -86,7 +86,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
     context 'when RSpec >= 3.6.0' do
       let(:rspec_args) { ['', nil].sample }
-      let(:expected_raw_cli_args) { [] }
+      let(:expected_args) { [] }
       let(:expected_format) { 'json' }
 
       it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
@@ -94,7 +94,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
     context 'when RSpec < 3.6.0' do
       let(:rspec_args) { ['', nil].sample }
-      let(:expected_raw_cli_args) { [] }
+      let(:expected_args) { [] }
       let(:expected_format) { 'KnapsackPro::Formatters::RSpecJsonFormatter' }
 
       before do
@@ -106,7 +106,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
     context 'when RSpec CLI args are present including format option' do
       let(:rspec_args) { '-t mytag --format documentation --out /tmp/documentation.txt --tag ~@skip --example-matches regexp --example string' }
-      let(:expected_raw_cli_args) { ['-t', 'mytag', '--tag', '~@skip', '--example-matches', 'regexp', '--example', 'string'] }
+      let(:expected_args) { ['-t', 'mytag', '--tag', '~@skip', '--example-matches', 'regexp', '--example', 'string'] }
       let(:expected_format) { 'json' }
 
       describe 'removes formatters from RSpec CLI args' do
