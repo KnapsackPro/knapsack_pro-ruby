@@ -1,5 +1,17 @@
 # Changelog
 
+### 8.0.1
+
+* Fix detection of id paths for Turnip, which resulted in sending to the API both file and id paths timings
+    * Example:
+      * turnip/acceptance/foo.feature[1:1:1] 0 seconds
+      * turnip/acceptance/foo.feature[1:1:2] 0 seconds
+      * turnip/acceptance/foo.feature 30 milliseconds (time recorded for [1:1:1] or [1:1:2])
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/290
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.0.0...v8.0.1
+
 ### 8.0.0
 
 * Enable [`KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES`](https://docs.knapsackpro.com/ruby/split-by-test-examples/) by default
