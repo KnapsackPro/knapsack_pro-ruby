@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased (patch)
+
+* Use the same regex when parsing file path and id path
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/291
+
 ### 8.0.1
 
 * Fix detection of id paths for Turnip, which resulted in sending to the API both file and id paths timings

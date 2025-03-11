@@ -7,7 +7,7 @@ module KnapsackPro
     class RSpecAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
       # https://github.com/rspec/rspec/blob/86b5e4218eece4c1913fe9aad24c0a96d8bc9f40/rspec-core/lib/rspec/core/example.rb#L122
-      REGEX = /^(.*?)(?:\[([\d\s:,]+)\])?$/.freeze
+      REGEX = /\A(.*?)(?:\[([\d\s:,]+)\])?\z/.freeze
 
       def self.split_by_test_cases_enabled?
         return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
@@ -76,9 +76,9 @@ module KnapsackPro
         return ''
       end
 
-      def self.parse_file_path(id)
-        # https://github.com/rspec/rspec-core/blob/1eeadce5aa7137ead054783c31ff35cbfe9d07cc/lib/rspec/core/example.rb#L122
-        id.match(/\A(.*?)(?:\[([\d\s:,]+)\])?\z/).captures.first
+      def self.parse_file_path(path)
+        file, _id = path.match(REGEX).captures
+        file
       end
 
       def self.id_path?(path)
