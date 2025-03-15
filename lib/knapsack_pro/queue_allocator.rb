@@ -33,7 +33,7 @@ module KnapsackPro
 
     def attempt_to_initialize_queue(tests)
       # make attempt to initalize a new queue on API side
-      action = build_action(can_initialize_queue, attempt_connect_to_queue: false, tests)
+      action = build_action(tests, can_initialize_queue, attempt_connect_to_queue: false)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       if connection.success?
