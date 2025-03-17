@@ -45,7 +45,6 @@ module KnapsackPro
       TestFilePattern.call(adapter_class)
     end
 
-
     def get_slow_test_files
       slow_test_files =
         if slow_test_file_pattern
