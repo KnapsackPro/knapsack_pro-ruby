@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class QueueAllocator
-    QueueResult = Struct.new(:batch_fetched?, :queue_exists?, :failed_connection?, :response)
+    QueueResult = Struct.new(:batch_fetched?, :failed_connection?, :response)
     FallbackModeError = Class.new(StandardError)
 
     def initialize(args)
@@ -13,7 +13,7 @@ module KnapsackPro
       @repository_adapter = args.fetch(:repository_adapter)
     end
 
-    def test_file_paths2(can_initialize_queue, executed_test_files)
+    def test_file_paths(can_initialize_queue, executed_test_files)
       return [] if @fallback_activated
 
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
@@ -125,7 +125,6 @@ module KnapsackPro
       unless connection.success?
         return QueueResult.new(
           batch_fetched?: false,
-          queue_exists?: nil,
           failed_connection?: true,
           response: response
         )
@@ -134,7 +133,6 @@ module KnapsackPro
       if can_initialize_queue && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
         return QueueResult.new(
           batch_fetched?: false,
-          queue_exists?: false,
           failed_connection?: false,
           response: response
         )
@@ -144,7 +142,6 @@ module KnapsackPro
 
       QueueResult.new(
         batch_fetched?: true,
-        queue_exists?: true,
         failed_connection?: false,
         response: response
       )
