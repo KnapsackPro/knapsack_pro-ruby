@@ -32,7 +32,7 @@ module KnapsackPro
       end
     end
 
-    def attempt_to_initialize_queue(tests)
+    def pseudo_attempt_to_initialize_queue(tests)
       # make attempt to initalize a new queue on API side
       action = build_action(tests, can_initialize_queue, attempt_connect_to_queue: false)
       connection = KnapsackPro::Client::Connection.new(action)
@@ -53,8 +53,13 @@ module KnapsackPro
         switch_to_fallback_mode(executed_test_files)
       elsif result.batch_fetched?
         prepare_test_files(result.response)
-      else #if !result.queue_exists?
-        attempt_to_initialize_queue(test_suite_builder.fast_and_slow_test_files_to_run.tests)
+      else #if !result.queue_exists? # queue is not initialized on the API side
+        test_suite_result = test_suite_builder.call
+        if test_suite_result.slowly_determined?
+          # TODO
+        else
+          attempt_to_initialize_queue(test_suite_result.tests_to_run)
+        end
       end
 
       # pseudo code
@@ -137,11 +142,11 @@ module KnapsackPro
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
-    def build_action(can_initialize_queue, attempt_connect_to_queue:)
-      test_files =
-        if can_initialize_queue && !attempt_connect_to_queue
-          encrypted_test_files
-        end
+    def build_action(can_initialize_queue:, attempt_connect_to_queue:, test_files: nil)
+      if can_initialize_queue && !attempt_connect_to_queue
+        raise 'Test files are required when initializing a new queue.' if test_files.nil?
+        test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
+      end
 
       KnapsackPro::Client::API::V1::Queues.queue(
         can_initialize_queue: can_initialize_queue,
@@ -167,7 +172,7 @@ module KnapsackPro
     end
 
     def attempt_to_fetch_tests_from_queue(can_initialize_queue)
-      action = build_action(can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
+      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
@@ -200,6 +205,16 @@ module KnapsackPro
     end
 
     def attempt_to_initialize_queue(tests_to_run)
+      # make an attempt to initalize a new queue on the API side
+      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+
+      if connection.success?
+        prepare_test_files(response)
+      else
+        switch_to_fallback_mode(_executed_test_files = [])
+      end
     end
 
     def switch_to_fallback_mode(executed_test_files)
