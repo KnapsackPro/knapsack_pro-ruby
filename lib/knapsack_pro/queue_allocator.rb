@@ -18,47 +18,23 @@ module KnapsackPro
 
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
-      if result.failed_connection?
-        switch_to_fallback_mode(executed_test_files)
-      elsif result.batch_fetched?
-        prepare_test_files(result.response)
-      else #if !result.queue_exists? # queue is not initialized on the API side
-        test_suite_result = test_suite_builder.call
-        if test_suite_result.slowly_determined?
-          # attempt to fetch tests from the queue first because it could already be initialized by another CI node
-          result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
-        else
-          attempt_to_initialize_queue(test_suite_result.tests_to_run)
-        end
-      end
+      return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      return prepare_test_files(result.response) if result.batch_fetched?
 
-      # pseudo code
-      result = attempt_to_pull_tests_from_queue
-      if result.batch_fetched?
-        response = result.response
-        prepare_test_files(response)
-      elsif result.queue_not_initialized?
-        test_suite_result = test_suite_builder.fast_and_slow_test_files_to_run
-        if test_suite_result.locally_determined?
-          attempt_to_initialize_queue(test_suite_result.tests)
-        else
-          # not locally determined tests could be slow (dry run for split by test examples etc)
-          # so let's attempt to pull from queue first because it could already be initialized by other node
-          result = attempt_to_pull_tests_from_queue
-          if result.batch_fetched?
-            response = result.response
-            prepare_test_files(response)
-          elsif result.queue_not_initialized?
-            attempt_to_initialize_queue(test_suite_result.tests)
-          elsif result.failed_request?
-            handle_fallback_mode
-          end
-        end
-      elsif result.failed_request?
-        handle_fallback_mode
-      else
-        raise 'should never happen'
-      end
+      # The queue is not initialized on the API side.
+      # Determine tests to run.
+      test_suite_result = test_suite_builder.call
+
+      return attempt_to_initialize_queue(test_suite_result.tests_to_run) unless test_suite_result.slowly_determined?
+
+      # The tests to run were determined slowly. By that time the queue could be initialized by another CI node.
+      # Make an attempt to fetch tests from the queue for the 2nd time.
+      result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
+
+      return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      return prepare_test_files(result.response) if result.batch_fetched?
+
+      attempt_to_initialize_queue(test_suite_result.tests_to_run)
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files)
