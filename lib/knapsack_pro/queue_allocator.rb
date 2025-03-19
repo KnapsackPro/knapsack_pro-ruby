@@ -32,18 +32,6 @@ module KnapsackPro
       end
     end
 
-    def pseudo_attempt_to_initialize_queue(tests)
-      # make attempt to initalize a new queue on API side
-      action = build_action(tests, can_initialize_queue, attempt_connect_to_queue: false)
-      connection = KnapsackPro::Client::Connection.new(action)
-      response = connection.call
-      if connection.success?
-        prepare_test_files(response)
-      else
-        handle_fallback_mode
-      end
-    end
-
     def test_file_paths2(can_initialize_queue, executed_test_files)
       return [] if @fallback_activated
 
