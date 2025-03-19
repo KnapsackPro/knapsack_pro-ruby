@@ -25,7 +25,8 @@ module KnapsackPro
       else #if !result.queue_exists? # queue is not initialized on the API side
         test_suite_result = test_suite_builder.call
         if test_suite_result.slowly_determined?
-          # TODO
+          # attempt to fetch tests from the queue first because it could already be initialized by another CI node
+          result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
         else
           attempt_to_initialize_queue(test_suite_result.tests_to_run)
         end
