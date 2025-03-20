@@ -23,8 +23,8 @@ module KnapsackPro
       KnapsackPro::Config::Env.test_dir || TestFilePattern.test_dir(adapter_class)
     end
 
-    def test_suite_builder
-      KnapsackPro::TestSuiteBuilder.new(adapter_class)
+    def test_suite
+      KnapsackPro::TestSuite.new(adapter_class)
     end
 
     private

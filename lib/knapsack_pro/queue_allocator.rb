@@ -6,7 +6,7 @@ module KnapsackPro
     FallbackModeError = Class.new(StandardError)
 
     def initialize(args)
-      @test_suite_builder = args.fetch(:test_suite_builder)
+      @test_suite = args.fetch(:test_suite)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
@@ -23,10 +23,10 @@ module KnapsackPro
 
       # The queue is not initialized on the API side.
       # Determine tests to run.
-      result = test_suite_builder.call
-      tests_to_run = result.tests_to_run
+      result = test_suite.test_files
+      tests = result.tests
 
-      return attempt_to_initialize_queue(tests_to_run) if result.tests_found_quickly?
+      return attempt_to_initialize_queue(tests) if result.tests_found_quickly?
 
       # The tests to run were found slowly. By that time the queue could already be initialized by another CI node.
       # Make the attempt to fetch tests from the queue to avoid the attempt to initialize the queue unnecessarily (it's expensive request with a big payload).
@@ -35,20 +35,16 @@ module KnapsackPro
       return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
       return prepare_test_files(result.response) if result.batch_fetched?
 
-      attempt_to_initialize_queue(tests_to_run)
+      attempt_to_initialize_queue(tests)
     end
 
     private
 
-    attr_reader :test_suite_builder,
+    attr_reader :test_suite,
       :ci_node_total,
       :ci_node_index,
       :ci_node_build_id,
       :repository_adapter
-
-    def encrypted_test_files
-      KnapsackPro::Crypto::Encryptor.call(test_suite_builder.fast_and_slow_test_files_to_run)
-    end
 
     def encrypted_branch
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
@@ -73,12 +69,12 @@ module KnapsackPro
     end
 
     def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite_builder, response['test_files'])
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
       KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
     def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite_builder.fallback_mode_test_files, ci_node_total)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.fallback_test_files, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
       KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end

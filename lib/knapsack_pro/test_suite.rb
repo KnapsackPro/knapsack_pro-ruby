@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module KnapsackPro
-  class TestSuiteBuilder
-    Result = Struct.new(:tests_to_run, :tests_found_quickly?)
+  class TestSuite
+    Result = Struct.new(:tests, :tests_found_quickly?)
 
     def initialize(adapter_class)
       @adapter_class = adapter_class
@@ -10,7 +10,7 @@ module KnapsackPro
 
     # Detect test files present on the disk that should be run.
     # This may include fast test files + slow test files split by test cases.
-    def call
+    def test_files
       return @result if defined?(@result)
 
       tests_found_quickly = true
@@ -45,7 +45,7 @@ module KnapsackPro
     # In Fallback Mode, we always want to run whole test files (not split by
     # test cases) to guarantee that each test will be executed at least once
     # across parallel CI nodes.
-    def fallback_mode_test_files
+    def fallback_test_files
       all_test_files_to_run
     end
 
