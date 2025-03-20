@@ -23,9 +23,10 @@ module KnapsackPro
 
       # The queue is not initialized on the API side.
       # Determine tests to run.
-      test_suite_result = test_suite_builder.call
+      result = test_suite_builder.call
+      tests_to_run = result.tests_to_run
 
-      return attempt_to_initialize_queue(test_suite_result.tests_to_run) unless test_suite_result.slowly_determined?
+      return attempt_to_initialize_queue(tests_to_run) unless result.slowly_determined?
 
       # The tests to run were determined slowly. By that time the queue could be initialized by another CI node.
       # Make an attempt to fetch tests from the queue for the 2nd time.
@@ -34,7 +35,7 @@ module KnapsackPro
       return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
       return prepare_test_files(result.response) if result.batch_fetched?
 
-      attempt_to_initialize_queue(test_suite_result.tests_to_run)
+      attempt_to_initialize_queue(tests_to_run)
     end
 
     private
