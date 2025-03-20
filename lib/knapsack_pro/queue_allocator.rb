@@ -116,6 +116,7 @@ module KnapsackPro
       response = connection.call
 
       if connection.success?
+        raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
       else
         switch_to_fallback_mode(_executed_test_files = [])
