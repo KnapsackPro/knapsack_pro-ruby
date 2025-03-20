@@ -26,10 +26,10 @@ module KnapsackPro
       result = test_suite_builder.call
       tests_to_run = result.tests_to_run
 
-      return attempt_to_initialize_queue(tests_to_run) unless result.slowly_determined?
+      return attempt_to_initialize_queue(tests_to_run) if result.tests_found_quickly?
 
-      # The tests to run were determined slowly. By that time the queue could be initialized by another CI node.
-      # Make an attempt to fetch tests from the queue for the 2nd time.
+      # The tests to run were found slowly. By that time the queue could already be initialized by another CI node.
+      # Make the attempt to fetch tests from the queue to avoid the attempt to initialize the queue unnecessarily (it's expensive request with a big payload).
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
