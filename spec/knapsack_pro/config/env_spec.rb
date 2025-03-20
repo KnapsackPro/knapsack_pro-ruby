@@ -1273,6 +1273,7 @@ describe KnapsackPro::Config::Env do
       ['GitHub Actions', { 'GITHUB_ACTIONS' => 'true' }, KnapsackPro::Config::CI::GithubActions],
       ['GitLab CI', { 'GITLAB_CI' => 'true' }, KnapsackPro::Config::CI::GitlabCI],
       ['Heroku CI', { 'HEROKU_TEST_RUN_ID' => '123' }, KnapsackPro::Config::CI::Heroku],
+      ['Mint', { 'MINT' => 'true' }, KnapsackPro::Config::CI::Mint],
       ['Semaphore CI 1.0', { 'SEMAPHORE_BUILD_NUMBER' => '123' }, KnapsackPro::Config::CI::Semaphore],
       ['Semaphore CI 2.0', { 'SEMAPHORE' => 'true', 'SEMAPHORE_WORKFLOW_ID' => '123' }, KnapsackPro::Config::CI::Semaphore2],
       ['Travis CI', { 'TRAVIS' => 'true' }, KnapsackPro::Config::CI::Travis],

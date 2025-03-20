@@ -1,6 +1,9 @@
 # Changelog
 
 ### Unreleased (patch)
+* Adds support for Mint CI
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/293
 
 * Use the same regex when parsing file path and id path
 
