@@ -14,8 +14,7 @@ module KnapsackPro
       return @result if defined?(@result)
 
       unless adapter_class.split_by_test_cases_enabled?
-        @result = Result.new(all_test_files_to_run, false)
-        return @result
+        return @result = Result.new(all_test_files_to_run, false)
       end
 
       slowly_determined = false
@@ -31,8 +30,7 @@ module KnapsackPro
       KnapsackPro.logger.debug("Detected #{slow_test_files.size} slow test files: #{slow_test_files.inspect}")
 
       if slow_test_files.empty?
-        @result = Result.new(all_test_files_to_run, slowly_determined)
-        return @result
+        return @result = Result.new(all_test_files_to_run, slowly_determined)
       end
 
       test_file_cases = adapter_class.test_file_cases_for(slow_test_files)
