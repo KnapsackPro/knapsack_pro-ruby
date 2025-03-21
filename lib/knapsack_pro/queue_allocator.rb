@@ -2,11 +2,11 @@
 
 module KnapsackPro
   class QueueAllocator
+    QueueResult = Struct.new(:batch_fetched?, :failed_connection?, :response)
     FallbackModeError = Class.new(StandardError)
 
     def initialize(args)
-      @fast_and_slow_test_files_to_run = args.fetch(:fast_and_slow_test_files_to_run)
-      @fallback_mode_test_files = args.fetch(:fallback_mode_test_files)
+      @test_suite = args.fetch(:test_suite)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
@@ -15,22 +15,116 @@ module KnapsackPro
 
     def test_file_paths(can_initialize_queue, executed_test_files)
       return [] if @fallback_activated
-      action = build_action(can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
+
+      result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
+
+      return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      return prepare_test_files(result.response) if result.batch_fetched?
+
+      # The queue is not initialized on the API side.
+      # Determine tests to run.
+      result = test_suite.test_files
+      tests = result.tests
+
+      return attempt_to_initialize_queue(tests) if result.tests_found_quickly?
+
+      # The tests to run were found slowly. By that time the queue could already be initialized by another CI node.
+      # Make the attempt to fetch tests from the queue to avoid the attempt to initialize the queue unnecessarily (it's expensive request with a big payload).
+      result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
+
+      return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      return prepare_test_files(result.response) if result.batch_fetched?
+
+      attempt_to_initialize_queue(tests)
+    end
+
+    private
+
+    attr_reader :test_suite,
+      :ci_node_total,
+      :ci_node_index,
+      :ci_node_build_id,
+      :repository_adapter
+
+    def encrypted_branch
+      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
+    end
+
+    def build_action(can_initialize_queue:, attempt_connect_to_queue:, test_files: nil)
+      if can_initialize_queue && !attempt_connect_to_queue
+        raise 'Test files are required when initializing a new queue.' if test_files.nil?
+        test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
+      end
+
+      KnapsackPro::Client::API::V1::Queues.queue(
+        can_initialize_queue: can_initialize_queue,
+        attempt_connect_to_queue: attempt_connect_to_queue,
+        commit_hash: repository_adapter.commit_hash,
+        branch: encrypted_branch,
+        node_total: ci_node_total,
+        node_index: ci_node_index,
+        node_build_id: ci_node_build_id,
+        test_files: test_files,
+      )
+    end
+
+    def prepare_test_files(response)
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
+      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+    end
+
+    def fallback_test_files(executed_test_files)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.fallback_test_files, ci_node_total)
+      test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
+      KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
+    end
+
+    def attempt_to_fetch_tests_from_queue(can_initialize_queue)
+      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
-      # when attempt to connect to existing queue on API side failed because queue does not exist yet
-      if can_initialize_queue && connection.success? && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
-        # make attempt to initalize a new queue on API side
-        action = build_action(can_initialize_queue, attempt_connect_to_queue: false)
-        connection = KnapsackPro::Client::Connection.new(action)
-        response = connection.call
+      unless connection.success?
+        return QueueResult.new(
+          batch_fetched?: false,
+          failed_connection?: true,
+          response: response
+        )
       end
+
+      if can_initialize_queue && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
+        return QueueResult.new(
+          batch_fetched?: false,
+          failed_connection?: false,
+          response: response
+        )
+      end
+
+      raise ArgumentError.new(response) if connection.errors?
+
+      QueueResult.new(
+        batch_fetched?: true,
+        failed_connection?: false,
+        response: response
+      )
+    end
+
+    def attempt_to_initialize_queue(tests_to_run)
+      # make an attempt to initalize a new queue on the API side
+      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
 
       if connection.success?
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
-      elsif !KnapsackPro::Config::Env.fallback_mode_enabled?
+      else
+        switch_to_fallback_mode(_executed_test_files = [])
+      end
+    end
+
+    def switch_to_fallback_mode(executed_test_files)
+      if !KnapsackPro::Config::Env.fallback_mode_enabled?
         message = "Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to #{KnapsackPro::Urls::QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE}"
         KnapsackPro.logger.error(message)
         raise FallbackModeError.new(message)
@@ -46,52 +140,6 @@ module KnapsackPro
         KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. If other CI nodes were able to connect with Knapsack Pro API then you may notice that some of the test files will be executed twice across CI nodes. The most important thing is to guarantee each of test files is run at least once! Read more about fallback mode at #{KnapsackPro::Urls::FALLBACK_MODE}")
         fallback_test_files(executed_test_files)
       end
-    end
-
-    private
-
-    attr_reader :fast_and_slow_test_files_to_run,
-      :fallback_mode_test_files,
-      :ci_node_total,
-      :ci_node_index,
-      :ci_node_build_id,
-      :repository_adapter
-
-    def encrypted_test_files
-      KnapsackPro::Crypto::Encryptor.call(fast_and_slow_test_files_to_run)
-    end
-
-    def encrypted_branch
-      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
-    end
-
-    def build_action(can_initialize_queue, attempt_connect_to_queue:)
-      test_files =
-        if can_initialize_queue && !attempt_connect_to_queue
-          encrypted_test_files
-        end
-
-      KnapsackPro::Client::API::V1::Queues.queue(
-        can_initialize_queue: can_initialize_queue,
-        attempt_connect_to_queue: attempt_connect_to_queue,
-        commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        node_build_id: ci_node_build_id,
-        test_files: test_files,
-      )
-    end
-
-    def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(fast_and_slow_test_files_to_run, response['test_files'])
-      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
-    end
-
-    def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(fallback_mode_test_files, ci_node_total)
-      test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
-      KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end
   end
 end

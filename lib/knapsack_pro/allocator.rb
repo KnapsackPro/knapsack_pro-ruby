@@ -3,8 +3,7 @@
 module KnapsackPro
   class Allocator
     def initialize(args)
-      @fast_and_slow_test_files_to_run = args.fetch(:fast_and_slow_test_files_to_run)
-      @fallback_mode_test_files = args.fetch(:fallback_mode_test_files)
+      @test_suite = args.fetch(:test_suite)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
       @repository_adapter = args.fetch(:repository_adapter)
@@ -47,15 +46,10 @@ module KnapsackPro
 
     private
 
-    attr_reader :fast_and_slow_test_files_to_run,
-      :fallback_mode_test_files,
+    attr_reader :test_suite,
       :ci_node_total,
       :ci_node_index,
       :repository_adapter
-
-    def encrypted_test_files
-      KnapsackPro::Crypto::Encryptor.call(fast_and_slow_test_files_to_run)
-    end
 
     def encrypted_branch
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
@@ -64,7 +58,7 @@ module KnapsackPro
     def build_action(cache_read_attempt:)
       test_files =
         unless cache_read_attempt
-          encrypted_test_files
+          KnapsackPro::Crypto::Encryptor.call(test_suite.test_files.tests)
         end
 
       KnapsackPro::Client::API::V1::BuildDistributions.subset(
@@ -78,12 +72,12 @@ module KnapsackPro
     end
 
     def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(fast_and_slow_test_files_to_run, response['test_files'])
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
       KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
     def fallback_test_files
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(fallback_mode_test_files, ci_node_total)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.fallback_test_files, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
       KnapsackPro::TestFilePresenter.paths(test_files_for_node_index)
     end
