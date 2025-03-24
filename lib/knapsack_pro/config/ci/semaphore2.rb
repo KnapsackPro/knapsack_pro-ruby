@@ -34,7 +34,7 @@ module KnapsackPro
         end
 
         def user_seat
-          # not provided
+          ENV['SEMAPHORE_GIT_COMMITTER']
         end
 
         def detected
