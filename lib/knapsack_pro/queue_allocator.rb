@@ -21,7 +21,7 @@ module KnapsackPro
       end
 
       def queue_exists?
-        return false if connection_failed?
+        raise 'Connection failed' if connection_failed?
         return false if connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
 
         true

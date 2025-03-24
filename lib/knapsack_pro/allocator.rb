@@ -19,7 +19,7 @@ module KnapsackPro
       end
 
       def test_suite_split?
-        return false if connection_failed?
+        raise 'Connection failed' if connection_failed?
         return false if connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::TEST_SUITE_SPLIT_CACHE_MISS_CODE
 
         true
