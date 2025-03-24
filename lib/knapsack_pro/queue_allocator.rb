@@ -59,8 +59,8 @@ module KnapsackPro
 
       return switch_to_initializing_queue(tests) if result.tests_found_quickly?
 
-      # The tests to run were found slowly. By that time the queue could already be initialized by another CI node.
-      # Make the attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
+      # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
+      # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
       result = attempt_to_pull_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
