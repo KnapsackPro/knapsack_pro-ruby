@@ -18,7 +18,7 @@ module KnapsackPro
 
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
-      return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.failed_connection?
       return prepare_test_files(result.response) if result.queue_exists?
 
       # Determine tests to run.
@@ -31,7 +31,7 @@ module KnapsackPro
       # Make the attempt to fetch tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
-      return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.failed_connection?
       return prepare_test_files(result.response) if result.queue_exists?
 
       attempt_to_initialize_queue(tests)
@@ -109,7 +109,6 @@ module KnapsackPro
     end
 
     def attempt_to_initialize_queue(tests_to_run)
-      # make an attempt to initalize a new queue on the API side
       action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
@@ -118,11 +117,11 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         prepare_test_files(response)
       else
-        switch_to_fallback_mode(_executed_test_files = [])
+        switch_to_fallback_mode(executed_test_files: [])
       end
     end
 
-    def switch_to_fallback_mode(executed_test_files)
+    def switch_to_fallback_mode(executed_test_files:)
       if !KnapsackPro::Config::Env.fallback_mode_enabled?
         message = "Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to #{KnapsackPro::Urls::QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE}"
         KnapsackPro.logger.error(message)
