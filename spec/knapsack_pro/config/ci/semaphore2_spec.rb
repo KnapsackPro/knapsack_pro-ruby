@@ -117,4 +117,17 @@ describe KnapsackPro::Config::CI::Semaphore2 do
       it { should be nil }
     end
   end
+
+  describe '#user_seat' do
+    subject { described_class.new.user_seat }
+
+    context 'when SEMAPHORE_GIT_COMMITTER is set' do
+      let(:env) { { 'SEMAPHORE_GIT_COMMITTER' => 'jane_doe' } }
+      it { should eql 'jane_doe' }
+    end
+
+    context "when no ENVs are set" do
+      it { should be nil }
+    end
+  end
 end
