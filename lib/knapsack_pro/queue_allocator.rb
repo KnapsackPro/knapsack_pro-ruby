@@ -2,8 +2,35 @@
 
 module KnapsackPro
   class QueueAllocator
-    QueueResult = Struct.new(:queue_exists?, :failed_connection?, :response, keyword_init: true)
     FallbackModeError = Class.new(StandardError)
+
+    class QueueResult
+      def initialize(connection)
+        @connection = connection
+        @response = connection.call
+
+        raise ArgumentError.new(connection.response) if connection.errors?
+      end
+
+      def queue_exists?
+        return false if connection_failed?
+        return false if connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
+
+        true
+      end
+
+      def connection_failed?
+        !connection.success?
+      end
+
+      def response
+        @response
+      end
+
+      private
+
+      attr_reader :connection
+    end
 
     def initialize(args)
       @test_suite = args.fetch(:test_suite)
@@ -19,7 +46,7 @@ module KnapsackPro
 
       result = attempt_to_pull_tests_from_queue(can_initialize_queue)
 
-      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.failed_connection?
+      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
       return prepare_test_files(result.response) if result.queue_exists?
 
       # Determine tests to run.
@@ -32,10 +59,14 @@ module KnapsackPro
       # Make the attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
       result = attempt_to_pull_tests_from_queue(can_initialize_queue)
 
-      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.failed_connection?
+      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
       return prepare_test_files(result.response) if result.queue_exists?
 
-      attempt_to_initialize_queue(tests)
+      result = attempt_to_initialize_queue(tests)
+
+      return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
+
+      prepare_test_files(result.response)
     end
 
     private
@@ -82,44 +113,15 @@ module KnapsackPro
     def attempt_to_pull_tests_from_queue(can_initialize_queue)
       action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
-      response = connection.call
 
-      unless connection.success?
-        return QueueResult.new(
-          queue_exists?: false,
-          failed_connection?: true,
-          response: response
-        )
-      end
-
-      if can_initialize_queue && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
-        return QueueResult.new(
-          queue_exists?: false,
-          failed_connection?: false,
-          response: response
-        )
-      end
-
-      raise ArgumentError.new(response) if connection.errors?
-
-      QueueResult.new(
-        queue_exists?: true,
-        failed_connection?: false,
-        response: response
-      )
+      QueueResult.new(connection)
     end
 
     def attempt_to_initialize_queue(tests_to_run)
       action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
       connection = KnapsackPro::Client::Connection.new(action)
-      response = connection.call
 
-      if connection.success?
-        raise ArgumentError.new(response) if connection.errors?
-        prepare_test_files(response)
-      else
-        switch_to_fallback_mode(executed_test_files: [])
-      end
+      QueueResult.new(connection)
     end
 
     def switch_to_fallback_mode(executed_test_files:)
