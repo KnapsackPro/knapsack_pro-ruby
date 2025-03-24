@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class QueueAllocator
-    QueueResult = Struct.new(:batch_fetched?, :failed_connection?, :response, keyword_init: true)
+    QueueResult = Struct.new(:queue_exists?, :failed_connection?, :response, keyword_init: true)
     FallbackModeError = Class.new(StandardError)
 
     def initialize(args)
@@ -19,10 +19,8 @@ module KnapsackPro
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
-      puts "result: #{result.inspect}"
-      return prepare_test_files(result.response) if result.batch_fetched?
+      return prepare_test_files(result.response) if result.queue_exists?
 
-      # The queue is not initialized on the API side.
       # Determine tests to run.
       result = test_suite.test_files
       tests = result.tests
@@ -30,11 +28,11 @@ module KnapsackPro
       return attempt_to_initialize_queue(tests) if result.tests_found_quickly?
 
       # The tests to run were found slowly. By that time the queue could already be initialized by another CI node.
-      # Make the attempt to fetch tests from the queue to avoid the attempt to initialize the queue unnecessarily (it's expensive request with a big payload).
+      # Make the attempt to fetch tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
-      return prepare_test_files(result.response) if result.batch_fetched?
+      return prepare_test_files(result.response) if result.queue_exists?
 
       attempt_to_initialize_queue(tests)
     end
@@ -85,25 +83,17 @@ module KnapsackPro
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
-      puts "action: #{action.inspect}"
-      puts "can_initialize_queue: #{can_initialize_queue}"
-      puts "connection.success?: #{connection.success?}"
-      puts "connection.api_code: #{connection.api_code}"
-      puts "connection.errors?: #{connection.errors?}"
-      puts "response: #{response.inspect}"
-
       unless connection.success?
         return QueueResult.new(
-          batch_fetched?: false,
+          queue_exists?: false,
           failed_connection?: true,
           response: response
         )
       end
 
       if can_initialize_queue && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
-        puts "entered code to handle CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED"
         return QueueResult.new(
-          batch_fetched?: false,
+          queue_exists?: false,
           failed_connection?: false,
           response: response
         )
@@ -111,9 +101,8 @@ module KnapsackPro
 
       raise ArgumentError.new(response) if connection.errors?
 
-      puts "entered code to handle fetched batch"
       QueueResult.new(
-        batch_fetched?: true,
+        queue_exists?: true,
         failed_connection?: false,
         response: response
       )
