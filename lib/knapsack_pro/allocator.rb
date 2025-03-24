@@ -2,6 +2,38 @@
 
 module KnapsackPro
   class Allocator
+    class RegularSplit
+      attr_reader :response
+
+      def self.pull_tests(action)
+        connection = KnapsackPro::Client::Connection.new(action)
+        response = connection.call
+        new(connection, response)
+      end
+
+      def initialize(connection, response)
+        @connection = connection
+        @response = response
+
+        raise ArgumentError.new(connection.response) if connection.errors?
+      end
+
+      def test_suite_split?
+        return false if connection_failed?
+        return false if connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::TEST_SUITE_SPLIT_CACHE_MISS_CODE
+
+        true
+      end
+
+      def connection_failed?
+        !connection.success?
+      end
+
+      private
+
+      attr_reader :connection
+    end
+
     def initialize(args)
       @test_suite = args.fetch(:test_suite)
       @ci_node_total = args.fetch(:ci_node_total)
@@ -10,22 +42,79 @@ module KnapsackPro
     end
 
     def test_file_paths
-      action = build_action(cache_read_attempt: true)
-      connection = KnapsackPro::Client::Connection.new(action)
-      response = connection.call
+      result = attempt_to_pull_tests
 
-      # when a cache miss because the test suite split was not cached yet
-      if connection.success? && connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::TEST_SUITE_SPLIT_CACHE_MISS_CODE
-        # make an attempt to initalize a new test suite split on the API side
-        action = build_action(cache_read_attempt: false)
-        connection = KnapsackPro::Client::Connection.new(action)
-        response = connection.call
+      return switch_to_fallback_mode if result.connection_failed?
+      return prepare_test_files(result.response) if result.test_suite_split?
+
+      # Determine tests to run.
+      result = test_suite.test_files
+      tests = result.tests
+
+      return switch_to_initializing_test_suite_split(tests) if result.tests_found_quickly?
+
+      # The tests to run were found slowly. By that time, the test suite split could have already been initialized by another CI node.
+      # Attempt to pull tests to avoid the attempt to initialize the test suite split unnecessarily (test suite split initialization is an expensive request with a big test files payload).
+      result = attempt_to_pull_tests
+
+      return switch_to_fallback_mode if result.connection_failed?
+      return prepare_test_files(result.response) if result.test_suite_split?
+
+      switch_to_initializing_test_suite_split(tests)
+    end
+
+    private
+
+    attr_reader :test_suite,
+      :ci_node_total,
+      :ci_node_index,
+      :repository_adapter
+
+    def encrypted_branch
+      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
+    end
+
+    def prepare_test_files(response)
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
+      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+    end
+
+    def build_action(cache_read_attempt:, test_files: nil)
+      unless cache_read_attempt
+        raise 'Test files are required when initializing a new test suite split.' if test_files.nil?
+        test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
       end
 
-      if connection.success?
-        raise ArgumentError.new(response) if connection.errors?
-        prepare_test_files(response)
-      elsif !KnapsackPro::Config::Env.fallback_mode_enabled?
+      KnapsackPro::Client::API::V1::BuildDistributions.subset(
+        cache_read_attempt: cache_read_attempt,
+        commit_hash: repository_adapter.commit_hash,
+        branch: encrypted_branch,
+        node_total: ci_node_total,
+        node_index: ci_node_index,
+        test_files: test_files,
+      )
+    end
+
+    def attempt_to_pull_tests
+      action = build_action(cache_read_attempt: true)
+      RegularSplit.pull_tests(action)
+    end
+
+    def attempt_to_initialize_test_suite_split(tests_to_run)
+      action = build_action(cache_read_attempt: false, test_files: tests_to_run)
+      RegularSplit.pull_tests(action)
+    end
+
+    def switch_to_initializing_test_suite_split(tests)
+      result = attempt_to_initialize_test_suite_split(tests)
+
+      return switch_to_fallback_mode if result.connection_failed?
+
+      prepare_test_files(result.response)
+    end
+
+    def switch_to_fallback_mode
+      if !KnapsackPro::Config::Env.fallback_mode_enabled?
         message = "Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to #{KnapsackPro::Urls::REGULAR_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE}"
         KnapsackPro.logger.error(message)
         exit_code = KnapsackPro::Config::Env.fallback_mode_error_exit_code
@@ -42,38 +131,6 @@ module KnapsackPro
         KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. Read more about fallback mode at #{KnapsackPro::Urls::FALLBACK_MODE}")
         fallback_test_files
       end
-    end
-
-    private
-
-    attr_reader :test_suite,
-      :ci_node_total,
-      :ci_node_index,
-      :repository_adapter
-
-    def encrypted_branch
-      KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
-    end
-
-    def build_action(cache_read_attempt:)
-      test_files =
-        unless cache_read_attempt
-          KnapsackPro::Crypto::Encryptor.call(test_suite.test_files.tests)
-        end
-
-      KnapsackPro::Client::API::V1::BuildDistributions.subset(
-        cache_read_attempt: cache_read_attempt,
-        commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        test_files: test_files,
-      )
-    end
-
-    def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
-      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
     def fallback_test_files
