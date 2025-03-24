@@ -19,6 +19,7 @@ module KnapsackPro
       result = attempt_to_fetch_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files) if result.failed_connection?
+      puts "result: #{result.inspect}"
       return prepare_test_files(result.response) if result.batch_fetched?
 
       # The queue is not initialized on the API side.
@@ -100,6 +101,7 @@ module KnapsackPro
       end
 
       if can_initialize_queue && connection.api_code == KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
+        puts "entered code to handle CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED"
         return QueueResult.new(
           batch_fetched?: false,
           failed_connection?: false,
@@ -109,6 +111,7 @@ module KnapsackPro
 
       raise ArgumentError.new(response) if connection.errors?
 
+      puts "entered code to handle fetched batch"
       QueueResult.new(
         batch_fetched?: true,
         failed_connection?: false,
