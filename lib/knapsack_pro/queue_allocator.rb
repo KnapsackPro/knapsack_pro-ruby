@@ -4,10 +4,18 @@ module KnapsackPro
   class QueueAllocator
     FallbackModeError = Class.new(StandardError)
 
-    class QueueResult
-      def initialize(connection)
+    class Queue
+      attr_reader :response
+
+      def self.pull_tests(action)
+        connection = KnapsackPro::Client::Connection.new(action)
+        response = connection.call
+        new(connection, response)
+      end
+
+      def initialize(connection, response)
         @connection = connection
-        @response = connection.call
+        @response = response
 
         raise ArgumentError.new(connection.response) if connection.errors?
       end
@@ -21,10 +29,6 @@ module KnapsackPro
 
       def connection_failed?
         !connection.success?
-      end
-
-      def response
-        @response
       end
 
       private
@@ -112,16 +116,12 @@ module KnapsackPro
 
     def attempt_to_pull_tests_from_queue(can_initialize_queue)
       action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
-      connection = KnapsackPro::Client::Connection.new(action)
-
-      QueueResult.new(connection)
+      Queue.pull_tests(action)
     end
 
     def attempt_to_initialize_queue(tests_to_run)
       action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
-      connection = KnapsackPro::Client::Connection.new(action)
-
-      QueueResult.new(connection)
+      Queue.pull_tests(action)
     end
 
     def switch_to_fallback_mode(executed_test_files:)
