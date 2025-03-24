@@ -81,6 +81,11 @@ module KnapsackPro
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
+    def prepare_test_files(response)
+      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
+      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
+    end
+
     def build_action(can_initialize_queue:, attempt_connect_to_queue:, test_files: nil)
       if can_initialize_queue && !attempt_connect_to_queue
         raise 'Test files are required when initializing a new queue.' if test_files.nil?
@@ -97,17 +102,6 @@ module KnapsackPro
         node_build_id: ci_node_build_id,
         test_files: test_files,
       )
-    end
-
-    def prepare_test_files(response)
-      decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, response['test_files'])
-      KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
-    end
-
-    def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.fallback_test_files, ci_node_total)
-      test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
-      KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end
 
     def attempt_to_pull_tests_from_queue(can_initialize_queue)
@@ -146,6 +140,12 @@ module KnapsackPro
         KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. If other CI nodes were able to connect with Knapsack Pro API then you may notice that some of the test files will be executed twice across CI nodes. The most important thing is to guarantee each of test files is run at least once! Read more about fallback mode at #{KnapsackPro::Urls::FALLBACK_MODE}")
         fallback_test_files(executed_test_files)
       end
+    end
+
+    def fallback_test_files(executed_test_files)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.fallback_test_files, ci_node_total)
+      test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
+      KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end
   end
 end
