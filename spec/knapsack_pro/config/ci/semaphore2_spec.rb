@@ -62,12 +62,22 @@ describe KnapsackPro::Config::CI::Semaphore2 do
   describe '#branch' do
     subject { described_class.new.branch }
 
-    context 'when the environment exists' do
+    context 'when SEMAPHORE_GIT_WORKING_BRANCH is set' do
+      let(:env) { { 'SEMAPHORE_GIT_WORKING_BRANCH' => 'feature' } }
+      it { should eql 'feature' }
+    end
+
+    context 'when both SEMAPHORE_GIT_WORKING_BRANCH and SEMAPHORE_GIT_BRANCH are set' do
+      let(:env) { { 'SEMAPHORE_GIT_WORKING_BRANCH' => 'feature', 'SEMAPHORE_GIT_BRANCH' => 'master' } }
+      it { should eql 'feature' }
+    end
+
+    context 'when SEMAPHORE_GIT_BRANCH is set' do
       let(:env) { { 'SEMAPHORE_GIT_BRANCH' => 'master' } }
       it { should eql 'master' }
     end
 
-    context "when the environment doesn't exist" do
+    context "when no ENVs are set" do
       it { should be nil }
     end
   end
