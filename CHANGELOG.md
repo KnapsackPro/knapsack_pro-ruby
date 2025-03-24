@@ -5,6 +5,8 @@
 * (patch) Semaphore: Detect the correct branch name in the context of a PR
 * (patch) Semaphore: Detect user seat (committer)
 
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/294
+
 * (patch) RSpec: Use the same regex when parsing file path and id path
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/291
