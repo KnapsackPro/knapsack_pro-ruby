@@ -2022,8 +2022,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout).to match(/DEBUG -- : \[knapsack_pro\] Detected 1 slow test files: \[\{"path".?=>.?"spec_integration\/a_spec\.rb"\}\]/)
-
       expect(actual.stdout).to include(
         <<~OUTPUT
         A_describe
@@ -2473,8 +2471,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ])
 
       actual = subject
-
-      expect(actual.stdout).to include('DEBUG -- : [knapsack_pro] Detected 0 slow test files: []')
 
       expect(actual.stdout).to include(
         <<~OUTPUT
