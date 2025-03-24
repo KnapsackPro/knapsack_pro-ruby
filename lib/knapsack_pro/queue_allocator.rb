@@ -11,6 +11,7 @@ module KnapsackPro
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
       @repository_adapter = args.fetch(:repository_adapter)
+      @fallback_activated = false
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files)
@@ -122,6 +123,8 @@ module KnapsackPro
     end
 
     def switch_to_fallback_mode(executed_test_files:)
+      @fallback_activated = true
+
       if !KnapsackPro::Config::Env.fallback_mode_enabled?
         message = "Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to #{KnapsackPro::Urls::QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE}"
         KnapsackPro.logger.error(message)
@@ -134,7 +137,6 @@ module KnapsackPro
         KnapsackPro.logger.error(message)
         raise FallbackModeError.new(message)
       else
-        @fallback_activated = true
         KnapsackPro.logger.warn("Fallback mode started. We could not connect with Knapsack Pro API. Your tests will be executed based on directory names. If other CI nodes were able to connect with Knapsack Pro API then you may notice that some of the test files will be executed twice across CI nodes. The most important thing is to guarantee each of test files is run at least once! Read more about fallback mode at #{KnapsackPro::Urls::FALLBACK_MODE}")
         fallback_test_files(executed_test_files)
       end
