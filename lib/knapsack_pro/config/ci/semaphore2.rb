@@ -23,7 +23,8 @@ module KnapsackPro
         end
 
         def branch
-          ENV['SEMAPHORE_GIT_BRANCH']
+          ENV['SEMAPHORE_GIT_WORKING_BRANCH'] || # nil when workflow is triggered by pushing a Git tag
+            ENV['SEMAPHORE_GIT_BRANCH']
         end
 
         def project_dir

@@ -1,8 +1,10 @@
 # Changelog
 
-### Unreleased (patch)
+### Unreleased
 
-* Use the same regex when parsing file path and id path
+* (patch) Semaphore: Detect the correct branch name in the context of a PR
+
+* (patch) RSpec: Use the same regex when parsing file path and id path
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/291
 
