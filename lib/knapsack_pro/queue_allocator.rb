@@ -84,6 +84,13 @@ module KnapsackPro
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
 
+      puts "action: #{action.inspect}"
+      puts "can_initialize_queue: #{can_initialize_queue}"
+      puts "connection.success?: #{connection.success?}"
+      puts "connection.api_code: #{connection.api_code}"
+      puts "connection.errors?: #{connection.errors?}"
+      puts "response: #{response.inspect}"
+
       unless connection.success?
         return QueueResult.new(
           batch_fetched?: false,
