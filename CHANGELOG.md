@@ -6,6 +6,14 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/291
 
+* Improve the performance of the [RSpec split by test examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/292
+
+    * Reduce `/v1/build_distributions/last` API requests.
+    * (Queue Mode) Improve the speed of starting tests for CI nodes that are started after the queue was already initialized by another CI node.
+    * (Regular Mode) Improve the speed of starting tests for CI nodes that are started after the test suite split was already initialized by another CI node.
+
 ### 8.0.1
 
 * Fix detection of id paths for Turnip, which resulted in sending to the API both file and id paths timings
