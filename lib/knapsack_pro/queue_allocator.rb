@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class QueueAllocator
-    QueueResult = Struct.new(:batch_fetched?, :failed_connection?, :response)
+    QueueResult = Struct.new(:batch_fetched?, :failed_connection?, :response, keyword_init: true)
     FallbackModeError = Class.new(StandardError)
 
     def initialize(args)
