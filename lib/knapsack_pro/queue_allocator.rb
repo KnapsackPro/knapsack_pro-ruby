@@ -36,11 +36,11 @@ module KnapsackPro
       @ci_node_index = args.fetch(:ci_node_index)
       @ci_node_build_id = args.fetch(:ci_node_build_id)
       @repository_adapter = args.fetch(:repository_adapter)
-      @fallback_activated = false
+      @fallback_mode = false
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files)
-      return [] if @fallback_activated
+      return [] if @fallback_mode
 
       result = pull_tests_from_queue(can_initialize_queue)
 
@@ -121,7 +121,7 @@ module KnapsackPro
     end
 
     def switch_to_fallback_mode(executed_test_files:)
-      @fallback_activated = true
+      @fallback_mode = true
 
       if !KnapsackPro::Config::Env.fallback_mode_enabled?
         message = "Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to #{KnapsackPro::Urls::QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE}"
