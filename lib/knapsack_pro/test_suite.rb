@@ -19,9 +19,9 @@ module KnapsackPro
 
       slow_test_files, quick =
         if slow_test_file_pattern
-          KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class), true
+          [KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class), true]
         else
-          KnapsackPro::SlowTestFileFinder.call(adapter_class), false
+          [KnapsackPro::SlowTestFileFinder.call(adapter_class), false]
         end
 
       KnapsackPro.logger.debug("Detected #{slow_test_files.size} slow test files: #{slow_test_files.inspect}")
