@@ -8,7 +8,7 @@ module KnapsackPro
       def self.call(test_suite, test_files)
         return test_files unless KnapsackPro::Config::Env.test_files_encrypted?
 
-        new(test_suite.test_files.tests, test_files).call
+        new(test_suite.calculate_test_files.test_files, test_files).call
       end
 
       def initialize(test_files, encrypted_test_files)

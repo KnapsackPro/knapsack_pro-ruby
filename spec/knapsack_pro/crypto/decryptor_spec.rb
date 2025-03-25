@@ -15,7 +15,7 @@ describe KnapsackPro::Crypto::Decryptor do
   let(:decryptor) { described_class.new(test_files, encrypted_test_files) }
 
   describe '.call' do
-    let(:test_suite) { instance_double(KnapsackPro::TestSuite, test_files: double(KnapsackPro::TestSuite::Result, tests: test_files)) }
+    let(:test_suite) { instance_double(KnapsackPro::TestSuite, calculate_test_files: instance_double(KnapsackPro::TestSuite::Result, test_files: test_files)) }
 
     subject { described_class.call(test_suite, encrypted_test_files) }
 
