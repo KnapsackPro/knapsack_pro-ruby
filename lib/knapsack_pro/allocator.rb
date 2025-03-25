@@ -11,7 +11,7 @@ module KnapsackPro
       end
 
       def exists?
-        raise 'Connection failed' if connection_failed?
+        raise "Connection failed. Please report this as a bug: #{KnapsackPro::Urls::SUPPORT}" if connection_failed?
         return false if connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::TEST_SUITE_SPLIT_CACHE_MISS_CODE
 
         true
