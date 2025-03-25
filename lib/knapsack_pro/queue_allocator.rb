@@ -42,7 +42,7 @@ module KnapsackPro
     def test_file_paths(can_initialize_queue, executed_test_files)
       return [] if @fallback_activated
 
-      result = attempt_to_pull_tests_from_queue(can_initialize_queue)
+      result = pull_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
       return prepare_test_files(result.response) if result.queue_exists?
@@ -55,7 +55,7 @@ module KnapsackPro
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
-      result = attempt_to_pull_tests_from_queue(can_initialize_queue)
+      result = pull_tests_from_queue(can_initialize_queue)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
       return prepare_test_files(result.response) if result.queue_exists?
@@ -98,14 +98,14 @@ module KnapsackPro
       )
     end
 
-    def attempt_to_pull_tests_from_queue(can_initialize_queue)
+    def pull_tests_from_queue(can_initialize_queue)
       action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       Queue.new(connection, response)
     end
 
-    def attempt_to_initialize_queue(tests_to_run)
+    def initialize_queue(tests_to_run)
       action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
@@ -113,7 +113,7 @@ module KnapsackPro
     end
 
     def switch_to_initializing_queue(tests)
-      result = attempt_to_initialize_queue(tests)
+      result = initialize_queue(tests)
 
       return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
 
