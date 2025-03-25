@@ -2,13 +2,7 @@
 
 module KnapsackPro
   class Allocator
-    class RegularSplit
-      def self.pull_tests(action)
-        connection = KnapsackPro::Client::Connection.new(action)
-        response = connection.call
-        new(connection, response)
-      end
-
+    class Split
       def initialize(connection, response)
         @connection = connection
         @response = response
@@ -99,12 +93,16 @@ module KnapsackPro
 
     def pull_tests
       action = build_action(cache_read_attempt: true)
-      RegularSplit.pull_tests(action)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      Split.new(connection, response)
     end
 
     def initialize_test_suite_split(tests_to_run)
       action = build_action(cache_read_attempt: false, test_files: tests_to_run)
-      RegularSplit.pull_tests(action)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      Split.new(connection, response)
     end
 
     def switch_to_initializing_test_suite_split(tests)
