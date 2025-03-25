@@ -1,6 +1,16 @@
 # Changelog
 
-### Unreleased
+### 8.1.0
+
+* Improve the performance of the [RSpec split by test examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/).
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/292
+
+    * Reduce `/v1/build_distributions/last` API requests.
+    * (Queue Mode) Improve the speed of starting tests for CI nodes that are started after the queue was already initialized by another CI node.
+    * (Regular Mode) Improve the speed of starting tests for CI nodes that are started after the test suite split was already initialized by another CI node.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.0.2...v8.1.0
 
 ### 8.0.2
 

@@ -8,7 +8,7 @@ module KnapsackPro
       end
 
       def initialize(adapter_class)
-        @allocator_builder = KnapsackPro::AllocatorBuilder.new(adapter_class)
+        @allocator_builder = KnapsackPro::RegularAllocatorBuilder.new(adapter_class)
         @allocator = allocator_builder.allocator
       end
 

@@ -5,13 +5,10 @@ module KnapsackPro
     class Decryptor
       class TooManyEncryptedTestFilesError < StandardError; end
 
-      def self.call(test_files, encrypted_test_files)
-        if KnapsackPro::Config::Env.test_files_encrypted?
-          new(test_files, encrypted_test_files).call
-        else
-          # those test files are not encrypted
-          encrypted_test_files
-        end
+      def self.call(test_suite, test_files)
+        return test_files unless KnapsackPro::Config::Env.test_files_encrypted?
+
+        new(test_suite.calculate_test_files.test_files, test_files).call
       end
 
       def initialize(test_files, encrypted_test_files)
