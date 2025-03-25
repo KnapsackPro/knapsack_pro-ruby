@@ -13,19 +13,15 @@ module KnapsackPro
     def calculate_test_files
       return @result if defined?(@result)
 
-      quick = true
-
       unless adapter_class.split_by_test_cases_enabled?
-        return @result = Result.new(all_test_files_to_run, quick)
+        return @result = Result.new(all_test_files_to_run, true)
       end
 
-      slow_test_files =
+      slow_test_files, quick =
         if slow_test_file_pattern
-          KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+          KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class), true
         else
-          quick = false
-          # get slow test files from API and ensure they exist on disk
-          KnapsackPro::SlowTestFileFinder.call(adapter_class)
+          KnapsackPro::SlowTestFileFinder.call(adapter_class), false
         end
 
       KnapsackPro.logger.debug("Detected #{slow_test_files.size} slow test files: #{slow_test_files.inspect}")
@@ -34,12 +30,11 @@ module KnapsackPro
         return @result = Result.new(all_test_files_to_run, quick)
       end
 
-      quick = false
       test_file_cases = adapter_class.test_file_cases_for(slow_test_files)
 
       fast_files_and_cases_for_slow_tests = KnapsackPro::TestFilesWithTestCasesComposer.call(all_test_files_to_run, slow_test_files, test_file_cases)
 
-      @result = Result.new(fast_files_and_cases_for_slow_tests, quick)
+      @result = Result.new(fast_files_and_cases_for_slow_tests, false)
     end
 
     # In Fallback Mode, we always want to run whole test files (not split by
