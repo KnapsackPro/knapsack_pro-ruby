@@ -45,7 +45,7 @@ module KnapsackPro
 
       test_files_result = test_suite.test_files
 
-      return switch_to_initializing_test_suite_split(test_files_result.tests) if test_files_result.tests_found_quickly?
+      return try_initializing_split(test_files_result.tests) if test_files_result.tests_found_quickly?
 
       # The tests to run were found slowly. By that time, the test suite split could have already been initialized by another CI node.
       # Attempt to pull tests to avoid the attempt to initialize the test suite split unnecessarily (test suite split initialization is an expensive request with a big test files payload).
@@ -54,7 +54,7 @@ module KnapsackPro
       return switch_to_fallback_mode if split.connection_failed?
       return normalize_test_files(split.test_files) if split.exists?
 
-      switch_to_initializing_test_suite_split(test_files_result.tests)
+      try_initializing_split(test_files_result.tests)
     end
 
     private
@@ -103,12 +103,12 @@ module KnapsackPro
       Split.new(connection, response)
     end
 
-    def switch_to_initializing_test_suite_split(tests)
-      result = initialize_test_suite_split(tests)
+    def try_initializing_split(tests)
+      split = initialize_test_suite_split(tests)
 
-      return switch_to_fallback_mode if result.connection_failed?
+      return switch_to_fallback_mode if split.connection_failed?
 
-      normalize_test_files(result.test_files)
+      normalize_test_files(split.test_files)
     end
 
     def switch_to_fallback_mode
