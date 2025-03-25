@@ -4,7 +4,7 @@ module KnapsackPro
   class QueueAllocator
     FallbackModeError = Class.new(StandardError)
 
-    class Queue
+    class Batch
       def initialize(connection, response)
         @connection = connection
         @response = response
@@ -44,25 +44,23 @@ module KnapsackPro
     def test_file_paths(can_initialize_queue, executed_test_files)
       return [] if @fallback_mode
 
-      result = pull_tests_from_queue(can_initialize_queue)
+      batch = pull_tests_from_queue(can_initialize_queue)
 
-      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
-      return normalize_test_files(result.test_files) if result.queue_exists?
+      return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
+      return normalize_test_files(batch.test_files) if batch.queue_exists?
 
-      # Determine tests to run.
-      result = test_suite.test_files
-      tests = result.tests
+      test_files_result = test_suite.test_files
 
-      return try_initializing_queue(tests) if result.tests_found_quickly?
+      return try_initializing_queue(test_files_result.tests) if test_files_result.tests_found_quickly?
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
-      result = pull_tests_from_queue(can_initialize_queue)
+      batch = pull_tests_from_queue(can_initialize_queue)
 
-      return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
-      return normalize_test_files(result.test_files) if result.queue_exists?
+      return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
+      return normalize_test_files(batch.test_files) if batch.queue_exists?
 
-      try_initializing_queue(tests)
+      try_initializing_queue(test_files_result.tests)
     end
 
     private
@@ -104,14 +102,14 @@ module KnapsackPro
       action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
-      Queue.new(connection, response)
+      Batch.new(connection, response)
     end
 
     def initialize_queue(tests_to_run)
       action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
-      Queue.new(connection, response)
+      Batch.new(connection, response)
     end
 
     def try_initializing_queue(tests)
