@@ -7,12 +7,6 @@ module KnapsackPro
     class Queue
       attr_reader :response
 
-      def self.pull_tests(action)
-        connection = KnapsackPro::Client::Connection.new(action)
-        response = connection.call
-        new(connection, response)
-      end
-
       def initialize(connection, response)
         @connection = connection
         @response = response
@@ -106,12 +100,16 @@ module KnapsackPro
 
     def attempt_to_pull_tests_from_queue(can_initialize_queue)
       action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
-      Queue.pull_tests(action)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      Queue.new(connection, response)
     end
 
     def attempt_to_initialize_queue(tests_to_run)
       action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
-      Queue.pull_tests(action)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      Queue.new(connection, response)
     end
 
     def switch_to_initializing_queue(tests)
