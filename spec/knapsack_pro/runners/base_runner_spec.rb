@@ -12,11 +12,11 @@ describe KnapsackPro::Runners::BaseRunner do
     let(:runner) do
       described_class.new(adapter_class)
     end
-    let(:allocator) { instance_double(KnapsackPro::Allocator) }
-    let(:allocator_builder) { instance_double(KnapsackPro::AllocatorBuilder) }
+    let(:allocator) { instance_double(KnapsackPro::RegularAllocator) }
+    let(:allocator_builder) { instance_double(KnapsackPro::RegularAllocatorBuilder) }
 
     before do
-      expect(KnapsackPro::AllocatorBuilder).to receive(:new).with(adapter_class).and_return(allocator_builder)
+      expect(KnapsackPro::RegularAllocatorBuilder).to receive(:new).with(adapter_class).and_return(allocator_builder)
       expect(allocator_builder).to receive(:allocator).and_return(allocator)
     end
 

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module KnapsackPro
-  class AllocatorBuilder < BaseAllocatorBuilder
+  class RegularAllocatorBuilder < BaseAllocatorBuilder
     def allocator
-      KnapsackPro::Allocator.new(
+      KnapsackPro::RegularAllocator.new(
         test_suite: test_suite,
         ci_node_total: env.ci_node_total,
         ci_node_index: env.ci_node_index,

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module KnapsackPro
-  class Allocator
+  class RegularAllocator
     class Split
       def initialize(connection, response)
         @connection = connection
