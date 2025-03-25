@@ -47,7 +47,7 @@ module KnapsackPro
       result = pull_tests
 
       return switch_to_fallback_mode if result.connection_failed?
-      return prepare_test_files(result.test_files) if result.test_suite_split?
+      return normalize_test_files(result.test_files) if result.test_suite_split?
 
       # Determine tests to run.
       result = test_suite.test_files
@@ -60,7 +60,7 @@ module KnapsackPro
       result = pull_tests
 
       return switch_to_fallback_mode if result.connection_failed?
-      return prepare_test_files(result.test_files) if result.test_suite_split?
+      return normalize_test_files(result.test_files) if result.test_suite_split?
 
       switch_to_initializing_test_suite_split(tests)
     end
@@ -76,7 +76,7 @@ module KnapsackPro
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
     end
 
-    def prepare_test_files(test_files)
+    def normalize_test_files(test_files)
       decrypted_test_files = KnapsackPro::Crypto::Decryptor.call(test_suite, test_files)
       KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
@@ -112,7 +112,7 @@ module KnapsackPro
 
       return switch_to_fallback_mode if result.connection_failed?
 
-      prepare_test_files(result.test_files)
+      normalize_test_files(result.test_files)
     end
 
     def switch_to_fallback_mode
