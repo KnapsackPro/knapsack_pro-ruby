@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class TestSuite
-    Result = Struct.new(:tests, :quick?)
+    Result = Struct.new(:test_files, :quick?)
 
     def initialize(adapter_class)
       @adapter_class = adapter_class
@@ -10,7 +10,7 @@ module KnapsackPro
 
     # Detect test files present on the disk that should be run.
     # This may include fast test files + slow test files split by test cases.
-    def test_files
+    def calculate_test_files
       return @result if defined?(@result)
 
       quick = true
