@@ -53,7 +53,7 @@ module KnapsackPro
       result = test_suite.test_files
       tests = result.tests
 
-      return switch_to_initializing_queue(tests) if result.tests_found_quickly?
+      return try_initializing_queue(tests) if result.tests_found_quickly?
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
@@ -62,7 +62,7 @@ module KnapsackPro
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if result.connection_failed?
       return normalize_test_files(result.test_files) if result.queue_exists?
 
-      switch_to_initializing_queue(tests)
+      try_initializing_queue(tests)
     end
 
     private
@@ -114,7 +114,7 @@ module KnapsackPro
       Queue.new(connection, response)
     end
 
-    def switch_to_initializing_queue(tests)
+    def try_initializing_queue(tests)
       result = initialize_queue(tests)
 
       return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
