@@ -1,10 +1,6 @@
 # Changelog
 
-### Unreleased (patch)
-
-* Use the same regex when parsing file path and id path
-
-    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/291
+### 8.1.0
 
 * Improve the performance of the [RSpec split by test examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/).
 
@@ -13,6 +9,21 @@
     * Reduce `/v1/build_distributions/last` API requests.
     * (Queue Mode) Improve the speed of starting tests for CI nodes that are started after the queue was already initialized by another CI node.
     * (Regular Mode) Improve the speed of starting tests for CI nodes that are started after the test suite split was already initialized by another CI node.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.0.2...v8.1.0
+
+### 8.0.2
+
+* (patch) Semaphore: Detect the correct branch name in the context of a PR
+* (patch) Semaphore: Detect user seat (committer)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/294
+
+* (patch) RSpec: Use the same regex when parsing file path and id path
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/291
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.0.1...v8.0.2
 
 ### 8.0.1
 
