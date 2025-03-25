@@ -45,7 +45,7 @@ module KnapsackPro
 
       test_files_result = test_suite.test_files
 
-      return try_initializing_test_suite_split(test_files_result.tests) if test_files_result.tests_found_quickly?
+      return try_initializing_test_suite_split(test_files_result.tests) if test_files_result.quick?
 
       # The tests to run were found slowly. By that time, the test suite split could have already been initialized by another CI node.
       # Attempt to pull tests to avoid the attempt to initialize the test suite split unnecessarily (test suite split initialization is an expensive request with a big test files payload).

@@ -51,7 +51,7 @@ module KnapsackPro
 
       test_files_result = test_suite.test_files
 
-      return try_initializing_queue(test_files_result.tests) if test_files_result.tests_found_quickly?
+      return try_initializing_queue(test_files_result.tests) if test_files_result.quick?
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).

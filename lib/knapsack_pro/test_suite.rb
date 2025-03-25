@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class TestSuite
-    Result = Struct.new(:tests, :tests_found_quickly?)
+    Result = Struct.new(:tests, :quick?)
 
     def initialize(adapter_class)
       @adapter_class = adapter_class
@@ -13,17 +13,17 @@ module KnapsackPro
     def test_files
       return @result if defined?(@result)
 
-      tests_found_quickly = true
+      quick = true
 
       unless adapter_class.split_by_test_cases_enabled?
-        return @result = Result.new(all_test_files_to_run, tests_found_quickly)
+        return @result = Result.new(all_test_files_to_run, quick)
       end
 
       slow_test_files =
         if slow_test_file_pattern
           KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
         else
-          tests_found_quickly = false
+          quick = false
           # get slow test files from API and ensure they exist on disk
           KnapsackPro::SlowTestFileFinder.call(adapter_class)
         end
@@ -31,15 +31,15 @@ module KnapsackPro
       KnapsackPro.logger.debug("Detected #{slow_test_files.size} slow test files: #{slow_test_files.inspect}")
 
       if slow_test_files.empty?
-        return @result = Result.new(all_test_files_to_run, tests_found_quickly)
+        return @result = Result.new(all_test_files_to_run, quick)
       end
 
-      tests_found_quickly = false
+      quick = false
       test_file_cases = adapter_class.test_file_cases_for(slow_test_files)
 
       fast_files_and_cases_for_slow_tests = KnapsackPro::TestFilesWithTestCasesComposer.call(all_test_files_to_run, slow_test_files, test_file_cases)
 
-      @result = Result.new(fast_files_and_cases_for_slow_tests, tests_found_quickly)
+      @result = Result.new(fast_files_and_cases_for_slow_tests, quick)
     end
 
     # In Fallback Mode, we always want to run whole test files (not split by
