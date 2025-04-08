@@ -9,6 +9,7 @@ namespace :knapsack_pro do
     end
 
     task :rspec_go, [:rspec_args] do |_, args|
+      Rake::Task.clear
       KnapsackPro::Runners::Queue::RSpecRunner.run(args[:rspec_args])
     end
   end
