@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased
+
+* (patch) RSpec: allow tests to run in a distroless environment
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
+
 ### 8.1.0
 
 * Improve the performance of the [RSpec split by test examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/).
