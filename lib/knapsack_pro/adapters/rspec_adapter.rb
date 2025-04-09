@@ -28,7 +28,7 @@ module KnapsackPro
           KnapsackPro::Config::Env.rspec_test_example_detector_prefix,
           'rake knapsack_pro:rspec_test_example_detector'
         ].join(' ')
-        unless Kernel.system(ENV.to_h.merge({ 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }), cmd)
+        unless Kernel.system({ 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }, cmd)
           raise "Could not generate JSON report for RSpec. Rake task failed when running #{cmd}"
         end
 
