@@ -6,6 +6,52 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
 
+### 8.1.1
+
+* Do not load Rake tasks on behalf of the user for RSpec and Minitest in Queue Mode
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/297
+
+    Workarounds like [this one](https://docs.knapsackpro.com/ruby/troubleshooting/#rake-tasks-under-tests-are-run-more-than-once-in-queue-mode) are no more needed to test Rake tasks, you can now remove them and test Rake tasks like you would normally do:
+
+    RSpec:
+
+    ```ruby
+    before do
+      MY_APPLICATION_NAME::Application.load_tasks if Rake::Task.tasks.empty?
+    end
+
+    after do
+      Rake::Task[MY_TASK_NAME].reenable
+    end
+
+    it "tests the rake task" do
+      Rake::Task[MY_TASK_NAME].invoke
+      # ...
+    end
+    ```
+
+    Minitest:
+
+    ```ruby
+    setup do
+      MY_APPLICATION_NAME::Application.load_tasks if Rake::Task.tasks.empty?
+    end
+
+    teardown do
+      Rake::Task[MY_TASK_NAME].reenable
+    end
+
+    test "tests the rake task" do
+      Rake::Task[MY_TASK_NAME].invoke
+      # ...
+    end
+    ```
+
+    It's also ok to use `Rake.application.rake_require("tasks/MY_TASK")` instead of `MY_APPLICATION_NAME::Application.load_tasks if Rake::Task.tasks.empty?`.
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.0...v8.1.1
+
 ### 8.1.0
 
 * Improve the performance of the [RSpec split by test examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/).
@@ -744,7 +790,7 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.3.0...v3.3.1
 
 ### 3.3.0
 
-* Show a JSON report file content when RSpec fails during a dry run 
+* Show a JSON report file content when RSpec fails during a dry run
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/172
 
@@ -825,7 +871,7 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.18.0...v2.18.1
 
 ### 2.18.0
 
-* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature in knapsack_pro gem in Regular Mode 
+* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature in knapsack_pro gem in Regular Mode
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/148
 
