@@ -446,19 +446,19 @@ workflows:
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
-              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+              rspec: ["3.12.3", "3.13.3"]
       - e2e-regular-rspec:
           name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
-              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+              rspec: ["3.12.3", "3.13.3"]
       - e2e-queue-rspec:
           name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
-              rspec: ["3.10.2", "3.11.0", "3.12.2"]
+              rspec: ["3.12.3", "3.13.3"]
       - e2e-regular-minitest:
           name: e2e-regular__ruby-<< matrix.ruby >>__minitest
           matrix:
