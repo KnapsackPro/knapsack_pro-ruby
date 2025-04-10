@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased
+
+* (patch) RSpec: allow tests to run in a distroless environment
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
+
 ### 8.1.1
 
 * Do not load Rake tasks on behalf of the user for RSpec and Minitest in Queue Mode
@@ -784,7 +790,7 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v3.3.0...v3.3.1
 
 ### 3.3.0
 
-* Show a JSON report file content when RSpec fails during a dry run 
+* Show a JSON report file content when RSpec fails during a dry run
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/172
 
@@ -865,7 +871,7 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v2.18.0...v2.18.1
 
 ### 2.18.0
 
-* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature in knapsack_pro gem in Regular Mode 
+* Do not allow to use the RSpec tag option together with the RSpec split by test examples feature in knapsack_pro gem in Regular Mode
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/148
 
