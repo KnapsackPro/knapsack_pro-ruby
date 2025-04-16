@@ -1,5 +1,13 @@
 # Changelog
 
+### 8.1.2
+
+* Allow running RSpec with `--force-color` (and the default Split by Test Examples)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/298
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.1...v8.1.2
+
 ### 8.1.1
 
 * Do not load Rake tasks on behalf of the user for RSpec and Minitest in Queue Mode
