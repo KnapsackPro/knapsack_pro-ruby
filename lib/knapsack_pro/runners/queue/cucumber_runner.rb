@@ -98,7 +98,7 @@ module KnapsackPro
             %Q[cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
           ].join(' ')
 
-          Kernel.system(cmd)
+          Kernel.system(_envs = {}, cmd)
 
           # it must be set here so when we call next time above cmd we won't run again:
           # KnapsackPro::Hooks::Queue.call_before_queue
