@@ -57,7 +57,7 @@ jobs:
     working_directory: ~/knapsack_pro-ruby
     resource_class: small
     docker:
-      - image: cimg/ruby:3.3
+      - image: cimg/ruby:3.4
     steps:
       - setup_knapsack_pro_ruby
       - run: gem install rubocop
