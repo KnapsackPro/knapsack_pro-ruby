@@ -48,7 +48,6 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           expect(RSpec::Core::ConfigurationOptions).to receive(:new).with(expected_args + [
             '--format', expected_format,
             '--dry-run',
-            '--no-color',
             '--out', report_path,
             '--default-path', test_dir,
             'spec/a_spec.rb', 'spec/b_spec.rb',
@@ -78,7 +77,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           end
 
           it do
-            expect { subject }.to raise_error(RuntimeError, 'There was a problem while generating test examples for the slow test files. Please read the actionable error message above.')
+            expect { subject }.to raise_error(SystemExit) { |error| expect(error.status).to eq exit_code }
           end
         end
       end
@@ -121,6 +120,36 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       it do
         expect { subject }.to raise_error("The internal KNAPSACK_PRO_RSPEC_OPTIONS environment variable is unset. Ensure it is not overridden accidentally. Otherwise, please report this as a bug: https://knapsackpro.com/perma/ruby/support")
+      end
+    end
+
+    context 'with --force-color' do
+      let(:rspec_args) { '--force-color' }
+      let(:expected_args) { ['--force-color'] }
+      let(:expected_format) { 'json' }
+
+      it_behaves_like 'generate_json_report runs RSpec::Core::Runner'
+    end
+
+    context 'with --no-color and --force-color' do
+      let(:rspec_args) { '--no-color --force-color' }
+
+      after { KnapsackPro.reset_logger! }
+
+      it do
+        subject_class = Class.new(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector) do
+          define_method(:slow_test_files) do
+            [{ 'path' => 'spec/a_spec.rb' }]
+          end
+        end
+
+        expect do
+          KnapsackPro.logger = ::Logger.new($stdout)
+          subject_class.new.generate_json_report(rspec_args)
+        end
+          .to output(/Please only use one of `--force-color` and `--no-color`/).to_stderr
+          .and output(%r{ERROR -- : \[knapsack_pro\] Failed to generate the slow test files report: bundle exec rspec --no-color --force-color --format json --dry-run --out .knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json --default-path spec spec/a_spec.rb}).to_stdout
+          .and raise_error(SystemExit) { |error| expect(error.status).to eq 1 }
       end
     end
   end
