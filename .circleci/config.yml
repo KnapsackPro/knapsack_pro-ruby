@@ -521,8 +521,8 @@ workflows:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
       - distroless-e2e-queue-rspec:
-        name: distroless-e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
-        matrix:
-          parameters:
-            ruby: ["3.4"]
-            rspec: ["3.13.3"]
+          name: distroless-e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          matrix:
+            parameters:
+              ruby: ["3.4"]
+              rspec: ["3.13.3"]
