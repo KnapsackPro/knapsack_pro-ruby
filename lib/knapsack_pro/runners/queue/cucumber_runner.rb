@@ -95,10 +95,15 @@ module KnapsackPro
 
           cmd = [
             KnapsackPro::Config::Env.cucumber_queue_prefix,
-            %Q[cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
-          ].join(' ')
+            'cucumber',
+            args,
+            '--require',
+            runner.test_dir,
+            '--',
+            stringify_test_file_paths
+          ]
 
-          Kernel.system(_envs = {}, cmd)
+          Kernel.system(*cmd)
 
           # it must be set here so when we call next time above cmd we won't run again:
           # KnapsackPro::Hooks::Queue.call_before_queue
@@ -108,7 +113,7 @@ module KnapsackPro
           unless child_status.exited?
             raise "Cucumber process execution failed. It's likely that your CI server has exceeded"\
                     " its available memory. Please try changing CI config or retrying the CI build.\n"\
-                    "Failed command: #{cmd}\n"\
+                    "Failed command: #{cmd.join(' ')}\n"\
                     "Process status: #{child_status.inspect}"
           end
 
