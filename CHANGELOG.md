@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased
+
+* (patch) RSpec: allow tests to run in a distroless environment
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
+
 ### 8.1.2
 
 * Allow running RSpec with `--force-color` (and the default Split by Test Examples)
