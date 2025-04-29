@@ -7,7 +7,7 @@ describe 'Request API /v1/build_subsets' do
   let(:action) do
     KnapsackPro::Client::API::V1::BuildSubsets.create(
       commit_hash: 'abcdefg',
-      branch: 'master',
+      branch: 'main',
       node_total: '2',
       node_index: '1',
       test_files: [

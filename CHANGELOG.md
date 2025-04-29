@@ -1,5 +1,9 @@
 # Changelog
 
+### UNRELEASED
+
+* (patch) Update `changelog_uri` in gemspec
+
 ### 8.1.2
 
 * Allow running RSpec with `--force-color` (and the default Split by Test Examples)

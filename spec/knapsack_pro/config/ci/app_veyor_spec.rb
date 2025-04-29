@@ -49,8 +49,8 @@ describe KnapsackPro::Config::CI::AppVeyor do
     subject { described_class.new.branch }
 
     context 'when the environment exists' do
-      let(:env) { { 'APPVEYOR_REPO_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'APPVEYOR_REPO_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when the environment doesn't exist" do
