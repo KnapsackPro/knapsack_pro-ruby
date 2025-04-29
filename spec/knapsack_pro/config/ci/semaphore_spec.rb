@@ -63,8 +63,8 @@ describe KnapsackPro::Config::CI::Semaphore do
     subject { described_class.new.branch }
 
     context 'when the environment exists' do
-      let(:env) { { 'BRANCH_NAME' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'BRANCH_NAME' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when the environment doesn't exist" do

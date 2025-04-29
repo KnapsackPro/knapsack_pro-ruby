@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
   spec.metadata    = {
     'bug_tracker_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby/issues',
-    'changelog_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby/blob/master/CHANGELOG.md',
+    'changelog_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby/blob/main/CHANGELOG.md',
     'documentation_uri' => 'https://docs.knapsackpro.com/knapsack_pro-ruby/guide/',
     'homepage_uri' => 'https://knapsackpro.com',
     'source_code_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby'

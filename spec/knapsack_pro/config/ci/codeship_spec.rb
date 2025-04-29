@@ -49,8 +49,8 @@ describe KnapsackPro::Config::CI::Codeship do
     subject { described_class.new.branch }
 
     context 'when the environment exists' do
-      let(:env) { { 'CI_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'CI_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when the environment doesn't exist" do

@@ -63,8 +63,8 @@ describe KnapsackPro::Config::CI::Heroku do
     subject { described_class.new.branch }
 
     context 'when the environment exists' do
-      let(:env) { { 'HEROKU_TEST_RUN_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'HEROKU_TEST_RUN_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when the environment doesn't exist" do

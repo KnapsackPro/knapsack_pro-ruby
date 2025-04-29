@@ -63,8 +63,8 @@ describe KnapsackPro::Config::CI::CirrusCI do
     subject { described_class.new.branch }
 
     context 'when the environment exists' do
-      let(:env) { { 'CIRRUS_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'CIRRUS_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when the environment doesn't exist" do
