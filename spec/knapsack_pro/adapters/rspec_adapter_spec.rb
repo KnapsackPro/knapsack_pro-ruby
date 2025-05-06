@@ -62,8 +62,9 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       expect(KnapsackPro).to receive(:logger).and_return(logger)
       expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing 5 slow test files.")
 
-      cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector'
-      expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
+      cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
+      env = { 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }
+      expect(Kernel).to receive(:system).with(env, cmd).and_return(cmd_result)
     end
 
     context 'when the rake task to detect RSpec test examples succeeded' do
@@ -84,7 +85,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:cmd_result) { false }
 
       it do
-        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
+        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running bundle exec rake knapsack_pro:rspec_test_example_detector')
       end
     end
   end
