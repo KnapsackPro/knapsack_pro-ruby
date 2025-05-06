@@ -313,8 +313,8 @@ describe KnapsackPro::Config::Env do
 
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_BRANCH has value' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_BRANCH' => 'master' }) }
-        it { should eq 'master' }
+        before { stub_const("ENV", { 'KNAPSACK_PRO_BRANCH' => 'main' }) }
+        it { should eq 'main' }
       end
 
       context 'when CI environment has value' do
@@ -335,22 +335,22 @@ describe KnapsackPro::Config::Env do
         end
 
         context 'when values are different' do
-          let(:env_value) { 'master' }
+          let(:env_value) { 'main' }
           let(:ci_value) { 'feature-branch' }
 
-          it { should eq 'master' }
+          it { should eq 'main' }
 
           it 'logs a warning' do
             expect(logger).to receive(:info).with(
-              'You have set the environment variable KNAPSACK_PRO_BRANCH to master which could be automatically determined from the CI environment as feature-branch.'
+              'You have set the environment variable KNAPSACK_PRO_BRANCH to main which could be automatically determined from the CI environment as feature-branch.'
             )
             subject
           end
         end
 
         context 'when values are the same' do
-          let(:env_value) { 'master' }
-          let(:ci_value) { 'master' }
+          let(:env_value) { 'main' }
+          let(:ci_value) { 'main' }
 
           it 'does not log a warning' do
             expect(logger).not_to receive(:info)

@@ -1,10 +1,20 @@
 # Changelog
 
-### Unreleased
+### UNRELEASED
+
+* (patch) Update `changelog_uri` in gemspec
 
 * (patch) RSpec: allow tests to run in a distroless environment
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
+
+### 8.1.2
+
+* Allow running RSpec with `--force-color` (and the default Split by Test Examples)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/298
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.1...v8.1.2
 
 ### 8.1.1
 

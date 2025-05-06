@@ -6,8 +6,8 @@ commands:
       - checkout
       - restore_cache:
           keys:
-          - v1-bundler-ruby-{{ checksum "knapsack_pro.gemspec" }}
-          - v1-bundler-ruby-
+            - v1-bundler-ruby-{{ checksum "knapsack_pro.gemspec" }}
+            - v1-bundler-ruby-
       - run:
           command: |
             bundle config set --local path './vendor/bundle'
@@ -37,10 +37,10 @@ commands:
             fi
       - restore_cache:
           keys:
-          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
-          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-
-          - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-
-          - v1-bundler-rails-
+            - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+            - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-
+            - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-
+            - v1-bundler-rails-
       - run:
           working_directory: << parameters.path >>
           command: |
@@ -57,7 +57,7 @@ jobs:
     working_directory: ~/knapsack_pro-ruby
     resource_class: small
     docker:
-      - image: cimg/ruby:3.3
+      - image: cimg/ruby:3.4
     steps:
       - setup_knapsack_pro_ruby
       - run: gem install rubocop
@@ -88,10 +88,10 @@ jobs:
             fi
       - restore_cache:
           keys:
-          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
-          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-
-          - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-
-          - v1-bundler-gem-
+            - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+            - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-ruby-<< parameters.ruby >>-
+            - v1-bundler-gem-{{ checksum "knapsack_pro.gemspec" }}-
+            - v1-bundler-gem-
       - run:
           command: |
             bundle config set --local path './vendor/bundle'

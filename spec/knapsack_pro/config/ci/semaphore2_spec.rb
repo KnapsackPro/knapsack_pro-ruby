@@ -68,13 +68,13 @@ describe KnapsackPro::Config::CI::Semaphore2 do
     end
 
     context 'when both SEMAPHORE_GIT_WORKING_BRANCH and SEMAPHORE_GIT_BRANCH are set' do
-      let(:env) { { 'SEMAPHORE_GIT_WORKING_BRANCH' => 'feature', 'SEMAPHORE_GIT_BRANCH' => 'master' } }
+      let(:env) { { 'SEMAPHORE_GIT_WORKING_BRANCH' => 'feature', 'SEMAPHORE_GIT_BRANCH' => 'main' } }
       it { should eql 'feature' }
     end
 
     context 'when SEMAPHORE_GIT_BRANCH is set' do
-      let(:env) { { 'SEMAPHORE_GIT_BRANCH' => 'master' } }
-      it { should eql 'master' }
+      let(:env) { { 'SEMAPHORE_GIT_BRANCH' => 'main' } }
+      it { should eql 'main' }
     end
 
     context "when no ENVs are set" do
