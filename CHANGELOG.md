@@ -2,7 +2,9 @@
 
 ### UNRELEASED
 
-* (patch) Update `changelog_uri` in gemspec
+### 8.1.3
+
+* Update `changelog_uri` in gemspec
 
 ### 8.1.2
 
