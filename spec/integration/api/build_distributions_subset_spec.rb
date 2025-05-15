@@ -8,7 +8,7 @@ describe 'Request API /v1/build_distributions/subset' do
     KnapsackPro::Client::API::V1::BuildDistributions.subset(
       cache_read_attempt: true,
       commit_hash: 'abcdefg',
-      branch: 'master',
+      branch: 'main',
       node_total: '2',
       node_index: '1',
       test_files: [

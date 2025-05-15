@@ -1,10 +1,16 @@
 # Changelog
 
-### Unreleased
+### UNRELEASED
 
 * (patch) RSpec: allow tests to run in a distroless environment
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
+
+### 8.1.3
+
+* Update `changelog_uri` in gemspec
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.2...v8.1.3
 
 ### 8.1.2
 
