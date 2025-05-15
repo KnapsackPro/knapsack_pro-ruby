@@ -26,11 +26,10 @@ module KnapsackPro
             runner.stringify_test_file_paths
           ]
 
-          Kernel.system({
+          Kernel.exec({
             'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => 'true',
             'KNAPSACK_PRO_TEST_SUITE_TOKEN' => ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']
           }, cmd)
-          Kernel.exit(child_status.exitstatus) unless child_status.exitstatus.zero?
         end
       end
     end
