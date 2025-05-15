@@ -64,7 +64,8 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
       # ensure cmd is a single argument in case KnapsackPro::Config::Env.rspec_test_example_detector_prefix is set by user
       cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
-      expect(Kernel).to receive(:system).with({'RACK_ENV' => 'test', 'RAILS_ENV' => 'test'}, cmd).and_return(cmd_result)
+      env = { 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }
+      expect(Kernel).to receive(:system).with(env, cmd).and_return(cmd_result)
     end
 
     context 'when the rake task to detect RSpec test examples succeeded' do
@@ -85,7 +86,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:cmd_result) { false }
 
       it do
-        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
+        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running bundle exec rake knapsack_pro:rspec_test_example_detector')
       end
     end
   end

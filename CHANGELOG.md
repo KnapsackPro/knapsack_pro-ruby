@@ -2,9 +2,9 @@
 
 ### UNRELEASED
 
-* (patch) RSpec: allow tests to run in a distroless environment
+* (minor): allow tests to run in a distroless environment
 
-    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/296
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/299
 
 ### 8.1.3
 
