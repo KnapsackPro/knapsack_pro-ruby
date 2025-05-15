@@ -2,7 +2,7 @@
 
 ### UNRELEASED
 
-* (minor): allow tests to run in a distroless environment
+* (minor): Avoid needing a shell to support distroless environment
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/299
 
