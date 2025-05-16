@@ -79,7 +79,9 @@ module KnapsackPro
         r, w = IO.pipe
         Kernel.system('git rev-parse --is-shallow-repository', out: w, err: File::NULL)
         w.close
-        r.read.strip == 'true'
+        result = r.read
+        r.close
+        result.strip == 'true'
       end
 
       def working_dir
