@@ -70,7 +70,9 @@ module KnapsackPro
         r, w = IO.pipe
         Kernel.system('git log --format="%aN <%aE>" -1', out: w, err: File::NULL)
         w.close
-        r.read
+        result = r.read
+        r.close
+        result
       end
 
       def shallow_repository?
