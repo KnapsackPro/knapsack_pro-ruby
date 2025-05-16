@@ -91,16 +91,14 @@ module KnapsackPro
         private
 
         def self.cucumber_run(runner, test_file_paths, args)
-          stringify_test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
-
           cmd = [
-            KnapsackPro::Config::Env.cucumber_queue_prefix,
+            *to_array(KnapsackPro::Config::Env.cucumber_queue_prefix),
             'cucumber',
-            args,
+            *to_array(args),
             '--require',
             runner.test_dir,
             '--',
-            stringify_test_file_paths
+            *test_file_paths
           ].compact
 
           Kernel.system(*cmd)
@@ -118,6 +116,10 @@ module KnapsackPro
           end
 
           child_status.exitstatus
+        end
+
+        def self.to_array(args)
+          args.to_s.strip.split(' ')
         end
       end
     end
