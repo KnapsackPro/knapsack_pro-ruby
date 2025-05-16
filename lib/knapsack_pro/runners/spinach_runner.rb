@@ -15,10 +15,21 @@ module KnapsackPro
 
           KnapsackPro.tracker.set_prerun_tests(runner.test_file_paths)
 
-          cmd = %Q[KNAPSACK_PRO_REGULAR_MODE_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=#{ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']} bundle exec spinach #{args} --features_path #{runner.test_dir} -- #{runner.stringify_test_file_paths}]
+          cmd = [
+            'bundle',
+            'exec',
+            'spinach',
+            *args.to_s.split(' '),
+            '--features_path',
+            runner.test_dir,
+            '--',
+            *runner.test_file_paths
+          ]
 
-          Kernel.system(cmd)
-          Kernel.exit(child_status.exitstatus) unless child_status.exitstatus.zero?
+          Kernel.exec({
+            'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => 'true',
+            'KNAPSACK_PRO_TEST_SUITE_TOKEN' => ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']
+          }, *cmd)
         end
       end
     end

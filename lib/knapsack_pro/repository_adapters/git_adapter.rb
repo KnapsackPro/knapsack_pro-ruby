@@ -44,25 +44,43 @@ module KnapsackPro
 
       def git_commit_authors
         if KnapsackPro::Config::Env.ci? && shallow_repository?
-          command = 'git fetch --shallow-since "one month ago" --quiet 2>/dev/null'
+          command = 'git fetch --shallow-since "one month ago" --quiet'
           begin
             Timeout.timeout(5) do
-              `#{command}`
+              Kernel.system(command, out: File::NULL, err: File::NULL)
             end
           rescue Timeout::Error
             KnapsackPro.logger.debug("Skip the `#{command}` command because it took too long.")
           end
         end
 
-        `git log --since "one month ago" 2>/dev/null | git shortlog --summary --email 2>/dev/null`
+        summary_read, log_write = IO.pipe
+        Kernel.system('git log --since "one month ago"', out: log_write, err: File::NULL)
+        log_write.close
+        summary, summary_write = IO.pipe
+        Kernel.system('git shortlog --summary --email', in: summary_read, out: summary_write, err: File::NULL)
+        summary_read.close
+        summary_write.close
+        result = summary.read
+        summary.close
+        result
       end
 
       def git_build_author
-        `git log --format="%aN <%aE>" -1 2>/dev/null`
+        r, w = IO.pipe
+        Kernel.system('git log --format="%aN <%aE>" -1', out: w, err: File::NULL)
+        w.close
+        result = r.read
+        r.close
+        result
       end
 
       def shallow_repository?
-        result = `git rev-parse --is-shallow-repository 2>/dev/null`
+        r, w = IO.pipe
+        Kernel.system('git rev-parse --is-shallow-repository', out: w, err: File::NULL)
+        w.close
+        result = r.read
+        r.close
         result.strip == 'true'
       end
 
