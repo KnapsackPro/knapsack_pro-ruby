@@ -59,8 +59,11 @@ module KnapsackPro
         log_write.close
         summary, summary_write = IO.pipe
         Kernel.system('git shortlog --summary --email', in: summary_read, out: summary_write, err: File::NULL)
+        summary_read.close
         summary_write.close
-        summary.read
+        result = summary.read
+        summary.close
+        result
       end
 
       def git_build_author
