@@ -29,12 +29,12 @@ module KnapsackPro
           KnapsackPro::Config::Env.rspec_test_example_detector_prefix,
           'rake knapsack_pro:rspec_test_example_detector'
         ].join(' ')
-        inline_cmd = ''
-        envs.each do |key, value|
-          inline_cmd += "#{key}=#{value} "
-        end
-        inline_cmd += cmd
         unless Kernel.system({'RACK_ENV' => 'test', 'RAILS_ENV' => 'test'}, cmd)
+          inline_cmd = ''
+          envs.each do |key, value|
+            inline_cmd += "#{key}=#{value} "
+          end
+          inline_cmd += cmd
           raise "Could not generate JSON report for RSpec. Rake task failed when running #{inline_cmd}"
         end
 
