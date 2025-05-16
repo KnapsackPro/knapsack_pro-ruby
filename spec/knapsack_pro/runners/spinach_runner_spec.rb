@@ -18,14 +18,12 @@ describe KnapsackPro::Runners::SpinachRunner do
     end
 
     context 'when test files were returned by Knapsack Pro API' do
-      let(:test_file_paths) { ['"features/a.feature"', '"features/b.feature"'] }
-      let(:stringify_test_file_paths) { test_file_paths.join(' ') }
+      let(:test_file_paths) { ['features/a.feature', 'features/b.feature'] }
       let(:test_dir) { 'fake-test-dir' }
       let(:runner) do
         instance_double(described_class,
                         test_dir: test_dir,
                         test_file_paths: test_file_paths,
-                        stringify_test_file_paths: stringify_test_file_paths,
                         test_files_to_execute_exist?: true)
       end
       let(:child_status) { double }
@@ -39,7 +37,7 @@ describe KnapsackPro::Runners::SpinachRunner do
 
         expect(Kernel).to receive(:exec).with(
           { "KNAPSACK_PRO_REGULAR_MODE_ENABLED" => "true", "KNAPSACK_PRO_TEST_SUITE_TOKEN" => "spinach-token" },
-          ['bundle', 'exec', 'spinach', '--custom-arg', '--features_path', 'fake-test-dir', '--', '"features/a.feature" "features/b.feature"']
+          'bundle', 'exec', 'spinach', '--custom-arg', '--features_path', 'fake-test-dir', '--', 'features/a.feature', 'features/b.feature'
         )
 
         subject

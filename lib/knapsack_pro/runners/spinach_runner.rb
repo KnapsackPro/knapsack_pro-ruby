@@ -19,17 +19,17 @@ module KnapsackPro
             'bundle',
             'exec',
             'spinach',
-            args,
+            *args.to_s.split(' '),
             '--features_path',
             runner.test_dir,
             '--',
-            runner.stringify_test_file_paths
+            *runner.test_file_paths
           ]
 
           Kernel.exec({
             'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => 'true',
             'KNAPSACK_PRO_TEST_SUITE_TOKEN' => ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN']
-          }, cmd)
+          }, *cmd)
         end
       end
     end
