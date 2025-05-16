@@ -101,7 +101,7 @@ module KnapsackPro
             runner.test_dir,
             '--',
             stringify_test_file_paths
-          ]
+          ].compact
 
           Kernel.system(*cmd)
 
