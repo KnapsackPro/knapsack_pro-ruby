@@ -47,7 +47,7 @@ module KnapsackPro
           command = 'git fetch --shallow-since "one month ago" --quiet'
           begin
             Timeout.timeout(5) do
-              Kernel.system(command, err: File::NULL)
+              Kernel.system(command, out: File::NULL, err: File::NULL)
             end
           rescue Timeout::Error
             KnapsackPro.logger.debug("Skip the `#{command}` command because it took too long.")
