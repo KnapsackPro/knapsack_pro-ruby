@@ -88,7 +88,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:cmd_result) { false }
 
       it do
-        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running bundle exec rake knapsack_pro:rspec_test_example_detector')
+        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
       end
     end
   end
