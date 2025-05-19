@@ -344,7 +344,7 @@ jobs:
           command: |
             # split by test examples AND an env var has been passed via KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX
             if [[ "$CIRCLE_NODE_INDEX" != "0" ]]; then
-              echo "Do nothing on the non-zero CI node index. Only the first and the fastest CI node runs a dry run rake task to detect test examples for slow test files."
+              echo "Do nothing on the non-zero CI node index. Only the starter CI node runs a dry run rake task to detect test examples for slow test files."
               exit 0
             fi
 
