@@ -351,7 +351,7 @@ jobs:
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX-has-env-var"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
-            export CUSTOM_VARIABLE_FOR_RSPEC_TEST_EXAMPLE_DETECTOR=custom-value
+            export KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX="CUSTOM_VARIABLE_FOR_RSPEC_TEST_EXAMPLE_DETECTOR='custom-value'"
             # a high value to ensure some tests are detected as slow to be split by test examples
             export KNAPSACK_PRO_CI_NODE_TOTAL=999
             bundle exec rake knapsack_pro:queue:rspec
