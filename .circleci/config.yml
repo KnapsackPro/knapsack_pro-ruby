@@ -343,11 +343,20 @@ jobs:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
             # split by test examples AND an env var has been passed via KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX
+            if [[ "$CIRCLE_NODE_INDEX"] != "0"]]; then
+            echo "Do nothing on the non-zero CI node index. Only the first and the fastest CI node runs a dry run rake task to detect test examples for slow test files."
+              exit 0
+            fi
+
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX-has-env-var"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export CUSTOM_VARIABLE_FOR_RSPEC_TEST_EXAMPLE_DETECTOR=custom-value
+            # a high value to ensure some tests are detected as slow to be split by test examples
+            export KNAPSACK_PRO_CI_NODE_TOTAL=999
             bundle exec rake knapsack_pro:queue:rspec
+
+            echo "------"
 
             FILE="tmp/env_var_passed_via_KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX.txt"
             EXPECTED_CONTENT="CUSTOM_VARIABLE_FOR_RSPEC_TEST_EXAMPLE_DETECTOR=custom-value"
@@ -355,6 +364,8 @@ jobs:
             if [[ -f "$FILE" ]]; then
               CONTENT=$(<"$FILE")
               if [[ "$CONTENT" == "$EXPECTED_CONTENT" ]]; then
+              echo
+                echo "Expected: $EXPECTED_CONTENT has been successfully passed to the dry run rake task."
                 exit 0
               else
                 echo "Expected: $EXPECTED_CONTENT"
