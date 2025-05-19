@@ -551,6 +551,7 @@ jobs:
             # Spinach with multiple options passed ||
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--spinach--with-multiple-options"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_FILE_PATTERN="spinach_features/**{,/*/**}/*.feature"
             bundle exec rake "knapsack_pro:spinach[--seed 123 -b]"
 
 workflows:
