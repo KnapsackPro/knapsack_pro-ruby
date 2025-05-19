@@ -119,7 +119,7 @@ module KnapsackPro
         end
 
         def self.to_array(args)
-          args.to_s.strip.split(' ')
+          args.to_s.split(' ')
         end
       end
     end
