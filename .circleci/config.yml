@@ -471,6 +471,88 @@ jobs:
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             bundle exec rake knapsack_pro:queue:minitest[--verbose]
 
+  e2e-queue-cucumber:
+    parameters:
+      ruby:
+        type: string
+    parallelism: 2
+    working_directory: ~/knapsack_pro-ruby
+    resource_class: small
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER: $KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER
+      - image: cimg/postgres:14.7
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - setup_knapsack_pro_ruby
+      - setup_rails_app_with_knapsack_pro:
+          path: ~/rails-app-with-knapsack_pro
+          ruby: << parameters.ruby >>
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: ruby --version
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bin/rails db:setup
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # Cucumber with multiple options passed ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--cucumber--with-multiple-options"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            bundle exec rake "knapsack_pro:queue:cucumber[--no-color --retry 1]"
+
+  e2e-regular-spinach:
+    parameters:
+      ruby:
+        type: string
+    parallelism: 2
+    working_directory: ~/knapsack_pro-ruby
+    resource_class: small
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH: $KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH
+      - image: cimg/postgres:14.7
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - setup_knapsack_pro_ruby
+      - setup_rails_app_with_knapsack_pro:
+          path: ~/rails-app-with-knapsack_pro
+          ruby: << parameters.ruby >>
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: ruby --version
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: bin/rails db:setup
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # Spinach with multiple options passed ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--spinach--with-multiple-options"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            bundle exec rake "knapsack_pro:spinach[--seed 123 -b]"
+
 workflows:
   tests:
     jobs:
@@ -500,6 +582,16 @@ workflows:
               ruby: ["3.2", "3.3", "3.4"]
       - e2e-queue-minitest:
           name: e2e-queue__ruby-<< matrix.ruby >>__minitest
+          matrix:
+            parameters:
+              ruby: ["3.2", "3.3", "3.4"]
+      - e2e-queue-cucumber:
+          name: e2e-queue__ruby-<< matrix.ruby >>__cucumber
+          matrix:
+            parameters:
+              ruby: ["3.2", "3.3", "3.4"]
+      - e2e-regular-spinach:
+          name: e2e-regular__ruby-<< matrix.ruby >>__spinach
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
