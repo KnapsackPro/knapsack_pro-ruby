@@ -339,6 +339,32 @@ jobs:
             rm .rspec
             mv .rspec.off .rspec
             exit $RSPEC_EXIT_CODE
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split by test examples AND an env var has been passed via KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX-has-env-var"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export CUSTOM_VARIABLE_FOR_RSPEC_TEST_EXAMPLE_DETECTOR=custom-value
+            bundle exec rake knapsack_pro:queue:rspec
+
+            FILE="tmp/env_var_passed_via_KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX.txt"
+            EXPECTED_CONTENT="CUSTOM_VARIABLE_FOR_RSPEC_TEST_EXAMPLE_DETECTOR=custom-value"
+
+            if [[ -f "$FILE" ]]; then
+              CONTENT=$(<"$FILE")
+              if [[ "$CONTENT" == "$EXPECTED_CONTENT" ]]; then
+                exit 0
+              else
+                echo "Expected: $EXPECTED_CONTENT"
+                echo "Got: $CONTENT"
+                exit 1
+              fi
+            else
+              echo "File not found: $FILE"
+              exit 1
+            fi
 
   e2e-regular-minitest:
     parallelism: 2
