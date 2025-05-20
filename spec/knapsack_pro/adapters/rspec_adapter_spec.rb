@@ -80,7 +80,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
 
     context 'when KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX is set with a custom environment variable' do
-      it 'calls Kernel.system using the command as a single argument to use shell to respect the custom environment variable (it violates distroless because it requires shell)' do
+      it 'calls Kernel.system using the command as a single argument to use shell to respect the custom environment variable (it violates distroless container images because it requires shell)' do
         stub_const('ENV', { 'KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX' => 'CUSTOM_ENV_VAR=123 bundle exec' })
 
         cmd = 'CUSTOM_ENV_VAR=123 bundle exec rake knapsack_pro:rspec_test_example_detector'
