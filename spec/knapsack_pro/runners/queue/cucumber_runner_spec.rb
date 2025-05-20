@@ -120,7 +120,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
         expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
 
         # .cucumber_run
-        expect(Kernel).to receive(:system).with('bundle', 'exec', 'cucumber', '--retry', '5', '--no-strict-flaky', '--require', 'fake-features-dir', '--', 'features/a.feature', 'features/b.feature')
+        expect(Kernel).to receive(:system).with('bundle exec cucumber --retry 5 --no-strict-flaky --require fake-features-dir -- "features/a.feature" "features/b.feature"')
 
         expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
 
