@@ -2,9 +2,13 @@
 
 ### UNRELEASED
 
-* (minor): Avoid needing a shell to support distroless environments (in most cases)
+### 8.2.0
+
+* Avoid needing a shell to support Distroless Container Images (in most cases)
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/299
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.3...v8.2.0
 
 ### 8.1.3
 
