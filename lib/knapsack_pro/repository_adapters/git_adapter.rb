@@ -54,34 +54,31 @@ module KnapsackPro
           end
         end
 
-        summary_read, log_write = IO.pipe
-        Kernel.system('git log --since "one month ago"', out: log_write, err: File::NULL)
-        log_write.close
-        summary, summary_write = IO.pipe
-        Kernel.system('git shortlog --summary --email', in: summary_read, out: summary_write, err: File::NULL)
-        summary_read.close
-        summary_write.close
-        result = summary.read
-        summary.close
-        result
+        IO.pipe do |log_r, log_w|
+          Kernel.system('git log --since "one month ago"', out: log_w, err: File::NULL)
+          log_w.close
+          IO.pipe do |shortlog_r, shortlog_w|
+            Kernel.system('git shortlog --summary --email', in: log_r, out: shortlog_w, err: File::NULL)
+            shortlog_w.close
+            shortlog_r.read
+          end
+        end
       end
 
       def git_build_author
-        r, w = IO.pipe
-        Kernel.system('git log --format="%aN <%aE>" -1', out: w, err: File::NULL)
-        w.close
-        result = r.read
-        r.close
-        result
+        IO.pipe do |r, w|
+          Kernel.system('git log --format="%aN <%aE>" -1', out: w, err: File::NULL)
+          w.close
+          r.read
+        end
       end
 
       def shallow_repository?
-        r, w = IO.pipe
-        Kernel.system('git rev-parse --is-shallow-repository', out: w, err: File::NULL)
-        w.close
-        result = r.read
-        r.close
-        result.strip == 'true'
+        IO.pipe do |r, w|
+          Kernel.system('git rev-parse --is-shallow-repository', out: w, err: File::NULL)
+          w.close
+          r.read.strip == 'true'
+        end
       end
 
       def working_dir

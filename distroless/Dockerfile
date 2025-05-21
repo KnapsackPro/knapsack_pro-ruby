@@ -20,27 +20,11 @@ cat <<CI > bin/ci
 ENV['PATH'] =+ "#{Gem.user_dir}/bin"
 require 'bundler/setup'
 
-def check_result(cmd, result)
-  puts "Command: #{cmd}"
+success = Kernel.system({ 'RAILS_ENV' => 'test' }, 'bundle --version') # ✅
+raise "The command failed!" unless success
 
-  if result
-    puts 'It works!'
-  else
-    raise 'The command failed!'
-  end
-
-  puts
-end
-
-# it works
-cmd = 'bundle --version'
-result = Kernel.system({ 'RAILS_ENV' => 'test' }, cmd)
-check_result(cmd, result)
-
-# the redirection operator does not work
-cmd = 'bundle --version 2>/dev/null'
-result = Kernel.system({ 'RAILS_ENV' => 'test' }, cmd)
-check_result(cmd, result)
+success = Kernel.system({ 'RAILS_ENV' => 'test' }, 'bundle --version 2>/dev/null') # ⛔️
+raise "The command failed!" unless success
 
 CI
 RUN

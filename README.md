@@ -102,11 +102,10 @@ cmd = 'program1 | program2'
 Kernel.system(cmd)
 ```
 
-Use [Dockerfile](distroless/Dockerfile) to test if the code does not use shell. Run:
+Use [Dockerfile](distroless/Dockerfile) to test if the code requires a shell:
 
 ```bash
-cd distroless
-docker build -t test . && docker run --rm -it test
+docker build -t test -f distroless/Dockerfile . && docker run --rm -it test
 ```
 
 ### Publishing

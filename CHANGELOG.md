@@ -2,7 +2,7 @@
 
 ### UNRELEASED
 
-* (minor): Avoid needing a shell to support distroless environment
+* (minor): Avoid needing a shell to support distroless environments (in most cases)
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/299
 
