@@ -19,8 +19,8 @@ describe KnapsackPro::Runners::SpinachRunner do
 
     context 'when test files were returned by Knapsack Pro API' do
       let(:test_file_paths) { ['features/a.feature', 'features/b.feature'] }
-      let(:stringify_test_file_paths) { test_file_paths.join(' ') }
       let(:test_dir) { 'fake-test-dir' }
+      let(:stringify_test_file_paths) { test_file_paths.join(' ') }
       let(:runner) do
         instance_double(described_class,
                         test_dir: test_dir,
@@ -30,42 +30,19 @@ describe KnapsackPro::Runners::SpinachRunner do
       end
       let(:child_status) { double }
 
-      before do
+      it do
         expect(KnapsackPro::Adapters::SpinachAdapter).to receive(:verify_bind_method_called)
 
         tracker = instance_double(KnapsackPro::Tracker)
         expect(KnapsackPro).to receive(:tracker).and_return(tracker)
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
-        expect(Kernel).to receive(:system).with('KNAPSACK_PRO_REGULAR_MODE_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature')
+        expect(Kernel).to receive(:exec).with(
+          { 'KNAPSACK_PRO_REGULAR_MODE_ENABLED' => 'true', 'KNAPSACK_PRO_TEST_SUITE_TOKEN' => 'spinach-token' },
+          'bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature'
+        )
 
-        allow(described_class).to receive(:child_status).and_return(child_status)
-      end
-
-      after { subject }
-
-      context 'when command exit with success code' do
-        let(:exitstatus) { 0 }
-
-        before do
-          expect(child_status).to receive(:exitstatus).and_return(exitstatus)
-        end
-
-        it do
-          expect(Kernel).not_to receive(:exit)
-        end
-      end
-
-      context 'when command exit without success code' do
-        let(:exitstatus) { 1 }
-
-        before do
-          expect(child_status).to receive(:exitstatus).twice.and_return(exitstatus)
-        end
-
-        it do
-          expect(Kernel).to receive(:exit).with(exitstatus)
-        end
+        subject
       end
     end
 

@@ -2,9 +2,15 @@
 
 ### UNRELEASED
 
+* (minor): Avoid needing a shell to support distroless environments (in most cases)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/299
+
 ### 8.1.3
 
 * Update `changelog_uri` in gemspec
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.2...v8.1.3
 
 ### 8.1.2
 

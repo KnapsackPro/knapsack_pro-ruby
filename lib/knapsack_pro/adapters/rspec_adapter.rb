@@ -24,14 +24,14 @@ module KnapsackPro
         KnapsackPro.logger.info("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing #{slow_test_files.size} slow test files.")
 
         # generate the RSpec JSON report in a separate process to not pollute the RSpec state
+        envs = {'RACK_ENV' => 'test', 'RAILS_ENV' => 'test'}
         cmd = [
-          'RACK_ENV=test',
-          'RAILS_ENV=test',
           KnapsackPro::Config::Env.rspec_test_example_detector_prefix,
-          'rake knapsack_pro:rspec_test_example_detector',
+          'rake knapsack_pro:rspec_test_example_detector'
         ].join(' ')
-        unless Kernel.system(cmd)
-          raise "Could not generate JSON report for RSpec. Rake task failed when running #{cmd}"
+        unless Kernel.system(envs, cmd)
+          inline_cmd = envs.map { _1.join('=') }.join(' ') + ' ' + cmd
+          raise "Could not generate JSON report for RSpec. Rake task failed when running #{inline_cmd}"
         end
 
         # read the JSON report
