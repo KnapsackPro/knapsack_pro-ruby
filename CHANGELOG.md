@@ -14,8 +14,6 @@ https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.3...v8.2.0
 
 * Update `changelog_uri` in gemspec
 
-https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.1.2...v8.1.3
-
 ### 8.1.2
 
 * Allow running RSpec with `--force-color` (and the default Split by Test Examples)
