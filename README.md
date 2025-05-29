@@ -72,42 +72,6 @@ bin/test
 
 Scripted tests can be found in the [Rails App With Knapsack Pro repository](https://github.com/KnapsackPro/rails-app-with-knapsack_pro/blob/master/bin/knapsack_pro_all.rb).
 
-### Distroless Container Images
-
-Ensure that Knapsack Pro is written in a way that supports Distroless Container Images. Avoid using a shell when calling methods like [`Kernel.system`](https://rubyapi.org/3.4/o/kernel#method-i-system) or [`Kernel.exec`](https://rubyapi.org/3.4/o/kernel#method-i-exec).
-
-✅ Good - shell is not required
-
-```ruby
-cmd = 'bundle exec rake knapsack_pro:something'
-Kernel.system({ 'RAILS_ENV' => 'test' }, cmd)
-
-cmd = ['bundle', 'exec', 'rake', 'knapsack_pro:example']
-Kernel.system({ 'RAILS_ENV' => 'test' }, *cmd)
-```
-
-⛔️ Bad - shell is required
-
-```ruby
-# Avoid embedding environment variables in the command string
-cmd = 'RAILS_ENV=test bundle exec rake knapsack_pro:something'
-Kernel.system(cmd)
-
-# Avoid output redirection
-cmd = 'program 2>/dev/null'
-Kernel.system(cmd)
-
-# Avoid using the pipe operator
-cmd = 'program1 | program2'
-Kernel.system(cmd)
-```
-
-Use [Dockerfile](distroless/Dockerfile) to test if the code requires a shell:
-
-```bash
-docker build -t test -f distroless/Dockerfile . && docker run --rm -it test
-```
-
 ### Publishing
 
 1. Move the changes listed in the `UNRELEASED` section of the `CHANGELOG.md` to the proper version

@@ -2,6 +2,14 @@
 
 ### UNRELEASED
 
+### 8.3.0
+
+* Revert to 8.1.3 because of [the issue #301](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/301)
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/302
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.2.0...v8.3.0
+
 ### 8.2.0
 
 * Avoid needing a shell to support Distroless Container Images (in most cases)

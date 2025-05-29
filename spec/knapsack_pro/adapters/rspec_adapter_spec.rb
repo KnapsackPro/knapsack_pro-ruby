@@ -57,36 +57,19 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
     subject { described_class.test_file_cases_for(slow_test_files) }
 
-    context 'when the rake task to detect RSpec test examples succeeded' do
-      it 'returns test example paths for slow test files' do
-        logger = instance_double(Logger)
-        allow(KnapsackPro).to receive(:logger).and_return(logger)
-        allow(logger).to receive(:info)
+    before do
+      logger = instance_double(Logger)
+      expect(KnapsackPro).to receive(:logger).and_return(logger)
+      expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing 5 slow test files.")
 
-        cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
-        env = { 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }
-        expect(Kernel).to receive(:system).with(env, cmd).and_return(true)
-
-        rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
-        expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
-
-        test_file_example_paths = double
-        expect(rspec_test_example_detector).to receive(:test_file_example_paths).and_return(test_file_example_paths)
-
-        expect(subject).to eq test_file_example_paths
-
-        expect(logger).to have_received(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing 5 slow test files.")
-      end
+      cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector'
+      expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
     end
 
-    context 'when KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX is set with a custom environment variable' do
-      it 'calls Kernel.system using a single command including ENVs that is passed to a shell (does not work in a distroless environment)' do
-        stub_const('ENV', { 'KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX' => 'CUSTOM_ENV_VAR=123 bundle exec' })
+    context 'when the rake task to detect RSpec test examples succeeded' do
+      let(:cmd_result) { true }
 
-        cmd = 'CUSTOM_ENV_VAR=123 bundle exec rake knapsack_pro:rspec_test_example_detector'
-        env = { 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }
-        expect(Kernel).to receive(:system).with(env, cmd).and_return(true)
-
+      it 'returns test example paths for slow test files' do
         rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
         expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
 
@@ -98,11 +81,9 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
 
     context 'when the rake task to detect RSpec test examples failed' do
-      it do
-        cmd = 'bundle exec rake knapsack_pro:rspec_test_example_detector'
-        env = { 'RACK_ENV' => 'test', 'RAILS_ENV' => 'test' }
-        expect(Kernel).to receive(:system).with(env, cmd).and_return(false)
+      let(:cmd_result) { false }
 
+      it do
         expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
       end
     end
