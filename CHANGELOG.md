@@ -4,7 +4,7 @@
 
 ### 8.3.0
 
-* Revert to 8.1.3 because of #301
+* Revert to 8.1.3 because of [the issue #301](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/301)
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/302
 
