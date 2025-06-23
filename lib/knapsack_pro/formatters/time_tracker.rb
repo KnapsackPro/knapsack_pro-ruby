@@ -43,7 +43,7 @@ module KnapsackPro
       end
 
       def example_started(_notification)
-        @before_all = now - @time_all if @before_all == 0.0
+        @before_all += now - @time_all #if @before_all == 0.0
         @time_each = now
       end
 
@@ -73,7 +73,7 @@ module KnapsackPro
 
         merge(@paths, missing).values.map do |example|
           example.transform_keys(&:to_s)
-        end
+        end.tap { puts _1 }
       end
 
       def batch
