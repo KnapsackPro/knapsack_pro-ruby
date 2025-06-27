@@ -19,7 +19,7 @@ module KnapsackPro
         @output = StringIO.new
         @time_each = nil
         @time_all = nil
-        @before_all = 0.0
+        @time_all_by_group_id_path = Hash.new(0)
         @group = {}
         @paths = {}
         @suite_started = now
@@ -38,12 +38,12 @@ module KnapsackPro
       end
 
       def example_group_started(notification)
-        return unless top_level_group?(notification.group)
+        record_time_all(notification.group.parent_groups[1], @time_all_by_group_id_path, @time_all)
         @time_all = now
       end
 
-      def example_started(_notification)
-        @before_all = now - @time_all if @before_all == 0.0
+      def example_started(notification)
+        record_time_all(notification.example.example_group, @time_all_by_group_id_path, @time_all)
         @time_each = now
       end
 
@@ -53,11 +53,12 @@ module KnapsackPro
       end
 
       def example_group_finished(notification)
+        record_time_all(notification.group, @time_all_by_group_id_path, @time_all)
+        @time_all = now
         return unless top_level_group?(notification.group)
 
-        after_all = @time_all.nil? ? 0.0 : now - @time_all
-        add_hooks_time(@group, @before_all, after_all)
-        @before_all = 0.0
+        add_hooks_time(@group, @time_all_by_group_id_path)
+        @time_all_by_group_id_path = Hash.new(0)
         @paths = merge(@paths, @group)
         @group = {}
       end
@@ -104,10 +105,17 @@ module KnapsackPro
         group.metadata[:parent_example_group].nil?
       end
 
-      def add_hooks_time(group, before_all, after_all)
+      def add_hooks_time(group, time_all_by_group_id_path)
         group.each do |_, example|
           next if example[:time_execution] == 0.0
-          example[:time_execution] += before_all + after_all
+
+          example[:time_execution] += time_all_by_group_id_path.sum do |group_id_path, time|
+            # :path is a file path (a_spec.rb), sum any before/after(:all) in the file
+            next time if group_id_path.start_with?(example[:path])
+            # :path is an id path (a_spec.rb[1:1]), sum any before/after(:all) above it
+            next time if example[:path].start_with?(group_id_path[0..-2])
+            0
+          end
         end
       end
 
@@ -121,6 +129,13 @@ module KnapsackPro
         else
           accumulator[path] = { path: path, time_execution: time_execution }
         end
+      end
+
+      def record_time_all(group, time_all_by_group_id_path, time_all)
+        return unless group # above top level group
+
+        group_id_path = KnapsackPro::TestFileCleaner.clean(group.id)
+        time_all_by_group_id_path[group_id_path] += now - time_all
       end
 
       def path_for(example)

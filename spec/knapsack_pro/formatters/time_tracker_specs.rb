@@ -220,6 +220,63 @@ class TestTimeTracker
     end
   end
 
+  def test_nested_hooks
+    KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
+      false
+    end
+
+    spec = <<~SPEC
+      describe "KnapsackPro::Formatters::TimeTracker" do
+        before(:all) do
+          sleep 0.1
+        end
+
+        after(:all) do
+          sleep 0.1
+        end
+
+        it do
+          expect(1).to eq 1
+        end
+
+        describe do
+          before(:all) do
+            sleep 0.1
+          end
+
+          after(:all) do
+            sleep 0.1
+          end
+
+          it do
+            expect(1).to eq 1
+          end
+        end
+
+        describe do
+          before(:all) do
+            sleep 0.1
+          end
+
+          after(:all) do
+            sleep 0.1
+          end
+
+          it do
+            expect(1).to eq 1
+          end
+        end
+      end
+    SPEC
+
+    run_specs(spec) do |spec_paths, times|
+      raise unless times.size == 1
+      raise unless times[0]["path"] == spec_paths.first
+      raise unless times[0]["time_execution"] > 0.60
+      raise unless times[0]["time_execution"] < 0.65
+    end
+  end
+
   def test_hooks_with_rspec_split_by_test_example
     KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
       true
@@ -262,6 +319,68 @@ class TestTimeTracker
       raise unless times.find { |time| time["path"] == "#{spec_path}[1:2]" }["time_execution"] < 0.45
     end
   end
+
+  def test_nested_hooks_with_rspec_split_by_test_example
+    KnapsackPro::Formatters::TimeTracker.define_method(:rspec_split_by_test_example?) do |_file|
+      true
+    end
+
+    spec = <<~SPEC
+      describe "KnapsackPro::Formatters::TimeTracker" do
+        before(:all) do
+          sleep 0.1
+        end
+
+        after(:all) do
+          sleep 0.1
+        end
+
+        it do
+          expect(1).to eq 1
+        end
+
+        describe do
+          before(:all) do
+            sleep 0.1
+          end
+
+          after(:all) do
+            sleep 0.1
+          end
+
+          it do
+            expect(1).to eq 1
+          end
+        end
+
+        describe do
+          before(:all) do
+            sleep 0.1
+          end
+
+          after(:all) do
+            sleep 0.1
+          end
+
+          it do
+            expect(1).to eq 1
+          end
+        end
+      end
+    SPEC
+
+    run_specs(spec) do |spec_paths, times|
+      raise unless times.size == 3
+      spec_path = spec_paths.first
+      raise unless times.find { |time| time["path"] == "#{spec_path}[1:1]" }["time_execution"] > 0.20
+      raise unless times.find { |time| time["path"] == "#{spec_path}[1:1]" }["time_execution"] < 0.25
+      raise unless times.find { |time| time["path"] == "#{spec_path}[1:2:1]" }["time_execution"] > 0.40
+      raise unless times.find { |time| time["path"] == "#{spec_path}[1:2:1]" }["time_execution"] < 0.45
+      raise unless times.find { |time| time["path"] == "#{spec_path}[1:3:1]" }["time_execution"] > 0.40
+      raise unless times.find { |time| time["path"] == "#{spec_path}[1:3:1]" }["time_execution"] < 0.45
+    end
+  end
+
 
   def test_unknown_path
     KnapsackPro::Formatters::TimeTracker.class_eval do
