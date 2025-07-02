@@ -2,6 +2,8 @@
 
 ### UNRELEASED (patch)
 
+### 8.3.1
+
 * Fix RSpec TimeTracker to properly track `before(:all)/after(:all)`.
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/303
