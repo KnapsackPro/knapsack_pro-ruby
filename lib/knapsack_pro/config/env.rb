@@ -294,7 +294,12 @@ module KnapsackPro
           ci_env_value = ci_env_for(ci_env_method)
 
           if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
-            KnapsackPro.logger.info("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
+            @logged_message ||= {}
+            key = [knapsack_env_name, ci_env_method].join(',').to_sym
+            unless @logged_message.has_key?(key)
+              @logged_message[key] = true
+              KnapsackPro.logger.info("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
+            end
           end
 
           knapsack_env_value != nil ? knapsack_env_value : ci_env_value
