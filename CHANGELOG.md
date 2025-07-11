@@ -2,6 +2,14 @@
 
 ### UNRELEASED (patch)
 
+### 8.3.2
+
+* Fix infinite recursion when the logger gets into a loop
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/304
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.3.1...v8.3.2
+
 ### 8.3.1
 
 * Fix RSpec TimeTracker to properly track `before(:all)/after(:all)`.

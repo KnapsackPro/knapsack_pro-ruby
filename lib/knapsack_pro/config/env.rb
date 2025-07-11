@@ -13,11 +13,11 @@ module KnapsackPro
 
       class << self
         def ci_node_total
-          (env_for('KNAPSACK_PRO_CI_NODE_TOTAL', :node_total) || 1).to_i
+          @ci_node_total ||= (env_for('KNAPSACK_PRO_CI_NODE_TOTAL', :node_total) || 1).to_i
         end
 
         def ci_node_index
-          (env_for('KNAPSACK_PRO_CI_NODE_INDEX', :node_index) || 0).to_i
+          @ci_node_index ||= (env_for('KNAPSACK_PRO_CI_NODE_INDEX', :node_index) || 0).to_i
         end
 
         def ci_node_build_id
@@ -294,7 +294,7 @@ module KnapsackPro
           ci_env_value = ci_env_for(ci_env_method)
 
           if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
-            KnapsackPro.logger.info("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
+            warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
           end
 
           knapsack_env_value != nil ? knapsack_env_value : ci_env_value
