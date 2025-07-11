@@ -294,8 +294,7 @@ module KnapsackPro
           ci_env_value = ci_env_for(ci_env_method)
 
           if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
-            Warning[:deprecated] = false
-            warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.", category: :deprecated)
+            warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
           end
 
           knapsack_env_value != nil ? knapsack_env_value : ci_env_value
