@@ -16,8 +16,6 @@ describe KnapsackPro do
     context 'when KNAPSACK_PRO_LOG_DIR is set' do
       let(:logger) { instance_double(Logger) }
 
-      after(:each) { KnapsackPro::Config::Env.remove_instance_variable(:@ci_node_index) }
-
       context 'when KNAPSACK_PRO_CI_NODE_INDEX is set' do
         before do
           stub_const('ENV', {

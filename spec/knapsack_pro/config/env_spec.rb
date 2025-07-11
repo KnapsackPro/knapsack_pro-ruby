@@ -4,8 +4,6 @@ describe KnapsackPro::Config::Env do
   describe '.ci_node_total' do
     subject { described_class.ci_node_total }
 
-    after(:each) { described_class.remove_instance_variable(:@ci_node_total) }
-
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_CI_NODE_TOTAL has value' do
         before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_TOTAL' => '5' }) }
@@ -59,8 +57,6 @@ describe KnapsackPro::Config::Env do
 
   describe '.ci_node_index' do
     subject { described_class.ci_node_index }
-
-    after(:each) { described_class.remove_instance_variable(:@ci_node_index) }
 
     context 'when ENV exists' do
       context 'when KNAPSACK_PRO_CI_NODE_INDEX has value' do
@@ -977,7 +973,6 @@ describe KnapsackPro::Config::Env do
             expect(logger).to receive(log_level).once.with(log_message)
           end
         end
-        after(:each) { described_class.remove_instance_variable(:@ci_node_total) if described_class.instance_variable_defined?(:@ci_node_total) }
 
         it do
           expect(described_class.rspec_split_by_test_examples?).to eq(expected)
