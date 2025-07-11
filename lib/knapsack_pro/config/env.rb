@@ -293,13 +293,8 @@ module KnapsackPro
           knapsack_env_value = ENV[knapsack_env_name]
           ci_env_value = ci_env_for(ci_env_method)
 
-          if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s && !(within_parallel_tests_gem? && (ci_env_method == :node_total || ci_env_method == :node_index))
-            @logged_message ||= {}
-            key = [knapsack_env_name, ci_env_method].join(',').to_sym
-            unless @logged_message.has_key?(key)
-              @logged_message[key] = true
-              KnapsackPro.logger.info("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
-            end
+          if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
+            warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
           end
 
           knapsack_env_value != nil ? knapsack_env_value : ci_env_value
@@ -307,10 +302,6 @@ module KnapsackPro
 
         def ci_env_for(env_name)
           detected_ci.new.send(env_name)
-        end
-
-        def within_parallel_tests_gem?
-          ENV.has_key?('TEST_ENV_NUMBER')
         end
       end
     end
