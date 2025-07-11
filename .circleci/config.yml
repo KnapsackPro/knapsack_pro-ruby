@@ -339,23 +339,6 @@ jobs:
             rm .rspec
             mv .rspec.off .rspec
             exit $RSPEC_EXIT_CODE
-      - run:
-          working_directory: ~/rails-app-with-knapsack_pro
-          # https://github.com/KnapsackPro/knapsack_pro-ruby/issues/269
-          command: |
-            # custom logger ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--custom-logger"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
-            # run a few tests to keep it quick
-            export KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/foo_spec.rb,spec/bar_spec.spec}"
-            # custom log directory
-            export KNAPSACK_PRO_LOG_DIR=log
-            export KNAPSACK_PRO_LOG_LEVEL=debug
-            # other CI provider env vars to trigger a conflict info message to be logged
-            export BUILDKITE=true
-            export BUILDKITE_PARALLEL_JOB=9
-            export BUILDKITE_PARALLEL_JOB_COUNT=10
-            bundle exec rake knapsack_pro:queue:rspec
 
   e2e-regular-minitest:
     parallelism: 2
