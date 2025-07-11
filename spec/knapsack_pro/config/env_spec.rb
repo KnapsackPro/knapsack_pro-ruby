@@ -1,6 +1,11 @@
 describe KnapsackPro::Config::Env do
   before { stub_const("ENV", {}) }
 
+  before(:each) do
+    described_class.remove_instance_variable(:@ci_node_index) if described_class.instance_variable_defined?(:@ci_node_index)
+    described_class.remove_instance_variable(:@ci_node_total) if described_class.instance_variable_defined?(:@ci_node_total)
+  end
+
   describe '.ci_node_total' do
     subject { described_class.ci_node_total }
 

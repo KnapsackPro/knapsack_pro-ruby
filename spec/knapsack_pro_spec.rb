@@ -1,4 +1,9 @@
 describe KnapsackPro do
+  before(:each) do
+    KnapsackPro::Config::Env.remove_instance_variable(:@ci_node_index) if KnapsackPro::Config::Env.instance_variable_defined?(:@ci_node_index)
+    KnapsackPro::Config::Env.remove_instance_variable(:@ci_node_total) if KnapsackPro::Config::Env.instance_variable_defined?(:@ci_node_total)
+  end
+
   describe '.root' do
     subject { described_class.root }
 
