@@ -1,6 +1,11 @@
 describe KnapsackPro::Config::Env do
   before { stub_const("ENV", {}) }
 
+  before(:each) do
+    described_class.remove_instance_variable(:@ci_node_index) if described_class.instance_variable_defined?(:@ci_node_index)
+    described_class.remove_instance_variable(:@ci_node_total) if described_class.instance_variable_defined?(:@ci_node_total)
+  end
+
   describe '.ci_node_total' do
     subject { described_class.ci_node_total }
 
@@ -19,12 +24,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_CI_NODE_TOTAL and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_TOTAL' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:node_total).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -34,7 +36,7 @@ describe KnapsackPro::Config::Env do
           it { should eq 5 }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_CI_NODE_TOTAL to 5 which could be automatically determined from the CI environment as 4.'
             )
             subject
@@ -46,7 +48,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { 5 }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -76,12 +78,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_CI_NODE_INDEX and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_INDEX' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:node_index).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -91,7 +90,7 @@ describe KnapsackPro::Config::Env do
           it { should eq 3 }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_CI_NODE_INDEX to 3 which could be automatically determined from the CI environment as 2.'
             )
             subject
@@ -103,7 +102,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { 3 }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -140,12 +139,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_CI_NODE_BUILD_ID and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_BUILD_ID' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:node_build_id).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -155,7 +151,7 @@ describe KnapsackPro::Config::Env do
           it { should eq '7' }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_CI_NODE_BUILD_ID to 7 which could be automatically determined from the CI environment as 8.'
             )
             subject
@@ -167,7 +163,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { '7' }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -199,12 +195,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_CI_NODE_RETRY_COUNT and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_RETRY_COUNT' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:node_retry_count).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -214,7 +207,7 @@ describe KnapsackPro::Config::Env do
           it { should eq 1 }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_CI_NODE_RETRY_COUNT to 1 which could be automatically determined from the CI environment as 2.'
             )
             subject
@@ -226,7 +219,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { '7' }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -269,12 +262,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_COMMIT_HASH and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_COMMIT_HASH' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:commit_hash).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -284,7 +274,7 @@ describe KnapsackPro::Config::Env do
           it { should eq '3fa64859337f6e56409d49f865d13fd7' }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_COMMIT_HASH to 3fa64859337f6e56409d49f865d13fd7 which could be automatically determined from the CI environment as fe61a08118d0d52e97c38666eba1eaf3.'
             )
             subject
@@ -296,7 +286,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { '3fa64859337f6e56409d49f865d13fd7' }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -326,12 +316,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_BRANCH and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_BRANCH' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:branch).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -341,7 +328,7 @@ describe KnapsackPro::Config::Env do
           it { should eq 'main' }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_BRANCH to main which could be automatically determined from the CI environment as feature-branch.'
             )
             subject
@@ -353,7 +340,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { 'main' }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -383,12 +370,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_PROJECT_DIR and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_PROJECT_DIR' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:project_dir).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -398,7 +382,7 @@ describe KnapsackPro::Config::Env do
           it { should eq '/home/user/myapp' }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_PROJECT_DIR to /home/user/myapp which could be automatically determined from the CI environment as /home/runner/myapp.'
             )
             subject
@@ -410,7 +394,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { '/home/user/myapp' }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -440,12 +424,9 @@ describe KnapsackPro::Config::Env do
       end
 
       context 'when both KNAPSACK_PRO_USER_SEAT and CI environment have value' do
-        let(:logger) { instance_double(Logger, info: nil) }
-
         before do
           stub_const("ENV", { 'KNAPSACK_PRO_USER_SEAT' => env_value })
           expect(described_class).to receive(:ci_env_for).with(:user_seat).and_return(ci_value)
-          allow(KnapsackPro).to receive(:logger).and_return(logger)
         end
 
         context 'when values are different' do
@@ -455,7 +436,7 @@ describe KnapsackPro::Config::Env do
           it { should eq 'John Doe' }
 
           it 'logs a warning' do
-            expect(logger).to receive(:info).with(
+            expect(described_class).to receive(:warn).with(
               'You have set the environment variable KNAPSACK_PRO_USER_SEAT to John Doe which could be automatically determined from the CI environment as Jane Doe.'
             )
             subject
@@ -467,7 +448,7 @@ describe KnapsackPro::Config::Env do
           let(:ci_value) { 'John Doe' }
 
           it 'does not log a warning' do
-            expect(logger).not_to receive(:info)
+            expect(described_class).not_to receive(:warn)
             subject
           end
         end
@@ -872,13 +853,11 @@ describe KnapsackPro::Config::Env do
           it "on #{ci} it is false" do
             stub_const("ENV", env.merge({ 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'false' }))
 
-            logger = instance_double(Logger)
-            allow(KnapsackPro).to receive(:logger).and_return(logger)
             ci_env = described_class.detected_ci.new.fixed_queue_split
             if ci_env == false
-              expect(logger).not_to receive(:info)
+              expect(described_class).not_to receive(:warn)
             else
-              expect(logger).to receive(:info).with(
+              expect(described_class).to receive(:warn).with(
                 'You have set the environment variable KNAPSACK_PRO_FIXED_QUEUE_SPLIT to false which could be automatically determined from the CI environment as true.'
               )
             end
@@ -907,13 +886,11 @@ describe KnapsackPro::Config::Env do
           it "on #{ci} it is true" do
             stub_const("ENV", env.merge({ 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT' => 'true' }))
 
-            logger = instance_double(Logger)
-            allow(KnapsackPro).to receive(:logger).and_return(logger)
             ci_env = described_class.detected_ci.new.fixed_queue_split
             if ci_env == true
-              expect(logger).not_to receive(:info)
+              expect(described_class).not_to receive(:warn)
             else
-              expect(logger).to receive(:info).with(
+              expect(described_class).to receive(:warn).with(
                 'You have set the environment variable KNAPSACK_PRO_FIXED_QUEUE_SPLIT to true which could be automatically determined from the CI environment as false.'
               )
             end

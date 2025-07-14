@@ -10,7 +10,10 @@ describe KnapsackPro do
 
     subject { described_class.logger }
 
-    before { described_class.reset_logger! }
+    before(:each) do
+      described_class.reset_logger!
+      KnapsackPro::Config::Env.remove_instance_variable(:@ci_node_index) if KnapsackPro::Config::Env.instance_variable_defined?(:@ci_node_index)
+    end
     after { described_class.reset_logger! }
 
     context 'when KNAPSACK_PRO_LOG_DIR is set' do
