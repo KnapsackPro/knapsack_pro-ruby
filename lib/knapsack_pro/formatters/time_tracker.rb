@@ -38,11 +38,13 @@ module KnapsackPro
       end
 
       def example_group_started(notification)
+        puts "example_group_started: #{notification.group.parent_groups[1].inspect}"
         record_time_all(notification.group.parent_groups[1], @time_all_by_group_id_path, @time_all)
         @time_all = now
       end
 
       def example_started(notification)
+        puts "example_started: #{notification.example.example_group.inspect}"
         record_time_all(notification.example.example_group, @time_all_by_group_id_path, @time_all)
         @time_each = now
       end
@@ -109,8 +111,7 @@ module KnapsackPro
         group.each do |_, example|
           next if example[:time_execution] == 0.0
 
-          puts "time_all_by_group_id_path:"
-          puts time_all_by_group_id_path.inspect
+          puts "time_all_by_group_id_path: #{time_all_by_group_id_path.inspect}"
           example[:time_execution] += time_all_by_group_id_path.sum do |group_id_path, time|
             puts "group_id_path: #{group_id_path.inspect}"
             puts "time: #{time.inspect}"
@@ -139,7 +140,10 @@ module KnapsackPro
       def record_time_all(group, time_all_by_group_id_path, time_all)
         return unless group # above top level group
 
+        puts "group: #{group.inspect}"
+        puts "group id: #{group.id.inspect}"
         group_id_path = KnapsackPro::TestFileCleaner.clean(group.id)
+        puts "group_id_path: #{group_id_path.inspect}"
         time_all_by_group_id_path[group_id_path] += now - time_all
       end
 
