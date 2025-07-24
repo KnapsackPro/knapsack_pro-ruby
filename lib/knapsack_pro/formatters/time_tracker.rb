@@ -112,15 +112,15 @@ module KnapsackPro
           next if example[:time_execution] == 0.0
 
           puts "time_all_by_group_id_path: #{time_all_by_group_id_path.inspect}"
-          example[:time_execution] += time_all_by_group_id_path.sum do |group_id_path, time|
+          example[:time_execution] += time_all_by_group_id_path.reduce(0.0) do |sum, (group_id_path, time)|
             puts "group_id_path: #{group_id_path.inspect}"
             puts "time: #{time.inspect}"
             puts
             # :path is a file path (a_spec.rb), sum any before/after(:all) in the file
-            next time if group_id_path.start_with?(example[:path])
+            next sum + time if group_id_path.start_with?(example[:path])
             # :path is an id path (a_spec.rb[1:1]), sum any before/after(:all) above it
-            next time if example[:path].start_with?(group_id_path[0..-2])
-            0
+            next sum + time if example[:path].start_with?(group_id_path[0..-2])
+            sum
           end
         end
       end
