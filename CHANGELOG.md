@@ -2,6 +2,14 @@
 
 ### UNRELEASED (patch)
 
+### 8.3.3
+
+* Fix a `Hash#sum` bug in the time tracker for RSpec
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/305
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.3.2...v8.3.3
+
 ### 8.3.2
 
 * Fix infinite recursion when the logger enters a loop. [The issue](https://github.com/KnapsackPro/knapsack_pro-ruby/issues/269) occurs when `KNAPSACK_PRO_LOG_DIR=log` is set and a conflict arises between the values of environment variables from the CI provider and those configured by the user (e.g., `KNAPSACK_PRO_CI_NODE_INDEX`, `KNAPSACK_PRO_CI_NODE_TOTAL`).
