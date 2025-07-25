@@ -4,7 +4,7 @@
 
 ### 8.3.3
 
-* Fix a `Hash#sum` bug in the time tracker for RSpec
+* Replace `Hash#sum` with `Hash#reduce` to fix a rare bug in the RSpec time tracker for a specific project
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/305
 
