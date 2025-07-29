@@ -336,7 +336,7 @@ describe 'TimeTracker' do
         RSpec.configure do |config|
           config.before(:all) do
             time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
-            time_tracker.scheduled_paths = ['#{@dir}/0_spec.rb']
+            time_tracker.schedule(["#{@dir}/0_spec.rb"])
           end
         end
 
@@ -359,7 +359,7 @@ describe 'TimeTracker' do
         RSpec.configure do |config|
           config.before(:suite) do
             time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
-            time_tracker.scheduled_paths = ['#{@dir}/0_spec.rb']
+            time_tracker.schedule(["#{@dir}/0_spec.rb"])
           end
         end
 
@@ -391,13 +391,13 @@ describe 'TimeTracker' do
     end
   end
 
-  describe '#unexecuted_test_files' do
+  describe '#unexecuted_test_paths' do
     it do
       spec = <<~SPEC
         RSpec.configure do |config|
           config.before(:all) do
             time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
-            time_tracker.scheduled_paths = ['#{@dir}/0_spec.rb', 'foo_spec.rb[1:1]']
+            time_tracker.schedule(["#{@dir}/0_spec.rb", "foo_spec.rb[1:1]"])
           end
         end
 
@@ -407,8 +407,8 @@ describe 'TimeTracker' do
         end
       SPEC
 
-      run_specs(spec, 'unexecuted_test_files') do |spec_paths, unexecuted_test_files|
-        expect(unexecuted_test_files).to eq(["#{@dir}/0_spec.rb", 'foo_spec.rb[1:1]'])
+      run_specs(spec, 'unexecuted_test_paths') do |spec_paths, unexecuted_test_paths|
+        expect(unexecuted_test_paths).to eq(["#{@dir}/0_spec.rb", 'foo_spec.rb[1:1]'])
       end
     end
   end
@@ -428,6 +428,45 @@ describe 'TimeTracker' do
         expect(batch.size).to eq(1)
         expect(batch[0]['path']).to eq(spec_paths[0])
         expect(batch[0]['time_execution']).to be_between(0.10, 0.15)
+      end
+    end
+  end
+
+  describe '#failed_test_id_paths' do
+    it 'returns the most recent failed_test_id_paths' do
+      spec0 = <<~SPEC
+        RSpec.configure do |config|
+          config.before(:all) do
+            time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+            time_tracker.schedule(["#{@dir}/0_spec.rb"])
+          end
+        end
+
+        describe 'KnapsackPro::Formatters::TimeTracker' do
+          it do
+            expect(1).to eq 2
+          end
+        end
+      SPEC
+
+      spec1 = <<~SPEC
+        RSpec.configure do |config|
+          config.before(:all) do
+            time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+            time_tracker.schedule(["#{@dir}/1_spec.rb"])
+          end
+        end
+
+        describe 'KnapsackPro::Formatters::TimeTracker' do
+          it do
+            expect(1).to eq 2
+          end
+        end
+      SPEC
+
+      run_specs([spec0, spec1], 'failed_test_id_paths') do |spec_paths, id_paths|
+        expect(id_paths.size).to eq(1)
+        expect(id_paths[0]).to eq("#{spec_paths[1]}[1:1]")
       end
     end
   end
