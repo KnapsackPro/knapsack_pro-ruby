@@ -3,15 +3,7 @@
 module KnapsackPro
   module Client
     module API
-      class Action
-        attr_reader :endpoint_path, :http_method, :request_hash
-
-        def initialize(args)
-          @endpoint_path = args.fetch(:endpoint_path)
-          @http_method = args.fetch(:http_method)
-          @request_hash = args.fetch(:request_hash)
-        end
-      end
+      Action = Struct.new(:endpoint_path, :http_method, :request_hash, keyword_init: true)
     end
   end
 end

@@ -33,7 +33,6 @@ require_relative 'knapsack_pro/client/api/action'
 require_relative 'knapsack_pro/client/api/v1/base'
 require_relative 'knapsack_pro/client/api/v1/build_distributions'
 require_relative 'knapsack_pro/client/api/v1/build_subsets'
-require_relative 'knapsack_pro/client/api/v1/queues'
 require_relative 'knapsack_pro/client/connection'
 require_relative 'knapsack_pro/repository_adapters/base_adapter'
 require_relative 'knapsack_pro/repository_adapters/env_adapter'
@@ -85,6 +84,20 @@ require_relative 'knapsack_pro/crypto/branch_encryptor'
 require_relative 'knapsack_pro/crypto/decryptor'
 require_relative 'knapsack_pro/crypto/digestor'
 require_relative 'knapsack_pro/pure/queue/rspec_pure'
+
+module KnapsackPro
+  module Client
+    module API
+      module V1
+        autoload(:Queues, 'knapsack_pro/client/api/v1/queues')
+      end
+
+      module V2
+        autoload(:Queues, 'knapsack_pro/client/api/v2/queues')
+      end
+    end
+  end
+end
 
 require 'knapsack_pro/railtie' if defined?(Rails::Railtie)
 
