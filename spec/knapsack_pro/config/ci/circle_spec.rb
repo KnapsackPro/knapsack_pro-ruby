@@ -119,4 +119,19 @@ describe KnapsackPro::Config::CI::Circle do
       it { should be nil }
     end
   end
+
+  [
+    [{ 'CIRCLE_PIPELINE_NUMBER' => '123', 'CIRCLE_JOB' => 'test' }, '123:test'],
+    [{ 'CIRCLE_PIPELINE_NUMBER' => '123' }, nil],
+    [{ 'CIRCLE_JOB' => 'test' }, nil],
+    [{}, nil]
+  ].each do |env, expected|
+    describe '#test_queue_id' do
+      subject { described_class.new.test_queue_id }
+
+      let(:env) { env }
+
+      it { should eql expected }
+    end
+  end
 end

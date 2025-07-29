@@ -51,6 +51,16 @@ module KnapsackPro
         def ci_provider
           "Gitlab CI"
         end
+
+        def test_queue_id
+          pipeline_id = ENV['CI_PIPELINE_ID']
+          return nil if pipeline_id.nil?
+
+          job = ENV['CI_JOB_NAME']
+          return nil if job.nil?
+
+          "#{pipeline_id}:#{job}"
+        end
       end
     end
   end

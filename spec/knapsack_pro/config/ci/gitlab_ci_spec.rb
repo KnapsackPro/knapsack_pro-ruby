@@ -134,4 +134,19 @@ describe KnapsackPro::Config::CI::GitlabCI do
       it { should be nil }
     end
   end
+
+  [
+    [{ 'CI_PIPELINE_ID' => '123', 'CI_JOB_NAME' => 'test' }, '123:test'],
+    [{ 'CI_PIPELINE_ID' => '123' }, nil],
+    [{ 'CI_JOB_NAME' => 'test' }, nil],
+    [{}, nil]
+  ].each do |env, expected|
+    describe '#test_queue_id' do
+      subject { described_class.new.test_queue_id }
+
+      let(:env) { env }
+
+      it { should eql expected }
+    end
+  end
 end
