@@ -18,7 +18,7 @@ module KnapsackPro
 
     INSTALLATION_GUIDE = "#{HOST}/perma/ruby/installation-guide"
 
-    KNAPSACK_PRO_CI_NODE_BUILD_ID= "#{HOST}/perma/ruby/knapsack-pro-ci-node-build-id"
+    KNAPSACK_PRO_CI_NODE_BUILD_ID = "#{HOST}/perma/ruby/knapsack-pro-ci-node-build-id"
 
     QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false"
 
@@ -35,5 +35,7 @@ module KnapsackPro
     SPLIT_BY_TEST_EXAMPLES = "#{HOST}/perma/ruby/split-by-test-examples"
 
     TEST_UNIT__TEST_FILE_PATH_DETECTION = "#{HOST}/perma/ruby/test-unit-test-file-path-detection"
+
+    KNAPSACK_PRO_TEST_QUEUE_ID = "#{HOST}/perma/ruby/knapsack-pro-test-queue-id"
   end
 end
