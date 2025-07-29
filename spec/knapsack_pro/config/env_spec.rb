@@ -1219,4 +1219,58 @@ describe KnapsackPro::Config::Env do
       end
     end
   end
+
+  describe '.test_queue_id' do
+    subject { described_class.test_queue_id }
+
+    context 'when KNAPSACK_PRO_TEST_QUEUE_ID has value' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_QUEUE_ID' => '123:456' }) }
+      it { should eq '123:456' }
+    end
+
+    context 'when CI environment has value' do
+      before do
+        expect(described_class).to receive(:ci_env_for).with(:test_queue_id).and_return('abc:def')
+      end
+
+      it { should eq 'abc:def' }
+    end
+
+    context 'when both KNAPSACK_PRO_TEST_QUEUE_ID and CI environment have value' do
+      before do
+        stub_const("ENV", { 'KNAPSACK_PRO_TEST_QUEUE_ID' => env_value })
+        expect(described_class).to receive(:ci_env_for).with(:test_queue_id).and_return(ci_value)
+      end
+
+      context 'when values are different' do
+        let(:env_value) { '123:456' }
+        let(:ci_value) { 'abc:def' }
+
+        it { should eq '123:456' }
+
+        it 'logs a warning' do
+          expect(described_class).to receive(:warn).with(
+            'You have set the environment variable KNAPSACK_PRO_TEST_QUEUE_ID to 123:456 which could be automatically determined from the CI environment as abc:def.'
+          )
+          subject
+        end
+      end
+
+      context 'when values are the same' do
+        let(:env_value) { '123:456' }
+        let(:ci_value) { '123:456' }
+
+        it 'does not log a warning' do
+          expect(described_class).not_to receive(:warn)
+          subject
+        end
+      end
+    end
+
+    context "when ENV does not exist" do
+      it 'raises' do
+        expect { subject }.to raise_error(/Missing environment variable KNAPSACK_PRO_TEST_QUEUE_ID/)
+      end
+    end
+  end
 end

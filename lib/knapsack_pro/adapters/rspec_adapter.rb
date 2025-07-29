@@ -138,7 +138,7 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.append_before(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            time_tracker.scheduled_paths = KnapsackPro::Adapters::RSpecAdapter.scheduled_paths
+            time_tracker.schedule(KnapsackPro::Adapters::RSpecAdapter.scheduled_paths)
           end
         end
       end
