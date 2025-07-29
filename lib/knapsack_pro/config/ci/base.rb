@@ -49,6 +49,9 @@ module KnapsackPro
 
           nil
         end
+
+        def test_queue_id
+        end
       end
     end
   end
