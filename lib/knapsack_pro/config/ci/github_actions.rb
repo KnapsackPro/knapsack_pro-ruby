@@ -55,6 +55,10 @@ module KnapsackPro
         def ci_provider
           "GitHub Actions"
         end
+
+        def test_queue_id
+          node_build_id
+        end
       end
     end
   end
