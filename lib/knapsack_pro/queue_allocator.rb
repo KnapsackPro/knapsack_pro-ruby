@@ -41,26 +41,26 @@ module KnapsackPro
       @fallback_mode = false
     end
 
-    def test_file_paths(can_initialize_queue, executed_test_files, batch_uuid: SecureRandom.uuid)
+    def test_file_paths(can_initialize_queue, executed_test_files, batch_uuid: SecureRandom.uuid, time_tracker: nil)
       return [] if @fallback_mode
 
-      batch = pull_tests_from_queue(can_initialize_queue, batch_uuid)
+      batch = pull_tests_from_queue(can_initialize_queue, batch_uuid, time_tracker: time_tracker)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
       return normalize_test_files(batch.test_files) if batch.queue_exists?
 
       test_files_result = test_suite.calculate_test_files
 
-      return try_initializing_queue(test_files_result.test_files, batch_uuid) if test_files_result.quick?
+      return try_initializing_queue(test_files_result.test_files, batch_uuid, time_tracker: time_tracker) if test_files_result.quick?
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
-      batch = pull_tests_from_queue(can_initialize_queue, batch_uuid)
+      batch = pull_tests_from_queue(can_initialize_queue, batch_uuid, time_tracker: time_tracker)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
       return normalize_test_files(batch.test_files) if batch.queue_exists?
 
-      try_initializing_queue(test_files_result.test_files, batch_uuid)
+      try_initializing_queue(test_files_result.test_files, batch_uuid, time_tracker: time_tracker)
     end
 
     private
@@ -80,7 +80,7 @@ module KnapsackPro
       KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
-    def build_action(can_initialize_queue:, attempt_connect_to_queue:, batch_uuid:, test_files: nil)
+    def build_action_v1(can_initialize_queue:, attempt_connect_to_queue:, batch_uuid:, test_files: nil)
       if can_initialize_queue && !attempt_connect_to_queue
         raise 'Test files are required when initializing a new queue.' if test_files.nil?
         test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
@@ -99,23 +99,78 @@ module KnapsackPro
       )
     end
 
-    def pull_tests_from_queue(can_initialize_queue, batch_uuid)
-      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue, batch_uuid: batch_uuid)
+    def build_action_v2(can_initialize_queue:, attempt_connect_to_queue:, time_tracker:, batch_uuid:, test_files: nil)
+      if can_initialize_queue && !attempt_connect_to_queue
+        raise 'Test files are required when initializing a new queue.' if test_files.nil?
+        test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
+      end
+
+      KnapsackPro::Client::API::V2::Queues.queue(
+        can_initialize_queue: can_initialize_queue,
+        attempt_connect_to_queue: attempt_connect_to_queue,
+        commit_hash: repository_adapter.commit_hash,
+        branch: encrypted_branch,
+        node_total: ci_node_total,
+        node_index: ci_node_index,
+        test_files: test_files,
+        failed_paths: time_tracker.failed_test_id_paths,
+        batch_uuid: batch_uuid
+      )
+    end
+
+    def pull_tests_from_queue(can_initialize_queue, batch_uuid, time_tracker: nil)
+      if time_tracker.nil?
+        pull_tests_from_queue_v1(can_initialize_queue, batch_uuid)
+      else
+        pull_tests_from_queue_v2(can_initialize_queue, batch_uuid, time_tracker)
+      end
+    end
+
+    def pull_tests_from_queue_v1(can_initialize_queue, batch_uuid)
+      action = build_action_v1(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue, batch_uuid: batch_uuid)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       Batch.new(connection, response)
     end
 
-    def initialize_queue(tests_to_run, batch_uuid)
-      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, batch_uuid: batch_uuid, test_files: tests_to_run)
+    def pull_tests_from_queue_v2(can_initialize_queue, batch_uuid, time_tracker)
+      action = build_action_v2(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue, batch_uuid: batch_uuid, time_tracker: time_tracker)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       Batch.new(connection, response)
     end
 
-    def try_initializing_queue(tests, batch_uuid)
-      result = initialize_queue(tests, batch_uuid)
+    def initialize_queue_v1(tests_to_run, batch_uuid)
+      action = build_action_v1(can_initialize_queue: true, attempt_connect_to_queue: false, batch_uuid: batch_uuid, test_files: tests_to_run)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      Batch.new(connection, response)
+    end
 
+    def initialize_queue_v2(tests_to_run, batch_uuid, time_tracker)
+      action = build_action_v2(can_initialize_queue: true, attempt_connect_to_queue: false, batch_uuid: batch_uuid, test_files: tests_to_run, time_tracker: time_tracker)
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      Batch.new(connection, response)
+    end
+
+    def try_initializing_queue(tests, batch_uuid, time_tracker: nil)
+      if time_tracker.nil?
+        try_initializing_queue_v1(tests, batch_uuid)
+      else
+        try_initializing_queue_v2(tests, batch_uuid, time_tracker)
+      end
+    end
+
+    def try_initializing_queue_v1(tests, batch_uuid)
+      result = initialize_queue_v1(tests, batch_uuid)
+      return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
+
+      normalize_test_files(result.test_files)
+    end
+
+    def try_initializing_queue_v2(tests, batch_uuid, time_tracker)
+      result = initialize_queue_v2(tests, batch_uuid, time_tracker)
       return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
 
       normalize_test_files(result.test_files)

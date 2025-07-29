@@ -260,6 +260,17 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE', 1).to_i
         end
 
+        def test_queue_id
+          env_name = 'KNAPSACK_PRO_TEST_QUEUE_ID'
+          env_for(env_name, :test_queue_id) ||
+            raise("Missing environment variable #{env_name}. Read more at #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
+        end
+
+        def node_uuid
+          env_name = 'KNAPSACK_PRO_NODE_UUID'
+          ENV[env_name] || raise("Missing environment variable #{env_name}. Please report this as a bug: #{KnapsackPro::Urls::SUPPORT}")
+        end
+
         private
 
         def required_env(env_name)
