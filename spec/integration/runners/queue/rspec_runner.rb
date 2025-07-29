@@ -18,7 +18,7 @@ end
 
 module KnapsackProExtensions
   module QueueAllocatorExtension
-    def test_file_paths(can_initialize_queue, executed_test_files)
+    def test_file_paths(can_initialize_queue, executed_test_files, time_tracker: nil)
       @batch_index ||= 0
       last_batch = []
       batches = [*SPEC_BATCHES, last_batch]

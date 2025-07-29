@@ -221,6 +221,7 @@ jobs:
           RACK_ENV: test
           KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: $KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
+          KNAPSACK_PRO_LOG_LEVEL: debug
           EXTRA_TEST_FILES_DELAY: 10
       - image: cimg/postgres:14.7
         environment:
@@ -247,26 +248,22 @@ jobs:
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue"
             bundle exec rake knapsack_pro:queue:rspec
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
-            # run 0 tests as queue is consumed ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false
-            bundle exec rake knapsack_pro:queue:rspec
-      - run:
-          working_directory: ~/rails-app-with-knapsack_pro
-          command: |
-            # retry the same split ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            # run 0 tests because nothing failed in the previous step ||
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue"
             bundle exec rake knapsack_pro:queue:rspec
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
             # fallback ||
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--fallback"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--fallback"
             export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
             export KNAPSACK_PRO_MAX_REQUEST_RETRIES=1
             bundle exec rake knapsack_pro:queue:rspec
@@ -274,16 +271,16 @@ jobs:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
             # split by test examples ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--split"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--split"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake knapsack_pro:queue:rspec
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
             # split by test examples above the slow test file threshold ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split-above-slow-test-file-threshold"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--split-above-slow-test-file-threshold"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--split-above-slow-test-file-threshold"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD=1
             bundle exec rake knapsack_pro:queue:rspec
@@ -291,8 +288,8 @@ jobs:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
             # split by test examples AND a single CI node ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split--single-node"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--split--single-node"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--split--single-node"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_CI_NODE_TOTAL=1
             export KNAPSACK_PRO_CI_NODE_INDEX=0
@@ -301,7 +298,8 @@ jobs:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
             # split custom files by test examples AND the --tag option passed ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split-custom-files--tag-option"
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--split-custom-files--tag-option"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--split-custom-files--tag-option"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
             export SKIP_ME_OR_I_WILL_FAIL=true
@@ -312,8 +310,8 @@ jobs:
             # turnip ||
             mv .rspec .rspec.off
             cp .rspec.turnip .rspec
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--turnip"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--turnip"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--turnip"
             export KNAPSACK_PRO_TEST_DIR=turnip
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="turnip/acceptance/foo.feature"
@@ -328,8 +326,8 @@ jobs:
             # turnip retry ||
             mv .rspec .rspec.off
             cp .rspec.turnip .rspec
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--turnip"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_QUEUE_ID="<< pipeline.number >>:$CIRCLE_JOB--queue--turnip"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--<< pipeline.number >>:$CIRCLE_JOB--queue--turnip"
             export KNAPSACK_PRO_TEST_DIR=turnip
             export KNAPSACK_PRO_TEST_FILE_PATTERN="turnip/**/*.feature"
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="turnip/acceptance/foo.feature"
