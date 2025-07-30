@@ -19,6 +19,7 @@ module KnapsackPro
                 node_index: args.fetch(:node_index),
                 node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
                 user_seat: KnapsackPro::Config::Env.masked_user_seat,
+                test_queue_id: KnapsackPro::Config::Env.test_queue_id,
                 node_uuid: KnapsackPro::Config::Env.node_uuid
               }
 

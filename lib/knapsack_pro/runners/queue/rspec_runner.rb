@@ -65,7 +65,7 @@ module KnapsackPro
             KnapsackPro.logger.error("Exception message: #{exception.message}")
             KnapsackPro.logger.error("Exception backtrace: #{exception.backtrace&.join("\n")}")
 
-            message = @rspec_pure.exit_summary(unexecuted_test_files)
+            message = @rspec_pure.exit_summary(unexecuted_test_paths)
             KnapsackPro.logger.warn(message) if message
 
             exit_code = @rspec_pure.error_exit_code(@rspec_runner.knapsack__error_exit_code)
@@ -186,7 +186,7 @@ module KnapsackPro
             time_tracker: time_tracker
           )
           @node_test_file_paths += test_file_paths
-          time_tracker.scheduled_paths = @node_test_file_paths
+          time_tracker.schedule(test_file_paths)
           test_file_paths
         end
 
@@ -225,8 +225,8 @@ module KnapsackPro
           end
         end
 
-        def unexecuted_test_files
-          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_files
+        def unexecuted_test_paths
+          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_paths
         end
       end
     end

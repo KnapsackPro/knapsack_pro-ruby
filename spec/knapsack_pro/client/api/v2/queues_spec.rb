@@ -10,12 +10,14 @@ describe KnapsackPro::Client::API::V2::Queues do
     let(:masked_user_seat) { double }
     let(:can_initialize_queue) { [false, true].sample }
     let(:attempt_connect_to_queue) { [false, true].sample }
+    let(:test_queue_id) { "123:abc" }
     let(:node_uuid) { SecureRandom.uuid }
 
     before(:each) do
       expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(fixed_queue_split)
       expect(KnapsackPro::Config::Env).to receive(:ci_node_build_id).and_return(node_build_id)
       expect(KnapsackPro::Config::Env).to receive(:masked_user_seat).and_return(masked_user_seat)
+      expect(KnapsackPro::Config::Env).to receive(:test_queue_id).and_return(test_queue_id)
       expect(KnapsackPro::Config::Env).to receive(:node_uuid).and_return(node_uuid)
     end
 
@@ -37,6 +39,7 @@ describe KnapsackPro::Client::API::V2::Queues do
             node_index: node_index,
             node_build_id: node_build_id,
             user_seat: masked_user_seat,
+            test_queue_id: test_queue_id,
             node_uuid: node_uuid
           }
         )
@@ -83,6 +86,7 @@ describe KnapsackPro::Client::API::V2::Queues do
             test_files: test_files,
             build_author: build_author,
             commit_authors: commit_authors,
+            test_queue_id: test_queue_id,
             node_uuid: node_uuid
           }
         )
@@ -121,6 +125,7 @@ describe KnapsackPro::Client::API::V2::Queues do
             node_index: node_index,
             node_build_id: node_build_id,
             user_seat: masked_user_seat,
+            test_queue_id: test_queue_id,
             node_uuid: node_uuid,
             test_paths: test_paths,
             failed_test_id_paths: failed_test_id_paths
