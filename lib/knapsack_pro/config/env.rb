@@ -289,6 +289,11 @@ module KnapsackPro
             raise("Missing environment variable #{env_name}. Read more at #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
         end
 
+        def node_uuid
+          env_name = 'KNAPSACK_PRO_NODE_UUID'
+          ENV[env_name] || raise("Missing environment variable #{env_name}. Please report this as a bug: #{KnapsackPro::Urls::SUPPORT}")
+        end
+
         private
 
         def required_env(env_name)
