@@ -13,6 +13,7 @@ module KnapsackPro
           KnapsackPro::Extensions::RSpecExtension.setup!
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
+          ENV['KNAPSACK_PRO_NODE_UUID'] = SecureRandom.uuid
 
           rspec_pure = KnapsackPro::Pure::Queue::RSpecPure.new
 
@@ -178,15 +179,14 @@ module KnapsackPro
         end
 
         def pull_tests_from_queue(can_initialize_queue: false)
+          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
           test_file_paths = test_file_paths(
             can_initialize_queue: can_initialize_queue,
-            executed_test_files: @node_test_file_paths
+            executed_test_files: @node_test_file_paths,
+            time_tracker: time_tracker
           )
           @node_test_file_paths += test_file_paths
-
-          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
           time_tracker.scheduled_paths = @node_test_file_paths
-
           test_file_paths
         end
 

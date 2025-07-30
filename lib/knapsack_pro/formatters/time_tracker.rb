@@ -27,6 +27,14 @@ module KnapsackPro
         @split_by_test_example_file_paths = Set.new
       end
 
+      def test_paths
+        []
+      end
+
+      def failed_test_id_paths
+        []
+      end
+
       def scheduled_paths=(scheduled_paths)
         @scheduled_paths = scheduled_paths
         @scheduled_paths.each do |path|
