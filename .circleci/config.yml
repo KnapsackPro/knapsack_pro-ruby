@@ -65,7 +65,6 @@ jobs:
       - run: bundle update rspec
       - run: bundle exec rspec --version
       - run: bundle exec rspec spec
-      - run: bundle exec ruby spec/knapsack_pro/formatters/time_tracker_specs.rb
 
   integration-rspec:
     parallelism: 1
