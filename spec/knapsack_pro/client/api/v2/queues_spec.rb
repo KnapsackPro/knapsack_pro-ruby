@@ -11,6 +11,7 @@ describe KnapsackPro::Client::API::V2::Queues do
     let(:attempt_connect_to_queue) { [false, true].sample }
     let(:test_queue_id) { "123:abc" }
     let(:node_uuid) { SecureRandom.uuid }
+    let(:batch_uuid) { SecureRandom.uuid }
 
     before(:each) do
       expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(fixed_queue_split)
@@ -37,7 +38,8 @@ describe KnapsackPro::Client::API::V2::Queues do
             node_index: node_index,
             user_seat: masked_user_seat,
             test_queue_id: test_queue_id,
-            node_uuid: node_uuid
+            node_uuid: node_uuid,
+            batch_uuid: batch_uuid
           }
         )
 
@@ -48,7 +50,8 @@ describe KnapsackPro::Client::API::V2::Queues do
           branch: branch,
           node_total: node_total,
           node_index: node_index,
-          test_files: test_files
+          test_files: test_files,
+          batch_uuid: batch_uuid
         )
 
         expect(actual).to eq(expected)
@@ -83,7 +86,8 @@ describe KnapsackPro::Client::API::V2::Queues do
             build_author: build_author,
             commit_authors: commit_authors,
             test_queue_id: test_queue_id,
-            node_uuid: node_uuid
+            node_uuid: node_uuid,
+            batch_uuid: batch_uuid
           }
         )
 
@@ -94,7 +98,8 @@ describe KnapsackPro::Client::API::V2::Queues do
           branch: branch,
           node_total: node_total,
           node_index: node_index,
-          test_files: test_files
+          test_files: test_files,
+          batch_uuid: batch_uuid
         )
 
         expect(actual).to eq(expected)
@@ -121,7 +126,8 @@ describe KnapsackPro::Client::API::V2::Queues do
             user_seat: masked_user_seat,
             test_queue_id: test_queue_id,
             node_uuid: node_uuid,
-            failed_paths: failed_paths
+            failed_paths: failed_paths,
+            batch_uuid: batch_uuid
           }
         )
 
@@ -133,7 +139,8 @@ describe KnapsackPro::Client::API::V2::Queues do
           node_total: node_total,
           node_index: node_index,
           test_files: test_files,
-          failed_paths: failed_paths
+          failed_paths: failed_paths,
+          batch_uuid: batch_uuid
         )
 
         expect(actual).to eq(expected)
