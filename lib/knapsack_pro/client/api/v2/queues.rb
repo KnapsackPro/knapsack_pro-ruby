@@ -19,7 +19,8 @@ module KnapsackPro
                 node_index: args.fetch(:node_index),
                 user_seat: KnapsackPro::Config::Env.masked_user_seat,
                 test_queue_id: KnapsackPro::Config::Env.test_queue_id,
-                node_uuid: KnapsackPro::Config::Env.node_uuid
+                node_uuid: KnapsackPro::Config::Env.node_uuid,
+                batch_uuid: args.fetch(:batch_uuid)
               }
 
               if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
