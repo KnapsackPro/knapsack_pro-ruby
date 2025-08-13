@@ -121,9 +121,7 @@ describe KnapsackPro::Config::CI::Circle do
   end
 
   [
-    [{ 'CIRCLE_PIPELINE_NUMBER' => '123', 'CIRCLE_JOB' => 'test' }, '123:test'],
-    [{ 'CIRCLE_PIPELINE_NUMBER' => '123' }, nil],
-    [{ 'CIRCLE_JOB' => 'test' }, nil],
+    [{ 'CIRCLE_PIPELINE_NUMBER' => '123' }, '123'],
     [{}, nil]
   ].each do |env, expected|
     describe '#test_queue_id' do
