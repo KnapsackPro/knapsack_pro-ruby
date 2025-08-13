@@ -136,9 +136,7 @@ describe KnapsackPro::Config::CI::GitlabCI do
   end
 
   [
-    [{ 'CI_PIPELINE_ID' => '123', 'CI_JOB_NAME' => 'test' }, '123:test'],
-    [{ 'CI_PIPELINE_ID' => '123' }, nil],
-    [{ 'CI_JOB_NAME' => 'test' }, nil],
+    [{ 'CI_PIPELINE_ID' => '123' }, '123'],
     [{}, nil]
   ].each do |env, expected|
     describe '#test_queue_id' do
