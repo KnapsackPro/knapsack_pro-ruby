@@ -2,6 +2,14 @@
 
 ### UNRELEASED (patch)
 
+### 8.4.0
+
+* Add a batch UUID to the V1 Queue API request payload to improve handling of retried requests
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/TODO
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.3.3...v8.4.0
+
 ### 8.3.3
 
 * Replace `Hash#sum` with `Hash#reduce` to fix a rare bug in the RSpec time tracker for a specific project

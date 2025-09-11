@@ -10,6 +10,7 @@ describe KnapsackPro::Client::API::V1::Queues do
     let(:masked_user_seat) { double }
     let(:can_initialize_queue) { [false, true].sample }
     let(:attempt_connect_to_queue) { [false, true].sample }
+    let(:batch_uuid) { SecureRandom.uuid }
 
     subject do
       described_class.queue(
@@ -19,7 +20,8 @@ describe KnapsackPro::Client::API::V1::Queues do
         branch: branch,
         node_total: node_total,
         node_index: node_index,
-        test_files: test_files
+        test_files: test_files,
+        batch_uuid: batch_uuid
       )
     end
 
