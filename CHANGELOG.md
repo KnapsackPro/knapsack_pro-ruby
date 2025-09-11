@@ -6,7 +6,7 @@
 
 * Add a batch UUID to the V1 Queue API request payload to improve handling of retried requests
 
-    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/TODO
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/307
 
 https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.3.3...v8.4.0
 
