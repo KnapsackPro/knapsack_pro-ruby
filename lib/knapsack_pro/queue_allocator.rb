@@ -41,26 +41,26 @@ module KnapsackPro
       @fallback_mode = false
     end
 
-    def test_file_paths(can_initialize_queue, executed_test_files)
+    def test_file_paths(can_initialize_queue, executed_test_files, batch_uuid: SecureRandom.uuid)
       return [] if @fallback_mode
 
-      batch = pull_tests_from_queue(can_initialize_queue)
+      batch = pull_tests_from_queue(can_initialize_queue, batch_uuid)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
       return normalize_test_files(batch.test_files) if batch.queue_exists?
 
       test_files_result = test_suite.calculate_test_files
 
-      return try_initializing_queue(test_files_result.test_files) if test_files_result.quick?
+      return try_initializing_queue(test_files_result.test_files, batch_uuid) if test_files_result.quick?
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
-      batch = pull_tests_from_queue(can_initialize_queue)
+      batch = pull_tests_from_queue(can_initialize_queue, batch_uuid)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
       return normalize_test_files(batch.test_files) if batch.queue_exists?
 
-      try_initializing_queue(test_files_result.test_files)
+      try_initializing_queue(test_files_result.test_files, batch_uuid)
     end
 
     private
@@ -80,7 +80,7 @@ module KnapsackPro
       KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
-    def build_action(can_initialize_queue:, attempt_connect_to_queue:, test_files: nil)
+    def build_action(can_initialize_queue:, attempt_connect_to_queue:, batch_uuid:, test_files: nil)
       if can_initialize_queue && !attempt_connect_to_queue
         raise 'Test files are required when initializing a new queue.' if test_files.nil?
         test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
@@ -95,25 +95,26 @@ module KnapsackPro
         node_index: ci_node_index,
         node_build_id: ci_node_build_id,
         test_files: test_files,
+        batch_uuid: batch_uuid
       )
     end
 
-    def pull_tests_from_queue(can_initialize_queue)
-      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue)
+    def pull_tests_from_queue(can_initialize_queue, batch_uuid)
+      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue, batch_uuid: batch_uuid)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       Batch.new(connection, response)
     end
 
-    def initialize_queue(tests_to_run)
-      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, test_files: tests_to_run)
+    def initialize_queue(tests_to_run, batch_uuid)
+      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, batch_uuid: batch_uuid, test_files: tests_to_run)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       Batch.new(connection, response)
     end
 
-    def try_initializing_queue(tests)
-      result = initialize_queue(tests)
+    def try_initializing_queue(tests, batch_uuid)
+      result = initialize_queue(tests, batch_uuid)
 
       return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
 
