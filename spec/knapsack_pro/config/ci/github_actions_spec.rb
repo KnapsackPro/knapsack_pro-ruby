@@ -61,30 +61,52 @@ describe KnapsackPro::Config::CI::GithubActions do
   describe '#branch' do
     subject { described_class.new.branch }
 
-    context 'when the environment exists' do
-      context 'when GITHUB_REF has value' do
-        let(:env) do
-          {
-            'GITHUB_REF' => 'main',
-            'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d',
-          }
-        end
-
-        it { should eql 'main' }
+    context 'when GITHUB_HEAD_REF is set' do
+      let(:env) do
+        {
+          'GITHUB_HEAD_REF' => 'feature',
+          'GITHUB_REF_NAME' => 'main',
+          'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d'
+        }
       end
 
-      context 'when GITHUB_REF is not set' do
-        let(:env) do
-          {
-            'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d',
-          }
-        end
-
-        it { should eql '2e13512fc230d6f9ebf4923352718e4d' }
-      end
+      it { should eql 'feature' }
     end
 
-    context "when the environment doesn't exist" do
+    context 'when GITHUB_REF_NAME is set' do
+      let(:env) do
+        {
+          'GITHUB_REF_NAME' => 'main',
+          'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d'
+        }
+      end
+
+      it { should eql 'main' }
+    end
+
+    context 'when GITHUB_HEAD_REF is set to empty string' do
+      let(:env) do
+        {
+          'GITHUB_HEAD_REF' => '',
+          'GITHUB_REF_NAME' => 'main',
+          'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d'
+        }
+      end
+
+      it { should eql 'main' }
+    end
+
+    context 'when GITHUB_SHA is set' do
+      let(:env) do
+        {
+          'GITHUB_SHA' => '2e13512fc230d6f9ebf4923352718e4d'
+        }
+      end
+
+      it { should eql '2e13512fc230d6f9ebf4923352718e4d' }
+    end
+
+    context 'with no ENVs' do
       it { should be nil }
     end
   end
