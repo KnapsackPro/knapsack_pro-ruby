@@ -1,6 +1,12 @@
 # Changelog
 
-### UNRELEASED (patch)
+### UNRELEASED (minor)
+
+* GitHub Actions: Detect either head branch in Pull Requests or short ref name (vs fully-formed ref) in the other cases
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/308
+
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.4.0...v8.5.0
 
 ### 8.4.0
 

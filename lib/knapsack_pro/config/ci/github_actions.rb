@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables
+# https://docs.github.com/en/actions/reference/workflows-and-actions/variables
 module KnapsackPro
   module Config
     module CI
@@ -31,9 +31,11 @@ module KnapsackPro
         end
 
         def branch
-          # GITHUB_REF - The branch or tag ref that triggered the workflow. For example, refs/heads/feature-branch-1.
-          # If neither a branch or tag is available for the event type, the variable will not exist.
-          ENV['GITHUB_REF'] || ENV['GITHUB_SHA']
+          # `on: push` has `GITHUB_HEAD_REF=`
+          head_ref = ENV.fetch('GITHUB_HEAD_REF', '')
+          return head_ref unless head_ref == ''
+
+          ENV['GITHUB_REF_NAME'] || ENV['GITHUB_SHA']
         end
 
         def project_dir
