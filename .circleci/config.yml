@@ -244,49 +244,49 @@ jobs:
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: bin/rails db:setup
-      #- run:
-          #working_directory: ~/rails-app-with-knapsack_pro
-          #command: |
-            #export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
-            #bundle exec rake knapsack_pro:queue:rspec
-      #- run:
-          #working_directory: ~/rails-app-with-knapsack_pro
-          #command: |
-            ## run 0 tests as queue is consumed ||
-            #export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
-            #export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false
-            #bundle exec rake knapsack_pro:queue:rspec
-      #- run:
-          #working_directory: ~/rails-app-with-knapsack_pro
-          #command: |
-            ## retry the same split ||
-            #export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
-            #export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
-            #bundle exec rake knapsack_pro:queue:rspec
-      #- run:
-          #working_directory: ~/rails-app-with-knapsack_pro
-          #command: |
-            ## fallback ||
-            #export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
-            #export KNAPSACK_PRO_MAX_REQUEST_RETRIES=1
-            #bundle exec rake knapsack_pro:queue:rspec
-      #- run:
-          #working_directory: ~/rails-app-with-knapsack_pro
-          #command: |
-            ## split by test examples ||
-            #export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split"
-            #export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
-            #export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
-            #bundle exec rake knapsack_pro:queue:rspec
-      #- run:
-          #working_directory: ~/rails-app-with-knapsack_pro
-          #command: |
-            ## split by test examples above the slow test file threshold ||
-            #export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split-above-slow-test-file-threshold"
-            #export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
-            #export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
-            #export KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD=1
-            #bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # run 0 tests as queue is consumed ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # retry the same split ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # fallback ||
+            export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
+            export KNAPSACK_PRO_MAX_REQUEST_RETRIES=1
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split by test examples ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            bundle exec rake knapsack_pro:queue:rspec
+      - run:
+          working_directory: ~/rails-app-with-knapsack_pro
+          command: |
+            # split by test examples above the slow test file threshold ||
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split-above-slow-test-file-threshold"
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+            export KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD=1
+            bundle exec rake knapsack_pro:queue:rspec
       - run:
           working_directory: ~/rails-app-with-knapsack_pro
           command: |
