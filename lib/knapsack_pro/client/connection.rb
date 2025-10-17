@@ -98,6 +98,7 @@ module KnapsackPro
       def make_request(&block)
         retries ||= 0
 
+        puts "#{action.http_method.to_s.upcase} #{endpoint_url}"
         @http_response = block.call
         @response_body = parse_response_body(http_response.body)
 
@@ -123,6 +124,33 @@ module KnapsackPro
         logger.warn('Request failed due to:')
         logger.warn(e.inspect)
         retries += 1
+
+        puts "@http.open_timeout #{@http.open_timeout}"
+
+        if retries == max_request_retries - 1
+          @http.open_timeout = 20
+          @http.set_debug_output(STDOUT)
+        end
+
+        if retries == max_request_retries
+          puts e.backtrace
+
+          [
+            'dig api.knapsackpro.com',
+            'nslookup api.knapsackpro.com',
+            'curl -v https://api.knapsackpro.com',
+            'nc -vz api.knapsackpro.com 443',
+            'openssl s_client -connect api.knapsackpro.com:443 < /dev/null',
+            'env',
+          ].each do |cmd|
+            puts
+            puts cmd
+            puts "=" * 80
+            puts system(cmd, exception: false)
+            puts
+          end
+        end
+
         if retries < max_request_retries
           wait = retries * REQUEST_RETRY_TIMEBOX
           print_every = 2 # seconds
@@ -158,18 +186,18 @@ module KnapsackPro
 
       def post
         uri = URI.parse(endpoint_url)
-        http = build_http(uri)
+        @http = build_http(uri)
         make_request do
-          http.post(uri.path, request_body, json_headers)
+          @http.post(uri.path, request_body, json_headers)
         end
       end
 
       def get
         uri = URI.parse(endpoint_url)
         uri.query = URI.encode_www_form(request_hash)
-        http = build_http(uri)
+        @http = build_http(uri)
         make_request do
-          http.get(uri, json_headers)
+          @http.get(uri, json_headers)
         end
       end
 
