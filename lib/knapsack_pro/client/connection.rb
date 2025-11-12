@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'resolv'
+
 module KnapsackPro
   module Client
     class Connection
@@ -126,6 +128,7 @@ module KnapsackPro
         retries += 1
 
         puts "@http.open_timeout #{@http.open_timeout}"
+        puts "@http.ipaddr #{@http.ipaddr}"
 
         if retries == max_request_retries - 1
           @http.open_timeout = 20
@@ -162,6 +165,11 @@ module KnapsackPro
             end
             Kernel.sleep(print_every)
           end
+
+          ip = Resolv.getaddress "api.knapsackpro.com"
+          puts "Using #{ip} from Resolv"
+          @http.ipaddr = ip
+
           retry
         else
           response_body
