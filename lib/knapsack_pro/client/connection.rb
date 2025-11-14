@@ -166,9 +166,7 @@ module KnapsackPro
             Kernel.sleep(print_every)
           end
 
-          ip = Resolv.getaddress "api.knapsackpro.com"
-          puts "Using #{ip} from Resolv"
-          @http.ipaddr = ip
+          @http.ipaddr = @ipaddrs.rotate!.first
 
           retry
         else
@@ -181,6 +179,9 @@ module KnapsackPro
         http.use_ssl = (uri.scheme == 'https')
         http.open_timeout = TIMEOUT
         http.read_timeout = TIMEOUT
+        @ipaddrs = Resolv.new({ use_ipv6: false }).getaddresses("api.knapsackpro.com").shuffle
+        puts "Resolv: #{@ipaddrs}"
+        http.ipaddr = @ipaddrs.first
         http
       end
 
