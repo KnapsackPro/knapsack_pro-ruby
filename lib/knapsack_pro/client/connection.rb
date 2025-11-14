@@ -179,7 +179,7 @@ module KnapsackPro
         http.use_ssl = (uri.scheme == 'https')
         http.open_timeout = TIMEOUT
         http.read_timeout = TIMEOUT
-        @ipaddrs = Resolv.new({ use_ipv6: false }).getaddresses("api.knapsackpro.com").shuffle
+        @ipaddrs = Resolv.new(use_ipv6: false).getaddresses("api.knapsackpro.com").shuffle
         puts "Resolv: #{@ipaddrs}"
         http.ipaddr = @ipaddrs.first
         http
