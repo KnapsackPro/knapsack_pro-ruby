@@ -15,7 +15,7 @@ module KnapsackPro
       build_distribution_entity = KnapsackPro::BuildDistributionFetcher.call
       test_files_from_api = build_distribution_entity.test_files
 
-      merged_test_files_from_api = KnapsackPro::TestCaseMergers::BaseMerger.call(adapter_class, test_files_from_api)
+      merged_test_files_from_api = KnapsackPro::TestCaseMergers::RSpecMerger.new(test_files_from_api).call
 
       test_files_existing_on_disk = KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(adapter_class, merged_test_files_from_api)
 

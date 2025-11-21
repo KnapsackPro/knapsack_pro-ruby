@@ -2,44 +2,32 @@
 
 module KnapsackPro
   module TestCaseMergers
-    class RSpecMerger < BaseMerger
+    class RSpecMerger
+      def initialize(test_files)
+        @test_files = test_files
+      end
+
       def call
-        all_test_files_hash = {}
-        merged_test_file_examples_hash = {}
+        file_paths = {}
+        id_paths = {}
 
-        test_files.each do |test_file|
-          path = test_file.fetch('path')
-          test_file_path = extract_test_file_path(path)
+        @test_files.each do |test_file|
+          raw_path = test_file.fetch('path')
+          path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(raw_path)
 
-          if KnapsackPro::Adapters::RSpecAdapter.id_path?(path)
-            merged_test_file_examples_hash[test_file_path] ||= 0.0
-            merged_test_file_examples_hash[test_file_path] += test_file.fetch('time_execution')
+          if KnapsackPro::Adapters::RSpecAdapter.id_path?(raw_path)
+            id_paths[path] ||= 0.0
+            id_paths[path] += test_file.fetch('time_execution')
           else
-            all_test_files_hash[test_file_path] = test_file.fetch('time_execution')
+            file_paths[path] = test_file.fetch('time_execution') # may be nil
           end
         end
 
-        merged_test_file_examples_hash.each do |path, time_execution|
-          all_test_files_hash[path] = [time_execution, all_test_files_hash[path]].compact.max
-        end
-
-        merged_test_files = []
-        all_test_files_hash.each do |path, time_execution|
-          merged_test_files << {
-            'path' => path,
-            'time_execution' => time_execution
-          }
-        end
-        merged_test_files
-      end
-
-      private
-
-      # path - can be:
-      # test file path: spec/a_spec.rb
-      # or test example path: spec/a_spec.rb[1:1]
-      def extract_test_file_path(path)
-        path.gsub(/\.rb\[.+\]$/, '.rb')
+        file_paths
+          .merge(id_paths) { |_, v1, v2| [v1, v2].compact.max }
+          .map do |path, time_execution|
+            { 'path' => path, 'time_execution' => time_execution }
+          end
       end
     end
   end
