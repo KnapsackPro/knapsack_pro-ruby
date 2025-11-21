@@ -27,8 +27,6 @@ describe KnapsackPro::SlowTestFileFinder do
         slow_test_files = double
         expect(KnapsackPro::SlowTestFileDeterminer).to receive(:call).with(test_files_existing_on_disk).and_return(slow_test_files)
 
-        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:save_to_json_report).with(slow_test_files)
-
         expect(subject).to eq slow_test_files
       end
     end

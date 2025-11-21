@@ -48,46 +48,10 @@ describe KnapsackPro::Adapters::BaseAdapter do
     it { expect(subject).to be false }
   end
 
-  describe '.test_file_cases_for' do
-    subject { described_class.test_file_cases_for([]) }
+  describe '.calculate_slow_id_paths' do
+    subject { described_class.calculate_slow_id_paths }
 
     it { expect { subject }.to raise_error NotImplementedError }
-  end
-
-  describe '.slow_test_file?' do
-    let(:adapter_class) { double }
-    let(:slow_test_files) do
-      [
-        { 'path' => 'spec/models/user_spec.rb' },
-        { 'path' => 'spec/controllers/users_spec.rb' },
-      ]
-    end
-
-    subject { described_class.slow_test_file?(adapter_class, test_file_path) }
-
-    before do
-      # reset class variable
-      described_class.instance_variable_set(:@slow_test_file_paths, nil)
-    end
-
-    context 'when slow test file pattern is present' do
-      before do
-        stub_const('ENV', {
-          'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN' => '{spec/models/*_spec.rb}',
-        })
-        expect(KnapsackPro::TestFileFinder).to receive(:slow_test_files_by_pattern).with(adapter_class).and_return(slow_test_files)
-      end
-
-      it_behaves_like '.slow_test_file? method'
-    end
-
-    context 'when slow test file pattern is not present' do
-      before do
-        expect(KnapsackPro::SlowTestFileDeterminer).to receive(:read_from_json_report).and_return(slow_test_files)
-      end
-
-      it_behaves_like '.slow_test_file? method'
-    end
   end
 
   describe '.bind' do
