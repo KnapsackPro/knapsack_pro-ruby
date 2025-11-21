@@ -1,5 +1,6 @@
 require 'knapsack_pro'
 require 'json'
+require 'ostruct'
 
 ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC'] = SecureRandom.hex
 ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = SecureRandom.uuid
@@ -18,7 +19,24 @@ end
 
 module KnapsackProExtensions
   module QueueAllocatorExtension
-    def test_file_paths(can_initialize_queue, executed_test_files)
+    # Succeeds to initialize on the first request
+    def initialize_queue(tests_to_run, batch_uuid)
+      # Ensure the stubbed batches matches the tests Knapsack Pro wants to run
+      raise unless tests_to_run.map { _1["path"] }.sort == SPEC_BATCHES.flatten.sort
+      test__pull
+    end
+
+    # On the first request it fails, but succeeds on the second request
+    def pull_tests_from_queue(can_initialize_queue, batch_uuid)
+      if can_initialize_queue
+        connection = OpenStruct.new(success?: true, api_code: KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED)
+        KnapsackPro::QueueAllocator::Batch.new(connection, {})
+      else
+        test__pull
+      end
+    end
+
+    def test__pull
       @batch_index ||= 0
       last_batch = []
       batches = [*SPEC_BATCHES, last_batch]
@@ -29,7 +47,8 @@ module KnapsackProExtensions
         IntegrationTestLogger.log("Stubbed tests from the Queue API: #{tests.inspect}")
       end
 
-      tests
+      connection = OpenStruct.new(success?: true)
+      KnapsackPro::QueueAllocator::Batch.new(connection, { "test_files" => tests.map { |path| { "path" => path } } })
     end
   end
 
@@ -58,23 +77,7 @@ module KnapsackProExtensions
 end
 
 KnapsackPro::QueueAllocator.prepend(KnapsackProExtensions::QueueAllocatorExtension)
-
-module KnapsackPro
-  class Report
-    class << self
-      prepend KnapsackProExtensions::Report
-    end
-  end
-end
-
-module KnapsackPro
-  module Adapters
-    class RSpecAdapter
-      class << self
-        prepend KnapsackProExtensions::RSpecAdapter
-      end
-    end
-  end
-end
+KnapsackPro::Report.singleton_class.prepend(KnapsackProExtensions::Report)
+KnapsackPro::Adapters::RSpecAdapter.singleton_class.prepend(KnapsackProExtensions::RSpecAdapter)
 
 KnapsackPro::Runners::Queue::RSpecRunner.run(RSPEC_OPTIONS)
