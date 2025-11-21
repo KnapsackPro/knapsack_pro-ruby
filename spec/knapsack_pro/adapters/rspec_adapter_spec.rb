@@ -352,6 +352,43 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
+  describe '.concat_paths' do
+    let(:tests) do
+      [
+        { 'path' => 'spec/a_spec.rb' },
+        { 'path' => 'spec/b_spec.rb' },
+        { 'path' => 'spec/c_spec.rb' },
+        { 'path' => 'spec/slow_1_spec.rb' },
+        { 'path' => 'spec/slow_2_spec.rb' },
+      ]
+    end
+
+    let(:id_tests) do
+      [
+        { 'path' => 'spec/slow_1_spec.rb[1:1]' },
+        { 'path' => 'spec/slow_1_spec.rb[1:2]' },
+        { 'path' => 'spec/slow_2_spec.rb[1:1:1]' },
+        { 'path' => 'spec/slow_2_spec.rb[1:1:2]' },
+        { 'path' => 'spec/slow_2_spec.rb[1:1:3]' },
+      ]
+    end
+
+    subject { described_class.concat_paths(tests, id_tests) }
+
+    it 'concats by replacing tests with the associated id_tests' do
+      expect(subject).to eq([
+        { 'path' => 'spec/a_spec.rb' },
+        { 'path' => 'spec/b_spec.rb' },
+        { 'path' => 'spec/c_spec.rb' },
+        { 'path' => 'spec/slow_1_spec.rb[1:1]' },
+        { 'path' => 'spec/slow_1_spec.rb[1:2]' },
+        { 'path' => 'spec/slow_2_spec.rb[1:1:1]' },
+        { 'path' => 'spec/slow_2_spec.rb[1:1:2]' },
+        { 'path' => 'spec/slow_2_spec.rb[1:1:3]' },
+      ])
+    end
+  end
+
   describe 'private .scheduled_paths' do
     subject { described_class.send(:scheduled_paths) }
 
