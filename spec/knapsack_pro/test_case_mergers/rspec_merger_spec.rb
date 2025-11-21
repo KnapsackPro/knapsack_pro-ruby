@@ -1,6 +1,6 @@
 describe KnapsackPro::TestCaseMergers::RSpecMerger do
   describe '#call' do
-    subject { described_class.new(test_files).call }
+    subject { KnapsackPro::TestCaseMergers::RSpecMerger.new(test_files).call }
 
     context 'when test files are regular file paths (not test example paths)' do
       let(:test_files) do
@@ -73,6 +73,21 @@ describe KnapsackPro::TestCaseMergers::RSpecMerger do
           expect(subject).to eq([
             { 'path' => 'spec/a_spec.rb', 'time_execution' => 1.1 },
             { 'path' => 'spec/test_case_spec.rb', 'time_execution' => 3.0 },
+          ])
+        end
+      end
+
+      context 'with a file path with nil time_execution' do
+        let(:test_files) do
+          [
+            { 'path' => 'spec/test_case_spec.rb', 'time_execution' => nil },
+            { 'path' => 'spec/test_case_spec.rb[1:1]', 'time_execution' => 1.0 },
+          ]
+        end
+
+        it "uses the id path time_execution" do
+          expect(subject).to eq([
+            { 'path' => 'spec/test_case_spec.rb', 'time_execution' => 1.0 },
           ])
         end
       end
