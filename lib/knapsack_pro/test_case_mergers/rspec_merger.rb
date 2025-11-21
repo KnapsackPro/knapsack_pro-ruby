@@ -13,20 +13,20 @@ module KnapsackPro
 
         @test_files.each do |test_file|
           raw_path = test_file.fetch('path')
-          path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(raw_path)
+          file_path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(raw_path)
 
           if KnapsackPro::Adapters::RSpecAdapter.id_path?(raw_path)
-            id_paths[path] ||= 0.0
-            id_paths[path] += test_file.fetch('time_execution')
+            id_paths[file_path] ||= 0.0
+            id_paths[file_path] += test_file.fetch('time_execution')
           else
-            file_paths[path] = test_file.fetch('time_execution') # may be nil
+            file_paths[file_path] = test_file.fetch('time_execution') # may be nil
           end
         end
 
         file_paths
           .merge(id_paths) { |_, v1, v2| [v1, v2].compact.max }
-          .map do |path, time_execution|
-            { 'path' => path, 'time_execution' => time_execution }
+          .map do |file_path, time_execution|
+            { 'path' => file_path, 'time_execution' => time_execution }
           end
       end
     end

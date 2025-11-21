@@ -66,9 +66,9 @@ describe KnapsackPro::TestFileFinder do
     let(:adapter_class) { double }
     let(:test_file_entities_to_run) do
       [
-        { 'path' => 'a_spec.rb' },
-        { 'path' => 'b_spec.rb' },
-        { 'path' => 'not_existing_on_disk_spec.rb' },
+        { 'path' => 'a_spec.rb', 'time_execution' => nil },
+        { 'path' => 'b_spec.rb', 'time_execution' => 2.2 },
+        { 'path' => 'not_existing_on_disk_spec.rb', 'time_execution' => 1.1 },
       ]
     end
     # test files existing on disk
@@ -88,8 +88,8 @@ describe KnapsackPro::TestFileFinder do
       expect(described_class).to receive(:call).with(test_file_pattern).and_return(test_file_entities)
 
       expect(subject).to eq([
-        { 'path' => 'a_spec.rb' },
-        { 'path' => 'b_spec.rb' },
+        { 'path' => 'a_spec.rb', 'time_execution' => nil },
+        { 'path' => 'b_spec.rb', 'time_execution' => 2.2 },
       ])
     end
   end
