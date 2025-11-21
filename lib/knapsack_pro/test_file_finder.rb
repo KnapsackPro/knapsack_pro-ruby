@@ -21,26 +21,13 @@ module KnapsackPro
       slow_test_file_entities & test_file_entities
     end
 
-    # Args:
-    #   test_file_entities_to_run - it can be list of slow test files that you want to run
-    # Return:
-    #   subset of test_file_entities_to_run that are present on disk and it is subset of tests matching pattern KNAPSACK_PRO_TEST_FILE_PATTERN
-    #   Thanks to that we can select only slow test files that are within list of test file pattern we want to run tests for
-    def self.select_test_files_that_can_be_run(adapter_class, test_file_entities_to_run)
+    def self.select_test_files_that_can_be_run(adapter_class, candidate_test_files)
       test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
-      test_file_entities = call(test_file_pattern)
-
-      test_file_paths_existing_on_disk = KnapsackPro::TestFilePresenter.paths(test_file_entities)
-
-      selected_test_files = []
-
-      test_file_entities_to_run.each do |test_file_entity|
-        if test_file_paths_existing_on_disk.include?(test_file_entity.fetch('path'))
-          selected_test_files << test_file_entity
-        end
-      end
-
-      selected_test_files
+      scheduled_test_files = call(test_file_pattern)
+      scheduled_paths = KnapsackPro::TestFilePresenter.paths(scheduled_test_files)
+      candidate_paths = KnapsackPro::TestFilePresenter.paths(candidate_test_files)
+      intersection = scheduled_paths & candidate_paths
+      KnapsackPro::TestFilePresenter.test_files(intersection)
     end
 
     def initialize(test_file_pattern, test_file_list_enabled)
@@ -49,18 +36,16 @@ module KnapsackPro
     end
 
     def call
-      test_file_hashes = []
-      test_files.each do |test_file_path|
-        test_file_hashes << test_file_hash_for(test_file_path)
+      file_paths.map do |file_path|
+        { 'path' => TestFileCleaner.clean(file_path) }
       end
-      test_file_hashes
     end
 
     private
 
     attr_reader :test_file_pattern, :test_file_list_enabled
 
-    def test_files
+    def file_paths
       if test_file_list_enabled && KnapsackPro::Config::Env.test_file_list
         return KnapsackPro::Config::Env.test_file_list.split(',').map(&:strip)
       end
@@ -69,22 +54,16 @@ module KnapsackPro
         return File.read(KnapsackPro::Config::Env.test_file_list_source_file).split(/\n/)
       end
 
-      test_file_paths = Dir.glob(test_file_pattern).uniq
+      included_paths = Dir.glob(test_file_pattern).uniq
 
-      excluded_test_file_paths =
+      excluded_paths =
         if KnapsackPro::Config::Env.test_file_exclude_pattern
           Dir.glob(KnapsackPro::Config::Env.test_file_exclude_pattern).uniq
         else
           []
         end
 
-      (test_file_paths - excluded_test_file_paths).sort
-    end
-
-    def test_file_hash_for(test_file_path)
-      {
-        'path' => TestFileCleaner.clean(test_file_path)
-      }
+      (included_paths - excluded_paths).sort
     end
   end
 end
