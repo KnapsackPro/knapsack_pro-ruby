@@ -86,6 +86,14 @@ module KnapsackPro
         !id.nil?
       end
 
+      def self.concat_paths(tests, id_tests)
+        paths = KnapsackPro::TestFilePresenter.paths(tests)
+        id_paths = KnapsackPro::TestFilePresenter.paths(id_tests)
+        file_paths = id_paths.map { |id_path| parse_file_path(id_path) }
+        acc = paths + id_paths - file_paths
+        KnapsackPro::TestFilePresenter.test_files(acc)
+      end
+
       def self.rails_helper_exists?(test_dir)
         File.exist?("#{test_dir}/rails_helper.rb")
       end
