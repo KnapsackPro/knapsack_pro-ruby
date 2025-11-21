@@ -19,12 +19,6 @@ module KnapsackPro
       end
     end
 
-    def self.save_to_json_report(test_files)
-      KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
-      FileUtils.mkdir_p(report_dir)
-      File.write(report_path, test_files.to_json)
-    end
-
     def self.read_from_json_report
       raise "The report with slow test files has not been generated yet. If you have enabled split by test cases #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES} and you see this error it means that your tests accidentally cleaned up the .knapsack_pro directory. Please do not remove this directory during tests runtime!" unless File.exist?(report_path)
       slow_test_files_json_report = File.read(report_path)

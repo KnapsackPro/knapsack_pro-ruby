@@ -71,24 +71,6 @@ describe KnapsackPro::SlowTestFileDeterminer do
     end
   end
 
-  describe '.save_to_json_report', :clear_tmp do
-    let(:json_report_path) { '.knapsack_pro/slow_test_file_determiner/slow_test_files_node_0.json' }
-    let(:test_files) do
-      [
-        { 'path' => 'a_spec.rb', 'time_execution' => 1.0 },
-        # unique path to ensure we saved on disk a completely new report
-        { 'path' => "#{SecureRandom.hex}_spec.rb", 'time_execution' => 3.4 },
-      ]
-    end
-
-    subject { described_class.save_to_json_report(test_files) }
-
-    it do
-      subject
-      expect(File.read(json_report_path)).to eq(test_files.to_json)
-    end
-  end
-
   describe '.read_from_json_report', :clear_tmp do
     let(:test_files) do
       [
@@ -102,7 +84,9 @@ describe KnapsackPro::SlowTestFileDeterminer do
 
     context 'when json report exists' do
       before do
-        described_class.save_to_json_report(test_files)
+        KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
+        FileUtils.mkdir_p(described_class.send(:report_dir))
+        File.write(described_class.send(:report_path), test_files.to_json)
       end
 
       it do
