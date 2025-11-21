@@ -67,6 +67,14 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN']
         end
 
+        def slow_test_file_threshold
+          ENV.fetch('KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD', nil)&.to_f
+        end
+
+        def slow_test_file_threshold?
+          !!slow_test_file_threshold
+        end
+
         def test_file_exclude_pattern
           ENV['KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN']
         end
@@ -198,14 +206,6 @@ module KnapsackPro
 
         def rspec_test_example_detector_prefix
           ENV.fetch('KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX', 'bundle exec')
-        end
-
-        def slow_test_file_threshold
-          ENV.fetch('KNAPSACK_PRO_SLOW_TEST_FILE_THRESHOLD', nil)&.to_f
-        end
-
-        def slow_test_file_threshold?
-          !!slow_test_file_threshold
         end
 
         def test_suite_token
