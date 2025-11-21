@@ -32,7 +32,7 @@ module KnapsackPro
 
       test_file_cases = adapter_class.test_file_cases_for(slow_test_files)
 
-      fast_files_and_cases_for_slow_tests = KnapsackPro::TestFilesWithTestCasesComposer.call(all_test_files_to_run, slow_test_files, test_file_cases)
+      fast_files_and_cases_for_slow_tests = adapter_class.concat_paths(all_test_files_to_run, test_file_cases)
 
       @result = Result.new(fast_files_and_cases_for_slow_tests, false)
     end
