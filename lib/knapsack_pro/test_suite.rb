@@ -8,8 +8,6 @@ module KnapsackPro
       @adapter_class = adapter_class
     end
 
-    # Detect test files present on the disk that should be run.
-    # This may include fast test files + slow test files split by test cases.
     def calculate_test_files
       return @result if defined?(@result)
 
@@ -17,24 +15,20 @@ module KnapsackPro
         return @result = Result.new(all_test_files_to_run, true)
       end
 
-      slow_test_files, quick =
-        if slow_test_file_pattern
-          [KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class), true]
-        else
-          [KnapsackPro::SlowTestFileFinder.call(adapter_class), false]
-        end
-
-      KnapsackPro.logger.debug("Detected #{slow_test_files.size} slow test files: #{slow_test_files.inspect}")
-
-      if slow_test_files.empty?
-        return @result = Result.new(all_test_files_to_run, quick)
+      unless (slow_id_paths = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new.precalculated_slow_id_paths).nil?
+        KnapsackPro.logger.info('Using precalculated Split by Test Examples.')
+        test_files = adapter_class.concat_paths(all_test_files_to_run, slow_id_paths)
+        return @result = Result.new(test_files, true)
       end
 
-      test_file_cases = adapter_class.test_file_cases_for(slow_test_files)
+      if KnapsackPro::Config::Env.slow_test_file_pattern
+        slow_test_files = KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+        return @result = Result.new(all_test_files_to_run, true) if slow_test_files.empty?
+      end
 
-      fast_files_and_cases_for_slow_tests = adapter_class.concat_paths(all_test_files_to_run, test_file_cases)
-
-      @result = Result.new(fast_files_and_cases_for_slow_tests, false)
+      slow_id_paths = adapter_class.calculate_slow_id_paths
+      test_files = adapter_class.concat_paths(all_test_files_to_run, slow_id_paths)
+      @result = Result.new(test_files, false)
     end
 
     # In Fallback Mode, we always want to run whole test files (not split by
@@ -49,15 +43,7 @@ module KnapsackPro
     attr_reader :adapter_class
 
     def all_test_files_to_run
-      @all_test_files_to_run ||= KnapsackPro::TestFileFinder.call(test_file_pattern)
-    end
-
-    def test_file_pattern
-      TestFilePattern.call(adapter_class)
-    end
-
-    def slow_test_file_pattern
-      KnapsackPro::Config::Env.slow_test_file_pattern
+      @all_test_files_to_run ||= KnapsackPro::TestFileFinder.call(TestFilePattern.call(adapter_class))
     end
   end
 end

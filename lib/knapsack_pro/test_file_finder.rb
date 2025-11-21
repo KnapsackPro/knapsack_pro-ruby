@@ -6,19 +6,13 @@ module KnapsackPro
       new(test_file_pattern, test_file_list_enabled).call
     end
 
-    # finds slow test files on disk based on ENV patterns
-    # returns example: [{ 'path' => 'a_spec.rb' }]
     def self.slow_test_files_by_pattern(adapter_class)
       raise 'KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN is not defined' unless KnapsackPro::Config::Env.slow_test_file_pattern
 
       test_file_pattern = KnapsackPro::TestFilePattern.call(adapter_class)
-      test_file_entities = call(test_file_pattern)
-
-      slow_test_file_entities = call(KnapsackPro::Config::Env.slow_test_file_pattern, test_file_list_enabled: false)
-
-      # slow test files (KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN)
-      # should be subset of test file pattern (KNAPSACK_PRO_TEST_FILE_PATTERN)
-      slow_test_file_entities & test_file_entities
+      scheduled_test_files = call(test_file_pattern)
+      slow_test_files = call(KnapsackPro::Config::Env.slow_test_file_pattern, test_file_list_enabled: false)
+      scheduled_test_files & slow_test_files
     end
 
     def self.select_test_files_that_can_be_run(adapter_class, candidate_test_files)
@@ -26,8 +20,8 @@ module KnapsackPro
       scheduled_test_files = call(test_file_pattern)
       scheduled_paths = KnapsackPro::TestFilePresenter.paths(scheduled_test_files)
       candidate_paths = KnapsackPro::TestFilePresenter.paths(candidate_test_files)
-      intersection = scheduled_paths & candidate_paths
-      KnapsackPro::TestFilePresenter.test_files(intersection)
+      paths = scheduled_paths & candidate_paths
+      candidate_test_files.filter { |test_file| paths.include? test_file.fetch('path') }
     end
 
     def initialize(test_file_pattern, test_file_list_enabled)

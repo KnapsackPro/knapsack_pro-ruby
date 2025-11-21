@@ -44,24 +44,10 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.test_file_cases_for' do
-    let(:slow_test_files) do
-      [
-        '1_spec.rb',
-        '2_spec.rb',
-        '3_spec.rb',
-        '4_spec.rb',
-        '5_spec.rb',
-      ]
-    end
-
-    subject { described_class.test_file_cases_for(slow_test_files) }
+  describe '.calculate_slow_id_paths' do
+    subject { described_class.calculate_slow_id_paths }
 
     before do
-      logger = instance_double(Logger)
-      expect(KnapsackPro).to receive(:logger).and_return(logger)
-      expect(logger).to receive(:info).with("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing 5 slow test files.")
-
       cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector'
       expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
     end
@@ -73,10 +59,10 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         rspec_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector)
         expect(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector).to receive(:new).and_return(rspec_test_example_detector)
 
-        test_file_example_paths = double
-        expect(rspec_test_example_detector).to receive(:test_file_example_paths).and_return(test_file_example_paths)
+        slow_id_paths = double
+        expect(rspec_test_example_detector).to receive(:slow_id_paths!).and_return(slow_id_paths)
 
-        expect(subject).to eq test_file_example_paths
+        expect(subject).to eq slow_id_paths
       end
     end
 
@@ -84,7 +70,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       let(:cmd_result) { false }
 
       it do
-        expect { subject }.to raise_error(RuntimeError, 'Could not generate JSON report for RSpec. Rake task failed when running RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
+        expect { subject }.to raise_error(RuntimeError, 'Failed to calculate Split by Test Examples: RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:rspec_test_example_detector')
       end
     end
   end
@@ -353,7 +339,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
   end
 
   describe '.concat_paths' do
-    let(:tests) do
+    let(:test_files) do
       [
         { 'path' => 'spec/a_spec.rb' },
         { 'path' => 'spec/b_spec.rb' },
@@ -363,19 +349,19 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       ]
     end
 
-    let(:id_tests) do
+    let(:id_paths) do
       [
-        { 'path' => 'spec/slow_1_spec.rb[1:1]' },
-        { 'path' => 'spec/slow_1_spec.rb[1:2]' },
-        { 'path' => 'spec/slow_2_spec.rb[1:1:1]' },
-        { 'path' => 'spec/slow_2_spec.rb[1:1:2]' },
-        { 'path' => 'spec/slow_2_spec.rb[1:1:3]' },
+        'spec/slow_1_spec.rb[1:1]',
+        'spec/slow_1_spec.rb[1:2]',
+        'spec/slow_2_spec.rb[1:1:1]',
+        'spec/slow_2_spec.rb[1:1:2]',
+        'spec/slow_2_spec.rb[1:1:3]',
       ]
     end
 
-    subject { described_class.concat_paths(tests, id_tests) }
+    subject { described_class.concat_paths(test_files, id_paths) }
 
-    it 'concats by replacing tests with the associated id_tests' do
+    it 'concats by replacing test_files with the associated id_paths' do
       expect(subject).to eq([
         { 'path' => 'spec/a_spec.rb' },
         { 'path' => 'spec/b_spec.rb' },
