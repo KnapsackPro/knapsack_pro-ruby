@@ -24,8 +24,6 @@ module KnapsackPro
       new.call
     end
 
-    # get test files and time execution for last build distribution matching:
-    # branch, node_total, node_index
     def call
       connection = KnapsackPro::Client::Connection.new(build_action)
       response = connection.call
@@ -33,11 +31,8 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         BuildDistributionEntity.new(response)
       else
-        KnapsackPro.logger.warn("Slow test files fallback behaviour started. We could not connect with Knapsack Pro API to fetch last CI build test files that are needed to determine slow test files. No test files will be split by test cases. It means all test files will be split by the whole test files as if split by test cases would be disabled #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
-        BuildDistributionEntity.new({
-          'time_execution' => 0.0,
-          'test_files' => [],
-        })
+        KnapsackPro.logger.warn("Failed to fetch slow test files. Split by Test Examples disabled. See: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
+        BuildDistributionEntity.new({ 'time_execution' => 0.0, 'test_files' => [] })
       end
     end
 
@@ -48,12 +43,21 @@ module KnapsackPro
     end
 
     def build_action
-      KnapsackPro::Client::API::V1::BuildDistributions.last(
+      request_hash = {
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
         node_total: KnapsackPro::Config::Env.ci_node_total,
-        node_index: KnapsackPro::Config::Env.ci_node_index,
-      )
+        node_index: KnapsackPro::Config::Env.ci_node_index
+      }
+
+      if ENV['KNAPSACK_PRO_PRECALCULATING_SPLIT_BY_TEST_EXAMPLES']
+        request_hash.merge!(
+          node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
+          none_if_queue_initialized: true
+        )
+      end
+
+      KnapsackPro::Client::API::V1::BuildDistributions.last(request_hash)
     end
   end
 end

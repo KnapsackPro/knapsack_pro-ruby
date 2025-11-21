@@ -20,22 +20,17 @@ module KnapsackPro
         true
       end
 
-      def self.test_file_cases_for(slow_test_files)
-        KnapsackPro.logger.info("Generating RSpec test examples JSON report for slow test files to prepare it to be split by test examples (by individual test cases). Thanks to that, a single slow test file can be split across parallel CI nodes. Analyzing #{slow_test_files.size} slow test files.")
-
-        # generate the RSpec JSON report in a separate process to not pollute the RSpec state
+      def self.calculate_slow_id_paths
+        # Shell out not to pollute the RSpec state
         cmd = [
           'RACK_ENV=test',
           'RAILS_ENV=test',
           KnapsackPro::Config::Env.rspec_test_example_detector_prefix,
           'rake knapsack_pro:rspec_test_example_detector',
         ].join(' ')
-        unless Kernel.system(cmd)
-          raise "Could not generate JSON report for RSpec. Rake task failed when running #{cmd}"
-        end
+        raise "Failed to calculate Split by Test Examples: #{cmd}" unless Kernel.system(cmd)
 
-        # read the JSON report
-        KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new.test_file_example_paths
+        KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new.slow_id_paths!
       end
 
       def self.has_format_option?(cli_args)
@@ -86,9 +81,8 @@ module KnapsackPro
         !id.nil?
       end
 
-      def self.concat_paths(tests, id_tests)
-        paths = KnapsackPro::TestFilePresenter.paths(tests)
-        id_paths = KnapsackPro::TestFilePresenter.paths(id_tests)
+      def self.concat_paths(test_files, id_paths)
+        paths = KnapsackPro::TestFilePresenter.paths(test_files)
         file_paths = id_paths.map { |id_path| parse_file_path(id_path) }
         acc = paths + id_paths - file_paths
         KnapsackPro::TestFilePresenter.test_files(acc)
