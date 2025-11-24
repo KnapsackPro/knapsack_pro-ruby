@@ -47,6 +47,10 @@ module KnapsackPro
         def ci_provider
           "Buildkite"
         end
+
+        def test_queue_id
+          node_build_id # BUILDKITE_BUILD_ID or BUILDKITE_STEP_ID may work too
+        end
       end
     end
   end
