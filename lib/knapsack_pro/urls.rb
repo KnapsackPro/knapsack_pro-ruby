@@ -34,6 +34,8 @@ module KnapsackPro
 
     SPLIT_BY_TEST_EXAMPLES = "#{HOST}/perma/ruby/split-by-test-examples"
 
+    SPLIT_BY_TEST_EXAMPLES_FILE = "#{HOST}/perma/ruby/split-by-test-examples-file"
+
     TEST_UNIT__TEST_FILE_PATH_DETECTION = "#{HOST}/perma/ruby/test-unit-test-file-path-detection"
   end
 end

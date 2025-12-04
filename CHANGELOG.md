@@ -2,6 +2,7 @@
 
 ### UNRELEASED (minor)
 
+* Allow to [precalculate RSpec Split by Test Examples](https://docs.knapsackpro.com/ruby/reference/#knapsack_pro_rspec_split_by_test_examples_file-rspec)
 * GitHub Actions: Detect either head branch in Pull Requests or short ref name (vs fully-formed ref) in the other cases
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/308

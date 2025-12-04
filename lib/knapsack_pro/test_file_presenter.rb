@@ -12,5 +12,9 @@ module KnapsackPro
     def self.paths(test_files)
       test_files.map { |t| t['path'] }
     end
+
+    def self.test_files(paths)
+      paths.map { |path| { 'path' => path } }
+    end
   end
 end

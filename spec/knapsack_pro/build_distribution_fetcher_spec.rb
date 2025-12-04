@@ -15,6 +15,7 @@ describe KnapsackPro::BuildDistributionFetcher do
   describe '#call' do
     let(:ci_node_total) { double }
     let(:ci_node_index) { double }
+    let(:ci_node_build_id) { double }
     let(:repository_adapter) { instance_double(KnapsackPro::RepositoryAdapters::EnvAdapter, commit_hash: double, branch: double) }
 
     subject { described_class.new.call }
@@ -30,7 +31,7 @@ describe KnapsackPro::BuildDistributionFetcher do
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
         node_total: ci_node_total,
-        node_index: ci_node_index,
+        node_index: ci_node_index
       }).and_return(action)
 
       connection = instance_double(KnapsackPro::Client::Connection,

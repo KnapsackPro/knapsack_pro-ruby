@@ -15,24 +15,8 @@ module KnapsackPro
         false
       end
 
-      def self.test_file_cases_for(slow_test_files)
+      def self.calculate_slow_id_paths
         raise NotImplementedError
-      end
-
-      def self.slow_test_file?(adapter_class, test_file_path)
-        @slow_test_file_paths ||=
-          begin
-            slow_test_files =
-              if KnapsackPro::Config::Env.slow_test_file_pattern
-                KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
-              else
-                # get slow test files from JSON file based on data from API
-                KnapsackPro::SlowTestFileDeterminer.read_from_json_report
-              end
-            KnapsackPro::TestFilePresenter.paths(slow_test_files)
-          end
-        clean_path = KnapsackPro::TestFileCleaner.clean(test_file_path)
-        @slow_test_file_paths.include?(clean_path)
       end
 
       def self.bind
