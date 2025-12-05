@@ -17,7 +17,7 @@ module KnapsackPro
       end
 
       def success?
-        return false if !response_body
+        return false unless response_body
 
         status = http_response.code.to_i
         status >= 200 && status < 500
@@ -29,6 +29,7 @@ module KnapsackPro
 
       def api_code
         return unless response_body
+
         response_body['code']
       end
 
@@ -45,20 +46,8 @@ module KnapsackPro
         KnapsackPro.logger
       end
 
-      def endpoint
-        KnapsackPro::Config::Env.endpoint
-      end
-
       def endpoint_url
-        endpoint + action.endpoint_path
-      end
-
-      def request_hash
-        action.request_hash
-      end
-
-      def request_body
-        request_hash.to_json
+        KnapsackPro::Config::Env.endpoint + action.endpoint_path
       end
 
       def json_headers
@@ -68,19 +57,20 @@ module KnapsackPro
           'KNAPSACK-PRO-CLIENT-NAME' => client_name,
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
           'KNAPSACK-PRO-TEST-SUITE-TOKEN' => KnapsackPro::Config::Env.test_suite_token,
-          'KNAPSACK-PRO-CI-PROVIDER' => KnapsackPro::Config::Env.ci_provider,
+          'KNAPSACK-PRO-CI-PROVIDER' => KnapsackPro::Config::Env.ci_provider
         }.compact
       end
 
       def client_name
         [
           'knapsack_pro-ruby',
-          ENV['KNAPSACK_PRO_TEST_RUNNER'],
+          ENV['KNAPSACK_PRO_TEST_RUNNER']
         ].compact.join('/')
       end
 
       def parse_response_body(body)
         return '' if body == '' || body.nil?
+
         JSON.parse(body)
       rescue JSON::ParserError
         nil
@@ -88,11 +78,8 @@ module KnapsackPro
 
       def seed
         return if @response_body.nil? || @response_body == ''
-        response_body['build_distribution_id']
-      end
 
-      def has_seed?
-        !seed.nil?
+        response_body['build_distribution_id']
       end
 
       def make_request(&block)
@@ -105,7 +92,7 @@ module KnapsackPro
 
         logger.debug("#{action.http_method.to_s.upcase} #{endpoint_url}")
         logger.debug("API request UUID: #{request_uuid}")
-        logger.debug("Test suite split seed: #{seed}") if has_seed?
+        logger.debug("Test suite split seed: #{seed}") unless seed.nil?
         logger.debug('API response:')
         if errors?
           logger.error(response_body)
@@ -113,12 +100,11 @@ module KnapsackPro
           logger.debug(response_body)
         end
 
-        if server_error?
-          raise ServerError.new(response_body)
-        end
+        raise ServerError.new(response_body) if server_error?
 
         response_body
-      rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
+      rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError,
+             SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         logger.warn("#{action.http_method.to_s.upcase} #{endpoint_url}")
         logger.warn('Request failed due to:')
         logger.warn(e.inspect)
@@ -127,7 +113,7 @@ module KnapsackPro
           wait = retries * REQUEST_RETRY_TIMEBOX
           print_every = 2 # seconds
           (wait / print_every).ceil.times do |i|
-            if i == 0
+            if i.zero?
               logger.warn("Wait for #{wait}s before retrying the request to Knapsack Pro API.")
             else
               logger.warn("#{wait - i * print_every}s left before retry...")
@@ -160,13 +146,13 @@ module KnapsackPro
         uri = URI.parse(endpoint_url)
         http = build_http(uri)
         make_request do
-          http.post(uri.path, request_body, json_headers)
+          http.post(uri.path, action.request_hash.to_json, json_headers)
         end
       end
 
       def get
         uri = URI.parse(endpoint_url)
-        uri.query = URI.encode_www_form(request_hash)
+        uri.query = URI.encode_www_form(action.request_hash)
         http = build_http(uri)
         make_request do
           http.get(uri, json_headers)
