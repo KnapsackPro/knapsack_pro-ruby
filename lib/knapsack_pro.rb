@@ -29,7 +29,6 @@ require_relative 'knapsack_pro/config/ci/heroku'
 require_relative 'knapsack_pro/config/env'
 require_relative 'knapsack_pro/config/env_generator'
 require_relative 'knapsack_pro/config/temp_files'
-require_relative 'knapsack_pro/logger_wrapper'
 require_relative 'knapsack_pro/client/api/action'
 require_relative 'knapsack_pro/client/api/v1/base'
 require_relative 'knapsack_pro/client/api/v1/build_distributions'
@@ -112,11 +111,13 @@ module KnapsackPro
         default_logger.level = KnapsackPro::Config::Env.log_level
         self.logger = default_logger
       end
+
       @logger
     end
 
     def logger=(logger)
-      @logger = KnapsackPro::LoggerWrapper.new(logger)
+      @logger = logger
+      @logger.progname = 'knapsack_pro'
     end
 
     def reset_logger!

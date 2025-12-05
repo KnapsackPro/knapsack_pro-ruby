@@ -28,9 +28,9 @@ describe KnapsackPro do
             KnapsackPro.logger.warn 'warn'
 
             log = File.read "#{dir}/knapsack_pro_node_1.log"
-            expect(log).not_to include('DEBUG -- : [knapsack_pro] debug')
-            expect(log).to include('INFO -- : [knapsack_pro] info')
-            expect(log).to include('WARN -- : [knapsack_pro] warn')
+            expect(log).not_to include('DEBUG -- knapsack_pro: debug')
+            expect(log).to include('INFO -- knapsack_pro: info')
+            expect(log).to include('WARN -- knapsack_pro: warn')
           end
         end
       end
@@ -45,9 +45,9 @@ describe KnapsackPro do
             KnapsackPro.logger.warn 'warn'
 
             log = File.read "#{dir}/knapsack_pro_node_0.log"
-            expect(log).not_to include('DEBUG -- : [knapsack_pro] debug')
-            expect(log).to include('INFO -- : [knapsack_pro] info')
-            expect(log).to include('WARN -- : [knapsack_pro] warn')
+            expect(log).not_to include('DEBUG -- knapsack_pro: debug')
+            expect(log).to include('INFO -- knapsack_pro: info')
+            expect(log).to include('WARN -- knapsack_pro: warn')
           end
         end
       end
@@ -67,7 +67,7 @@ describe KnapsackPro do
           KnapsackPro.stdout = $stdout
           KnapsackPro.logger.info 'info'
         end
-          .to output(/INFO -- : \[knapsack_pro\] info/)
+          .to output(/INFO -- knapsack_pro: info/)
           .to_stdout
       end
 
@@ -76,7 +76,7 @@ describe KnapsackPro do
           KnapsackPro.stdout = $stdout
           KnapsackPro.logger.warn 'warn'
         end
-          .to output(/WARN -- : \[knapsack_pro\] warn/)
+          .to output(/WARN -- knapsack_pro: warn/)
           .to_stdout
       end
     end
@@ -90,9 +90,9 @@ describe KnapsackPro do
         KnapsackPro.logger.info 'info'
         KnapsackPro.logger.warn 'warn'
 
-        expect(stream.string).to include('DEBUG -- : [knapsack_pro] debug')
-        expect(stream.string).to include('INFO -- : [knapsack_pro] info')
-        expect(stream.string).to include('WARN -- : [knapsack_pro] warn')
+        expect(stream.string).to include('DEBUG -- knapsack_pro: debug')
+        expect(stream.string).to include('INFO -- knapsack_pro: info')
+        expect(stream.string).to include('WARN -- knapsack_pro: warn')
       end
     end
   end

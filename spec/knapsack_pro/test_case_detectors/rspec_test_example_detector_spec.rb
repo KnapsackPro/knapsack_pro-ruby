@@ -148,7 +148,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
           subject_class.new.generate_json_report(rspec_args)
         end
           .to output(/Please only use one of `--force-color` and `--no-color`/).to_stderr
-          .and output(%r{ERROR -- : \[knapsack_pro\] Failed to generate the slow test files report: bundle exec rspec --no-color --force-color --format json --dry-run --out .knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json --default-path spec spec/a_spec.rb}).to_stdout
+          .and output(%r{ERROR -- knapsack_pro: Failed to generate the slow test files report: bundle exec rspec --no-color --force-color --format json --dry-run --out .knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json --default-path spec spec/a_spec.rb}).to_stdout
           .and raise_error(SystemExit) { |error| expect(error.status).to eq 1 }
       end
     end
