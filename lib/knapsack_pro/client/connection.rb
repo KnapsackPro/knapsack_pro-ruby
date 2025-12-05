@@ -109,6 +109,7 @@ module KnapsackPro
         logger.warn('Request failed due to:')
         logger.warn(e.inspect)
         retries += 1
+        @http.set_debug_output(STDOUT) if retries == max_request_retries - 1
         if retries < max_request_retries
           backoff(retries)
           rotate_ip
