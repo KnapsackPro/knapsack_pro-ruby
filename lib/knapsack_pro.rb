@@ -91,6 +91,11 @@ require 'knapsack_pro/railtie' if defined?(Rails::Railtie)
 
 module KnapsackPro
   class << self
+    attr_writer :stdout
+    def stdout
+      @stdout ||= STDOUT
+    end
+
     def root
       File.expand_path('../..', __FILE__)
     end
@@ -103,7 +108,7 @@ module KnapsackPro
       end
 
       unless @logger
-        default_logger = ::Logger.new(STDOUT)
+        default_logger = ::Logger.new(stdout)
         default_logger.level = KnapsackPro::Config::Env.log_level
         self.logger = default_logger
       end
