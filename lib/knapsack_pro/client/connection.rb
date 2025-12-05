@@ -120,6 +120,7 @@ module KnapsackPro
             end
             Kernel.sleep(print_every)
           end
+          rotate_ip
           retry
         else
           response_body
@@ -131,6 +132,17 @@ module KnapsackPro
         @http.use_ssl = (uri.scheme == 'https')
         @http.open_timeout = TIMEOUT
         @http.read_timeout = TIMEOUT
+        rotate_ip
+      end
+
+      def rotate_ip
+        # Ruby v3.4 implements Happy Eyeballs Version 2 (RFC 8305)
+        return if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4')
+
+        require 'resolv'
+        host = URI.parse(KnapsackPro::Config::Env.endpoint).host
+        @ipaddrs ||= Resolv.new(use_ipv6: false).getaddresses(host).shuffle
+        @http.ipaddr = @ipaddrs.rotate!.first
       end
 
       def net_http
