@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'stringio'
+
 module KnapsackPro
   module Client
     class Connection
@@ -10,6 +12,7 @@ module KnapsackPro
 
       def initialize(action)
         @action = action
+        @http_debug_output = StringIO.new
       end
 
       def call
@@ -106,8 +109,8 @@ module KnapsackPro
       rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError,
              SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         retries += 1
-        log_diagnostics(e)
-        @http.set_debug_output(STDOUT) if retries == max_request_retries - 1
+        log_diagnostics(e, retries)
+        @http.set_debug_output(@http_debug_output) if retries == max_request_retries - 1
         if retries < max_request_retries
           backoff(retries)
           rotate_ip
@@ -117,15 +120,42 @@ module KnapsackPro
         end
       end
 
-      def log_diagnostics(error)
+      def log_diagnostics(error, retries)
         message = [
           action.http_method.to_s.upcase,
           endpoint_url,
-          @http.ipaddr # not nil only after @http.ipaddr=
+          @http.ipaddr # value from @http.ipaddr= or nil
         ].compact.join(' ')
         logger.warn(message)
         logger.warn('Request failed due to:')
         logger.warn(error.inspect)
+        return if retries < max_request_retries
+
+        logger.warn('Net::HTTP debug output:')
+        @http_debug_output.string.each_line { |line| logger.warn(line.chomp) }
+
+        require 'open3'
+        error.backtrace.each { |line| logger.warn(line) }
+        [
+          "dig #{URI.parse(KnapsackPro::Config::Env.endpoint).host}",
+          "nslookup #{URI.parse(KnapsackPro::Config::Env.endpoint).host}",
+          "curl -v #{URI.parse(KnapsackPro::Config::Env.endpoint).host}:#{URI.parse(KnapsackPro::Config::Env.endpoint).port}",
+          "nc -vz #{URI.parse(KnapsackPro::Config::Env.endpoint).host} #{URI.parse(KnapsackPro::Config::Env.endpoint).port}",
+          "openssl s_client -connect #{URI.parse(KnapsackPro::Config::Env.endpoint).host}:#{URI.parse(KnapsackPro::Config::Env.endpoint).port} < /dev/null",
+          'env'
+        ].each do |cmd|
+          logger.warn
+          logger.warn(cmd)
+          logger.warn('=' * cmd.size)
+          begin
+            outerr, status = Open3.capture2e(cmd)
+            logger.warn("Exit status: #{status.exitstatus}")
+            outerr.each_line { |line| logger.warn(line.chomp) }
+          rescue Errno::ENOENT => e
+            logger.warn("Error: #{e}")
+          end
+          logger.warn
+        end
       end
 
       def backoff(retries)
