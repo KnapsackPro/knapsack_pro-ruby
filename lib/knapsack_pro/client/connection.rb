@@ -110,20 +110,24 @@ module KnapsackPro
         logger.warn(e.inspect)
         retries += 1
         if retries < max_request_retries
-          wait = retries * REQUEST_RETRY_TIMEBOX
-          print_every = 2 # seconds
-          (wait / print_every).ceil.times do |i|
-            if i.zero?
-              logger.warn("Wait for #{wait}s before retrying the request to Knapsack Pro API.")
-            else
-              logger.warn("#{wait - i * print_every}s left before retry...")
-            end
-            Kernel.sleep(print_every)
-          end
+          backoff(retries)
           rotate_ip
           retry
         else
           response_body
+        end
+      end
+
+      def backoff(retries)
+        wait = retries * REQUEST_RETRY_TIMEBOX
+        print_every = 2 # seconds
+        (wait / print_every).ceil.times do |i|
+          if i.zero?
+            logger.warn("Wait for #{wait}s before retrying the request to the Knapsack Pro API.")
+          else
+            logger.warn("#{wait - i * print_every}s left before retry...")
+          end
+          Kernel.sleep(print_every)
         end
       end
 
