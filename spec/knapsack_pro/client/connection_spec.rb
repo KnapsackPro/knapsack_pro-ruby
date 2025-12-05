@@ -72,7 +72,7 @@ shared_examples 'when retry request' do
 
     before do
       expect(KnapsackPro).to receive(:logger).at_least(1).and_return(logger)
-      allow(http).to receive(:set_debug_output).with(STDOUT)
+      allow(http).to receive(:set_debug_output)
       allow(http).to receive(:ipaddr).and_return(nil)
       allow(logger).to receive(:warn).at_least(:once)
     end

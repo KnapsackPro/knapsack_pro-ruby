@@ -49,8 +49,8 @@ module KnapsackPro
         KnapsackPro.logger
       end
 
-      def endpoint_url
-        KnapsackPro::Config::Env.endpoint + action.endpoint_path
+      def endpoint_uri
+        URI.parse(KnapsackPro::Config::Env.endpoint + action.endpoint_path)
       end
 
       def json_headers
@@ -93,7 +93,7 @@ module KnapsackPro
 
         request_uuid = http_response.header['X-Request-Id'] || 'N/A'
 
-        logger.debug("#{action.http_method.to_s.upcase} #{endpoint_url}")
+        logger.debug("#{action.http_method.to_s.upcase} #{endpoint_uri}")
         logger.debug("API request UUID: #{request_uuid}")
         logger.debug("Test suite split seed: #{seed}") unless seed.nil?
         logger.debug('API response:')
@@ -123,7 +123,7 @@ module KnapsackPro
       def log_diagnostics(error, retries)
         message = [
           action.http_method.to_s.upcase,
-          endpoint_url,
+          endpoint_uri,
           @http.ipaddr # value from @http.ipaddr= or nil
         ].compact.join(' ')
         logger.warn(message)
@@ -137,11 +137,11 @@ module KnapsackPro
         require 'open3'
         error.backtrace.each { |line| logger.warn(line) }
         [
-          "dig #{URI.parse(KnapsackPro::Config::Env.endpoint).host}",
-          "nslookup #{URI.parse(KnapsackPro::Config::Env.endpoint).host}",
-          "curl -v #{URI.parse(KnapsackPro::Config::Env.endpoint).host}:#{URI.parse(KnapsackPro::Config::Env.endpoint).port}",
-          "nc -vz #{URI.parse(KnapsackPro::Config::Env.endpoint).host} #{URI.parse(KnapsackPro::Config::Env.endpoint).port}",
-          "openssl s_client -connect #{URI.parse(KnapsackPro::Config::Env.endpoint).host}:#{URI.parse(KnapsackPro::Config::Env.endpoint).port} < /dev/null",
+          "dig #{endpoint_uri.host}",
+          "nslookup #{endpoint_uri.host}",
+          "curl -v #{endpoint_uri.host}:#{endpoint_uri.port}",
+          "nc -vz #{endpoint_uri.host} #{endpoint_uri.port}",
+          "openssl s_client -connect #{endpoint_uri.host}:#{endpoint_uri.port} < /dev/null",
           'env'
         ].each do |cmd|
           logger.warn
@@ -198,15 +198,14 @@ module KnapsackPro
       end
 
       def post
-        uri = URI.parse(endpoint_url)
-        build_http(uri)
+        build_http(endpoint_uri)
         make_request do
-          @http.post(uri.path, action.request_hash.to_json, json_headers)
+          @http.post(endpoint_uri.path, action.request_hash.to_json, json_headers)
         end
       end
 
       def get
-        uri = URI.parse(endpoint_url)
+        uri = endpoint_uri
         uri.query = URI.encode_www_form(action.request_hash)
         build_http(uri)
         make_request do
