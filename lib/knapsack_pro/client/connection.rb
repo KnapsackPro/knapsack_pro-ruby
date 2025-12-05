@@ -105,10 +105,8 @@ module KnapsackPro
         response_body
       rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError,
              SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
-        logger.warn("#{action.http_method.to_s.upcase} #{endpoint_url}")
-        logger.warn('Request failed due to:')
-        logger.warn(e.inspect)
         retries += 1
+        log_diagnostics(e)
         @http.set_debug_output(STDOUT) if retries == max_request_retries - 1
         if retries < max_request_retries
           backoff(retries)
@@ -117,6 +115,17 @@ module KnapsackPro
         else
           response_body
         end
+      end
+
+      def log_diagnostics(error)
+        message = [
+          action.http_method.to_s.upcase,
+          endpoint_url,
+          @http.ipaddr # not nil only after @http.ipaddr=
+        ].compact.join(' ')
+        logger.warn(message)
+        logger.warn('Request failed due to:')
+        logger.warn(error.inspect)
       end
 
       def backoff(retries)
