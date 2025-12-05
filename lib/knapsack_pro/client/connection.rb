@@ -133,6 +133,7 @@ module KnapsackPro
 
         logger.warn('Net::HTTP debug output:')
         @http_debug_output.string.each_line { |line| logger.warn(line.chomp) }
+        logger.warn
 
         require 'open3'
         error.backtrace.each { |line| logger.warn(line) }
@@ -183,9 +184,16 @@ module KnapsackPro
         # Ruby v3.4 implements Happy Eyeballs Version 2 (RFC 8305)
         return if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4')
 
-        require 'resolv'
-        host = URI.parse(KnapsackPro::Config::Env.endpoint).host
-        @ipaddrs ||= Resolv.new(use_ipv6: false).getaddresses(host).shuffle
+        @ipaddrs ||=
+          begin
+            require 'resolv'
+            resolvers = [
+              Resolv::Hosts.new,
+              Resolv::DNS.new(Resolv::DNS::Config.default_config_hash.merge(use_ipv6: false))
+            ]
+            Resolv.new(resolvers).getaddresses(endpoint_uri.host).shuffle
+          end
+
         @http.ipaddr = @ipaddrs.rotate!.first
       end
 
