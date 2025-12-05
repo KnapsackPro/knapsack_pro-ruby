@@ -127,11 +127,10 @@ module KnapsackPro
       end
 
       def build_http(uri)
-        http = net_http.new(uri.host, uri.port)
-        http.use_ssl = (uri.scheme == 'https')
-        http.open_timeout = TIMEOUT
-        http.read_timeout = TIMEOUT
-        http
+        @http = net_http.new(uri.host, uri.port)
+        @http.use_ssl = (uri.scheme == 'https')
+        @http.open_timeout = TIMEOUT
+        @http.read_timeout = TIMEOUT
       end
 
       def net_http
@@ -144,18 +143,18 @@ module KnapsackPro
 
       def post
         uri = URI.parse(endpoint_url)
-        http = build_http(uri)
+        build_http(uri)
         make_request do
-          http.post(uri.path, action.request_hash.to_json, json_headers)
+          @http.post(uri.path, action.request_hash.to_json, json_headers)
         end
       end
 
       def get
         uri = URI.parse(endpoint_url)
         uri.query = URI.encode_www_form(action.request_hash)
-        http = build_http(uri)
+        build_http(uri)
         make_request do
-          http.get(uri, json_headers)
+          @http.get(uri, json_headers)
         end
       end
 
