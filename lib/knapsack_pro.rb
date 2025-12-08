@@ -29,7 +29,6 @@ require_relative 'knapsack_pro/config/ci/heroku'
 require_relative 'knapsack_pro/config/env'
 require_relative 'knapsack_pro/config/env_generator'
 require_relative 'knapsack_pro/config/temp_files'
-require_relative 'knapsack_pro/logger_wrapper'
 require_relative 'knapsack_pro/client/api/action'
 require_relative 'knapsack_pro/client/api/v1/base'
 require_relative 'knapsack_pro/client/api/v1/build_distributions'
@@ -91,6 +90,11 @@ require 'knapsack_pro/railtie' if defined?(Rails::Railtie)
 
 module KnapsackPro
   class << self
+    attr_writer :stdout
+    def stdout
+      @stdout ||= STDOUT
+    end
+
     def root
       File.expand_path('../..', __FILE__)
     end
@@ -103,15 +107,17 @@ module KnapsackPro
       end
 
       unless @logger
-        default_logger = ::Logger.new(STDOUT)
+        default_logger = ::Logger.new(stdout)
         default_logger.level = KnapsackPro::Config::Env.log_level
         self.logger = default_logger
       end
+
       @logger
     end
 
     def logger=(logger)
-      @logger = KnapsackPro::LoggerWrapper.new(logger)
+      @logger = logger
+      @logger.progname = 'knapsack_pro'
     end
 
     def reset_logger!

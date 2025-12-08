@@ -67,7 +67,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} Fallback - Integration tes
 
       expect(actual.exit_code).to eq 1
 
-      expect(actual.stdout).to include('ERROR -- : [knapsack_pro] Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false')
+      expect(actual.stdout).to include('ERROR -- knapsack_pro: Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false')
       expect(actual.stdout).to include(/Finished in .* seconds \(files took .* seconds to load\)/)
       expect(actual.stdout).to include('0 examples, 0 failures')
     end
@@ -86,7 +86,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} Fallback - Integration tes
 
         expect(actual.exit_code).to eq 123
 
-        expect(actual.stdout).to include('ERROR -- : [knapsack_pro] Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false')
+        expect(actual.stdout).to include('ERROR -- knapsack_pro: Fallback Mode was disabled with KNAPSACK_PRO_FALLBACK_MODE_ENABLED=false. Please restart this CI node to retry tests. Most likely Fallback Mode was disabled due to https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false')
         expect(actual.stdout).to include(/Finished in .* seconds \(files took .* seconds to load\)/)
         expect(actual.stdout).to include('0 examples, 0 failures')
       end
@@ -109,7 +109,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} Fallback - Integration tes
 
       expect(actual.exit_code).to eq 1
 
-      expect(actual.stdout).to include('ERROR -- : [knapsack_pro] knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count')
+      expect(actual.stdout).to include('ERROR -- knapsack_pro: knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count')
       expect(actual.stdout).to include(/Finished in .* seconds \(files took .* seconds to load\)/)
       expect(actual.stdout).to include('0 examples, 0 failures')
     end
@@ -128,7 +128,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} Fallback - Integration tes
 
         expect(actual.exit_code).to eq 123
 
-        expect(actual.stdout).to include('ERROR -- : [knapsack_pro] knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count')
+        expect(actual.stdout).to include('ERROR -- knapsack_pro: knapsack_pro gem could not connect to Knapsack Pro API and the Fallback Mode cannot be used this time. Running tests in Fallback Mode are not allowed for retried parallel CI node to avoid running the wrong set of tests. Please manually retry this parallel job on your CI server then knapsack_pro gem will try to connect to Knapsack Pro API again and will run a correct set of tests for this CI node. Learn more https://knapsackpro.com/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count')
         expect(actual.stdout).to include(/Finished in .* seconds \(files took .* seconds to load\)/)
         expect(actual.stdout).to include('0 examples, 0 failures')
       end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'stringio'
+
 module KnapsackPro
   module Client
     class Connection
@@ -10,6 +12,7 @@ module KnapsackPro
 
       def initialize(action)
         @action = action
+        @http_debug_output = StringIO.new
       end
 
       def call
@@ -17,7 +20,7 @@ module KnapsackPro
       end
 
       def success?
-        return false if !response_body
+        return false unless response_body
 
         status = http_response.code.to_i
         status >= 200 && status < 500
@@ -29,6 +32,7 @@ module KnapsackPro
 
       def api_code
         return unless response_body
+
         response_body['code']
       end
 
@@ -45,20 +49,8 @@ module KnapsackPro
         KnapsackPro.logger
       end
 
-      def endpoint
-        KnapsackPro::Config::Env.endpoint
-      end
-
-      def endpoint_url
-        endpoint + action.endpoint_path
-      end
-
-      def request_hash
-        action.request_hash
-      end
-
-      def request_body
-        request_hash.to_json
+      def endpoint_uri
+        URI.parse(KnapsackPro::Config::Env.endpoint + action.endpoint_path)
       end
 
       def json_headers
@@ -68,19 +60,20 @@ module KnapsackPro
           'KNAPSACK-PRO-CLIENT-NAME' => client_name,
           'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
           'KNAPSACK-PRO-TEST-SUITE-TOKEN' => KnapsackPro::Config::Env.test_suite_token,
-          'KNAPSACK-PRO-CI-PROVIDER' => KnapsackPro::Config::Env.ci_provider,
+          'KNAPSACK-PRO-CI-PROVIDER' => KnapsackPro::Config::Env.ci_provider
         }.compact
       end
 
       def client_name
         [
           'knapsack_pro-ruby',
-          ENV['KNAPSACK_PRO_TEST_RUNNER'],
+          ENV['KNAPSACK_PRO_TEST_RUNNER']
         ].compact.join('/')
       end
 
       def parse_response_body(body)
         return '' if body == '' || body.nil?
+
         JSON.parse(body)
       rescue JSON::ParserError
         nil
@@ -88,11 +81,8 @@ module KnapsackPro
 
       def seed
         return if @response_body.nil? || @response_body == ''
-        response_body['build_distribution_id']
-      end
 
-      def has_seed?
-        !seed.nil?
+        response_body['build_distribution_id']
       end
 
       def make_request(&block)
@@ -103,9 +93,9 @@ module KnapsackPro
 
         request_uuid = http_response.header['X-Request-Id'] || 'N/A'
 
-        logger.debug("#{action.http_method.to_s.upcase} #{endpoint_url}")
+        logger.debug("#{action.http_method.to_s.upcase} #{endpoint_uri}")
         logger.debug("API request UUID: #{request_uuid}")
-        logger.debug("Test suite split seed: #{seed}") if has_seed?
+        logger.debug("Test suite split seed: #{seed}") unless seed.nil?
         logger.debug('API response:')
         if errors?
           logger.error(response_body)
@@ -113,39 +103,95 @@ module KnapsackPro
           logger.debug(response_body)
         end
 
-        if server_error?
-          raise ServerError.new(response_body)
-        end
+        raise ServerError.new(response_body) if server_error?
 
         response_body
-      rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError, SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
-        logger.warn("#{action.http_method.to_s.upcase} #{endpoint_url}")
-        logger.warn('Request failed due to:')
-        logger.warn(e.inspect)
+      rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError,
+             SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
         retries += 1
+        log_diagnostics(e, retries)
+        @http.set_debug_output(@http_debug_output) if retries == max_request_retries - 1
         if retries < max_request_retries
-          wait = retries * REQUEST_RETRY_TIMEBOX
-          print_every = 2 # seconds
-          (wait / print_every).ceil.times do |i|
-            if i == 0
-              logger.warn("Wait for #{wait}s before retrying the request to Knapsack Pro API.")
-            else
-              logger.warn("#{wait - i * print_every}s left before retry...")
-            end
-            Kernel.sleep(print_every)
-          end
+          backoff(retries)
+          rotate_ip
           retry
         else
           response_body
         end
       end
 
+      def log_diagnostics(error, retries)
+        message = [
+          action.http_method.to_s.upcase,
+          endpoint_uri,
+          @http.ipaddr # value from @http.ipaddr= or nil
+        ].compact.join(' ')
+        logger.warn(message)
+        logger.warn('Request failed due to:')
+        logger.warn(error.inspect)
+        return if retries < max_request_retries
+
+        error.backtrace.each { |line| logger.warn(line) }
+        logger.warn('Net::HTTP debug output:')
+        @http_debug_output.string.each_line { |line| logger.warn(line.chomp) }
+
+        require 'open3'
+        [
+          "dig #{endpoint_uri.host}",
+          "nslookup #{endpoint_uri.host}",
+          "curl -v #{endpoint_uri.host}:#{endpoint_uri.port}",
+          "nc -vz #{endpoint_uri.host} #{endpoint_uri.port}",
+          "openssl s_client -connect #{endpoint_uri.host}:#{endpoint_uri.port} < /dev/null",
+          'env'
+        ].each do |cmd|
+          logger.warn(cmd)
+          logger.warn('=' * cmd.size)
+          begin
+            outerr, status = Open3.capture2e(cmd)
+            logger.warn("Exit status: #{status.exitstatus}")
+            outerr.each_line { |line| logger.warn(line.chomp) }
+          rescue Errno::ENOENT => e
+            logger.warn("Error: #{e}")
+          end
+        end
+      end
+
+      def backoff(retries)
+        wait = retries * REQUEST_RETRY_TIMEBOX
+        print_every = 2 # seconds
+        (wait / print_every).ceil.times do |i|
+          if i.zero?
+            logger.warn("Wait for #{wait}s before retrying the request to the Knapsack Pro API.")
+          else
+            logger.warn("#{wait - i * print_every}s left before retry...")
+          end
+          Kernel.sleep(print_every)
+        end
+      end
+
       def build_http(uri)
-        http = net_http.new(uri.host, uri.port)
-        http.use_ssl = (uri.scheme == 'https')
-        http.open_timeout = TIMEOUT
-        http.read_timeout = TIMEOUT
-        http
+        @http = net_http.new(uri.host, uri.port)
+        @http.use_ssl = (uri.scheme == 'https')
+        @http.open_timeout = TIMEOUT
+        @http.read_timeout = TIMEOUT
+        rotate_ip
+      end
+
+      def rotate_ip
+        # Ruby v3.4 implements Happy Eyeballs Version 2 (RFC 8305)
+        return if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4')
+
+        @ipaddrs ||=
+          begin
+            require 'resolv'
+            resolvers = [
+              Resolv::Hosts.new,
+              Resolv::DNS.new(Resolv::DNS::Config.default_config_hash.merge(use_ipv6: false))
+            ]
+            Resolv.new(resolvers).getaddresses(endpoint_uri.host).shuffle
+          end
+
+        @http.ipaddr = @ipaddrs.rotate!.first
       end
 
       def net_http
@@ -157,19 +203,18 @@ module KnapsackPro
       end
 
       def post
-        uri = URI.parse(endpoint_url)
-        http = build_http(uri)
+        build_http(endpoint_uri)
         make_request do
-          http.post(uri.path, request_body, json_headers)
+          @http.post(endpoint_uri.path, action.request_hash.to_json, json_headers)
         end
       end
 
       def get
-        uri = URI.parse(endpoint_url)
-        uri.query = URI.encode_www_form(request_hash)
-        http = build_http(uri)
+        uri = endpoint_uri
+        uri.query = URI.encode_www_form(action.request_hash)
+        build_http(uri)
         make_request do
-          http.get(uri, json_headers)
+          @http.get(uri, json_headers)
         end
       end
 
