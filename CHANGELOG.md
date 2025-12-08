@@ -6,6 +6,9 @@
 * Implement IP rotation for Ruby <3.4 to mitigate connection errors
 * Upon connection failure, log additional diagnostics to gather more context
 * Change log format from `LEVEL -- : [knapsack_pro] ...` to `ERROR -- knapsack_pro: ...`
+
+    https://github.com/KnapsackPro/knapsack_pro-ruby/pull/313
+
 * GitHub Actions: Detect either head branch in Pull Requests or short ref name (vs fully-formed ref) in the other cases
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/308
