@@ -131,12 +131,11 @@ module KnapsackPro
         logger.warn(error.inspect)
         return if retries < max_request_retries
 
+        error.backtrace.each { |line| logger.warn(line) }
         logger.warn('Net::HTTP debug output:')
         @http_debug_output.string.each_line { |line| logger.warn(line.chomp) }
-        logger.warn
 
         require 'open3'
-        error.backtrace.each { |line| logger.warn(line) }
         [
           "dig #{endpoint_uri.host}",
           "nslookup #{endpoint_uri.host}",
@@ -145,7 +144,6 @@ module KnapsackPro
           "openssl s_client -connect #{endpoint_uri.host}:#{endpoint_uri.port} < /dev/null",
           'env'
         ].each do |cmd|
-          logger.warn
           logger.warn(cmd)
           logger.warn('=' * cmd.size)
           begin
@@ -155,7 +153,6 @@ module KnapsackPro
           rescue Errno::ENOENT => e
             logger.warn("Error: #{e}")
           end
-          logger.warn
         end
       end
 
