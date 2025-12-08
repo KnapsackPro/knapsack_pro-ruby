@@ -1,7 +1,11 @@
 # Changelog
 
-### UNRELEASED (minor)
+### UNRELEASED (major)
 
+* __(breaking change)__ Require Ruby >=3.0.0
+* Implement IP rotation for Ruby <3.4 to mitigate connection errors
+* Upon connection failure, log additional diagnostics to gather more context
+* Change log format from `LEVEL -- : [knapsack_pro] ...` to `ERROR -- knapsack_pro: ...`
 * GitHub Actions: Detect either head branch in Pull Requests or short ref name (vs fully-formed ref) in the other cases
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/308
