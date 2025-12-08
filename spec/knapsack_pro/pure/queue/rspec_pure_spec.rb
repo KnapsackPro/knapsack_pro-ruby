@@ -59,7 +59,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
 
     context 'when the order option is not random' do
       let(:args) { ['--order', 'defined'] }
-      let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new(value: nil, used?: false) }
+      let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new(nil, false) }
 
       it 'does not add the seed option to args' do
         expect(subject).to eq ['--order', 'defined']
@@ -71,7 +71,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
         let(:args) { ['--order', random_option_value] }
 
         context 'when the seed is not used' do
-          let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new(value: '123', used?: false) }
+          let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new('123', false) }
 
           it 'does not add the seed option to args' do
             expect(subject).to eq ['--order', random_option_value]
@@ -79,7 +79,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
         end
 
         context 'when the seed is used' do
-          let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new(value: '123', used?: true) }
+          let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new('123', true) }
 
           it 'adds the seed option to args' do
             expect(subject).to eq ['--order', random_option_value, '--seed', '123']
@@ -90,7 +90,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
 
     context 'when the order option is `rand:123`' do
       let(:args) { ['--order', 'rand:123'] }
-      let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new(value: '123', used?: true) }
+      let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new('123', true) }
 
       it 'does not add the seed option to args' do
         expect(subject).to eq ['--order', 'rand:123']
@@ -99,7 +99,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
 
     context 'when the order option is not set in args AND seed is used' do
       let(:args) { ['--format', 'documentation'] }
-      let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new(value: '123', used?: true) }
+      let(:seed) { KnapsackPro::Extensions::RSpecExtension::Seed.new('123', true) }
 
       it 'adds the seed option to args' do
         expect(subject).to eq ['--format', 'documentation', '--seed', '123']

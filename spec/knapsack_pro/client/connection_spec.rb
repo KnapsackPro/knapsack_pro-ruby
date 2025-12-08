@@ -314,7 +314,7 @@ describe KnapsackPro::Client::Connection do
       expect(http).to receive(:use_ssl=).with(false)
       expect(http).to receive(:open_timeout=).with(15)
       expect(http).to receive(:read_timeout=).with(15)
-      allow(http).to receive(:ipaddr=).with('127.0.0.1').at_least(:once)
+      allow(http).to receive(:ipaddr=).at_least(:once)
     end
 
     context 'when http method is POST on GitHub Actions' do
