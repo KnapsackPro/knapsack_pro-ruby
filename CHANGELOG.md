@@ -1,6 +1,6 @@
 # Changelog
 
-### UNRELEASED (major)
+### 9.0.0
 
 * __(breaking change)__ Require Ruby >=3.0.0
 * Implement IP rotation for Ruby <3.4 to mitigate connection errors
@@ -13,7 +13,7 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/308
 
-https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.4.0...v8.5.0
+https://github.com/KnapsackPro/knapsack_pro-ruby/compare/v8.4.0...v9.0.0
 
 ### 8.4.0
 
