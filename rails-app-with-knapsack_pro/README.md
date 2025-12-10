@@ -1,8 +1,5 @@
 # Rails app with knapsack_pro gem
 
-[![Circle CI](https://circleci.com/gh/KnapsackPro/rails-app-with-knapsack_pro.svg)](https://circleci.com/gh/KnapsackPro/rails-app-with-knapsack_pro)
-[![Knapsack Pro Parallel CI builds for RSpec - Queue Mode - GitHub Actions](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20/%20RSpec%20--%20Queue%20Mode%20--%20GitHub%20Actions-%230074ff)](https://knapsackpro.com/dashboard/organizations/54/projects/205/test_suites/815/builds)
-
 This is example Ruby on Rails app with knapsack_pro gem. Knapsack Pro splits tests across CI nodes and makes sure that tests will run comparable time on each node.
 
 __You can read more about [knapsack_pro gem here](https://github.com/KnapsackPro/knapsack_pro-ruby). You will find there info how to set up your test suite and how to do it on your favorite CI server.__
