@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# run it with number at the end to bump commit hash and record unique CI build
+# bin/knapsack_pro_split_by_test_cases_queue_rspec v1
+
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000
+export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a998199d1f294a750c184f4f635851b9
+export KNAPSACK_PRO_CI_NODE_TOTAL=2
+export KNAPSACK_PRO_BRANCH=test-1
+export KNAPSACK_PRO_COMMIT_HASH=commit-${1:-1}
+
+export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+#export KNAPSACK_PRO_LOG_LEVEL=warn
+#export KNAPSACK_PRO_LOG_LEVEL=info
+
+KNAPSACK_PRO_CI_NODE_INDEX=0 \
+  bundle exec rake "knapsack_pro:queue:rspec[-f d]"
+export KNAPSACK_PRO_EXIT_CODE_1=$?
+
+KNAPSACK_PRO_CI_NODE_INDEX=1 \
+  bundle exec rake "knapsack_pro:queue:rspec[-f d]"
+export KNAPSACK_PRO_EXIT_CODE_2=$?
+
+
+if [ "$KNAPSACK_PRO_EXIT_CODE_1" -ne "0" ]; then
+  exit $KNAPSACK_PRO_EXIT_CODE_1
+fi
+
+if [ "$KNAPSACK_PRO_EXIT_CODE_2" -ne "0" ]; then
+  exit $KNAPSACK_PRO_EXIT_CODE_2
+fi

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Test case when the file has syntax error and it cannot be run via RSpec.
+# Test file: spec/controllers/pending_controller_spec.rb
+# To reproduce the case add to the test file at the very beginning:
+#
+# MissingConstantHereToTestDefect
+#
+# We want to test scenario when the test file won't be executed and
+# to the Knapsack Pro API should be send summary of tests timing with the test file.
+# When KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true we expect retried CI build fail.
+# We expect the test file to be run and fail.
+
+# If you want to record a new CI build then set
+# KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false
+# and run this file for both CI nodes.
+# bin/edge_cases/knapsack_pro_queue_rspec_missing_constant 0
+# bin/edge_cases/knapsack_pro_queue_rspec_missing_constant 1
+# Then you can set
+# KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+# and run tests to see if the test file:
+# spec/controllers/pending_controller_spec.rb
+# was executed with error.
+# We expect CI node to return exit code 1 because test fails.
+
+CI_BUILD_ID=$(openssl rand -base64 32)
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=. \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  KNAPSACK_PRO_TEST_FILE_PATTERN=spec/controllers/*_spec.rb \
+  KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+  KNAPSACK_PRO_CI_NODE_BUILD_ID=${3:-$CI_BUILD_ID} \
+  bundle exec rake "knapsack_pro:queue:rspec[-f d]"

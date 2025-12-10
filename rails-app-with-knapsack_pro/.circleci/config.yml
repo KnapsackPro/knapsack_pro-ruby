@@ -1,0 +1,309 @@
+version: 2.1
+
+jobs:
+  build:
+    parallelism: 2
+    working_directory: ~/repo
+    docker:
+      - image: cimg/ruby:3.3.1-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: rails-app-with-knapsack_pro
+          RAILS_ENV: test
+          RACK_ENV: test
+          # You can ignore this ENV variable: it's for internal testing by Knapsack Pro devs.
+          KNAPSACK_PRO_REPO_PATH: ~/knapsack_pro-ruby
+          # You can ignore this ENV variable: it's for internal testing by Knapsack Pro devs.
+          KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+
+          # Tokens are set in CircleCI settings so you can't read them from this file.
+          # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: rspec-token
+          # KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER: cucumber-token
+          # KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST: minitest-token
+          # KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH: spinach-token
+
+      - image: cimg/postgres:14.7
+        environment:
+          POSTGRES_DB: rails-app-with-knapsack_pro_test
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: rails-app-with-knapsack_pro
+    steps:
+      - checkout
+      - run:
+          working_directory: ~/knapsack_pro-ruby
+          command: git clone --depth 1 --branch $CIRCLE_BRANCH --single-branch git@github.com:KnapsackPro/knapsack_pro-ruby.git ./ || git clone --depth 1 git@github.com:KnapsackPro/knapsack_pro-ruby.git ./
+      - run:
+          working_directory: ~/knapsack_pro-ruby
+          command: git branch
+      - run:
+          name: Show last commit
+          working_directory: ~/knapsack_pro-ruby
+          command: git log -n 1 --pretty=oneline
+      - run: mkdir -p tmp/test-reports/rspec/regular_mode/
+      - run: mkdir -p tmp/test-reports/rspec/queue_mode/
+      - run: mkdir -p tmp/test-reports/cucumber/regular_mode/
+      - run: mkdir -p tmp/test-reports/cucumber/queue_mode/
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run: ./cc-test-reporter before-build
+      - restore_cache:
+          keys:
+          - v2-dependencies-bundler-{{ checksum "Gemfile.lock" }}
+          - v2-dependencies-bundler-
+      - run:
+          name: Install ruby dependencies
+          command: |
+            bundle config set --local path './vendor/bundle'
+            bundle install --jobs=4 --retry=3
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v2-dependencies-bundler-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Wait for postgres to be available
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run: bin/rails db:setup
+      - run:
+          name: Database setup for parallel_tests gem
+          command: TEST_ENV_NUMBER=2 bin/rails db:setup
+
+      # (Test --profile formatter to show only once the profile summary.)
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake "knapsack_pro:queue:rspec[--profile]"
+
+      # Queue Mode: retry CI with the same test suite split as the last dynamic queue run.
+      # (Add the RSpec order option to ensure we print a seed in the log output.)
+      - run:
+          command: |
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake "knapsack_pro:queue:rspec[--order random]"
+
+      # Queue Mode: retry CI with the same test suite split as the last dynamic queue run with junit formatter.
+      # (The rspec.xml file will have tests from all intermediate requests to API.)
+      - run:
+          command: |
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RspecJunitFormatter --out tmp/test-reports/rspec/queue_mode/rspec.xml]"
+
+      - run:
+          name: Import JUnit XML reports to Calliope.pro for RSpec in Knapsack Pro Queue Mode
+          command: |
+            report_dir=tmp/test-reports/rspec/queue_mode/
+            if [ -d $report_dir ] && [ `ls $report_dir | wc -l` -gt 0 ]; then
+              curl -X POST \
+                -H "x-api-key:$CALLIOPE_API_KEY" \
+                -H "Content-Type:multipart/form-data" \
+                -F "file[]=@tmp/test-reports/rspec/queue_mode/rspec.xml" \
+                "https://app.calliope.pro/api/v2/profile/3416/import/junit?build=$CIRCLE_BUILD_NUM"
+            else
+              echo "Report files not found. Nothing to import to Calliope.pro"
+            fi
+
+      # Queue Mode and parallel_tests gem
+      - run:
+          command: |
+            export PARALLEL_TESTS_CONCURRENCY=2
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            export KNAPSACK_PRO_CI_NODE_TOTAL=$CIRCLE_NODE_TOTAL
+            export KNAPSACK_PRO_CI_NODE_INDEX=$CIRCLE_NODE_INDEX
+            bundle exec parallel_test -n $PARALLEL_TESTS_CONCURRENCY -e './bin/parallel_tests'
+
+      # Regular Mode with junit formatter
+      - run:
+          command: |
+            export KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=false
+            bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/test-reports/rspec/regular_mode/rspec.xml]"
+
+      # Regular mode With custom test_dir
+      - run:
+          command: |
+            export KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT=false
+            export KNAPSACK_PRO_TEST_DIR=spec
+            export KNAPSACK_PRO_TEST_FILE_PATTERN="{spec,engines/*/spec}/**/*_spec.rb"
+            bundle exec rake knapsack_pro:rspec
+
+      - run:
+          command: |
+            bundle exec rake knapsack_pro:cucumber
+
+      - run:
+          command: |
+            bundle exec rake "knapsack_pro:cucumber[--tag @Test]"
+
+      - run:
+          command: |
+            bundle exec rake "knapsack_pro:cucumber[--format junit --out tmp/test-reports/cucumber/regular_mode]"
+
+      - run:
+          name: Import JUnit XML report to Calliope.pro for Cucumber in Knapsack Pro Regular Mode
+          command: |
+            # ensure there is / at the end of a directory name
+            report_dir=tmp/test-reports/cucumber/regular_mode/
+            if [ -d $report_dir ] && [ `ls $report_dir | wc -l` -gt 0 ]; then
+              echo "All report files:"
+              ls -la $report_dir
+              echo
+
+              for file in $report_dir*
+              do
+                echo
+                echo "Import file: $file"
+                # use double quote in @\"$file\" to import file name with spaces in the name
+                curl -X POST -H "x-api-key:$CALLIOPE_API_KEY" -H "Content-Type:multipart/form-data" -F "file[]=@\"$file\"" "https://app.calliope.pro/api/v2/profile/3418/import/junit?build=$CIRCLE_BUILD_NUM&merge_containers=true"
+                echo
+              done
+            else
+              echo "Report files not found. Nothing to import to Calliope.pro"
+            fi
+
+      # Queue Mode in Cucumber
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=$KNAPSACK_PRO_QUEUE_TEST_SUITE_TOKEN_CUCUMBER
+            bundle exec rake knapsack_pro:queue:cucumber
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER=$KNAPSACK_PRO_QUEUE_TEST_SUITE_TOKEN_CUCUMBER
+            bundle exec rake "knapsack_pro:queue:cucumber[--format junit --out tmp/test-reports/cucumber/queue_mode/]"
+
+      - run:
+          name: Import JUnit XML reports to Calliope.pro for Cucumber in Knapsack Pro Queue Mode
+          command: |
+            # ensure there is / at the end of a directory name
+            report_dir=tmp/test-reports/cucumber/queue_mode/
+            if [ -d $report_dir ] && [ `ls $report_dir | wc -l` -gt 0 ]; then
+              echo "All report files:"
+              ls -la $report_dir
+              echo
+
+              for file in $report_dir*
+              do
+                echo
+                echo "Import file: $file"
+                # use double quote in @\"$file\" to import file name with spaces in the name
+                curl -X POST -H "x-api-key:$CALLIOPE_API_KEY" -H "Content-Type:multipart/form-data" -F "file[]=@\"$file\"" "https://app.calliope.pro/api/v2/profile/3419/import/junit?build=$CIRCLE_BUILD_NUM&merge_containers=true"
+                echo
+              done
+            else
+              echo "Report files not found. Nothing to import to Calliope.pro"
+            fi
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_DIR=test-unit
+            export KNAPSACK_PRO_TEST_FILE_PATTERN="test-unit/**{,/*/**}/*_test.rb"
+            bundle exec rake "knapsack_pro:test_unit[--verbose]"
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_FILE_PATTERN="spinach_features/**{,/*/**}/*.feature"
+            bundle exec rake knapsack_pro:spinach
+
+      # Example of encrypted test files names
+      # KNAPSACK_PRO_SALT is set in CircleCI settings
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true
+            export KNAPSACK_PRO_BRANCH_ENCRYPTED=true
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:rspec
+
+      # Queue Mode with encrypted test files names
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true
+            export KNAPSACK_PRO_BRANCH_ENCRYPTED=true
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:queue:rspec
+
+      # Queue Mode: retry CI with the same test suite split as the last dynamic queue run with encrypted test files names.
+      - run:
+          command: |
+            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+            export KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true
+            export KNAPSACK_PRO_BRANCH_ENCRYPTED=true
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:queue:rspec
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_LOG_LEVEL=warn
+            bundle exec rake knapsack_pro:rspec
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:encrypted_test_file_names[rspec]
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:encrypted_test_file_names[minitest]
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:encrypted_test_file_names[cucumber]
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:encrypted_test_file_names[spinach]
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:encrypted_branch_names
+
+      - run:
+          command: |
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_FOR_ENCRYPTED_QUEUE_TEST_SUITE_TOKEN_RSPEC
+            bundle exec rake knapsack_pro:encrypted_branch_names[feature-branch]
+
+      - run:
+          name: Code Climate Test Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json" --debug
+      - persist_to_workspace:
+          root: coverage
+          paths:
+            - codeclimate.*.json
+      - store_test_results:
+          path: tmp/test-reports
+      - store_artifacts:
+          path: tmp/test-reports
+
+  upload-coverage:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/ruby:3.3.1-browsers
+    environment:
+      CC_TEST_REPORTER_ID: dd360701bd9bd47abdea789fe94c9a9b118bc9f7fbce6d3cdc1dd3709866e460
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          command: |
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
+
+workflows:
+  commit:
+    jobs:
+      - build
+      - upload-coverage:
+          requires:
+             - build

@@ -1,0 +1,15 @@
+<h1>Calculator</h1>
+
+<%= form_tag do %>
+  <%= label_tag(:x, 'X') %>
+  <%= text_field(:calculator, :x, value: @x) %>
+
+  <%= label_tag(:y, 'Y') %>
+  <%= text_field(:calculator, :y, value: @y) %>
+
+  <%= submit_tag('Add') %>
+<% end %>
+
+<% unless @result.nil? %>
+  Result is <%= @result %>
+<% end %>

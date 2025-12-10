@@ -1,0 +1,12 @@
+#!/bin/bash
+
+bin/knapsack_pro_queue_rspec 0 10
+bin/knapsack_pro_queue_rspec 1 10
+bin/knapsack_pro_queue_rspec 2 10
+bin/knapsack_pro_queue_rspec 3 10
+bin/knapsack_pro_queue_rspec 4 10
+bin/knapsack_pro_queue_rspec 5 10
+bin/knapsack_pro_queue_rspec 6 10
+bin/knapsack_pro_queue_rspec 7 10
+bin/knapsack_pro_queue_rspec 8 10
+bin/knapsack_pro_queue_rspec 9 10

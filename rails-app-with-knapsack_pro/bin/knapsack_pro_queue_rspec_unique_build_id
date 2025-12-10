@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Run tests for the same CI build ID
+# bin/knapsack_pro_queue_rspec_unique_build_id 0 2 build-id-2023-04-02-v1
+# bin/knapsack_pro_queue_rspec_unique_build_id 1 2 build-id-2023-04-02-v1
+
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=$3
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=. \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  bundle exec rake "knapsack_pro:queue:rspec[--format d]"

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+CI_BUILD_ID=$(openssl rand -base64 32)
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=3fa64859337f6e56409d49f865d13fd7 \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=. \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  KNAPSACK_PRO_CI_NODE_BUILD_ID=${3:-$CI_BUILD_ID} \
+  bundle exec rake knapsack_pro:rspec
+
+export KNAPSACK_PRO_EXIT_CODE_1=$?
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=. \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  KNAPSACK_PRO_CI_NODE_BUILD_ID=${3:-$CI_BUILD_ID} \
+  bundle exec rake "knapsack_pro:queue:rspec[-f d]"
+
+export KNAPSACK_PRO_EXIT_CODE_2=$?
+
+echo
+echo
+echo "1st exit code"
+echo $KNAPSACK_PRO_EXIT_CODE_1
+echo "2nd exit code"
+echo $KNAPSACK_PRO_EXIT_CODE_2
+
+# process should exit with non zero exit code when one of test suites failed
+if [ "$KNAPSACK_PRO_EXIT_CODE_1" -ne "0" ]; then
+  echo "exit with 1st exit code"
+  exit $KNAPSACK_PRO_EXIT_CODE_1
+fi
+
+if [ "$KNAPSACK_PRO_EXIT_CODE_2" -ne "0" ]; then
+  echo "exit with 2nd exit code"
+  exit $KNAPSACK_PRO_EXIT_CODE_2
+fi

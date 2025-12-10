@@ -1,0 +1,82 @@
+name: Main
+
+on: [push]
+
+jobs:
+  vm-job:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        # tmpfs makes DB faster by using RAM
+        options: >-
+          --mount type=tmpfs,destination=/var/lib/postgresql/data
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # set N number of parallel jobs you want to run tests on
+        ci_node_total: [2]
+        # set N-1 indexes for parallel jobs
+        # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+        ci_node_index: [0, 1]
+
+    env:
+      RAILS_ENV: test
+      # use localhost for the host here because we have specified a container for the job.
+      # If we were running the job on the VM this would be postgres
+      PGHOST: localhost
+      PGUSER: postgres
+      # Rails verifies Time Zone in DB is the same as time zone of the Rails app
+      TZ: "Europe/Warsaw"
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: show list of env variables
+      run: env
+
+    - name: Setup knapsack_pro gem locally
+      run: |
+        # remove refs/heads from branch name like refs/heads/github-actions
+        export BRANCH=$(ruby -e 'print ENV["GITHUB_REF"].to_s.split("/").last')
+        echo $BRANCH
+        cd /home/runner/work/rails-app-with-knapsack_pro/ && (git clone -b $BRANCH --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git || git clone -b master --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git)
+        cd /home/runner/work/rails-app-with-knapsack_pro/knapsack_pro-ruby && git branch
+        cd /home/runner/work/rails-app-with-knapsack_pro/knapsack_pro-ruby && git log -n 1 | more
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        # Not needed with a .ruby-version file
+        ruby-version: 3.3.1
+        # runs 'bundle install' and caches installed gems automatically
+        bundler-cache: true
+
+    - name: Check Ruby version
+      run: |
+        ruby -v
+
+    - name: create DB
+      run: |
+        bin/rails db:prepare
+
+    - name: Run tests
+      env:
+        KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+        KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+        KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+      run: |
+        bundle exec rake knapsack_pro:queue:rspec

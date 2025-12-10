@@ -1,0 +1,95 @@
+# .codefresh/codefresh.parallel.yml
+# Use type: parallel feature
+# https://codefresh.io/docs/docs/codefresh-yaml/advanced-workflows/
+version: "1.0"
+
+stages:
+  - "clone"
+  - "build"
+  - "tests"
+
+indicators:
+  - common_config: &common_config
+      image: '${{BuildTestDockerImage}}'
+      working_directory: /src
+      fail_fast: false
+      environment:
+        - RAILS_ENV=test
+        # remember to set proper amount of parallel nodes here
+        - KNAPSACK_PRO_CI_NODE_TOTAL=2
+        - PGHOST=postgres
+        - PGUSER=rails-app-with-knapsack_pro
+        - PGPASSWORD=password
+      services:
+        composition:
+          postgres:
+            image: postgres:latest
+            environment:
+              - POSTGRES_DB=rails-app-with-knapsack_pro_test
+              - POSTGRES_PASSWORD=password
+              - POSTGRES_USER=rails-app-with-knapsack_pro
+            ports:
+              - 5432
+
+steps:
+  main_clone:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_BRANCH}}"
+    stage: "clone"
+  BuildTestDockerImage:
+    title: Building Test Docker image
+    type: build
+    arguments:
+      image_name: '${{CF_ACCOUNT}}/${{CF_REPO_NAME}}-test'
+      tag: '${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
+      dockerfile: Test.Dockerfile
+    stage: "build"
+
+  run_parallel_tests:
+    type: parallel
+    title: "Run tests with Knapsack Pro"
+    stage: "tests"
+    steps:
+      # remember to use proper index 0
+      node_0:
+        <<: *common_config
+        commands:
+          # start - use knapsack_pro from source code
+          - mkdir -p /root/gems
+          - cd /root/gems
+          - git clone -b $CF_BRANCH --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git || git clone -b master --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git
+          - cd /root/gems/knapsack_pro-ruby
+          - git branch
+          - git log -n 1 | more
+          - cd /src
+          - export KNAPSACK_PRO_REPO_PATH=/root/gems/knapsack_pro-ruby
+          - bundle install
+          # end - use knapsack_pro from source code
+
+          # remember to use proper index 0
+          - export KNAPSACK_PRO_CI_NODE_INDEX=0
+          - bin/rails db:prepare
+          - bundle exec rake knapsack_pro:queue:rspec
+
+      # remember to use proper index 1
+      node_1:
+        <<: *common_config
+        commands:
+          # start - use knapsack_pro from source code
+          - mkdir -p /root/gems
+          - cd /root/gems
+          - git clone -b $CF_BRANCH --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git || git clone -b master --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git
+          - cd /root/gems/knapsack_pro-ruby
+          - git branch
+          - git log -n 1 | more
+          - cd /src
+          - export KNAPSACK_PRO_REPO_PATH=/root/gems/knapsack_pro-ruby
+          - bundle install
+          # end - use knapsack_pro from source code
+
+          # remember to use proper index 1
+          - export KNAPSACK_PRO_CI_NODE_INDEX=1
+          - bin/rails db:prepare
+          - bundle exec rake knapsack_pro:queue:rspec

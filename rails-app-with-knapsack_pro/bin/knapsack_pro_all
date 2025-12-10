@@ -1,0 +1,2 @@
+#!/bin/bash
+time ruby bin/knapsack_pro_all.rb

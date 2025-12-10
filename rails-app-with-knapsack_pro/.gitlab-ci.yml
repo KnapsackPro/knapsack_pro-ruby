@@ -1,0 +1,43 @@
+image: "ruby:3.3.1"
+
+services:
+  - postgres
+
+variables:
+  RAILS_ENV: test
+  POSTGRES_DB: rails-app-with-knapsack_pro_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: "password"
+  DATABASE_URL: "postgresql://postgres:password@postgres:5432/rails-app-with-knapsack_pro_test"
+  # https://github.com/DatabaseCleaner/database_cleaner#safeguards
+  DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: "true"
+  KNAPSACK_PRO_REPO_PATH: ~/gems/knapsack_pro-ruby
+  KNAPSACK_PRO_GIT_REPO: https://github.com/KnapsackPro/knapsack_pro-ruby.git
+  KNAPSACK_PRO_ENDPOINT: https://api-staging.knapsackpro.com
+  # KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: it is set in Settings -> CI/CD -> Variables (Expand) as masked variable
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq nodejs
+  - ruby -v
+  - which ruby
+
+  # clone knapsack_pro gem repo
+  - mkdir ~/gems
+  - cd ~/gems && (git clone -b $CI_COMMIT_REF_NAME --single-branch $KNAPSACK_PRO_GIT_REPO || git clone -b master --single-branch $KNAPSACK_PRO_GIT_REPO)
+  - cd ~/gems/knapsack_pro-ruby && git branch
+  - cd ~/gems/knapsack_pro-ruby && git log -n 1 | more
+
+  - cd $CI_PROJECT_DIR
+
+  - gem install bundler --no-document
+  - bundle install --jobs $(nproc)  "${FLAGS[@]}"
+
+  - env
+
+  # Database setup
+  - bin/rails db:setup
+
+rspec:
+  parallel: 2
+  script:
+    - bundle exec rake knapsack_pro:queue:rspec

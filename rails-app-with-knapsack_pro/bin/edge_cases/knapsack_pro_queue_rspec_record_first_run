@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# This file uses separate KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
+# to don't pollute master and other default branches
+# so thanks to that we can test a new queue generated on API side
+# for test files with not recorded time execution
+#
+# This file can be used to test how to optimise the first run of Queue Mode
+#
+# To run tests on the same commit for all nodes do:
+# CI node 0 for commit-v1
+# bin/edge_cases/knapsack_pro_queue_rspec_record_first_run 0 2 commit-v1 ci-build-1
+# CI node 1 for commit-v2
+# bin/edge_cases/knapsack_pro_queue_rspec_record_first_run 1 2 commit-v1 ci-build-1
+
+RANDOM_CI_BUILD_ID=$(openssl rand -base64 32)
+CI_BUILD_ID=${4:-$RANDOM_CI_BUILD_ID}
+COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
+BRANCH_NAME=fake-branch
+
+# you can set a const fake data if you need to test running tests on 2 CI nodes for the same commit/branch
+#COMMIT_HASH=57dccc53cb2ee921692ad1d3df971674
+
+#export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
+
+#export EXTRA_TEST_FILES_DELAY=10 # seconds
+#export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+#export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/**{,/*/**}/*_spec.rb"
+
+# In order to mock the Queue API responses, you need to change source code of the knapsack_pro gem:
+# https://github.com/KnapsackPro/rails-app-with-knapsack_pro/pull/56/
+# uncomment all 3 export lines to test mocked API response
+export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/features/calculator_spec.rb" # it must match test cases returned from Queue API
+export MOCK_QUEUE_API_RESPONSE=true
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=fec3c641a3c4d2e720fe1b6d9dd780bc \
+  KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
+  KNAPSACK_PRO_COMMIT_HASH=${3:-$COMMIT_HASH} \
+  KNAPSACK_PRO_BRANCH=$BRANCH_NAME \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  bundle exec rake "knapsack_pro:queue:rspec[--format d]"
+
+# Example options you can pass to RSpec:
+#bundle exec rake "knapsack_pro:queue:rspec[--format d --tag my_tag]"
+#bundle exec rake "knapsack_pro:queue:rspec[--format d --tag my_skip_tag]"
+#bundle exec rake "knapsack_pro:queue:rspec[--format d --profile]"
+#bundle exec rake "knapsack_pro:queue:rspec[--format d --order random]"
+#
+# --failure-exit-code CODE - Override the exit code used when there are failing specs.
+#bundle exec rake "knapsack_pro:queue:rspec[--format d --failure-exit-code 2]"
+#
+# --error-exit-code CODE - Override the exit code used when there are errors loading or running specs outside of examples.
+#bundle exec rake "knapsack_pro:queue:rspec[--format d --error-exit-code 3]"
+
+
+# Uncomment the following to run 2nd CI node to ensure the CI build is finished in the user dashboard
+#KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  #KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=fec3c641a3c4d2e720fe1b6d9dd780bc \
+  #KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
+  #KNAPSACK_PRO_COMMIT_HASH=${3:-$COMMIT_HASH} \
+  #KNAPSACK_PRO_BRANCH=$BRANCH_NAME \
+  #KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  #KNAPSACK_PRO_CI_NODE_INDEX=1 \
+  #bundle exec rake "knapsack_pro:queue:rspec[--format d]"

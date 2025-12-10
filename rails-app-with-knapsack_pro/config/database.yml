@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  pool: 5
+
+development:
+  <<: *default
+  database: rails-app-with-knapsack_pro_development
+
+test: &test
+  <<: *default
+  database: rails-app-with-knapsack_pro_test<%= ENV['TEST_ENV_NUMBER'] %>
+
+production:
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
+
+cucumber:
+  <<: *test

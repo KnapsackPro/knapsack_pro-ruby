@@ -1,0 +1,17 @@
+#!/bin/bash
+
+CI_BUILD_ID=$(openssl rand -base64 32)
+
+# 3rd argument is added as number to branch name
+# you can bump it to test a new recorded CI build for a new branch
+# bin/knapsack_pro_fixed_queue_split_minitest_custom_branch_commit 0 2 1
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_MINITEST=a1d15e9837f9a4b8ec8eb5477048607a \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
+  KNAPSACK_PRO_BRANCH=test-fixed-queue-split-v${3:-1} \
+  KNAPSACK_PRO_COMMIT_HASH=test-commit \
+  KNAPSACK_PRO_CI_NODE_BUILD_ID=${4:-$CI_BUILD_ID} \
+  bundle exec rake knapsack_pro:queue:minitest[--verbose]

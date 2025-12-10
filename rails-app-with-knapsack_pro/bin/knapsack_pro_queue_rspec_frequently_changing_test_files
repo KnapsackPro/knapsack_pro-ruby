@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# The purpose of this script is to test that a frequently changing list of test files in Queue Mode
+# can be ordered by ever recorded test files' time execution.
+
+export KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000
+export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf
+export KNAPSACK_PRO_CI_NODE_TOTAL=2
+
+# generate a unique commit hash and branch
+export KNAPSACK_PRO_COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
+export KNAPSACK_PRO_BRANCH=frequently-changing-test-files-$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
+
+echo
+echo
+echo "=== Step 1 ====================================================="
+echo
+echo
+
+# Run all test files in the test suite.
+# The commands below should record time execution for all test files.
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+
+KNAPSACK_PRO_CI_NODE_INDEX=0 \
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+KNAPSACK_PRO_CI_NODE_INDEX=1 \
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+
+echo
+echo
+echo "=== Step 2 ====================================================="
+echo
+echo
+
+# Run only controllers' specs.
+# Expect Queue API to return test files ordered by time execution recorded in the previous CI build run.
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_TEST_FILE_PATTERN="spec/controllers/**{,/*/**}/*_spec.rb"
+
+KNAPSACK_PRO_CI_NODE_INDEX=0 \
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+KNAPSACK_PRO_CI_NODE_INDEX=1 \
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+echo
+echo
+echo "=== Step 3 ====================================================="
+echo
+echo
+
+# Run services specs only.
+# In the previous CI build, we recorded time execution for controllers' specs only.
+# Despite that, we expect the Queue API will return services specs ordered based on ever recorded
+# services specs' time execution.
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_TEST_FILE_PATTERN="spec/services/**{,/*/**}/*_spec.rb"
+
+KNAPSACK_PRO_CI_NODE_INDEX=0 \
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
+
+KNAPSACK_PRO_CI_NODE_INDEX=1 \
+  bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"

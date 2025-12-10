@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# We expect the first request to API won't read the test suite split from the API cache
+# because we use a random branch name.
+# The test suite split is not cached yet for this branch.
+#
+#   bin/knapsack_pro_rspec_cache_read_attempt
+#
+# If you use a constant branch name as an option and record tests for it:
+#
+#   bin/knapsack_pro_rspec_cache_read_attempt 0 2 branch-v1
+#
+# and you run the command again or for another parallel node
+# then it should read the test suite split from the API cache
+#
+#   bin/knapsack_pro_rspec_cache_read_attempt 1 2 branch-v1
+
+RANDOM_VALUE=$(openssl rand -base64 32)
+
+export KNAPSACK_PRO_BRANCH=${3:-$RANDOM_VALUE}
+export KNAPSACK_PRO_COMMIT_HASH=commit-attempt-to-read-from-cache
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=ci-build-id-1
+
+#export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=3fa64859337f6e56409d49f865d13fd7 \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  bundle exec rake knapsack_pro:rspec

@@ -70,21 +70,11 @@ RSpec:
 bundle exec rspec
 ```
 
-Scripted tests can be found in the [Rails App With Knapsack Pro repository](https://github.com/KnapsackPro/rails-app-with-knapsack_pro/blob/master/bin/knapsack_pro_all.rb).
-
 ### Publishing
 
 1. Move the changes listed in the `UNRELEASED` section of the `CHANGELOG.md` to the proper version
-
-2. Update the gem version in `lib/knapsack_pro/version.rb`
-
-3. `git commit -am "Bump version x.x.x"`
-
-4. Build, tag, push, release: `bundle exec rake release`
-
-5. Update the latest available gem version in `TestSuiteClientVersionChecker` for the Knapsack Pro API repository.
-
-6. Update the `knapsack_pro` gem version in:
-
-- [Rails App With Knapsack Pro repository](https://github.com/KnapsackPro/rails-app-with-knapsack_pro)
-- Knapsack Pro API internal repository
+1. Update the gem version in `lib/knapsack_pro/version.rb`
+1. `git commit -am "Bump version x.x.x"`
+1. Build, tag, push, release: `bundle exec rake release`
+1. Update the latest available gem version in `TestSuiteClientVersionChecker` for the Knapsack Pro API repository.
+1. Update the `knapsack_pro` gem version in the Knapsack Pro API repository

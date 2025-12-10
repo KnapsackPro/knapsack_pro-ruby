@@ -1,0 +1,68 @@
+# .codefresh/codefresh.yml
+version: "1.0"
+
+stages:
+  - "clone"
+  - "build"
+  - "tests"
+
+steps:
+  main_clone:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+    revision: "${{CF_BRANCH}}"
+    stage: "clone"
+  BuildTestDockerImage:
+    title: Building Test Docker image
+    type: build
+    arguments:
+      image_name: "knapsackpro/${{CF_REPO_NAME}}-codefresh"
+      tag: '${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}'
+      dockerfile: Test.Dockerfile
+    stage: "build"
+    registry: knapsackpro
+
+  run_tests:
+    stage: "tests"
+    image: '${{BuildTestDockerImage}}'
+    working_directory: /src
+    fail_fast: false
+    environment:
+      - RAILS_ENV=test
+      # set how many parallel jobs you want to run
+      - KNAPSACK_PRO_CI_NODE_TOTAL=2
+      - PGHOST=postgres
+      - PGUSER=rails-app-with-knapsack_pro
+      - PGPASSWORD=password
+    services:
+      composition:
+        postgres:
+          image: postgres:latest
+          environment:
+            - POSTGRES_DB=rails-app-with-knapsack_pro_test
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_USER=rails-app-with-knapsack_pro
+          ports:
+            - 5432
+    matrix:
+      environment:
+        # ensure you listed N-1 indexes here
+        # where N is KNAPSACK_PRO_CI_NODE_TOTAL
+        - KNAPSACK_PRO_CI_NODE_INDEX=0
+        - KNAPSACK_PRO_CI_NODE_INDEX=1
+    commands:
+      # start - use knapsack_pro from source code
+      - mkdir -p /root/gems
+      - cd /root/gems
+      - git clone -b $CF_BRANCH --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git || git clone -b master --single-branch https://github.com/KnapsackPro/knapsack_pro-ruby.git
+      - cd /root/gems/knapsack_pro-ruby
+      - git branch
+      - git log -n 1 | more
+      - cd /src
+      - export KNAPSACK_PRO_REPO_PATH=/root/gems/knapsack_pro-ruby
+      - bundle install
+      # end - use knapsack_pro from source code
+
+      - bin/rails db:prepare
+      - bundle exec rake knapsack_pro:queue:rspec

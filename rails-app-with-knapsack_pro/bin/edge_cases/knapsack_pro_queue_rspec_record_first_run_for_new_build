@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# This file uses separate KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC
+# to don't pollute master and other default branches
+# so thanks to that we can test a new queue generated on API side
+# for test files with not recorded time execution
+#
+# This file can be used to test how to optimise the first run of Queue Mode
+# You must set a unique CI build ID, commit hash or branch.
+
+CI_BUILD_ID=2023-08-28-v5
+COMMIT_HASH=abc1234
+BRANCH_NAME=redis-test
+
+export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=false
+
+KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
+  KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=fec3c641a3c4d2e720fe1b6d9dd780bc \
+  KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
+  KNAPSACK_PRO_COMMIT_HASH=$COMMIT_HASH \
+  KNAPSACK_PRO_BRANCH=$BRANCH_NAME \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  bundle exec rake knapsack_pro:queue:rspec

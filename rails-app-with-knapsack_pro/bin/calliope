@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# script for testing import of multiple reports to Calliope.pro
+
+# do not commit Calliope API key here because it is sharable across projects
+#export CALLIOPE_API_KEY=xyz
+export CI_BUILD_ID=1
+
+# ensure there is / at the end of a directory name
+#report_dir=tmp/test-reports/cucumber/fake_dir/ # fake directory
+#report_dir=tmp/test-reports/cucumber/test/ # empty directory
+report_dir=tmp/test-reports/cucumber/regular_mode/ # directory with reports
+if [ -d $report_dir ] && [ `ls $report_dir | wc -l` -gt 0 ]; then
+  echo "All report files:"
+  ls -la $report_dir
+  echo
+
+  # $report_dir must end with / so the * will look for files inside of the directory
+  # example of full pattern: dir/dir2/*
+  for file in $report_dir*
+  do
+    echo
+    echo "Import file: $file"
+    # use double quote in @\"$file\" to import file name with spaces in the name
+    curl -X POST -H "x-api-key:$CALLIOPE_API_KEY" -H "Content-Type:multipart/form-data" -F "file[]=@\"$file\"" "https://app.calliope.pro/api/v2/profile/3418/import/junit?build=$CI_BUILD_ID&merge_containers=true"
+    echo
+  done
+else
+  echo "Report files not found. Nothing to import to Calliope.pro"
+fi

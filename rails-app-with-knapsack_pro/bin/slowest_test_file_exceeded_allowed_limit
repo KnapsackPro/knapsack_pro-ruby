@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -f tmp/slowest_test_file_exceeded_allowed_limit.txt ]; then
+  cat tmp/slowest_test_file_exceeded_allowed_limit.txt
+  echo
+  echo "Too slow test file found. Fail CI build!"
+  exit 1
+fi

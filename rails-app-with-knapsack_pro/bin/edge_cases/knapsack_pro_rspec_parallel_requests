@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# First CI node (index 0).
+# The first argument is a timestamp. It must be unique to record a unique CI build.
+# The last argument is the node index.
+# bin/edge_cases/knapsack_pro_rspec_parallel_requests 2022-11-13-v1 0
+# If the CI build is run the first time for the unique commit (commit has a timestamp), then
+# the 1st request to API will create a semaphore on the API side.
+# You can add 5s sleep in development on the API side (build_distributions#subset) before saving nodes to cache
+# to simulate a scenario that someone is initializing a test suite split for the large test suite (which can be slow).
+
+# Second CI node (index 1).
+# bin/edge_cases/knapsack_pro_rspec_parallel_requests 2022-11-13-v1 1
+# Ensure the timestamp matches the first CI node.
+# The request should fail due to 1st command still initializing the test suite split on the API side.
+# This is expected. The request should be retried and get tests assigned to node index 1.
+
+export KNAPSACK_PRO_CI_NODE_BUILD_ID=ci-build-id-${1:-1}
+export KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000
+export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf
+export KNAPSACK_PRO_CI_NODE_TOTAL=2
+export KNAPSACK_PRO_BRANCH=test-1
+export KNAPSACK_PRO_COMMIT_HASH=commit-${1:-1}
+
+export KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/controllers/articles_controller_spec.rb,spec/timecop_spec.rb}"
+
+KNAPSACK_PRO_CI_NODE_INDEX=${2:-0} \
+  bundle exec rake "knapsack_pro:rspec[-f d]"

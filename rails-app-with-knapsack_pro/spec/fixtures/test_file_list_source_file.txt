@@ -1,0 +1,5 @@
+spec/bar_spec.rb
+spec/time_helpers_spec.rb:10
+spec/time_helpers_spec.rb:38
+spec/controllers/articles_controller_spec.rb
+
