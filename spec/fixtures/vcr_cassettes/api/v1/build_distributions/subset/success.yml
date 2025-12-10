@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://api.knapsackpro.test:3000/v1/build_distributions/subset
+    uri: http://api.knapsackpro.localhost:3000/v1/build_distributions/subset
     body:
       encoding: UTF-8
       string: '{"fixed_test_suite_split":true,"cache_read_attempt":true,"commit_hash":"abcdefg","branch":"main","node_total":"2","node_index":"1","ci_build_id":"missing-build-id"}'

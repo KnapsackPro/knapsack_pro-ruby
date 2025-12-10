@@ -5,7 +5,7 @@ shared_examples 'when request got response from API' do
 
     before do
       expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
       expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
       expect(logger).to receive(:debug).with('API response:')
     end
@@ -27,7 +27,7 @@ shared_examples 'when request got response from API' do
 
     before do
       expect(KnapsackPro).to receive(:logger).exactly(5).and_return(logger)
-      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
       expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
       expect(logger).to receive(:debug).with("Test suite split seed: seed-uuid")
       expect(logger).to receive(:debug).with('API response:')
@@ -50,7 +50,7 @@ shared_examples 'when request got response from API' do
 
     before do
       expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
       expect(logger).to receive(:debug).with('API request UUID: fake-uuid')
       expect(logger).to receive(:debug).with('API response:')
     end
@@ -78,7 +78,7 @@ shared_examples 'when retry request' do
     end
 
     it do
-      expect(logger).to receive(:debug).exactly(3).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).exactly(3).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
       expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
       expect(logger).to receive(:debug).exactly(3).with('API response:')
 
@@ -87,7 +87,7 @@ shared_examples 'when retry request' do
       expect(logger).to receive(:error).exactly(3).with(parsed_response)
 
       server_error = described_class::ServerError.new(parsed_response)
-      expect(logger).to receive(:warn).exactly(3).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+      expect(logger).to receive(:warn).exactly(3).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
       expect(logger).to receive(:warn).exactly(3).with('Request failed due to:')
       expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
 
@@ -117,7 +117,7 @@ shared_examples 'when retry request' do
       end
 
       it do
-        expect(logger).to receive(:debug).exactly(4).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:debug).exactly(4).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
         expect(logger).to receive(:debug).exactly(4).with('API request UUID: fake-uuid')
         expect(logger).to receive(:debug).exactly(4).with('API response:')
 
@@ -126,7 +126,7 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:error).exactly(4).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
-        expect(logger).to receive(:warn).exactly(4).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(4).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
         expect(logger).to receive(:warn).exactly(4).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(4).with(server_error.inspect)
 
@@ -164,7 +164,7 @@ shared_examples 'when retry request' do
       end
 
       it do
-        expect(logger).to receive(:debug).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:debug).exactly(6).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
         expect(logger).to receive(:debug).exactly(6).with('API request UUID: fake-uuid')
         expect(logger).to receive(:debug).exactly(6).with('API response:')
 
@@ -173,7 +173,7 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:error).exactly(6).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
-        expect(logger).to receive(:warn).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(6).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
         expect(logger).to receive(:warn).exactly(6).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
 
@@ -221,7 +221,7 @@ shared_examples 'when retry request' do
       end
 
       it do
-        expect(logger).to receive(:debug).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:debug).exactly(6).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
         expect(logger).to receive(:debug).exactly(6).with('API request UUID: fake-uuid')
         expect(logger).to receive(:debug).exactly(6).with('API response:')
 
@@ -230,7 +230,7 @@ shared_examples 'when retry request' do
         expect(logger).to receive(:error).exactly(6).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
-        expect(logger).to receive(:warn).exactly(6).with("#{expected_http_method} http://api.knapsackpro.test:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(6).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
         expect(logger).to receive(:warn).exactly(6).with('Request failed due to:')
         expect(logger).to receive(:warn).exactly(6).with(server_error.inspect)
 
@@ -288,7 +288,7 @@ describe KnapsackPro::Client::Connection do
   let(:connection) { described_class.new(action) }
   let(:headers) do
     {
-      'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
+      'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.localhost:3000',
       'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
       'GITHUB_ACTIONS' => 'true',
     }
@@ -309,7 +309,7 @@ describe KnapsackPro::Client::Connection do
     subject { connection.call }
 
     before do
-      expect(Net::HTTP).to receive(:new).with('api.knapsackpro.test', 3000).and_return(http)
+      expect(Net::HTTP).to receive(:new).with('api.knapsackpro.localhost', 3000).and_return(http)
 
       expect(http).to receive(:use_ssl=).with(false)
       expect(http).to receive(:open_timeout=).with(15)
@@ -345,7 +345,7 @@ describe KnapsackPro::Client::Connection do
 
       let(:headers) do
         {
-          'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
+          'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.localhost:3000',
           'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
         }
       end
@@ -367,7 +367,7 @@ describe KnapsackPro::Client::Connection do
       let(:http_method) { :get }
 
       before do
-        uri = URI.parse("http://api.knapsackpro.test:3000#{endpoint_path}")
+        uri = URI.parse("http://api.knapsackpro.localhost:3000#{endpoint_path}")
         uri.query = URI.encode_www_form(request_hash)
         expect(http).to receive(:get).with(
           uri,
@@ -392,7 +392,7 @@ describe KnapsackPro::Client::Connection do
 
       let(:headers) do
         {
-          'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.test:3000',
+          'KNAPSACK_PRO_ENDPOINT' => 'http://api.knapsackpro.localhost:3000',
           'KNAPSACK_PRO_TEST_SUITE_TOKEN' => test_suite_token,
         }
       end
@@ -436,7 +436,7 @@ describe KnapsackPro::Client::Connection do
       let(:http_method) { :get }
 
       before do
-        uri = URI.parse("http://api.knapsackpro.test:3000#{endpoint_path}")
+        uri = URI.parse("http://api.knapsackpro.localhost:3000#{endpoint_path}")
         uri.query = URI.encode_www_form(request_hash)
         expect(http).to receive(:get).at_least(3).with(
           uri,
