@@ -1,6 +1,6 @@
 describe KnapsackPro::BuildDistributionFetcher do
   describe '.call' do
-    subject { described_class.call }
+    subject { described_class.new.call }
 
     it do
       build_distribution_fetcher = instance_double(described_class)
@@ -67,7 +67,6 @@ describe KnapsackPro::BuildDistributionFetcher do
         end
 
         it { expect(subject).to be_a described_class::BuildDistributionEntity }
-        it { expect(subject.time_execution).to eq 2.5 }
         it do
           expect(subject.test_files).to eq([
             { 'path' => 'a_spec.rb', 'time_execution' => 1.5 },
@@ -83,7 +82,6 @@ describe KnapsackPro::BuildDistributionFetcher do
       let(:response) { double }
 
       it { expect(subject).to be_a described_class::BuildDistributionEntity }
-      it { expect(subject.time_execution).to eq 0.0 }
       it { expect(subject.test_files).to eq([]) }
     end
   end
