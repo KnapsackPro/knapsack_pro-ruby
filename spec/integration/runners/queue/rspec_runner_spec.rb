@@ -2675,7 +2675,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       end
     SPEC
 
-    let(:command) { "bundle exec rspec #{spec.path}" }
+    let(:command) { "rspec #{spec.path}" }
 
     it 'runs successfully' do
       generate_spec_helper(spec_helper_with_knapsack)

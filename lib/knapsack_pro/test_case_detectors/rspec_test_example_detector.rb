@@ -3,7 +3,7 @@
 module KnapsackPro
   module TestCaseDetectors
     class RSpecTestExampleDetector
-      def calculate(rspec_args)
+      def dry_run_to_file(rspec_args, slow_test_files = slow_test_files(KnapsackPro::BuildDistributionFetcher.new))
         KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
         FileUtils.mkdir_p(File.dirname(report_path))
         File.delete(report_path) if File.exist?(report_path)
@@ -26,6 +26,21 @@ module KnapsackPro
         exit exit_code
       end
 
+      def calculate_slow_id_paths(rspec_args)
+        dry_run_to_file(rspec_args, slow_test_files(KnapsackPro::OptimizedBuildDistributionFetcher.new))
+        slow_id_paths!
+      end
+
+      def slow_id_paths!
+        raise "No report found at #{report_path}" unless File.exist?(report_path)
+
+        JSON.parse(File.read(report_path))
+          .fetch('examples')
+          .map { |example| TestFileCleaner.clean(example.fetch('id')) }
+      end
+
+      private
+
       # Apply a --format option which overrides formatters from the RSpec custom option files like `.rspec`.
       def cli_format
         require 'rspec/core'
@@ -47,34 +62,16 @@ module KnapsackPro
         e.status
       end
 
-      def slow_id_paths!
-        raise "No report found at #{report_path}" unless File.exist?(report_path)
-
-        JSON.parse(File.read(report_path))
-          .fetch('examples')
-          .map { |example| TestFileCleaner.clean(example.fetch('id')) }
-      end
-
-      def precalculated_slow_id_paths
-        return nil if ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES_FILE'].nil?
-
-        slow_id_paths!
-      end
-
       def report_path
-        ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES_FILE'] ||
-          "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/test_case_detectors/rspec/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
+        "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/test_case_detectors/rspec/rspec_dry_run_json_report_node_#{KnapsackPro::Config::Env.ci_node_index}.json"
       end
 
-      private
-
-      def slow_test_files
-        @slow_test_files ||=
-          if KnapsackPro::Config::Env.slow_test_file_pattern
-            KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
-          else
-            KnapsackPro::SlowTestFileFinder.call(adapter_class)
-          end
+      def slow_test_files(build_distribution_fetcher)
+        if KnapsackPro::Config::Env.slow_test_file_pattern
+          KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+        else
+          KnapsackPro::RSpecSlowTestFileFinder.new(build_distribution_fetcher).call
+        end
       end
 
       def report

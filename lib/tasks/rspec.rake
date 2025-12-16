@@ -17,25 +17,18 @@ namespace :knapsack_pro do
 
     KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector
       .new
-      .calculate(ENV[key])
+      .dry_run_to_file(ENV[key])
   end
 
   namespace :rspec do
-    desc 'Precalculate Split by Test Examples into KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES_FILE (to avoid doing it later in each node running Knapsack Pro)'
-    task :precalculate_split_by_test_examples, [:rspec_args] do |_, args|
-      ENV['KNAPSACK_PRO_PRECALCULATING_SPLIT_BY_TEST_EXAMPLES'] = 'true'
+    desc 'Initialize the test queue to be consumed later with either Regular Mode or Queue Mode.'
+    task :initialize, [:rspec_args] do |_, args|
+      require_relative '../knapsack_pro/queue_initializer'
 
-      key = 'KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES_FILE'
-      raise "Missing #{key}. See: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES_FILE}" if ENV[key].nil?
-
+      ENV.delete('SPEC_OPTS') # Ignore `SPEC_OPTS` to not affect the RSpec execution within this rake task
       ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
 
-      # Ignore `SPEC_OPTS` to not affect the RSpec execution within this rake task
-      ENV.delete('SPEC_OPTS')
-
-      KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector
-        .new
-        .calculate(args[:rspec_args].to_s)
+      KnapsackPro::RSpec::QueueInitializer.new.call(args[:rspec_args].to_s)
     end
   end
 end
