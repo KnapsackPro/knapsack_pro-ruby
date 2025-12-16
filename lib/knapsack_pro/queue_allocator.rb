@@ -141,8 +141,9 @@ module KnapsackPro
       end
     end
 
+    # Run file paths to guarantee at-least-once execution across CI nodes.
     def fallback_test_files(executed_test_files)
-      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.fallback_test_files, ci_node_total)
+      test_flat_distributor = KnapsackPro::TestFlatDistributor.new(test_suite.all_test_files_to_run, ci_node_total)
       test_files_for_node_index = test_flat_distributor.test_files_for_node(ci_node_index)
       KnapsackPro::TestFilePresenter.paths(test_files_for_node_index) - executed_test_files
     end

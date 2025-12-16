@@ -1,8 +1,7 @@
-describe KnapsackPro::SlowTestFileFinder do
+describe KnapsackPro::RSpecSlowTestFileFinder do
   describe '.call' do
-    let(:adapter_class) { double }
-
-    subject { described_class.call(adapter_class) }
+    let(:build_distribution_fetcher) { double }
+    subject { described_class.new(build_distribution_fetcher).call }
 
     before do
       expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(test_files_encrypted?)
@@ -14,7 +13,7 @@ describe KnapsackPro::SlowTestFileFinder do
       it do
         test_files_from_api = double
         build_distribution_entity = instance_double(KnapsackPro::BuildDistributionFetcher::BuildDistributionEntity, test_files: test_files_from_api)
-        expect(KnapsackPro::BuildDistributionFetcher).to receive(:call).and_return(build_distribution_entity)
+        expect(build_distribution_fetcher).to receive(:call).and_return(build_distribution_entity)
 
         rspec_merger = double
         merged_test_files_from_api = double
@@ -22,7 +21,7 @@ describe KnapsackPro::SlowTestFileFinder do
         expect(KnapsackPro::TestCaseMergers::RSpecMerger).to receive(:new).with(test_files_from_api).and_return(rspec_merger)
 
         test_files_existing_on_disk = double
-        expect(KnapsackPro::TestFileFinder).to receive(:select_test_files_that_can_be_run).with(adapter_class, merged_test_files_from_api).and_return(test_files_existing_on_disk)
+        expect(KnapsackPro::TestFileFinder).to receive(:select_test_files_that_can_be_run).with(KnapsackPro::Adapters::RSpecAdapter, merged_test_files_from_api).and_return(test_files_existing_on_disk)
 
         slow_test_files = double
         expect(KnapsackPro::SlowTestFileDeterminer).to receive(:call).with(test_files_existing_on_disk).and_return(slow_test_files)
