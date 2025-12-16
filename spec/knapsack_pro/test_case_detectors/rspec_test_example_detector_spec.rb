@@ -127,7 +127,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       it do
         subject_class = Class.new(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector) do
-          define_method(:slow_test_files) do
+          define_method(:slow_test_files) do |_fetcher|
             [{ 'path' => 'spec/a_spec.rb' }]
           end
         end
@@ -175,7 +175,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   end
 
   describe '#slow_test_files' do
-    subject { described_class.new.send(:slow_test_files) }
+    subject { described_class.new.send(:slow_test_files, KnapsackPro::BuildDistributionFetcher.new) }
 
     before do
       expect(KnapsackPro::Config::Env).to receive(:slow_test_file_pattern).and_return(slow_test_file_pattern)
@@ -197,7 +197,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       it do
         expected_slow_test_files = double
-        expect(KnapsackPro::SlowTestFileFinder).to receive(:call).and_return(expected_slow_test_files)
+        expect_any_instance_of(KnapsackPro::SlowTestFileFinder).to receive(:call).and_return(expected_slow_test_files)
 
         expect(subject).to eq expected_slow_test_files
       end

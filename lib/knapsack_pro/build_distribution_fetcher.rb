@@ -7,10 +7,6 @@ module KnapsackPro
         @response = response
       end
 
-      def time_execution
-        response.fetch('time_execution')
-      end
-
       def test_files
         response.fetch('test_files')
       end
@@ -18,10 +14,6 @@ module KnapsackPro
       private
 
       attr_reader :response
-    end
-
-    def self.call
-      new.call
     end
 
     def call
@@ -48,16 +40,24 @@ module KnapsackPro
         branch: repository_adapter.branch,
         node_total: KnapsackPro::Config::Env.ci_node_total,
         node_index: KnapsackPro::Config::Env.ci_node_index
-      }
-
-      if ENV['KNAPSACK_PRO_PRECALCULATING_SPLIT_BY_TEST_EXAMPLES']
-        request_hash.merge!(
-          node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
-          none_if_queue_initialized: true
-        )
-      end
+      }.merge(additional_params)
 
       KnapsackPro::Client::API::V1::BuildDistributions.last(request_hash)
+    end
+
+    def additional_params
+      {}
+    end
+  end
+
+  class OptimizedBuildDistributionFetcher < BuildDistributionFetcher
+    private
+
+    def additional_params
+      {
+        node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
+        none_if_queue_initialized: true
+      }
     end
   end
 end

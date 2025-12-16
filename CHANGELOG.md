@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+* RSpec: Allow initializing the test queue (for both Regular Mode and Queue Mode) with `rake knapsack_pro:rspec:initialize`.
+
 ### 9.0.0
 
 * __(breaking change)__ Require Ruby >=3.0.0
@@ -9,7 +13,6 @@
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/313
 
-* Allow to [precalculate RSpec Split by Test Examples](https://docs.knapsackpro.com/ruby/reference/#knapsack_pro_rspec_split_by_test_examples_file-rspec)
 * GitHub Actions: Detect either head branch in Pull Requests or short ref name (vs fully-formed ref) in the other cases
 
     https://github.com/KnapsackPro/knapsack_pro-ruby/pull/308
