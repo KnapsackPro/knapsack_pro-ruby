@@ -17,7 +17,7 @@ namespace :knapsack_pro do
 
     KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector
       .new
-      .calculate(ENV[key])
+      .dry_run_to_file(ENV[key])
   end
 
   namespace :rspec do

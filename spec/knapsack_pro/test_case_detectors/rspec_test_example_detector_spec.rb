@@ -3,8 +3,8 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   let(:report_path) { '.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
   let(:rspec_test_example_detector) { described_class.new }
 
-  describe '#calculate' do
-    subject { rspec_test_example_detector.calculate(rspec_args) }
+  describe '#dry_run_to_file' do
+    subject { rspec_test_example_detector.dry_run_to_file(rspec_args) }
 
     shared_examples 'calculate runs RSpec::Core::Runner' do
       before do
@@ -134,7 +134,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
         expect do
           KnapsackPro.logger = ::Logger.new($stdout)
-          subject_class.new.calculate(rspec_args)
+          subject_class.new.dry_run_to_file(rspec_args)
         end
           .to output(/Please only use one of `--force-color` and `--no-color`/).to_stderr
           .and output(%r{ERROR -- knapsack_pro: Failed to calculate Split by Test Examples: bundle exec rspec --no-color --force-color --format json --dry-run --out .knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json --default-path spec spec/a_spec.rb}).to_stdout
