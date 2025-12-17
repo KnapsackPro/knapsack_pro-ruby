@@ -11,7 +11,10 @@ module KnapsackPro
         raise 'No paths to run' if paths.empty?
         action = KnapsackPro::Client::API::V1::Queues.initialize(paths)
         connection = KnapsackPro::Client::Connection.new(action)
-        connection.call
+        response = connection.call
+
+        build_url = response.fetch('url')
+        KnapsackPro.logger.info "Build URL: #{build_url}" unless build_url.nil?
       end
     end
   end
