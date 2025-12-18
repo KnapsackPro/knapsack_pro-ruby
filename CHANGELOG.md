@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+* (minor) Remove the internal `KNAPSACK_PRO_MODE` ENV. For gem development purposes `KNAPSACK_PRO_ENDPOINT` can be used instead.
+
 ### 9.0.0
 
 * __(breaking change)__ Require Ruby >=3.0.0

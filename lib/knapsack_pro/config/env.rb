@@ -132,19 +132,7 @@ module KnapsackPro
         end
 
         def endpoint
-          env_name = 'KNAPSACK_PRO_ENDPOINT'
-          return ENV[env_name] if ENV[env_name]
-
-          case mode
-          when :development
-            'http://api.knapsackpro.test:3000'
-          when :test
-            'https://api-staging.knapsackpro.com'
-          when :production
-            'https://api.knapsackpro.com'
-          else
-            required_env(env_name)
-          end
+          ENV.fetch('KNAPSACK_PRO_ENDPOINT', 'https://api.knapsackpro.com')
         end
 
         def fixed_test_suite_split
@@ -231,17 +219,6 @@ module KnapsackPro
 
         def test_suite_token_spinach
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_SPINACH']
-        end
-
-        def mode
-          mode = ENV['KNAPSACK_PRO_MODE']
-          return :production if mode.nil?
-          mode = mode.to_sym
-          if [:development, :test, :production].include?(mode)
-            mode
-          else
-            raise ArgumentError.new('Wrong mode name')
-          end
         end
 
         def detected_ci
