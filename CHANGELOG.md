@@ -3,6 +3,7 @@
 ### Unreleased
 
 * (minor) Remove the internal `KNAPSACK_PRO_MODE` ENV. For gem development purposes `KNAPSACK_PRO_ENDPOINT` can be used instead.
+* (patch) Print only `KNAPSACK_PRO_*` ENVs when the connection fails (excluding `TOKEN`).
 
 ### 9.0.0
 
