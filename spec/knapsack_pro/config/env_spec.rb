@@ -761,34 +761,7 @@ describe KnapsackPro::Config::Env do
     end
 
     context "when ENV doesn't exist" do
-      context 'when default mode' do
-        it { should eq 'https://api.knapsackpro.com' }
-      end
-
-      context 'when development mode' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'development' }) }
-        it { should eq 'http://api.knapsackpro.test:3000' }
-      end
-
-      context 'when test mode' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'test' }) }
-        it { should eq 'https://api-staging.knapsackpro.com' }
-      end
-
-      context 'when production mode' do
-        before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'production' }) }
-        it { should eq 'https://api.knapsackpro.com' }
-      end
-
-      context 'when unknown mode' do
-        before do
-          expect(described_class).to receive(:mode).and_return(:fake)
-        end
-
-        it do
-          expect { subject }.to raise_error('Missing environment variable KNAPSACK_PRO_ENDPOINT')
-        end
-      end
+      it { should eq 'https://api.knapsackpro.com' }
     end
   end
 
@@ -1095,48 +1068,6 @@ describe KnapsackPro::Config::Env do
 
     context "when ENV doesn't exist" do
       it { should be_nil }
-    end
-  end
-
-  describe '.mode' do
-    subject { described_class.mode }
-
-    context 'when development mode' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'development' }) }
-
-      it { should eq :development }
-    end
-
-    context 'when test mode' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'test' }) }
-
-      it { should eq :test }
-    end
-
-    context 'when production mode' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'production' }) }
-
-      it { should eq :production }
-    end
-
-    context 'when fake mode' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => 'fake' }) }
-
-      it do
-        expect { subject }.to raise_error(ArgumentError)
-      end
-    end
-
-    context 'when blank mode' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_MODE' => '' }) }
-
-      it do
-        expect { subject }.to raise_error(ArgumentError)
-      end
-    end
-
-    context "when ENV doesn't exist" do
-      it { should eq :production }
     end
   end
 
