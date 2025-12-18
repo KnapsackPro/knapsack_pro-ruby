@@ -142,7 +142,7 @@ module KnapsackPro
           "curl -v #{endpoint_uri.host}:#{endpoint_uri.port}",
           "nc -vz #{endpoint_uri.host} #{endpoint_uri.port}",
           "openssl s_client -connect #{endpoint_uri.host}:#{endpoint_uri.port} < /dev/null",
-          'env'
+          'env | grep KNAPSACK_PRO | grep -v TOKEN'
         ].each do |cmd|
           logger.warn(cmd)
           logger.warn('=' * cmd.size)
