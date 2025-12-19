@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     'source_code_uri' => 'https://github.com/KnapsackPro/knapsack_pro-ruby'
   }
 
-  spec.files         = `git ls-files -z`.split("\x0")
+  spec.files         = Dir.glob("lib/**/*") + Dir.glob("exe/*")
   spec.executables   = ['knapsack_pro']
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
