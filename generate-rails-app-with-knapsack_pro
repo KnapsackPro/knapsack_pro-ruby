@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+set -x
+
+NAME=rails-app-with-knapsack_pro
+
+mv $NAME $NAME-bak
+
+gem install rails
+rails new $NAME
+
+echo 'coverage/' >> $NAME/.gitignore
+
+cp $NAME-bak/.github/workflows/main.yaml $NAME/.github/workflows/main.yaml
+cp $NAME-bak/.gitlab-ci.yml $NAME/
+cp $NAME-bak/.rspec* $NAME/
+cp $NAME-bak/README.md $NAME/
+cp $NAME-bak/Test.Dockerfile $NAME/
+cp $NAME-bak/app/controllers/articles_controller.rb $NAME/app/controllers
+cp $NAME-bak/app/controllers/calculator_controller.rb $NAME/app/controllers
+cp $NAME-bak/app/controllers/pending_controller.rb $NAME/app/controllers
+cp $NAME-bak/app/controllers/welcome_controller.rb $NAME/app/controllers
+cp $NAME-bak/app/models/article.rb $NAME/app/models
+cp $NAME-bak/bin/bin_knapsack* $NAME/bin/
+cp $NAME-bak/bin/collect_junit_xml_reports.rb $NAME/bin/
+cp $NAME-bak/bin/knapsack* $NAME/bin/
+cp $NAME-bak/bin/slowest_test_file_exceeded_allowed_limit $NAME/bin/
+cp $NAME-bak/config/cucumber.yml $NAME/config/
+cp $NAME-bak/config/routes.rb $NAME/config/
+cp $NAME-bak/lib/tasks/* $NAME/lib/tasks
+cp -R $NAME-bak/.circleci $NAME/
+cp -R $NAME-bak/.codefresh $NAME/
+cp -R $NAME-bak/.semaphore $NAME/
+cp -R $NAME-bak/app/services $NAME/app/
+cp -R $NAME-bak/app/views/articles $NAME/app/views/
+cp -R $NAME-bak/app/views/calculator $NAME/app/views/
+cp -R $NAME-bak/app/views/welcome $NAME/app/views/
+cp -R $NAME-bak/bin/edge_cases $NAME/bin
+cp -R $NAME-bak/bin/record_many_nodes $NAME/bin/
+cp -R $NAME-bak/features $NAME/
+cp -R $NAME-bak/spec $NAME/
+cp -R $NAME-bak/spec_examples $NAME/
+cp -R $NAME-bak/spinach_features $NAME/
+rm -rf $NAME/test
+cp -R $NAME-bak/test $NAME/
+cp -R $NAME-bak/test-unit $NAME/
+cp -R $NAME-bak/turnip $NAME/
+
+cat <<EOF >> $NAME/Gemfile
+gem 'async'
+gem 'async-io'
+# use a legacy version which supports Ruby 3.0
+# we use this repo with Ruby 3.0 for testing the knapsack_pro gem
+gem 'fiber-local', '1.0.0'
+
+group :development, :test do
+  gem 'spring'
+  gem 'spring-commands-cucumber'
+  gem 'spring-commands-rspec'
+
+  if ENV['USE_KNAPSACK_PRO_FROM_RUBYGEMS']
+    gem 'knapsack_pro'
+  else
+    gem 'knapsack_pro', path: "../"
+  end
+
+  unless ENV["MINITEST"]
+    gem 'test-unit-rails'
+  end
+
+  gem 'listen'
+end
+
+group :test do
+  gem 'rails-controller-testing'
+
+  if ENV['KNAPSACK_PRO_RSPEC_DISABLED'] != 'true'
+    gem 'rspec-rails'
+    gem 'rspec_junit_formatter'
+    gem 'rspec-retry'
+    gem 'async-rspec', require: false
+  end
+
+  gem 'cucumber-rails', require: false
+  gem 'database_cleaner'
+  gem 'spinach'
+  gem 'timecop'
+  gem 'vcr' # Needed to test https://github.com/KnapsackPro/knapsack_pro-ruby/pull/251
+  gem 'webmock', require: false # Needed to test https://github.com/KnapsackPro/knapsack_pro-ruby/pull/251
+  gem 'capybara-screenshot'
+  gem 'shared_should', require: false
+  gem 'simplecov', require: false
+end
+
+gem 'turnip', '~> 4.4'
+gem 'juniter'
+gem 'minitest', '~> 5.27'
+EOF
+
+(
+	cd $NAME
+        bundle install
+	bin/rails generate migration CreateArticles title:string body:text
+	bin/rails db:migrate
+	bin/rails db:seed
+)
+
+rm -rf $NAME/.git
+rm -rf $NAME-bak
+
+echo "========================================================================"
+echo "Set config.enable_reloading to true in $NAME/config/environments/test.rb for spring to work"
