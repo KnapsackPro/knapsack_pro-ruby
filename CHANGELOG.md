@@ -4,6 +4,7 @@
 
 * (minor) Remove the internal `KNAPSACK_PRO_MODE` ENV. For gem development purposes `KNAPSACK_PRO_ENDPOINT` can be used instead.
 * (patch) Print only `KNAPSACK_PRO_*` ENVs when the connection fails (excluding `TOKEN`).
+* (patch) Support minitest v6; this also ensures that timing for shared examples defined in file1 and included in file2 are attributed to file2
 
 ### 9.0.0
 
