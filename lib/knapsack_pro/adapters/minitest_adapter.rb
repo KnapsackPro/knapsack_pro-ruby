@@ -7,8 +7,13 @@ module KnapsackPro
       @@parent_of_test_dir = nil
 
       def self.test_path(obj)
-        test_method_name = obj.class.runnable_methods.first
-        path, _line = obj.method(test_method_name).source_location
+        path, _line =
+          begin
+            Object.const_source_location(obj.class.to_s)
+          rescue NameError
+            test_method_name = obj.class.runnable_methods.first
+            obj.method(test_method_name).source_location
+          end
         path.gsub(Regexp.new("^#{@@parent_of_test_dir}"), '.')
       end
 
