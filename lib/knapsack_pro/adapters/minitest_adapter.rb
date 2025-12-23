@@ -7,17 +7,9 @@ module KnapsackPro
       @@parent_of_test_dir = nil
 
       def self.test_path(obj)
-        # Pick the first public method in the class itself, that starts with "test_"
-        test_method_name = obj.public_methods(false).select{|m| m =~ /^test_/ }.first
-        source_location =
-          if test_method_name.nil? # Shared examples
-            Object.const_source_location(obj.class.to_s)
-          else
-            obj.method(test_method_name).source_location
-          end
-        full_test_path = source_location.first
-        parent_of_test_dir_regexp = Regexp.new("^#{@@parent_of_test_dir}")
-        full_test_path.gsub(parent_of_test_dir_regexp, '.')
+        test_method_name = obj.class.runnable_methods.first
+        path, _line = obj.method(test_method_name).source_location
+        path.gsub(Regexp.new("^#{@@parent_of_test_dir}"), '.')
       end
 
       # See how to write hooks and plugins
