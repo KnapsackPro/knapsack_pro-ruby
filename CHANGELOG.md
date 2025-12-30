@@ -2,9 +2,11 @@
 
 ### Unreleased
 
-* (minor) Remove the internal `KNAPSACK_PRO_MODE` ENV. For gem development purposes `KNAPSACK_PRO_ENDPOINT` can be used instead.
-* (patch) Print only `KNAPSACK_PRO_*` ENVs when the connection fails (excluding `TOKEN`).
-* (patch) Support minitest v6; this also ensures that timing for shared examples defined in file1 and included in file2 are attributed to file2
+### 9.1.0
+
+* Remove the internal `KNAPSACK_PRO_MODE` ENV. For gem development purposes `KNAPSACK_PRO_ENDPOINT` can be used instead (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/315).
+* Print only `KNAPSACK_PRO_*` ENVs when the connection fails, excluding `TOKEN` (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/315).
+* Support minitest v6; this also ensures that timing for shared examples defined in file1 and included in file2 are attributed to file2 (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/321).
 
 ### 9.0.0
 
