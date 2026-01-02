@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'ostruct', '>= 0.6.0'
   spec.add_development_dependency 'pry', '~> 0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rspec-its', '~> 2.0'
+  spec.add_development_dependency 'rspec-its'
   spec.add_development_dependency 'spinach', '>= 0.8'
   spec.add_development_dependency 'test-unit', '>= 3.0.0'
   spec.add_development_dependency 'timecop', '>= 0.9.9'
