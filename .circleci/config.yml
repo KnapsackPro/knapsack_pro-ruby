@@ -25,12 +25,12 @@ commands:
         type: string
       rspec:
         type: string
-        default: ""
+        default: "latest"
     steps:
       - run:
           working_directory: << parameters.path >>
           command: |
-            if [[ "<< parameters.rspec >>" != "" ]]; then
+            if [[ "<< parameters.rspec >>" != "latest" ]]; then
               sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
               echo "Updated RSpec version in Gemfile"
             fi
@@ -80,7 +80,7 @@ jobs:
       - checkout
       - run:
           command: |
-            if [[ "<< parameters.rspec >>" != "" ]]; then
+            if [[ "<< parameters.rspec >>" != "latest" ]]; then
               sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
               echo "Updated RSpec version in Gemfile"
             fi
@@ -103,7 +103,7 @@ jobs:
             ruby --version
             bundle exec rspec --version
             RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
-            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+            [ "<< parameters.rspec >>" != "latest" ] && [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
       - run: bundle exec rspec spec/integration/runners/queue/rspec_runner_spec.rb
 
   e2e-regular-rspec:
@@ -143,7 +143,7 @@ jobs:
             ruby --version
             bundle exec rspec --version
             RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
-            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+            [ "<< parameters.rspec >>" != "latest" ] && [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: bin/rails db:setup
@@ -239,7 +239,7 @@ jobs:
             ruby --version
             bundle exec rspec --version
             RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
-            [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: $RSPEC"
+            [ "<< parameters.rspec >>" != "latest" ] && [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: bin/rails db:setup
@@ -442,19 +442,19 @@ workflows:
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
-              rspec: ["3.12.3", "3.13.3"]
+              rspec: ["3.12.3", "latest"]
       - e2e-regular-rspec:
           name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
-              rspec: ["3.12.3", "3.13.3"]
+              rspec: ["3.12.3", "latest"]
       - e2e-queue-rspec:
           name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
               ruby: ["3.2", "3.3", "3.4"]
-              rspec: ["3.12.3", "3.13.3"]
+              rspec: ["3.12.3", "latest"]
       - e2e-regular-minitest:
           name: e2e-regular__ruby-<< matrix.ruby >>__minitest
           matrix:

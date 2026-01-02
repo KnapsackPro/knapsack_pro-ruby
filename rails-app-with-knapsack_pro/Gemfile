@@ -92,10 +92,10 @@ group :test do
   gem 'rails-controller-testing'
 
   if ENV['KNAPSACK_PRO_RSPEC_DISABLED'] != 'true'
-    gem 'rspec-rails'
-    gem 'rspec_junit_formatter'
-    gem 'rspec-retry'
     # gem 'rspec-core'
+    gem 'rspec-rails'
+    gem 'rspec-retry'
+    gem 'rspec_junit_formatter'
     gem 'async-rspec', require: false
   end
 
