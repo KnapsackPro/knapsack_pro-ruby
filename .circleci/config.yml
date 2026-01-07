@@ -180,13 +180,6 @@ jobs:
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
-            # split by test examples ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split"
-            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
-            bundle exec rake knapsack_pro:rspec
-      - run:
-          working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
-          command: |
             # split custom files by test examples ||
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
@@ -275,14 +268,6 @@ jobs:
             # fallback ||
             export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
             export KNAPSACK_PRO_MAX_REQUEST_RETRIES=1
-            bundle exec rake knapsack_pro:queue:rspec
-      - run:
-          working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
-          command: |
-            # split by test examples ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--split"
-            export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
-            export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             bundle exec rake knapsack_pro:queue:rspec
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
