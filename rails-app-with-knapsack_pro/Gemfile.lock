@@ -1,8 +1,9 @@
 PATH
   remote: ..
   specs:
-    knapsack_pro (9.2.1)
+:   knapsack_pro (9.2.1)
       rake
+      thor (~> 1.4)
 
 GEM
   remote: https://rubygems.org/
