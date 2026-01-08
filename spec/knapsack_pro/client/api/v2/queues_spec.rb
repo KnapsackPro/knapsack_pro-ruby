@@ -1,6 +1,5 @@
 describe KnapsackPro::Client::API::V2::Queues do
   describe '.queue' do
-    let(:fixed_queue_split) { double }
     let(:commit_hash) { double }
     let(:branch) { double }
     let(:node_total) { double }
@@ -14,7 +13,6 @@ describe KnapsackPro::Client::API::V2::Queues do
     let(:batch_uuid) { SecureRandom.uuid }
 
     before(:each) do
-      expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split).and_return(fixed_queue_split)
       expect(KnapsackPro::Config::Env).to receive(:masked_user_seat).and_return(masked_user_seat)
       expect(KnapsackPro::Config::Env).to receive(:test_queue_id).and_return(test_queue_id)
       expect(KnapsackPro::Config::Env).to receive(:node_uuid).and_return(node_uuid)
@@ -29,7 +27,6 @@ describe KnapsackPro::Client::API::V2::Queues do
           endpoint_path: '/v2/queues/queue',
           http_method: :post,
           request_hash: {
-            fixed_queue_split: fixed_queue_split,
             can_initialize_queue: true,
             attempt_connect_to_queue: true,
             commit_hash: commit_hash,
@@ -74,7 +71,6 @@ describe KnapsackPro::Client::API::V2::Queues do
           endpoint_path: '/v2/queues/queue',
           http_method: :post,
           request_hash: {
-            fixed_queue_split: fixed_queue_split,
             can_initialize_queue: true,
             attempt_connect_to_queue: false,
             commit_hash: commit_hash,
@@ -116,7 +112,6 @@ describe KnapsackPro::Client::API::V2::Queues do
           endpoint_path: '/v2/queues/queue',
           http_method: :post,
           request_hash: {
-            fixed_queue_split: fixed_queue_split,
             can_initialize_queue: false,
             attempt_connect_to_queue: false,
             commit_hash: commit_hash,

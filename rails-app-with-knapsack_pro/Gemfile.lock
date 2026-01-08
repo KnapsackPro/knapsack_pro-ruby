@@ -3,6 +3,7 @@ PATH
   specs:
     knapsack_pro (9.2.3)
       rake
+      thor (~> 1.4)
 
 GEM
   remote: https://rubygems.org/
