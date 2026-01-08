@@ -194,13 +194,6 @@ jobs:
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
             export SKIP_ME_OR_I_WILL_FAIL=true
             bundle exec rake "knapsack_pro:rspec[--tag tag_x -t ~tag_y --tag ~skip_me_or_i_will_fail --format documentation]"
-      - run:
-          working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
-          command: |
-            # separate queue initialization
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular-init"
-            bundle exec rake knapsack_pro:rspec:initialize
-            bundle exec rake knapsack_pro:rspec
 
   e2e-queue-rspec:
     parameters:
@@ -334,7 +327,7 @@ jobs:
           command: |
             # separate queue initialization
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue-init"
-            bundle exec rake knapsack_pro:rspec:initialize
+            bundle exec rake knapsack_pro:queue:rspec:initialize
             bundle exec rake knapsack_pro:queue:rspec
 
   e2e-regular-minitest:
