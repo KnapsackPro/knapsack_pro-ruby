@@ -2,7 +2,7 @@
 
 ### Unreleased
 
-* (minor) RSpec: Allow initializing the test queue (for both Regular Mode and Queue Mode) with `rake knapsack_pro:rspec:initialize`.
+* (minor) RSpec: Allow initializing the test queue for Queue Mode with `rake knapsack_pro:queue:rspec:initialize`.
 
 ### 9.1.0
 
