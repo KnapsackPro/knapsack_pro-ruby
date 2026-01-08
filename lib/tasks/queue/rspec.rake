@@ -10,6 +10,7 @@ namespace :knapsack_pro do
 
     task :rspec_go, [:rspec_args] do |_, args|
       Rake::Task.clear
+      ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = KnapsackPro::Config::Env.test_queue_id # Needed by queue_allocator_builder (and ignored in this code path)
       KnapsackPro::Runners::Queue::RSpecRunner.run(args[:rspec_args])
     end
 
@@ -20,6 +21,7 @@ namespace :knapsack_pro do
 
         ENV.delete('SPEC_OPTS') # Ignore `SPEC_OPTS` to not affect the RSpec execution within this rake task
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
+        ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = KnapsackPro::Config::Env.test_queue_id # Needed by build_distributions#last
 
         KnapsackPro::RSpec::QueueInitializer.new.call(args[:rspec_args].to_s)
       end

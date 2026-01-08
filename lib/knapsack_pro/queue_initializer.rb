@@ -9,7 +9,7 @@ module KnapsackPro
         paths = KnapsackPro::Adapters::RSpecAdapter.concat_paths(all_test_files_to_run, slow_id_paths)
 
         raise 'No paths to run' if paths.empty?
-        action = KnapsackPro::Client::API::V1::Queues.initialize(paths)
+        action = KnapsackPro::Client::API::V2::Queues.initialize(paths)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
         return unless response.key?('url') # Race to initialize lost to another parallel node
