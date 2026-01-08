@@ -12,6 +12,8 @@ module KnapsackPro
         action = KnapsackPro::Client::API::V1::Queues.initialize(paths)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
+        return unless response.key?('url') # Race to initialize lost to another parallel node
+
         KnapsackPro.logger.info "Build URL: #{response.fetch('url')}"
       end
     end
