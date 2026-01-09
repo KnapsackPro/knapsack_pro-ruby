@@ -263,9 +263,22 @@ module KnapsackPro
         end
 
         def test_queue_id
-          env_name = 'KNAPSACK_PRO_TEST_QUEUE_ID'
-          env_for(env_name, :test_queue_id) ||
-            raise("Missing environment variable #{env_name}. Read more at #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
+          knapsack_env_name = 'KNAPSACK_PRO_TEST_QUEUE_ID'
+          knapsack_env_value = ENV[knapsack_env_name]
+
+          ci_env_value = detected_ci.new.test_queue_id
+
+          if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
+            warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
+          end
+
+          id = knapsack_env_value != nil ? knapsack_env_value : ci_env_value
+          return id unless id.nil?
+
+          triplet = [ci_node_total, branch, commit_hash]
+          return triplet.join('-') if triplet.all?
+
+          raise("Missing test_queue_id. See: #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
         end
 
         def node_uuid

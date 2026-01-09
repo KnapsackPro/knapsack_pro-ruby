@@ -1223,53 +1223,58 @@ describe KnapsackPro::Config::Env do
   describe '.test_queue_id' do
     subject { described_class.test_queue_id }
 
-    context 'when KNAPSACK_PRO_TEST_QUEUE_ID has value' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_TEST_QUEUE_ID' => '123:456' }) }
-      it { should eq '123:456' }
-    end
+    [
+      [{ 'BUILDKITE' => 'true', 'BUILDKITE_BUILD_NUMBER' => 'abc:123' }, 'abc:123'],
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_PIPELINE_NUMBER' => 'abc:123' }, 'abc:123'],
+      [{ 'GITHUB_ACTIONS' => 'true', 'GITHUB_RUN_ID' => 'abc:123' }, 'abc:123'],
+      [{ 'GITLAB_CI' => 'true', 'CI_PIPELINE_ID' => 'abc:123' }, 'abc:123'],
+    ].each do |env, expected|
+      context "when CI provides an id" do
+        before { stub_const("ENV", env) }
 
-    context 'when CI environment has value' do
-      before do
-        expect(described_class).to receive(:ci_env_for).with(:test_queue_id).and_return('abc:def')
+        it do
+          expect(subject).to eq(expected)
+        end
       end
 
-      it { should eq 'abc:def' }
-    end
+      context "when CI provides an id and KNAPSACK_PRO_TEST_QUEUE_ID is set" do
+        before { stub_const("ENV", env.merge('KNAPSACK_PRO_TEST_QUEUE_ID' => 'env:456')) }
 
-    context 'when both KNAPSACK_PRO_TEST_QUEUE_ID and CI environment have value' do
-      before do
-        stub_const("ENV", { 'KNAPSACK_PRO_TEST_QUEUE_ID' => env_value })
-        expect(described_class).to receive(:ci_env_for).with(:test_queue_id).and_return(ci_value)
-      end
-
-      context 'when values are different' do
-        let(:env_value) { '123:456' }
-        let(:ci_value) { 'abc:def' }
-
-        it { should eq '123:456' }
+        it "uses KNAPSACK_PRO_TEST_QUEUE_ID" do
+          expect(subject).to eq('env:456')
+        end
 
         it 'logs a warning' do
           expect(described_class).to receive(:warn).with(
-            'You have set the environment variable KNAPSACK_PRO_TEST_QUEUE_ID to 123:456 which could be automatically determined from the CI environment as abc:def.'
+            'You have set the environment variable KNAPSACK_PRO_TEST_QUEUE_ID to env:456 which could be automatically determined from the CI environment as abc:123.'
           )
           subject
         end
       end
+    end
 
-      context 'when values are the same' do
-        let(:env_value) { '123:456' }
-        let(:ci_value) { '123:456' }
+    [
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" }, '2-feature-branch-ab153653b065dbf22d2caad1bab39d26aa48b883'],
+    ].each do |env, expected|
+      context "when CI does not provide an id" do
+        before { stub_const("ENV", env) }
 
-        it 'does not log a warning' do
-          expect(described_class).not_to receive(:warn)
-          subject
+        it "uses the triplet" do
+          expect(subject).to eq(expected)
         end
       end
     end
 
-    context "when ENV does not exist" do
-      it 'raises' do
-        expect { subject }.to raise_error(/Missing environment variable KNAPSACK_PRO_TEST_QUEUE_ID/)
+    [
+      { 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" },
+      { 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch" }
+    ].each do |env|
+      context "when triplet cannot be calculated" do
+        before { stub_const("ENV", env) }
+
+        it 'raises' do
+          expect { subject }.to raise_error(/Missing test_queue_id/)
+        end
       end
     end
   end
