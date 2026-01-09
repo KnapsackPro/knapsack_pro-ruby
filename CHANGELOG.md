@@ -2,6 +2,10 @@
 
 ### Unreleased
 
+### 9.2.1
+
+* Minitest: Fix for `Minitest::Spec` with oneword dynamic classes (`describe "oneword"`) (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/324).
+
 ### 9.2.0
 
 * RSpec: Allow initializing the test queue for Queue Mode with `rake knapsack_pro:queue:rspec:initialize` (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/322).
