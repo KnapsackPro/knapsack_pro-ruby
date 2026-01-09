@@ -10,15 +10,18 @@ module KnapsackPro
         path, _line =
           begin
             Object.const_source_location(obj.class.to_s)
-          rescue NameError
-            test_method_name = obj.class.runnable_methods.first
-            obj.method(test_method_name).source_location
+          rescue NameError # Dynamically defined class (Minitest::Spec `describe "more words"`)
+            nil
           end
+
+        if path.nil? # Dynamically defined class (Minitest::Spec `describe "oneword"`)
+          test_method_name = obj.class.runnable_methods.first
+          path, _line = obj.method(test_method_name).source_location
+        end
+
         path.gsub(Regexp.new("^#{@@parent_of_test_dir}"), '.')
       end
 
-      # See how to write hooks and plugins
-      # https://github.com/seattlerb/minitest/blob/master/lib/minitest/test.rb
       module BindTimeTrackerMinitestPlugin
         def before_setup
           super
