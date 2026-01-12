@@ -56,7 +56,7 @@ jobs:
     working_directory: ~/knapsack_pro-ruby
     resource_class: small
     docker:
-      - image: cimg/ruby:3.4
+      - image: cimg/ruby:4.0
     steps:
       - setup_knapsack_pro_ruby
       - run: gem install rubocop
@@ -433,27 +433,27 @@ workflows:
           name: integration__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
-              ruby: ["3.2", "3.3", "3.4"]
+              ruby: ["3.3", "3.4", "4.0"]
               rspec: ["3.12.3", "latest"]
       - e2e-regular-rspec:
           name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
-              ruby: ["3.2", "3.3", "3.4"]
+              ruby: ["3.3", "3.4", "4.0"]
               rspec: ["3.12.3", "latest"]
       - e2e-queue-rspec:
           name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
           matrix:
             parameters:
-              ruby: ["3.2", "3.3", "3.4"]
+              ruby: ["3.3", "3.4", "4.0"]
               rspec: ["3.12.3", "latest"]
       - e2e-regular-minitest:
           name: e2e-regular__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
-              ruby: ["3.2", "3.3", "3.4"]
+              ruby: ["3.3", "3.4", "4.0"]
       - e2e-queue-minitest:
           name: e2e-queue__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
-              ruby: ["3.2", "3.3", "3.4"]
+              ruby: ["3.3", "3.4", "4.0"]
