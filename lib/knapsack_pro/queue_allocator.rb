@@ -113,7 +113,7 @@ module KnapsackPro
         node_total: ci_node_total,
         node_index: ci_node_index,
         test_files: test_files,
-        failed_paths: time_tracker.failed_test_id_paths,
+        failed_paths: time_tracker.current_batch_failed_id_paths,
         batch_uuid: batch_uuid
       )
     end

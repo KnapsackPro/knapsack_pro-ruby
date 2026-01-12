@@ -28,7 +28,7 @@ module KnapsackPro
         @current_batch_failed_examples = []
       end
 
-      def failed_test_id_paths
+      def current_batch_failed_id_paths
         @current_batch_failed_examples.map { |example| KnapsackPro::TestFileCleaner.clean(example.id) }
       end
 
