@@ -432,8 +432,8 @@ describe 'TimeTracker' do
     end
   end
 
-  describe '#failed_test_id_paths' do
-    it 'returns the most recent failed_test_id_paths' do
+  describe '#current_batch_failed_id_paths' do
+    it 'returns the most recent current_batch_failed_id_paths' do
       spec0 = <<~SPEC
         RSpec.configure do |config|
           config.before(:all) do
@@ -464,7 +464,7 @@ describe 'TimeTracker' do
         end
       SPEC
 
-      run_specs([spec0, spec1], 'failed_test_id_paths') do |spec_paths, id_paths|
+      run_specs([spec0, spec1], 'current_batch_failed_id_paths') do |spec_paths, id_paths|
         expect(id_paths.size).to eq(1)
         expect(id_paths[0]).to eq("#{spec_paths[1]}[1:1]")
       end
