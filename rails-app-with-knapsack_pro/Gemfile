@@ -111,4 +111,7 @@ group :test do
 end
 
 gem 'turnip', '~> 4.4'
+# TODO: Install from rubygems as soon as support for ruby v4 is released:
+#       https://github.com/enkessler/cuke_modeler/issues/18
+gem 'cuke_modeler', github: 'enkessler/cuke_modeler', branch: 'master'
 gem 'juniter'

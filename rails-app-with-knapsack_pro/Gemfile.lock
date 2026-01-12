@@ -1,4 +1,12 @@
 GIT
+  remote: https://github.com/enkessler/cuke_modeler.git
+  revision: 889d1840def6459b85cd98596b775e0050f08209
+  branch: master
+  specs:
+    cuke_modeler (3.26.0)
+      cucumber-gherkin (< 38.0)
+
+GIT
   remote: https://github.com/rails/rails.git
   revision: 60d92e4e7dfe923528ccdccc18820ccfe841b7b8
   branch: main
@@ -103,7 +111,7 @@ GIT
 PATH
   remote: ..
   specs:
-    knapsack_pro (9.2.0)
+    knapsack_pro (9.2.1)
       rake
 
 GEM
@@ -191,8 +199,6 @@ GEM
       cucumber (>= 7, < 11)
       railties (>= 6.1, < 9)
     cucumber-tag-expressions (8.1.0)
-    cuke_modeler (3.26.0)
-      cucumber-gherkin (< 37.0)
     database_cleaner (2.1.0)
       database_cleaner-active_record (>= 2, < 3)
     database_cleaner-active_record (2.2.2)
@@ -582,6 +588,7 @@ DEPENDENCIES
   capybara
   capybara-screenshot
   cucumber-rails
+  cuke_modeler!
   database_cleaner
   debug
   fiber-local (= 1.0.0)
