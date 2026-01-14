@@ -41,11 +41,6 @@ module KnapsackPro
         end
       end
 
-      if test_files.empty?
-        KnapsackPro.logger.warn("No test files were executed on this CI node.")
-        KnapsackPro.logger.debug("This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.")
-      end
-
       measured_test_files = test_files
         .map { |t| t['time_execution'] }
         .select { |time_execution| time_execution != KnapsackPro::Tracker::DEFAULT_TEST_FILE_TIME }
