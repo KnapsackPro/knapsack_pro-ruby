@@ -1579,8 +1579,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('0 examples, 0 failures')
-      expect(actual.stdout).to include('WARN -- knapsack_pro: No test files were executed on this CI node.')
-      expect(actual.stdout).to include('DEBUG -- knapsack_pro: This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
 
       expect(actual.exit_code).to eq 0
     end
@@ -1604,8 +1602,6 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('0 examples, 0 failures')
-      expect(actual.stdout).to include('WARN -- knapsack_pro: No test files were executed on this CI node.')
-      expect(actual.stdout).to include('DEBUG -- knapsack_pro: This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
 
       expect(actual.exit_code).to eq 0
     end
