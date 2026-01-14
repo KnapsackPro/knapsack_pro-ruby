@@ -89,7 +89,7 @@ module KnapsackPro
         'KNAPSACK-PRO-TEST-SUITE-TOKEN' => ENV.fetch("KNAPSACK_PRO_TEST_SUITE_TOKEN")
       }
 
-      uri = URI.parse("#{KnapsackPro::Config::Env.endpoint}/v2/paths")
+      uri = URI.parse("#{KnapsackPro::Config::Env.endpoint}/v2/test_paths")
       uri.query = URI.encode_www_form(branch: branch)
 
       http = Net::HTTP.new(uri.host, uri.port)
