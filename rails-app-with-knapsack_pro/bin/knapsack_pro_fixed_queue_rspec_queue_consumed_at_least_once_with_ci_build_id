@@ -1,16 +1,15 @@
 #!/bin/bash
 
-CI_BUILD_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -base64 32)
 
 # we use random branch name in order to create a new Build record on API side
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
-  KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
-  KNAPSACK_PRO_BRANCH=branch-$CI_BUILD_ID \
+  KNAPSACK_PRO_TEST_QUEUE_ID=$TEST_QUEUE_ID \
+  KNAPSACK_PRO_BRANCH=branch-$TEST_QUEUE_ID \
   KNAPSACK_PRO_COMMIT_HASH=commit-v1 \
   KNAPSACK_PRO_CI_NODE_TOTAL=2 \
   KNAPSACK_PRO_CI_NODE_INDEX=0 \
-  KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
   bundle exec rake knapsack_pro:queue:rspec
 
 # We expect:
@@ -25,15 +24,14 @@ echo
 echo ========================================
 echo
 
-# This should not execute tests because Knapsack Pro API won't allow to initialize another queue for the same CI_BUILD_ID.
+# This should not execute tests because Knapsack Pro API won't allow to initialize another queue for the same TEST_QUEUE_ID.
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
-  KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
-  KNAPSACK_PRO_BRANCH=branch-$CI_BUILD_ID \
+  KNAPSACK_PRO_TEST_QUEUE_ID=$TEST_QUEUE_ID \
+  KNAPSACK_PRO_BRANCH=branch-$TEST_QUEUE_ID \
   KNAPSACK_PRO_COMMIT_HASH=commit-v1 \
   KNAPSACK_PRO_CI_NODE_TOTAL=2 \
   KNAPSACK_PRO_CI_NODE_INDEX=1 \
-  KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true \
   bundle exec rake knapsack_pro:queue:rspec
 
 # We expect:
