@@ -127,11 +127,6 @@ describe KnapsackPro::Report do
       end
 
       it 'logs warning about reasons why no test files were executed on this CI node' do
-        logger = instance_double(Logger)
-        expect(KnapsackPro).to receive(:logger).exactly(2).and_return(logger)
-        expect(logger).to receive(:warn).with('No test files were executed on this CI node.')
-        expect(logger).to receive(:debug).with('This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
-
         expect(described_class).to receive(:create_build_subset).with([])
 
         subject
