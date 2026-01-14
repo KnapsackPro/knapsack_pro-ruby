@@ -1,12 +1,12 @@
 #!/bin/bash
 
-CI_BUILD_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -base64 32)
 
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
   KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
   KNAPSACK_PRO_PROJECT_DIR=. \
-  KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
+  KNAPSACK_PRO_TEST_QUEUE_ID=$TEST_QUEUE_ID \
   KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
   KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
   bundle exec rake knapsack_pro:queue:rspec
@@ -16,12 +16,12 @@ echo
 echo ========================================
 echo
 
-# This should not execute tests because Knapsack Pro API won't allow to initialize another queue for the same CI_BUILD_ID.
+# This should not execute tests because Knapsack Pro API won't allow to initialize another queue for the same TEST_QUEUE_ID.
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \
   KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
   KNAPSACK_PRO_PROJECT_DIR=. \
-  KNAPSACK_PRO_CI_NODE_BUILD_ID=$CI_BUILD_ID \
+  KNAPSACK_PRO_TEST_QUEUE_ID=$TEST_QUEUE_ID \
   KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
   KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
   bundle exec rake knapsack_pro:queue:rspec
