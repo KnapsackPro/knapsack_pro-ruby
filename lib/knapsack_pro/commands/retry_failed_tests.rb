@@ -29,7 +29,7 @@ class RetryFailedTests
     }
 
     uri = URI.parse("#{KnapsackPro::Config::Env.endpoint}/v2/test_paths")
-    uri.query = URI.encode_www_form(branch: branch)
+    uri.query = URI.encode_www_form(branch: KnapsackPro::Crypto::BranchEncryptor.call(branch))
 
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = (uri.scheme == 'https')
