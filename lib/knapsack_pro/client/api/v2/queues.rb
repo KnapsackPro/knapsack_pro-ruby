@@ -23,9 +23,11 @@ module KnapsackPro
               }
 
               if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
+                git_adapter = KnapsackPro::RepositoryAdapters::GitAdapter.new
+
                 request_hash.merge!(
-                  build_author: KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
-                  commit_authors: KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
+                  build_author: git_adapter.build_author,
+                  commit_authors: git_adapter.commit_authors,
                   test_files: args.fetch(:test_files)
                 )
               end
