@@ -49,7 +49,7 @@ module KnapsackPro
         end
 
         def test_queue_id
-          node_build_id # BUILDKITE_BUILD_ID or BUILDKITE_STEP_ID may work too
+          node_build_id
         end
       end
     end
