@@ -21,6 +21,7 @@ module KnapsackPro
     desc "queue:rspec [arguments]", "Parallelize RSpec with Knapsack Pro in Queue Mode"
     def queue_rspec(*arguments)
       require "knapsack_pro"
+      ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = KnapsackPro::Config::Env.test_queue_id # Needed by queue_allocator_builder (and ignored in this code path)
       KnapsackPro::Runners::Queue::RSpecRunner.run(arguments.join(" "))
     end
 
