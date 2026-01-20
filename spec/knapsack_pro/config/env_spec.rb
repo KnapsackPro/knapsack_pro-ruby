@@ -1,4 +1,10 @@
 describe KnapsackPro::Config::Env do
+  around(:each) do |example|
+    $stderr = StringIO.new
+    example.run
+    $stderr = STDERR
+  end
+
   before { stub_const("ENV", {}) }
 
   before(:each) do

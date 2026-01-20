@@ -1,6 +1,18 @@
 require_relative '../../../lib/knapsack_pro/formatters/time_tracker'
 
 describe KnapsackPro::Adapters::RSpecAdapter do
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   it 'backwards compatibility with knapsack gem old rspec adapter name' do
     expect(KnapsackPro::Adapters::RspecAdapter.new).to be_kind_of(described_class)
   end
