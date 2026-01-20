@@ -14,8 +14,8 @@ describe KnapsackPro::Client::API::V2::Queues do
 
     before(:each) do
       expect(KnapsackPro::Config::Env).to receive(:masked_user_seat).and_return(masked_user_seat)
-      expect(KnapsackPro::Config::Env).to receive(:test_queue_id).and_return(test_queue_id)
       expect(KnapsackPro::Config::Env).to receive(:node_uuid).and_return(node_uuid)
+      expect(KnapsackPro::Config::Env).to receive(:test_queue_id).and_return(test_queue_id)
     end
 
     context 'when can_initialize_queue=true and attempt_connect_to_queue=true' do
