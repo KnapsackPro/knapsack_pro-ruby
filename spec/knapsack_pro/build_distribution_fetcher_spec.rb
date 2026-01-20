@@ -1,4 +1,16 @@
 describe KnapsackPro::BuildDistributionFetcher do
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   describe '.call' do
     subject { described_class.new.call }
 

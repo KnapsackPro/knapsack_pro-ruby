@@ -8,7 +8,7 @@ describe "commands" do
       original = $stderr
       $stderr = StringIO.new
       example.run
-      $stdout = original
+      $stderr = original
     end
 
     it do

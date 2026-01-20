@@ -1,4 +1,16 @@
 describe KnapsackPro::Adapters::BaseAdapter do
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   it do
     expect(described_class::TEST_DIR_PATTERN).to eq 'test/**{,/*/**}/*_test.rb'
   end
