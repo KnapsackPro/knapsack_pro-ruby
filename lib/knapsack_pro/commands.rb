@@ -69,7 +69,7 @@ module KnapsackPro
     option :branch, type: :string, aliases: :b, desc: "Default: current branch."
     def retry(*runner_args)
       require_relative "./commands/retry_failed_tests"
-      KnapsackPro::RetryFailedTests.new(branch: options[:branch]).call(runner_args)
+      KnapsackPro::RetryFailedTests.new(options[:branch]).call(runner_args)
     end
   end
 end
