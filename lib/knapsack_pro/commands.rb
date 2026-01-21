@@ -61,7 +61,7 @@ module KnapsackPro
       KnapsackPro::Runners::SpinachRunner.run(arguments.join(" "))
     end
 
-    desc "retry [-b] [-- test_runner_args]", "Retry the tests that failed on the previous Knapsack Pro run on BRANCH."
+    desc "retry [-b] [-- test_runner_args]", "Retry RSpec the tests that failed on the previous Knapsack Pro run on BRANCH."
     long_desc <<~DESC
       \x5knapsack_pro retry
       \x5knapsack_pro retry --branch feature -- --format progress
