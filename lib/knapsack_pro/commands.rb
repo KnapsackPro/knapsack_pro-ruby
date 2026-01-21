@@ -12,53 +12,53 @@ module KnapsackPro
       true
     end
 
-    desc "rspec [arguments]", "Parallelize RSpec with Knapsack Pro in Regular Mode"
-    def rspec(*arguments)
+    desc "rspec ['arguments']", "Parallelize RSpec with Knapsack Pro in Regular Mode"
+    def rspec(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::RSpecRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::RSpecRunner.run(arguments)
     end
 
-    desc "queue:rspec [arguments]", "Parallelize RSpec with Knapsack Pro in Queue Mode"
-    def queue_rspec(*arguments)
+    desc "queue:rspec ['arguments']", "Parallelize RSpec with Knapsack Pro in Queue Mode"
+    def queue_rspec(arguments = "")
       require "knapsack_pro"
       ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = KnapsackPro::Config::Env.test_queue_id # Needed by queue_allocator_builder (and ignored in this code path)
-      KnapsackPro::Runners::Queue::RSpecRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::Queue::RSpecRunner.run(arguments)
     end
 
-    desc "cucumber [arguments]", "Parallelize Cucumber with Knapsack Pro in Regular Mode"
-    def cucumber(*arguments)
+    desc "cucumber ['arguments']", "Parallelize Cucumber with Knapsack Pro in Regular Mode"
+    def cucumber(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::CucumberRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::CucumberRunner.run(arguments)
     end
 
-    desc "queue:cucumber [arguments]", "Parallelize Cucumber with Knapsack Pro in Queue Mode"
-    def queue_cucumber(*arguments)
+    desc "queue:cucumber ['arguments']", "Parallelize Cucumber with Knapsack Pro in Queue Mode"
+    def queue_cucumber(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::Queue::CucumberRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::Queue::CucumberRunner.run(arguments)
     end
 
-    desc "minitest [arguments]", "Parallelize Minitest with Knapsack Pro in Regular Mode"
-    def minitest(*arguments)
+    desc "minitest ['arguments']", "Parallelize Minitest with Knapsack Pro in Regular Mode"
+    def minitest(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::MinitestRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::MinitestRunner.run(arguments)
     end
 
-    desc "queue:minitest [arguments]", "Parallelize Minitest with Knapsack Pro in Queue Mode"
-    def queue_minitest(*arguments)
+    desc "queue:minitest ['arguments']", "Parallelize Minitest with Knapsack Pro in Queue Mode"
+    def queue_minitest(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::Queue::MinitestRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::Queue::MinitestRunner.run(arguments)
     end
 
-    desc "test_unit [arguments]", "Parallelize TestUnit with Knapsack Pro in Regular Mode"
-    def test_unit(*arguments)
+    desc "test_unit ['arguments']", "Parallelize TestUnit with Knapsack Pro in Regular Mode"
+    def test_unit(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::TestUnitRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::TestUnitRunner.run(arguments)
     end
 
-    desc "spinach [arguments]", "Parallelize Spinach with Knapsack Pro in Regular Mode"
-    def spinach(*arguments)
+    desc "spinach ['arguments']", "Parallelize Spinach with Knapsack Pro in Regular Mode"
+    def spinach(arguments = "")
       require "knapsack_pro"
-      KnapsackPro::Runners::SpinachRunner.run(arguments.join(" "))
+      KnapsackPro::Runners::SpinachRunner.run(arguments)
     end
 
     desc "retry [-b] [-- test_runner_args]", "Retry RSpec the tests that failed on the previous Knapsack Pro run on BRANCH."
