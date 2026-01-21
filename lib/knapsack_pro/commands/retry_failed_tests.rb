@@ -5,7 +5,7 @@ require "net/http"
 
 module KnapsackPro
   class RetryFailedTests
-    def initialize(branch:)
+    def initialize(branch)
       @branch = branch || `git branch --show-current`.chomp
     end
 
