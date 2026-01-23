@@ -41,6 +41,10 @@ module KnapsackPro
         end
       end
 
+      if test_files.empty?
+        KnapsackPro.logger.info("No tests were executed because the test queue is empty.")
+      end
+
       measured_test_files = test_files
         .map { |t| t['time_execution'] }
         .select { |time_execution| time_execution != KnapsackPro::Tracker::DEFAULT_TEST_FILE_TIME }
