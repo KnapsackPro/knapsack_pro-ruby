@@ -1579,6 +1579,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('0 examples, 0 failures')
+      expect(actual.stdout).to include('INFO -- knapsack_pro: No tests were executed because the test queue is empty.')
 
       expect(actual.exit_code).to eq 0
     end
@@ -1602,6 +1603,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('0 examples, 0 failures')
+      expect(actual.stdout).to include('INFO -- knapsack_pro: No tests were executed because the test queue is empty.')
 
       expect(actual.exit_code).to eq 0
     end
