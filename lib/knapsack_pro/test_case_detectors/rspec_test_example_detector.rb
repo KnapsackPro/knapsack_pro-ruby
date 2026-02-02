@@ -27,8 +27,11 @@ module KnapsackPro
       end
 
       def calculate_slow_id_paths(rspec_args)
-        dry_run_to_file(rspec_args, slow_test_files(KnapsackPro::OptimizedBuildDistributionFetcher.new))
-        slow_id_paths!
+        result = fetch_slow_file_paths(KnapsackPro::OptimizedBuildDistributionFetcher.new)
+        return { queue_url: result.fetch(:queue_url), slow_id_paths: [] } unless result.fetch(:queue_url).nil?
+
+        dry_run_to_file(rspec_args, result.fetch(:slow_file_paths))
+        { queue_url: nil, slow_id_paths: slow_id_paths! }
       end
 
       def slow_id_paths!
@@ -67,22 +70,30 @@ module KnapsackPro
       end
 
       def slow_test_files(build_distribution_fetcher)
+        fetch_slow_file_paths(build_distribution_fetcher).fetch(:slow_file_paths)
+      end
+
+      def fetch_slow_file_paths(build_distribution_fetcher)
         if KnapsackPro::Config::Env.slow_test_file_pattern
-          KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+          slow_file_paths = KnapsackPro::TestFileFinder.slow_test_files_by_pattern(adapter_class)
+          { queue_url: nil, slow_file_paths: slow_file_paths }
         else
-          determine_slow_test_files(build_distribution_fetcher)
+          determine_slow_file_paths(build_distribution_fetcher)
         end
       end
 
-      def determine_slow_test_files(build_distribution_fetcher)
+      def determine_slow_file_paths(build_distribution_fetcher)
         if KnapsackPro::Config::Env.test_files_encrypted?
           raise "Split by test cases is not possible when you have enabled test file names encryption ( #{KnapsackPro::Urls::ENCRYPTION} ). You need to disable encryption with KNAPSACK_PRO_TEST_FILES_ENCRYPTED=false in order to use split by test cases #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}"
         end
 
-        test_files_from_api = build_distribution_fetcher.call.test_files
-        merged_test_files_from_api = KnapsackPro::TestCaseMergers::RSpecMerger.new(test_files_from_api).call
+        build_distribution = build_distribution_fetcher.call
+        return { queue_url: nil, slow_file_paths: [] } if build_distribution.queue_url.nil?
+
+        merged_test_files_from_api = KnapsackPro::TestCaseMergers::RSpecMerger.new(build_distribution.test_files).call
         test_files_existing_on_disk = KnapsackPro::TestFileFinder.select_test_files_that_can_be_run(KnapsackPro::Adapters::RSpecAdapter, merged_test_files_from_api)
-        KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk)
+        slow_file_paths = KnapsackPro::SlowTestFileDeterminer.call(test_files_existing_on_disk)
+        { queue_url: nil, slow_file_paths: slow_file_paths }
       end
 
       def report

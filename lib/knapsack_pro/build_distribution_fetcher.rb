@@ -11,6 +11,10 @@ module KnapsackPro
         response.fetch('test_files')
       end
 
+      def queue_url # Can be present only when using the initialize command
+        response.fetch('queue_url', nil)
+      end
+
       private
 
       attr_reader :response
