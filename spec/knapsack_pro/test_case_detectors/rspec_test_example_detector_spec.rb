@@ -197,7 +197,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       it do
         expected_slow_test_files = double
-        expect_any_instance_of(KnapsackPro::RSpecSlowTestFileFinder).to receive(:call).and_return(expected_slow_test_files)
+        expect_any_instance_of(described_class).to receive(:determine_slow_test_files).and_return(expected_slow_test_files)
 
         expect(subject).to eq expected_slow_test_files
       end
