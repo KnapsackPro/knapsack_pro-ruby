@@ -5,8 +5,8 @@ module KnapsackPro
     class QueueInitializer
       def call(args)
         result = KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector.new.calculate_slow_id_paths(args.to_s)
-        unless result.fetch(:queue_url).nil?
-          KnapsackPro.logger.info "Build URL: #{result.fetch(:queue_url)}"
+        unless result.fetch(:test_queue_url).nil?
+          KnapsackPro.logger.info "Test Queue URL: #{result.fetch(:test_queue_url)}"
           exit 0
         end
 
@@ -30,7 +30,7 @@ module KnapsackPro
         end
 
         if response.key?('url')
-          KnapsackPro.logger.info "Build URL: #{response.fetch('url')}"
+          KnapsackPro.logger.info "Test Queue URL: #{response.fetch('url')}"
         end
       end
     end
