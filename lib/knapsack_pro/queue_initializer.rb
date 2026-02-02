@@ -12,9 +12,22 @@ module KnapsackPro
         action = KnapsackPro::Client::API::V1::Queues.initialize(paths)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
-        return unless response.key?('url') # Race to initialize lost to another parallel node
 
-        KnapsackPro.logger.info "Build URL: #{response.fetch('url')}"
+        unless connection.success?
+          KnapsackPro.logger.warn "Failed to initialize the test queue. Knapsack Pro will initialize it right before running the tests."
+          exit 1
+        end
+
+        if connection.errors?
+          KnapsackPro.logger.warn "Failed to initialize the test queue. Knapsack Pro will initialize it right before running the tests."
+          KnapsackPro.logger.warn response.inspect
+          exit 1
+        end
+
+        # Not present if this node lost the race to initialize to another parallel node.
+        if response.key?('url')
+          KnapsackPro.logger.info "Build URL: #{response.fetch('url')}"
+        end
       end
     end
   end
