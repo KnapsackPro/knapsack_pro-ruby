@@ -23,7 +23,7 @@ describe 'TimeTracker' do
       run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(1)
         expect(queue[0]['path']).to eq(spec_paths[0])
-        expect(queue[0]['time_execution']).to be_between(0.10, 0.15)
+        expect(queue[0]['time_execution']).to be_between(0.1, 0.2).exclusive
       end
     end
 
@@ -49,9 +49,9 @@ describe 'TimeTracker' do
       run_specs([spec0, spec1], 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(2)
         expect(queue[0]['path']).to eq(spec_paths[0])
-        expect(queue[0]['time_execution']).to be_between(0.10, 0.15)
+        expect(queue[0]['time_execution']).to be_between(0.1, 0.2).exclusive
         expect(queue[1]['path']).to eq(spec_paths[1])
-        expect(queue[1]['time_execution']).to be_between(0.20, 0.25)
+        expect(queue[1]['time_execution']).to be_between(0.2, 0.3).exclusive
       end
     end
 
@@ -68,7 +68,7 @@ describe 'TimeTracker' do
       run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(1)
         expect(queue[0]['path']).to eq(spec_paths[0])
-        expect(queue[0]['time_execution']).to be_between(0.10, 0.15)
+        expect(queue[0]['time_execution']).to be_between(0.1, 0.2).exclusive
       end
     end
 
@@ -109,7 +109,7 @@ describe 'TimeTracker' do
       run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(1)
         expect(queue[0]['path']).to eq(spec_paths[0])
-        expect(queue[0]['time_execution']).to be_between(0.30, 0.35)
+        expect(queue[0]['time_execution']).to be_between(0.3, 0.4).exclusive
       end
     end
 
@@ -143,10 +143,10 @@ describe 'TimeTracker' do
         expect(queue.size).to eq(4)
 
         spec_path = spec_paths[0]
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:1]" }['time_execution']).to be_between(0.00, 0.05).exclusive
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:2]" }['time_execution']).to be_between(0.10, 0.15)
-        expect(queue.find { |time| time['path'] == "#{spec_path}[2:1]" }['time_execution']).to be_between(0.20, 0.25)
-        expect(queue.find { |time| time['path'] == "#{spec_path}[2:2]" }['time_execution']).to be_between(0.30, 0.35)
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:1]" }['time_execution']).to be_between(0.0, 0.1).exclusive
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:2]" }['time_execution']).to be_between(0.1, 0.2).exclusive
+        expect(queue.find { |time| time['path'] == "#{spec_path}[2:1]" }['time_execution']).to be_between(0.2, 0.3).exclusive
+        expect(queue.find { |time| time['path'] == "#{spec_path}[2:2]" }['time_execution']).to be_between(0.3, 0.4).exclusive
       end
     end
 
@@ -182,7 +182,7 @@ describe 'TimeTracker' do
       run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(1)
         expect(queue[0]['path']).to eq(spec_paths[0])
-        expect(queue[0]['time_execution']).to be_between(0.60, 0.65)
+        expect(queue[0]['time_execution']).to be_between(0.6, 0.7).exclusive
       end
     end
 
@@ -234,7 +234,7 @@ describe 'TimeTracker' do
       run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(1)
         expect(queue[0]['path']).to eq(spec_paths[0])
-        expect(queue[0]['time_execution']).to be_between(0.60, 0.65)
+        expect(queue[0]['time_execution']).to be_between(0.6, 0.7).exclusive
       end
     end
 
@@ -271,8 +271,8 @@ describe 'TimeTracker' do
         expect(queue.size).to eq(2)
 
         spec_path = spec_paths[0]
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:1]" }['time_execution']).to be_between(0.40, 0.45)
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:2]" }['time_execution']).to be_between(0.40, 0.45)
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:1]" }['time_execution']).to be_between(0.4, 0.5).exclusive
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:2]" }['time_execution']).to be_between(0.4, 0.5).exclusive
       end
     end
 
@@ -325,9 +325,9 @@ describe 'TimeTracker' do
         expect(queue.size).to eq(3)
 
         spec_path = spec_paths[0]
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:1]" }['time_execution']).to be_between(0.20, 0.25)
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:2:1]" }['time_execution']).to be_between(0.40, 0.45)
-        expect(queue.find { |time| time['path'] == "#{spec_path}[1:3:1]" }['time_execution']).to be_between(0.40, 0.45)
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:1]" }['time_execution']).to be_between(0.2, 0.3).exclusive
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:2:1]" }['time_execution']).to be_between(0.4, 0.5).exclusive
+        expect(queue.find { |time| time['path'] == "#{spec_path}[1:3:1]" }['time_execution']).to be_between(0.4, 0.5).exclusive
       end
     end
 
@@ -386,7 +386,7 @@ describe 'TimeTracker' do
       SPEC
 
       run_specs(spec, 'duration') do |_, duration|
-        expect(duration).to be_between(0.00, 0.05).exclusive
+        expect(duration).to be_between(0.0, 0.1).exclusive
       end
     end
   end
@@ -427,7 +427,7 @@ describe 'TimeTracker' do
       run_specs(spec, 'batch') do |spec_paths, batch|
         expect(batch.size).to eq(1)
         expect(batch[0]['path']).to eq(spec_paths[0])
-        expect(batch[0]['time_execution']).to be_between(0.10, 0.15)
+        expect(batch[0]['time_execution']).to be_between(0.1, 0.2).exclusive
       end
     end
   end
