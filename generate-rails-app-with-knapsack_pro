@@ -96,7 +96,6 @@ end
 
 gem 'turnip', '~> 4.4'
 gem 'juniter'
-gem 'minitest', '~> 5.27'
 EOF
 
 (
