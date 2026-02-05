@@ -2,7 +2,9 @@
 
 ### Unreleased
 
-* (Patch) RSpec: Skip unneeded API call when queue is already initialized in `rake knapsack_pro:queue:rspec:initialize` and improve error handling (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/326).
+### 9.2.2
+
+* RSpec: Skip unneeded API call when queue is already initialized in `rake knapsack_pro:queue:rspec:initialize` and improve error handling (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/326).
 
 ### 9.2.1
 
