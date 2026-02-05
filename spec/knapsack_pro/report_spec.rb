@@ -103,10 +103,10 @@ describe KnapsackPro::Report do
       it 'logs error on lost info about recorded timing for test files due missing json files AND creates empty build subset' do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).exactly(4).and_return(logger)
-        expect(logger).to receive(:warn).with('2 test files were executed on this CI node but the recorded time was lost due to:')
-        expect(logger).to receive(:warn).with('1. Please ensure you do not remove the contents of the .knapsack_pro directory between tests run.')
-        expect(logger).to receive(:warn).with("2. Ensure you've added Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: https://knapsackpro.com/perma/ruby/installation-guide")
-        expect(logger).to receive(:warn).with('3. Another potential reason for this warning is that all your tests are empty test files, pending tests, or they have syntax errors, and the time execution was not recorded for them.')
+        expect(logger).to receive(:warn).with('2 test files were executed, but their execution time could not be recorded. This usually happens when one of the following is true:')
+        expect(logger).to receive(:warn).with('- The `.knapsack_pro` directory (or its contents) were removed during the run.')
+        expect(logger).to receive(:warn).with('- The `bind` method was not called in the test runner configuration. See: https://knapsackpro.com/perma/ruby/installation-guide')
+        expect(logger).to receive(:warn).with('- The test files did not run any tests because they are empty, contain only pending tests, or have syntax errors.')
 
         expect(described_class).to receive(:create_build_subset).with(
           json_test_file_a + json_test_file_b

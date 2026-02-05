@@ -30,10 +30,8 @@ module KnapsackPro
           if File.exist?(adapter_bind_method_called_file)
             File.delete(adapter_bind_method_called_file)
           else
-            puts "\n\n"
-            KnapsackPro.logger.error('-'*10 + ' Configuration error ' + '-'*50)
-            KnapsackPro.logger.error("You forgot to call #{self}.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly #{KnapsackPro::Urls::INSTALLATION_GUIDE}")
-            KnapsackPro.logger.error("If you already have #{self}.bind method added and you still see this error then one of your tests must have deleted the .knapsack_pro directory from the disk accidentally. Please ensure you do not remove the .knapsack_pro directory: #{KnapsackPro::Urls::DASHBOARD__ZEROISH_TEST_EXECUTION_TIMES}")
+            KnapsackPro.logger.error("The `#{self}.bind` method was not called in the test runner configuration. See: #{KnapsackPro::Urls::INSTALLATION_GUIDE}")
+            KnapsackPro.logger.error("If `#{self}.bind` was called and you still see this error, ensure the `.knapsack_pro` directory (or its contents) were not removed during the run: #{KnapsackPro::Urls::DASHBOARD__ZEROISH_TEST_EXECUTION_TIMES}")
             Kernel.exit(1)
           end
         end

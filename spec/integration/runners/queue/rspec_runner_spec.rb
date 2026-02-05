@@ -233,7 +233,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout).to include('ERROR -- knapsack_pro: You forgot to call KnapsackPro::Adapters::RSpecAdapter.bind method in your test runner configuration file. It is needed to record test files time execution. Please follow the installation guide to configure your project properly https://knapsackpro.com/perma/ruby/installation-guide')
+      expect(actual.stdout).to include('ERROR -- knapsack_pro: The `KnapsackPro::Adapters::RSpecAdapter.bind` method was not called in the test runner configuration. See: https://knapsackpro.com/perma/ruby/installation-guide')
 
       expect(actual.exit_code).to eq 1
     end

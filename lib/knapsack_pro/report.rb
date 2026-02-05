@@ -51,10 +51,10 @@ module KnapsackPro
         .select { |time_execution| time_execution != KnapsackPro::Tracker::DEFAULT_TEST_FILE_TIME }
 
       if test_files.size > 0 && measured_test_files.size == 0
-        KnapsackPro.logger.warn("#{test_files.size} test files were executed on this CI node but the recorded time was lost due to:")
-        KnapsackPro.logger.warn("1. Please ensure you do not remove the contents of the .knapsack_pro directory between tests run.")
-        KnapsackPro.logger.warn("2. Ensure you've added Knapsack::Adapters::RSpecAdapter.bind in your rails_helper.rb or spec_helper.rb. Please follow the installation guide again: #{KnapsackPro::Urls::INSTALLATION_GUIDE}")
-        KnapsackPro.logger.warn("3. Another potential reason for this warning is that all your tests are empty test files, pending tests, or they have syntax errors, and the time execution was not recorded for them.")
+        KnapsackPro.logger.warn("#{test_files.size} test files were executed, but their execution time could not be recorded. This usually happens when one of the following is true:")
+        KnapsackPro.logger.warn('- The `.knapsack_pro` directory (or its contents) were removed during the run.')
+        KnapsackPro.logger.warn("- The `bind` method was not called in the test runner configuration. See: #{KnapsackPro::Urls::INSTALLATION_GUIDE}")
+        KnapsackPro.logger.warn('- The test files did not run any tests because they are empty, contain only pending tests, or have syntax errors.')
       end
 
       create_build_subset(test_files)
