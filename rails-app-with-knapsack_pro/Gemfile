@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-# NOTE: Need edge Rails to run minitest v6 (https://github.com/rails/rails/pull/56202)
-gem "rails", github: "rails/rails", branch: "main"
+# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem "rails", "~> 8.1.2"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use sqlite3 as the database for Active Record
@@ -92,10 +92,10 @@ group :test do
   gem 'rails-controller-testing'
 
   if ENV['KNAPSACK_PRO_RSPEC_DISABLED'] != 'true'
-    # gem 'rspec-core'
     gem 'rspec-rails'
-    gem 'rspec-retry'
     gem 'rspec_junit_formatter'
+    gem 'rspec-retry'
+    # gem 'rspec-core'
     gem 'async-rspec', require: false
   end
 
@@ -111,7 +111,4 @@ group :test do
 end
 
 gem 'turnip', '~> 4.4'
-# TODO: Install from rubygems as soon as support for ruby v4 is released:
-#       https://github.com/enkessler/cuke_modeler/issues/18
-gem 'cuke_modeler', github: 'enkessler/cuke_modeler', branch: 'master'
 gem 'juniter'
