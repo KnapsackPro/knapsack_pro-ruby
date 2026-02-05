@@ -16,7 +16,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
         expect(File).to receive(:exist?).at_least(:once).with(report_path).and_return(true)
         expect(File).to receive(:delete).with(report_path)
 
-        expect(rspec_test_example_detector).to receive(:slow_test_files).at_least(1).time.and_return(test_file_entities)
+        expect(rspec_test_example_detector).to receive(:fetch_slow_file_paths).at_least(1).time.and_return({ slow_file_paths: test_file_entities, test_queue_url: nil })
       end
 
       context 'when there are no slow test files' do
@@ -127,8 +127,8 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       it do
         subject_class = Class.new(KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector) do
-          define_method(:slow_test_files) do |_fetcher|
-            [{ 'path' => 'spec/a_spec.rb' }]
+          define_method(:fetch_slow_file_paths) do
+            { slow_file_paths: [{ 'path' => 'spec/a_spec.rb' }], test_queue_url: nil }
           end
         end
 
@@ -175,7 +175,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   end
 
   describe '#slow_test_files' do
-    subject { described_class.new.send(:slow_test_files, KnapsackPro::BuildDistributionFetcher.new) }
+    subject { described_class.new.send(:fetch_slow_file_paths).fetch(:slow_file_paths) }
 
     before do
       expect(KnapsackPro::Config::Env).to receive(:slow_test_file_pattern).and_return(slow_test_file_pattern)
@@ -197,7 +197,7 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
 
       it do
         expected_slow_test_files = double
-        expect_any_instance_of(KnapsackPro::RSpecSlowTestFileFinder).to receive(:call).and_return(expected_slow_test_files)
+        expect_any_instance_of(described_class).to receive(:determine_slow_file_paths).and_return(slow_file_paths: expected_slow_test_files)
 
         expect(subject).to eq expected_slow_test_files
       end

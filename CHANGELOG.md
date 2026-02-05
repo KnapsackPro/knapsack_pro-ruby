@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (Patch) RSpec: Skip unneeded API call when queue is already initialized in `rake knapsack_pro:queue:rspec:initialize` and improve error handling (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/326).
+
 ### 9.2.1
 
 * Minitest: Fix for `Minitest::Spec` with oneword dynamic classes (`describe "oneword"`) (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/324).
