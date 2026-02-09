@@ -23,7 +23,7 @@ module KnapsackPro
       private
 
       def test_queue_exists?
-        action = KnapsackPro::Client::API::V1::Queues.connect
+        action = KnapsackPro::Client::API::V2::Queues.connect
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
 
@@ -53,7 +53,7 @@ module KnapsackPro
           exit 1
         end
 
-        action = KnapsackPro::Client::API::V1::Queues.initialize(paths)
+        action = KnapsackPro::Client::API::V2::Queues.initialize(paths)
         connection = KnapsackPro::Client::Connection.new(action)
         response = connection.call
 

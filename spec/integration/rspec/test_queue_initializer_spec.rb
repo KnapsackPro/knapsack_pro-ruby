@@ -111,7 +111,7 @@ describe "#{KnapsackPro::RSpec::TestQueueInitializer} - Integration tests", :cle
 
     expect(actual.stdout).to include('DEBUG -- knapsack_pro: GET https://api.knapsackpro.com/v1/build_distributions/last').once
     expect(actual.stdout).to include('INFO -- knapsack_pro: Calculating Split by Test Examples. Analyzing 1 slow test files').once
-    expect(actual.stdout).to include('DEBUG -- knapsack_pro: POST https://api.knapsackpro.com/v1/queues/queue').twice
+    expect(actual.stdout).to include('DEBUG -- knapsack_pro: POST https://api.knapsackpro.com/v2/queues/queue').twice
     expect(actual.stdout).to include('"test_files":[{"path":"spec_integration/fast_spec.rb[1:1]"},{"path":"spec_integration/fast_spec.rb[1:2]"},{"path":"spec_integration/slow_spec.rb[1:1]"},{"path":"spec_integration/slow_spec.rb[1:2]"}]').once
     expect(actual.stdout).to include('INFO -- knapsack_pro: Test Queue URL: http://example.com').once
 
