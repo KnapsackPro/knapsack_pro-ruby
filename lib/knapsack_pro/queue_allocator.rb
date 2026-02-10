@@ -36,7 +36,6 @@ module KnapsackPro
       @test_suite = args.fetch(:test_suite)
       @ci_node_total = args.fetch(:ci_node_total)
       @ci_node_index = args.fetch(:ci_node_index)
-      @ci_node_build_id = args.fetch(:ci_node_build_id)
       @repository_adapter = args.fetch(:repository_adapter)
       @fallback_mode = false
     end
@@ -65,11 +64,7 @@ module KnapsackPro
 
     private
 
-    attr_reader :test_suite,
-      :ci_node_total,
-      :ci_node_index,
-      :ci_node_build_id,
-      :repository_adapter
+    attr_reader :test_suite, :ci_node_total, :ci_node_index, :repository_adapter
 
     def encrypted_branch
       KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch)
@@ -93,7 +88,6 @@ module KnapsackPro
         branch: encrypted_branch,
         node_total: ci_node_total,
         node_index: ci_node_index,
-        node_build_id: ci_node_build_id,
         test_files: test_files,
         batch_uuid: batch_uuid
       )

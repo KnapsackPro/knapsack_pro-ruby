@@ -10,7 +10,6 @@ namespace :knapsack_pro do
 
     task :rspec_go, [:rspec_args] do |_, args|
       Rake::Task.clear
-      ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = KnapsackPro::Config::Env.test_queue_id # Needed by queue_allocator_builder (and ignored in this code path)
       KnapsackPro::Runners::Queue::RSpecRunner.run(args[:rspec_args])
     end
 
