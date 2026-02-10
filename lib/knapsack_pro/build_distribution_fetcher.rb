@@ -59,7 +59,7 @@ module KnapsackPro
 
     def additional_params
       {
-        node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
+        node_build_id: KnapsackPro::Config::Env.test_queue_id,
         none_if_queue_initialized: true
       }
     end
