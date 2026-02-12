@@ -4,14 +4,16 @@ require 'ostruct'
 require_relative '../../../lib/knapsack_pro/rspec/test_queue_initializer'
 
 describe "#{KnapsackPro::RSpec::TestQueueInitializer} - Integration tests", :clear_tmp do
-  SPEC_DIRECTORY = 'spec_integration'
-
   class Spec
     attr_reader :path, :content
 
     def initialize(path, content)
-      @path = "#{SPEC_DIRECTORY}/#{path}"
+      @path = "#{self.class.directory}/#{path}"
       @content = content
+    end
+
+    def self.directory
+      'spec_integration'
     end
   end
 
@@ -55,15 +57,15 @@ describe "#{KnapsackPro::RSpec::TestQueueInitializer} - Integration tests", :cle
   end
 
   before do
-    FileUtils.mkdir_p(SPEC_DIRECTORY)
+    FileUtils.mkdir_p(Spec.directory)
 
     ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'debug'
     # Useful when creating or editing a test:
     # ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
   after do
-    FileUtils.rm_rf(SPEC_DIRECTORY)
-    FileUtils.mkdir_p(SPEC_DIRECTORY)
+    FileUtils.rm_rf(Spec.directory)
+    FileUtils.mkdir_p(Spec.directory)
 
     ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
     ENV.keys.select { _1.start_with?('TEST__') }.each do |key|

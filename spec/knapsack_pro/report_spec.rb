@@ -120,6 +120,10 @@ describe KnapsackPro::Report do
       subject { described_class.save_node_queue_to_api }
 
       before do
+        logger = instance_double(Logger)
+        expect(KnapsackPro).to receive(:logger).exactly(1).and_return(logger)
+        expect(logger).to receive(:info).with('No tests were executed because the test queue is empty.')
+
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
