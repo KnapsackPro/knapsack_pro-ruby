@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (Major) RSpec & Queue Mode: When you retry one (or all the) nodes, Knapsack Pro only executes the tests that failed last time on that node. See [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
+
 ### 9.2.3
 
 * (patch) Fix 5-second timeout when unshallowing git repo (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/328)
