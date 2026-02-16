@@ -43,18 +43,39 @@ module KnapsackPro
       private
 
       def git_commit_authors
-        if KnapsackPro::Config::Env.ci? && shallow_repository?
-          command = 'git fetch --shallow-since "one month ago" --quiet 2>/dev/null'
-          begin
-            Timeout.timeout(5) do
-              `#{command}`
-            end
-          rescue Timeout::Error
-            KnapsackPro.logger.debug("Skip the `#{command}` command because it took too long.")
-          end
+        git_unshallow if KnapsackPro::Config::Env.ci? && shallow_repository?
+        `git log --since "one month ago" 2>/dev/null | git shortlog --summary --email 2>/dev/null`
+      end
+
+      def git_unshallow
+        args = ['git', 'fetch', '--quiet', '--shallow-since', 'one month ago']
+
+        begin
+          pid = Process.spawn(*args, [:out, :err] => File::NULL)
+        rescue StandardError => e
+          KnapsackPro.logger.debug("Failed to unshallow (#{args.join(' ')}): #{e.message}")
+          return
         end
 
-        `git log --since "one month ago" 2>/dev/null | git shortlog --summary --email 2>/dev/null`
+        begin
+          Timeout.timeout(5) { safe_waitpid(pid) }
+        rescue Timeout::Error
+          safe_kill(pid)
+          Timeout.timeout(1) { safe_waitpid(pid) } rescue Timeout::Error
+          KnapsackPro.logger.debug("Failed to unshallow (#{args.join(' ')}) in 5 seconds")
+        end
+      end
+
+      def safe_waitpid(pid)
+        Process.waitpid(pid)
+      rescue Errno::ECHILD
+        nil
+      end
+
+      def safe_kill(pid)
+        Process.kill('KILL', pid)
+      rescue Errno::ESRCH
+        nil
       end
 
       def git_build_author
