@@ -43,18 +43,15 @@ module KnapsackPro
       private
 
       def git_commit_authors
-        if KnapsackPro::Config::Env.ci? && shallow_repository?
-          command = 'git fetch --shallow-since "one month ago" --quiet 2>/dev/null'
-          begin
-            Timeout.timeout(5) do
-              `#{command}`
-            end
-          rescue Timeout::Error
-            KnapsackPro.logger.debug("Skip the `#{command}` command because it took too long.")
-          end
-        end
-
+        git_unshallow if KnapsackPro::Config::Env.ci? && shallow_repository?
         `git log --since "one month ago" 2>/dev/null | git shortlog --summary --email 2>/dev/null`
+      end
+
+      def git_unshallow
+        command = 'git fetch --shallow-since "one month ago" --quiet 2>/dev/null'
+        Timeout.timeout(5) { `#{command}` }
+      rescue Timeout::Error
+        KnapsackPro.logger.debug("Skip the `#{command}` command because it took too long.")
       end
 
       def git_build_author
