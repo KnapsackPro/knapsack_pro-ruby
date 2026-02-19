@@ -164,6 +164,10 @@ module KnapsackPro
           end
         end
 
+        def fixed_queue_split_?
+          @fixed_queue_split_ ||= env_for('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', :fixed_queue_split).to_s == "true"
+        end
+
         def fixed_queue_split?
           fixed_queue_split.to_s == 'true'
         end
@@ -258,6 +262,30 @@ module KnapsackPro
 
         def fallback_mode_error_exit_code
           ENV.fetch('KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE', 1).to_i
+        end
+
+        def test_queue_id
+          knapsack_env_name = 'KNAPSACK_PRO_TEST_QUEUE_ID'
+          knapsack_env_value = ENV[knapsack_env_name]
+
+          ci_env_value = detected_ci.new.test_queue_id
+
+          if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
+            warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
+          end
+
+          id = knapsack_env_value != nil ? knapsack_env_value : ci_env_value
+          return id unless id.nil?
+
+          triplet = [ci_node_total, branch, commit_hash]
+          return triplet.join('-') if triplet.all?
+
+          raise("Missing test_queue_id. See: #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
+        end
+
+        def node_uuid
+          env_name = 'KNAPSACK_PRO_NODE_UUID'
+          ENV[env_name] || raise("Missing environment variable #{env_name}. Please report this as a bug: #{KnapsackPro::Urls::SUPPORT}")
         end
 
         private

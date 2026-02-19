@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "knapsack_pro"
+require "knapsack_pro/commands"
+KnapsackPro::Commands.start(ARGV)

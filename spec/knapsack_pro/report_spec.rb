@@ -120,6 +120,10 @@ describe KnapsackPro::Report do
       subject { described_class.save_node_queue_to_api }
 
       before do
+        logger = instance_double(Logger)
+        expect(KnapsackPro).to receive(:logger).exactly(1).and_return(logger)
+        expect(logger).to receive(:info).with('No tests were executed because the test queue is empty.')
+
         queue_id = 'fake-queue-id'
         expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
@@ -127,11 +131,6 @@ describe KnapsackPro::Report do
       end
 
       it 'logs warning about reasons why no test files were executed on this CI node' do
-        logger = instance_double(Logger)
-        expect(KnapsackPro).to receive(:logger).exactly(2).and_return(logger)
-        expect(logger).to receive(:warn).with('No test files were executed on this CI node.')
-        expect(logger).to receive(:debug).with('This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
-
         expect(described_class).to receive(:create_build_subset).with([])
 
         subject
