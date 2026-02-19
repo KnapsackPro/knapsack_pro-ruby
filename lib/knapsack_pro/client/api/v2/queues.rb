@@ -11,7 +11,8 @@ module KnapsackPro
             def queue(args)
               request_hash = {
                 attempt_connect_to_queue: args.fetch(:attempt_connect_to_queue),
-                batch_uuid: args.fetch(:batch_uuid),
+                batch_uuid: SecureRandom.uuid,
+                batch_index: args.fetch(:batch_uuid),
                 branch: args.fetch(:branch),
                 can_initialize_queue: args.fetch(:can_initialize_queue),
                 commit_hash: args.fetch(:commit_hash),
@@ -53,6 +54,7 @@ module KnapsackPro
               request_hash = {
                 attempt_connect_to_queue: true,
                 batch_uuid: SecureRandom.uuid,
+                batch_index: 0,
                 branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
                 build_author: git_adapter.build_author,
                 can_initialize_queue: true,
@@ -81,6 +83,7 @@ module KnapsackPro
               request_hash = {
                 attempt_connect_to_queue: false,
                 batch_uuid: SecureRandom.uuid,
+                batch_index: 0,
                 branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
                 build_author: git_adapter.build_author,
                 can_initialize_queue: true,

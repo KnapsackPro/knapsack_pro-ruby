@@ -38,9 +38,12 @@ module KnapsackPro
       @ci_node_index = args.fetch(:ci_node_index)
       @repository_adapter = args.fetch(:repository_adapter)
       @fallback_mode = false
+      @batch_index = -1
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files, batch_uuid: SecureRandom.uuid, time_tracker: nil)
+      @batch_index += 1
+      batch_uuid = @batch_index if batch_uuid
       return [] if @fallback_mode
 
       batch = pull_tests_from_queue(can_initialize_queue, batch_uuid, time_tracker: time_tracker)
