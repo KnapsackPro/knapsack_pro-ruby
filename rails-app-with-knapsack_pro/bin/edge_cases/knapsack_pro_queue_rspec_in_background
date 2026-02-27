@@ -3,7 +3,7 @@
 # run it with number at the end to bump commit hash and record unique CI build
 # bin/edge_cases/knapsack_pro_queue_rspec_in_background 1
 
-export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_TEST_QUEUE_ID=$(openssl rand -base64 32)
 export KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000
 export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf
 export KNAPSACK_PRO_CI_NODE_TOTAL=2

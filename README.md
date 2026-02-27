@@ -67,7 +67,7 @@ bundle update knapsack_pro
 RSpec:
 
 ```bash
-bundle exec rspec
+bin/rspec
 ```
 
 ### Publishing

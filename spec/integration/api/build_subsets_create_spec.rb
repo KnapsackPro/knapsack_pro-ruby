@@ -26,6 +26,18 @@ describe 'Request API /v1/build_subsets' do
   let(:endpoint) { valid_endpoint }
   let(:test_suite_token) { valid_test_suite_token }
 
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   before do
     stub_const('ENV', {
       'KNAPSACK_PRO_ENDPOINT' => endpoint,

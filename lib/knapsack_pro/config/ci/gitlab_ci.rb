@@ -51,6 +51,10 @@ module KnapsackPro
         def ci_provider
           "Gitlab CI"
         end
+
+        def test_queue_id
+          ENV['CI_PIPELINE_ID']
+        end
       end
     end
   end

@@ -19,7 +19,7 @@ echo
 
 # Run all test files in the test suite.
 # The commands below should record time execution for all test files.
-export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_TEST_QUEUE_ID=$(openssl rand -base64 32)
 
 KNAPSACK_PRO_CI_NODE_INDEX=0 \
   bundle exec rake "knapsack_pro:queue:rspec[--format documentation]"
@@ -36,7 +36,7 @@ echo
 
 # Run only controllers' specs.
 # Expect Queue API to return test files ordered by time execution recorded in the previous CI build run.
-export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_TEST_QUEUE_ID=$(openssl rand -base64 32)
 export KNAPSACK_PRO_TEST_FILE_PATTERN="spec/controllers/**{,/*/**}/*_spec.rb"
 
 KNAPSACK_PRO_CI_NODE_INDEX=0 \
@@ -55,7 +55,7 @@ echo
 # In the previous CI build, we recorded time execution for controllers' specs only.
 # Despite that, we expect the Queue API will return services specs ordered based on ever recorded
 # services specs' time execution.
-export KNAPSACK_PRO_CI_NODE_BUILD_ID=$(openssl rand -base64 32)
+export KNAPSACK_PRO_TEST_QUEUE_ID=$(openssl rand -base64 32)
 export KNAPSACK_PRO_TEST_FILE_PATTERN="spec/services/**{,/*/**}/*_spec.rb"
 
 KNAPSACK_PRO_CI_NODE_INDEX=0 \

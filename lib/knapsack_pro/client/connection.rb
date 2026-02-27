@@ -86,9 +86,9 @@ module KnapsackPro
       end
 
       def make_request(&block)
-        retries ||= 0
+        attempts ||= 0
 
-        @http_response = block.call
+        @http_response = block.call(attempts)
         @response_body = parse_response_body(http_response.body)
 
         request_uuid = http_response.header['X-Request-Id'] || 'N/A'
@@ -108,11 +108,11 @@ module KnapsackPro
         response_body
       rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError,
              SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
-        retries += 1
-        log_diagnostics(e, retries)
-        @http.set_debug_output(@http_debug_output) if retries == max_request_retries - 1
-        if retries < max_request_retries
-          backoff(retries)
+        attempts += 1
+        log_diagnostics(e, attempts)
+        @http.set_debug_output(@http_debug_output) if attempts == max_request_retries - 1
+        if attempts < max_request_retries
+          backoff(attempts)
           rotate_ip
           retry
         else
@@ -204,8 +204,8 @@ module KnapsackPro
 
       def post
         build_http(endpoint_uri)
-        make_request do
-          @http.post(endpoint_uri.path, action.request_hash.to_json, json_headers)
+        make_request do |attempt|
+          @http.post(endpoint_uri.path, action.request_hash.merge(attempt: attempt).to_json, json_headers)
         end
       end
 
@@ -213,7 +213,7 @@ module KnapsackPro
         uri = endpoint_uri
         uri.query = URI.encode_www_form(action.request_hash)
         build_http(uri)
-        make_request do
+        make_request do |_attempt|
           @http.get(uri, json_headers)
         end
       end

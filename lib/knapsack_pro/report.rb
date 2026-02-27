@@ -42,8 +42,7 @@ module KnapsackPro
       end
 
       if test_files.empty?
-        KnapsackPro.logger.warn("No test files were executed on this CI node.")
-        KnapsackPro.logger.debug("This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.")
+        KnapsackPro.logger.info("No tests were executed because the test queue is empty.")
       end
 
       measured_test_files = test_files

@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (Major) RSpec & Queue Mode: When you retry one (or all the) nodes, Knapsack Pro only executes the tests that failed last time on that node. See [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
+
 ### 9.2.2
 
 * RSpec: Skip unneeded API call when queue is already initialized in `rake knapsack_pro:queue:rspec:initialize` and improve error handling (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/326).

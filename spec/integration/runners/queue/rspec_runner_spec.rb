@@ -4,14 +4,16 @@ require 'nokogiri'
 require 'ostruct'
 
 describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :clear_tmp do
-  SPEC_DIRECTORY = 'spec_integration'
-
   class Spec
     attr_reader :path, :content
 
     def initialize(path, content)
-      @path = "#{SPEC_DIRECTORY}/#{path}"
+      @path = "#{self.class.directory}/#{path}"
       @content = content
+    end
+
+    def self.directory
+      'spec_integration'
     end
   end
 
@@ -27,7 +29,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   def generate_spec_helper(spec_helper)
-    spec_helper_path = "#{SPEC_DIRECTORY}/spec_helper.rb"
+    spec_helper_path = "#{Spec.directory}/spec_helper.rb"
     File.open(spec_helper_path, 'w') { |file| file.write(spec_helper) }
   end
 
@@ -39,7 +41,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   def create_rails_helper_file(rails_helper)
-    rails_helper_path = "#{SPEC_DIRECTORY}/rails_helper.rb"
+    rails_helper_path = "#{Spec.directory}/rails_helper.rb"
     File.open(rails_helper_path, 'w') { |file| file.write(rails_helper) }
   end
 
@@ -87,7 +89,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   before do
-    FileUtils.mkdir_p(SPEC_DIRECTORY)
+    FileUtils.mkdir_p(Spec.directory)
 
     ENV['KNAPSACK_PRO_LOG_LEVEL'] = 'debug'
     ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'false'
@@ -95,8 +97,8 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     # ENV['TEST__SHOW_DEBUG_LOG'] = 'true'
   end
   after do
-    FileUtils.rm_rf(SPEC_DIRECTORY)
-    FileUtils.mkdir_p(SPEC_DIRECTORY)
+    FileUtils.rm_rf(Spec.directory)
+    FileUtils.mkdir_p(Spec.directory)
 
     ENV.delete('KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES')
     ENV.delete('KNAPSACK_PRO_LOG_LEVEL')
@@ -1116,7 +1118,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   # Based on:
   # https://github.com/rspec/rspec-core/pull/2926/files
   context 'when RSpec is quitting' do
-    let(:helper_with_exit_location) { "#{SPEC_DIRECTORY}/helper_with_exit.rb" }
+    let(:helper_with_exit_location) { "#{Spec.directory}/helper_with_exit.rb" }
 
     it 'returns non zero exit code because RSpec is quitting' do
       skip 'Not supported by this RSpec version' if RSpec::Core::Version::STRING == '3.10.2'
@@ -1579,8 +1581,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('0 examples, 0 failures')
-      expect(actual.stdout).to include('WARN -- knapsack_pro: No test files were executed on this CI node.')
-      expect(actual.stdout).to include('DEBUG -- knapsack_pro: This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
+      expect(actual.stdout).to include('INFO -- knapsack_pro: No tests were executed because the test queue is empty.')
 
       expect(actual.exit_code).to eq 0
     end
@@ -1604,8 +1605,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('0 examples, 0 failures')
-      expect(actual.stdout).to include('WARN -- knapsack_pro: No test files were executed on this CI node.')
-      expect(actual.stdout).to include('DEBUG -- knapsack_pro: This CI node likely started work late after the test files were already executed by other CI nodes consuming the queue.')
+      expect(actual.stdout).to include('INFO -- knapsack_pro: No tests were executed because the test queue is empty.')
 
       expect(actual.exit_code).to eq 0
     end
@@ -1967,7 +1967,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files.
-      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{Spec.directory}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
@@ -2063,7 +2063,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:2])
       # for the following slow test files.
-      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{Spec.directory}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
@@ -2136,13 +2136,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when the RSpec split by test examples is enabled AND JSON formatter is used' do
-    let(:json_file) { "#{SPEC_DIRECTORY}/rspec.json" }
+    let(:json_file) { "#{Spec.directory}/rspec.json" }
 
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files.
-      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{Spec.directory}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
@@ -2237,13 +2237,13 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when the RSpec split by test examples is enabled AND JUnit XML formatter is used' do
-    let(:xml_file) { "#{SPEC_DIRECTORY}/rspec.xml" }
+    let(:xml_file) { "#{Spec.directory}/rspec.xml" }
 
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files.
-      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{Spec.directory}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
@@ -2342,7 +2342,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
       # Remember to stub the Queue API batches to include test examples (example: a_spec.rb[1:1])
       # for the following slow test files.
-      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{SPEC_DIRECTORY}/a_spec.rb"
+      ENV['KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN'] = "#{Spec.directory}/a_spec.rb"
 
       ENV['KNAPSACK_PRO_CI_NODE_TOTAL'] = '2'
     end
@@ -2524,7 +2524,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when the example_status_persistence_file_path option is used and multiple batches of tests are fetched from the Queue API and some tests are pending and failing' do
-    let(:examples_file_path) { "#{SPEC_DIRECTORY}/examples.txt" }
+    let(:examples_file_path) { "#{Spec.directory}/examples.txt" }
 
     after do
       File.delete(examples_file_path) if File.exist?(examples_file_path)
@@ -2592,7 +2592,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when the .rspec file has RSpec options' do
-    let(:dot_rspec_file) { "#{SPEC_DIRECTORY}/.rspec" }
+    let(:dot_rspec_file) { "#{Spec.directory}/.rspec" }
 
     it 'ignores options from the .rspec file' do
       File.open(dot_rspec_file, 'w') { |file| file.write('--format documentation') }
@@ -2622,7 +2622,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
   end
 
   context 'when --options is set' do
-    let(:rspec_custom_options_file) { "#{SPEC_DIRECTORY}/.rspec_custom_options" }
+    let(:rspec_custom_options_file) { "#{Spec.directory}/.rspec_custom_options" }
 
     it 'uses options from the custom rspec file' do
       rspec_custom_options = <<~FILE

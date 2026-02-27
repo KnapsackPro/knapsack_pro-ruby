@@ -1,4 +1,16 @@
 describe KnapsackPro::Runners::Queue::MinitestRunner do
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   describe '.run' do
     let(:test_suite_token_minitest) { 'fake-token' }
     let(:queue_id) { 'fake-queue-id' }

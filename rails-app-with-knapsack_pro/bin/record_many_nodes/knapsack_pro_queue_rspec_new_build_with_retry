@@ -1,18 +1,18 @@
 #!/bin/bash
 
-CI_BUILD_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -base64 32)
 COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
 
-bin/knapsack_pro_queue_rspec_record_first_run 0 4 $COMMIT_HASH $CI_BUILD_ID &
+bin/knapsack_pro_queue_rspec_record_first_run 0 4 $COMMIT_HASH $TEST_QUEUE_ID &
 sleep 1
-bin/knapsack_pro_queue_rspec_record_first_run 1 4 $COMMIT_HASH $CI_BUILD_ID &
+bin/knapsack_pro_queue_rspec_record_first_run 1 4 $COMMIT_HASH $TEST_QUEUE_ID &
 sleep 2
-bin/knapsack_pro_queue_rspec_record_first_run 2 4 $COMMIT_HASH $CI_BUILD_ID &
+bin/knapsack_pro_queue_rspec_record_first_run 2 4 $COMMIT_HASH $TEST_QUEUE_ID &
 sleep 1
 
 # retry node 3
-bin/knapsack_pro_queue_rspec_record_first_run 3 4 $COMMIT_HASH $CI_BUILD_ID
-bin/knapsack_pro_queue_rspec_record_first_run 3 4 $COMMIT_HASH $CI_BUILD_ID
+bin/knapsack_pro_queue_rspec_record_first_run 3 4 $COMMIT_HASH $TEST_QUEUE_ID
+bin/knapsack_pro_queue_rspec_record_first_run 3 4 $COMMIT_HASH $TEST_QUEUE_ID
 
 # retry node 2
-bin/knapsack_pro_queue_rspec_record_first_run 2 4 $COMMIT_HASH $CI_BUILD_ID
+bin/knapsack_pro_queue_rspec_record_first_run 2 4 $COMMIT_HASH $TEST_QUEUE_ID

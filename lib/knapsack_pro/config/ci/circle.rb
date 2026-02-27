@@ -43,6 +43,12 @@ module KnapsackPro
         def ci_provider
           "CircleCI"
         end
+
+        def test_queue_id
+          # CIRCLE_PIPELINE_NUMBER does not exist in Circle, set it with:
+          # `CIRCLE_PIPELINE_NUMBER: << pipeline.number >>`
+          ENV['CIRCLE_PIPELINE_NUMBER']
+        end
       end
     end
   end
