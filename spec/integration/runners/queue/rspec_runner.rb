@@ -37,11 +37,11 @@ module KnapsackProExtensions
     end
 
     def test__pull
-      @batch_index ||= 0
+      @test__batch_index ||= 0
       last_batch = []
       batches = [*BATCHES, last_batch]
-      tests = batches[@batch_index]
-      @batch_index += 1
+      tests = batches[@test__batch_index]
+      @test__batch_index += 1
 
       if SHOW_DEBUG_LOG
         IntegrationTestLogger.log("Stubbed tests from the Queue API: #{tests.inspect}")
