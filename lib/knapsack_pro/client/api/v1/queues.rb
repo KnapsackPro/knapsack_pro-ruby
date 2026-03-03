@@ -22,12 +22,26 @@ module KnapsackPro
                 batch_uuid: args.fetch(:batch_uuid)
               }
 
-              if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
-                request_hash.merge!({
-                  :test_files => args.fetch(:test_files),
-                  :build_author => KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
-                  :commit_authors => KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
-                })
+              if ENV.key?("TEST__ZSTD")
+                require 'json'
+                require 'base64'
+                require 'zstd-ruby'
+
+                if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
+                  request_hash.merge!({
+                    :compressed_test_files => Base64.strict_encode64(Zstd.compress(JSON.dump(args.fetch(:test_files).map { _1.fetch("path") } ), level: 11)),
+                    :build_author => KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
+                    :commit_authors => KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
+                  })
+                end
+              else
+                if request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
+                  request_hash.merge!({
+                    :test_files => args.fetch(:test_files),
+                    :build_author => KnapsackPro::RepositoryAdapters::GitAdapter.new.build_author,
+                    :commit_authors => KnapsackPro::RepositoryAdapters::GitAdapter.new.commit_authors,
+                  })
+                end
               end
 
               action_class.new(
@@ -41,21 +55,44 @@ module KnapsackPro
               git_adapter = KnapsackPro::RepositoryAdapters::GitAdapter.new
               repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
 
-              request_hash = {
-                attempt_connect_to_queue: false,
-                branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
-                build_author: git_adapter.build_author,
-                can_initialize_queue: true,
-                commit_authors: git_adapter.commit_authors,
-                commit_hash: repository_adapter.commit_hash,
-                fixed_queue_split: KnapsackPro::Config::Env.fixed_queue_split,
-                node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
-                node_index: KnapsackPro::Config::Env.ci_node_index,
-                node_total: KnapsackPro::Config::Env.ci_node_total,
-                skip_pull: true,
-                test_files: KnapsackPro::Crypto::Encryptor.call(paths),
-                user_seat: KnapsackPro::Config::Env.masked_user_seat,
-              }
+              request_hash =
+                if ENV.key?("TEST__ZSTD")
+                  require 'json'
+                  require 'base64'
+                  require 'zstd-ruby'
+
+                  {
+                    attempt_connect_to_queue: false,
+                    branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
+                    build_author: git_adapter.build_author,
+                    can_initialize_queue: true,
+                    commit_authors: git_adapter.commit_authors,
+                    commit_hash: repository_adapter.commit_hash,
+                    fixed_queue_split: KnapsackPro::Config::Env.fixed_queue_split,
+                    node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
+                    node_index: KnapsackPro::Config::Env.ci_node_index,
+                    node_total: KnapsackPro::Config::Env.ci_node_total,
+                    skip_pull: true,
+                    compressed_test_files: Base64.strict_encode64(Zstd.compress(JSON.dump(KnapsackPro::Crypto::Encryptor.call(paths).map { _1.fetch("path") } ), level: 11)),
+                    user_seat: KnapsackPro::Config::Env.masked_user_seat,
+                  }
+                else
+                  {
+                    attempt_connect_to_queue: false,
+                    branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
+                    build_author: git_adapter.build_author,
+                    can_initialize_queue: true,
+                    commit_authors: git_adapter.commit_authors,
+                    commit_hash: repository_adapter.commit_hash,
+                    fixed_queue_split: KnapsackPro::Config::Env.fixed_queue_split,
+                    node_build_id: KnapsackPro::Config::Env.ci_node_build_id,
+                    node_index: KnapsackPro::Config::Env.ci_node_index,
+                    node_total: KnapsackPro::Config::Env.ci_node_total,
+                    skip_pull: true,
+                    test_files: KnapsackPro::Crypto::Encryptor.call(paths),
+                    user_seat: KnapsackPro::Config::Env.masked_user_seat,
+                  }
+                end
 
               action_class.new(
                 endpoint_path: '/v1/queues/queue',
