@@ -74,8 +74,7 @@ bundle exec rspec
 
 1. Move the changes listed in the `UNRELEASED` section of the `CHANGELOG.md` to the proper version
 1. Update the gem version in `lib/knapsack_pro/version.rb`
-1. `cd rails-app-with-knapsack_pro && bundle install`
 1. `git commit -am "Bump version x.x.x"`
 1. Build, tag, push, release: `bundle exec rake release`
 1. Update the latest available gem version in `TestSuiteClientVersionChecker` for the Knapsack Pro API repository.
-1. Update the `knapsack_pro` gem version in the Knapsack Pro API repository
+1. Update the `knapsack_pro` gem version in the Knapsack Pro API repository: `cd rails-app-with-knapsack_pro && bundle install`
