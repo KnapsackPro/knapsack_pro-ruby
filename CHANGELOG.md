@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (patch) Fix 5-second timeout when unshallowing git repo (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/328)
+
 ### 9.2.2
 
 * RSpec: Skip unneeded API call when queue is already initialized in `rake knapsack_pro:queue:rspec:initialize` and improve error handling (https://github.com/KnapsackPro/knapsack_pro-ruby/pull/326).
