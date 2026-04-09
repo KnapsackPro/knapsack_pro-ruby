@@ -11,6 +11,14 @@ module KnapsackPro
         end
       end
 
+      def self.paths(paths)
+        if KnapsackPro::Config::Env.test_files_encrypted?
+          paths.map { |path| Digestor.salt_hexdigest(path) }
+        else
+          paths
+        end
+      end
+
       def initialize(test_files)
         @test_files = test_files
       end

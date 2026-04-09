@@ -20,14 +20,14 @@ end
 module KnapsackProExtensions
   module QueueAllocatorExtension
     # Succeeds to initialize on the first request
-    def initialize_queue_v2(tests_to_run, batch_uuid, time_tracker)
-      # Ensure the stubbed batches match the tests Knapsack Pro wants to run
-      raise unless tests_to_run.map { _1["path"] }.sort == BATCHES.flatten.sort
+    def initialize_queue_v2(paths, time_tracker)
+      # Ensure the stubbed batches match the paths Knapsack Pro wants to run
+      raise unless paths.sort == BATCHES.flatten.sort
       test__pull
     end
 
     # On the first request it fails, but succeeds on the second request
-    def pull_tests_from_queue_v2(can_initialize_queue, batch_uuid, time_tracker)
+    def pull_tests_from_queue_v2(can_initialize_queue, time_tracker)
       if can_initialize_queue
         connection = OpenStruct.new(success?: true, api_code: KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED)
         KnapsackPro::QueueAllocator::Batch.new(connection, {})
@@ -37,18 +37,16 @@ module KnapsackProExtensions
     end
 
     def test__pull
-      @batch_index ||= 0
       last_batch = []
       batches = [*BATCHES, last_batch]
-      tests = batches[@batch_index]
-      @batch_index += 1
+      paths = batches[@batch_index]
 
       if SHOW_DEBUG_LOG
-        IntegrationTestLogger.log("Stubbed tests from the Queue API: #{tests.inspect}")
+        IntegrationTestLogger.log("Stubbed paths from the Queue API: #{paths.inspect}")
       end
 
       connection = OpenStruct.new(success?: true)
-      KnapsackPro::QueueAllocator::Batch.new(connection, { "test_files" => tests.map { |path| { "path" => path } } })
+      KnapsackPro::QueueAllocator::Batch.new(connection, { "paths" => paths })
     end
   end
 

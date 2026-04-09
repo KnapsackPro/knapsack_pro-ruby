@@ -20,6 +20,7 @@ namespace :knapsack_pro do
 
         ENV.delete('SPEC_OPTS') # Ignore `SPEC_OPTS` to not affect the RSpec execution within this rake task
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
+        ENV['KNAPSACK_PRO_TEST_RUNNER'] = 'rspec'
 
         KnapsackPro::RSpec::TestQueueInitializer.new.call(args[:rspec_args].to_s)
       end

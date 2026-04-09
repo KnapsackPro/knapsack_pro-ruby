@@ -9,5 +9,5 @@ group :test do
   gem 'simplecov', require: false
 
   # This line is going to be replaced on CI to test different RSpec versions.
-  # gem 'rspec-core', 'x.x.x'
+  gem 'rspec'
 end

@@ -21,7 +21,7 @@ module KnapsackPro
       end
 
       slow_id_paths = adapter_class.calculate_slow_id_paths
-      test_files = adapter_class.concat_paths(all_test_files_to_run, slow_id_paths)
+      test_files = adapter_class.concat_test_files(all_test_files_to_run, slow_id_paths)
       @result = Result.new(test_files, false)
     end
 

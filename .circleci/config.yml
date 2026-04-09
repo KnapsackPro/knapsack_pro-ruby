@@ -23,20 +23,20 @@ commands:
         type: string
       ruby:
         type: string
-      rspec:
+      rspec-rails:
         type: string
         default: "latest"
     steps:
       - run:
           working_directory: << parameters.path >>
           command: |
-            if [[ "<< parameters.rspec >>" != "latest" ]]; then
-              sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
-              echo "Updated RSpec version in Gemfile"
+            if [[ "<< parameters.rspec-rails >>" != "latest" ]]; then
+              sed -i 's/.*gem.*rspec-rails.$/gem "rspec-rails", "<< parameters.rspec-rails >>"/g' ./Gemfile
+              echo "Updated rspec-rails version in Gemfile"
             fi
       - restore_cache:
           keys:
-            - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+            - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-rails-<< parameters.rspec-rails >>
             - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-
             - v1-bundler-rails-{{ checksum "Gemfile.lock" }}-
             - v1-bundler-rails-
@@ -48,7 +48,7 @@ commands:
       - save_cache:
           paths:
             - << parameters.path >>/vendor/bundle
-          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-<< parameters.rspec >>
+          key: v1-bundler-rails-{{ checksum "Gemfile.lock" }}-ruby-<< parameters.ruby >>-rspec-rails-<< parameters.rspec-rails >>
 
 jobs:
   unit:
@@ -81,7 +81,7 @@ jobs:
       - run:
           command: |
             if [[ "<< parameters.rspec >>" != "latest" ]]; then
-              sed -i 's/.*gem.*rspec-core.*/gem "rspec-core", "<< parameters.rspec >>"/g' ./Gemfile
+              sed -i 's/.*gem.*rspec.$/gem "rspec", "<< parameters.rspec >>"/g' ./Gemfile
               echo "Updated RSpec version in Gemfile"
             fi
       - restore_cache:
@@ -102,8 +102,8 @@ jobs:
           command: |
             ruby --version
             bundle exec rspec --version
-            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
-            [ "<< parameters.rspec >>" != "latest" ] && [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
+            RSPEC=$(bundle exec rspec --version | grep -i rspec | head -n1 | cut -d " " -f2)
+            [ "<< parameters.rspec >>" != "latest" ] && [ "$RSPEC" != "<< parameters.rspec >>" ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
       - run: bundle exec rspec spec/integration/runners/queue/rspec_runner_spec.rb
 
   e2e-regular-rspec:
@@ -113,7 +113,7 @@ jobs:
     parameters:
       ruby:
         type: string
-      rspec:
+      rspec-rails:
         type: string
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-browsers
@@ -135,15 +135,15 @@ jobs:
       - setup_rails_app_with_knapsack_pro:
           path: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           ruby: << parameters.ruby >>
-          rspec: << parameters.rspec >>
+          rspec-rails: << parameters.rspec-rails >>
       - run: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             ruby --version
             bundle exec rspec --version
-            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
-            [ "<< parameters.rspec >>" != "latest" ] && [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
+            VERSION=$(bundle exec rspec --version | grep -i rspec-rails | head -n1 | cut -d " " -f5)
+            [ "<< parameters.rspec-rails >>" != "latest" ] && [ "$VERSION" != "<< parameters.rspec-rails >>" ] && exit 1 || echo "Correct version of rspec-rails installed: << parameters.rspec-rails >>"
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: bin/rails db:setup
@@ -199,7 +199,7 @@ jobs:
     parameters:
       ruby:
         type: string
-      rspec:
+      rspec-rails:
         type: string
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
@@ -225,15 +225,15 @@ jobs:
       - setup_rails_app_with_knapsack_pro:
           path: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           ruby: << parameters.ruby >>
-          rspec: << parameters.rspec >>
+          rspec-rails: << parameters.rspec-rails >>
       - run: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             ruby --version
             bundle exec rspec --version
-            RSPEC=$(bundle exec rspec --version | grep rspec-core | head -n1 | cut -d " " -f5)
-            [ "<< parameters.rspec >>" != "latest" ] && [ $RSPEC != << parameters.rspec >> ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
+            VERSION=$(bundle exec rspec --version | grep -i rspec-rails | head -n1 | cut -d " " -f5)
+            [ "<< parameters.rspec-rails >>" != "latest" ] && [ "$VERSION" != "<< parameters.rspec-rails >>" ] && exit 1 || echo "Correct version of rspec-rails installed: << parameters.rspec-rails >>"
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: bin/rails db:setup
@@ -433,19 +433,19 @@ workflows:
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
-              rspec: ["3.12.3", "latest"]
+              rspec: ["3.12", "latest"]
       - e2e-regular-rspec:
-          name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec-rails >>
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
-              rspec: ["3.12.3", "latest"]
+              rspec-rails: ["6.1.1", "latest"] # 6.1.1 uses rspec 3.12
       - e2e-queue-rspec:
-          name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec >>
+          name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec-rails >>
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
-              rspec: ["3.12.3", "latest"]
+              rspec-rails: ["6.1.1", "latest"] # 6.1.1 uses rspec 3.12
       - e2e-regular-minitest:
           name: e2e-regular__ruby-<< matrix.ruby >>__minitest
           matrix:
