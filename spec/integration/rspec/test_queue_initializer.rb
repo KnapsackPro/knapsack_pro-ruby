@@ -28,7 +28,7 @@ module Net
       puts body
       hash = {}
       # Return url if it's the initialize request (second one)
-      hash.merge!(url: "http://example.com") if JSON.parse(body).key?("test_files")
+      hash.merge!(url: "http://example.com") if JSON.parse(body).key?("paths")
       Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
         response.body = JSON.dump(hash)
         response.instance_variable_set(:@read, true)

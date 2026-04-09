@@ -11,7 +11,7 @@ module KnapsackPro
             def queue(args)
               request_hash = {
                 attempt_connect_to_queue: args.fetch(:attempt_connect_to_queue),
-                batch_uuid: args.fetch(:batch_uuid),
+                batch_index: args.fetch(:batch_index),
                 branch: args.fetch(:branch),
                 can_initialize_queue: args.fetch(:can_initialize_queue),
                 commit_hash: args.fetch(:commit_hash),
@@ -29,13 +29,14 @@ module KnapsackPro
                 request_hash.merge!(
                   build_author: git_adapter.build_author,
                   commit_authors: git_adapter.commit_authors,
-                  test_files: args.fetch(:test_files)
+                  paths: args.fetch(:paths)
                 )
               end
 
               if !request_hash[:can_initialize_queue] && !request_hash[:attempt_connect_to_queue]
                 request_hash.merge!(
-                  failed_paths: args.fetch(:failed_paths)
+                  failed_paths: args.fetch(:failed_paths),
+                  batch_id: args.fetch(:batch_id)
                 )
               end
 
@@ -52,7 +53,7 @@ module KnapsackPro
 
               request_hash = {
                 attempt_connect_to_queue: true,
-                batch_uuid: SecureRandom.uuid,
+                batch_index: 0,
                 branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
                 build_author: git_adapter.build_author,
                 can_initialize_queue: true,
@@ -80,7 +81,7 @@ module KnapsackPro
 
               request_hash = {
                 attempt_connect_to_queue: false,
-                batch_uuid: SecureRandom.uuid,
+                batch_index: 0,
                 branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
                 build_author: git_adapter.build_author,
                 can_initialize_queue: true,
@@ -91,7 +92,7 @@ module KnapsackPro
                 node_total: KnapsackPro::Config::Env.ci_node_total,
                 node_uuid: SecureRandom.uuid,
                 skip_pull: true,
-                test_files: KnapsackPro::Crypto::Encryptor.call(paths),
+                paths: KnapsackPro::Crypto::Encryptor.paths(paths),
                 test_queue_id: KnapsackPro::Config::Env.test_queue_id,
                 user_seat: KnapsackPro::Config::Env.masked_user_seat,
               }

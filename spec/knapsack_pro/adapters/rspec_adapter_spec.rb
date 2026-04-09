@@ -350,7 +350,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.concat_paths' do
+  describe '.concat_test_files' do
     let(:test_files) do
       [
         { 'path' => 'spec/a_spec.rb' },
@@ -371,7 +371,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       ]
     end
 
-    subject { described_class.concat_paths(test_files, id_paths) }
+    subject { described_class.concat_test_files(test_files, id_paths) }
 
     it 'concats by replacing test_files with the associated id_paths' do
       expect(subject).to eq([

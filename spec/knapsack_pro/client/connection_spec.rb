@@ -276,7 +276,7 @@ end
 
 describe KnapsackPro::Client::Connection do
   let(:endpoint_path) { '/v1/fake_endpoint' }
-  let(:request_hash) { { fake: 'hash' } }
+  let(:request_hash) { { fake: 'hash', attempt_count: 1 } }
   let(:http_method) { :post }
   let(:action) do
     instance_double(KnapsackPro::Client::API::Action,
@@ -413,18 +413,35 @@ describe KnapsackPro::Client::Connection do
       let(:http_method) { :post }
 
       before do
-        expect(http).to receive(:post).at_least(3).with(
-          endpoint_path,
-          request_hash.to_json,
-          {
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-            'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
-            'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
-            'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
-            'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
-          }
-        ).and_return(http_response)
+        1.upto(3) do |i|
+          expect(http).to receive(:post).with(
+            endpoint_path,
+            request_hash.merge(attempt_count: i).to_json,
+            {
+              'Content-Type' => 'application/json',
+              'Accept' => 'application/json',
+              'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+              'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+              'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+              'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
+            }
+          ).and_return(http_response)
+        end
+
+        4.upto(6) do |i|
+          allow(http).to receive(:post).with(
+            endpoint_path,
+            request_hash.merge(attempt_count: i).to_json,
+            {
+              'Content-Type' => 'application/json',
+              'Accept' => 'application/json',
+              'KNAPSACK-PRO-CLIENT-NAME' => 'knapsack_pro-ruby',
+              'KNAPSACK-PRO-CLIENT-VERSION' => KnapsackPro::VERSION,
+              'KNAPSACK-PRO-TEST-SUITE-TOKEN' => test_suite_token,
+              'KNAPSACK-PRO-CI-PROVIDER' => 'GitHub Actions',
+            }
+          ).and_return(http_response)
+        end
       end
 
       it_behaves_like 'when retry request' do
