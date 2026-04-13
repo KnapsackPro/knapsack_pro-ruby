@@ -165,7 +165,9 @@ module KnapsackPro
         end
 
         def fixed_queue_split_?
-          @fixed_queue_split_ ||= env_for('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', :fixed_queue_split).to_s == "true"
+          return @fixed_queue_split_ if defined?(@fixed_queue_split_)
+
+          @fixed_queue_split_ = env_for('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', :fixed_queue_split).to_s == "true"
         end
 
         def fixed_queue_split?
