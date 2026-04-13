@@ -78,23 +78,24 @@ shared_examples 'when retry request' do
     end
 
     it do
-      expect(logger).to receive(:debug).exactly(3).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
-      expect(logger).to receive(:debug).exactly(3).with('API request UUID: fake-uuid')
-      expect(logger).to receive(:debug).exactly(3).with('API response:')
+      expect(logger).to receive(:debug).exactly(4).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
+      expect(logger).to receive(:debug).exactly(4).with('API request UUID: fake-uuid')
+      expect(logger).to receive(:debug).exactly(4).with('API response:')
 
       parsed_response = { 'error' => 'Internal Server Error' }
 
-      expect(logger).to receive(:error).exactly(3).with(parsed_response)
+      expect(logger).to receive(:error).exactly(4).with(parsed_response)
 
       server_error = described_class::ServerError.new(parsed_response)
-      expect(logger).to receive(:warn).exactly(3).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
-      expect(logger).to receive(:warn).exactly(3).with('Request failed due to:')
-      expect(logger).to receive(:warn).exactly(3).with(server_error.inspect)
+      expect(logger).to receive(:warn).exactly(4).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
+      expect(logger).to receive(:warn).exactly(4).with('Request failed due to:')
+      expect(logger).to receive(:warn).exactly(4).with(server_error.inspect)
 
       expect(logger).to receive(:warn).with("Wait for 8s before retrying the request to the Knapsack Pro API.")
       expect(logger).to receive(:warn).with("6s left before retry...")
       expect(logger).to receive(:warn).with("4s left before retry...")
       expect(logger).to receive(:warn).with("2s left before retry...")
+
       expect(logger).to receive(:warn).with("Wait for 16s before retrying the request to the Knapsack Pro API.")
       expect(logger).to receive(:warn).with("14s left before retry...")
       expect(logger).to receive(:warn).with("12s left before retry...")
@@ -103,7 +104,21 @@ shared_examples 'when retry request' do
       expect(logger).to receive(:warn).with("6s left before retry...")
       expect(logger).to receive(:warn).with("4s left before retry...")
       expect(logger).to receive(:warn).with("2s left before retry...")
-      expect(Kernel).to receive(:sleep).exactly(12).with(2)
+
+      expect(logger).to receive(:warn).with("Wait for 24s before retrying the request to the Knapsack Pro API.")
+      expect(logger).to receive(:warn).with("22s left before retry...")
+      expect(logger).to receive(:warn).with("20s left before retry...")
+      expect(logger).to receive(:warn).with("18s left before retry...")
+      expect(logger).to receive(:warn).with("16s left before retry...")
+      expect(logger).to receive(:warn).with("14s left before retry...")
+      expect(logger).to receive(:warn).with("12s left before retry...")
+      expect(logger).to receive(:warn).with("10s left before retry...")
+      expect(logger).to receive(:warn).with("8s left before retry...")
+      expect(logger).to receive(:warn).with("6s left before retry...")
+      expect(logger).to receive(:warn).with("4s left before retry...")
+      expect(logger).to receive(:warn).with("2s left before retry...")
+
+      expect(Kernel).to receive(:sleep).exactly(24).with(2)
 
       expect(subject).to eq(parsed_response)
 
@@ -113,43 +128,29 @@ shared_examples 'when retry request' do
 
     context 'when max request retries defined' do
       before do
-        expect(KnapsackPro::Config::Env).to receive(:max_request_retries).at_least(1).and_return(4)
+        expect(KnapsackPro::Config::Env).to receive(:max_request_retries).at_least(1).and_return(2)
       end
 
       it do
-        expect(logger).to receive(:debug).exactly(4).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
-        expect(logger).to receive(:debug).exactly(4).with('API request UUID: fake-uuid')
-        expect(logger).to receive(:debug).exactly(4).with('API response:')
+        expect(logger).to receive(:debug).exactly(2).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
+        expect(logger).to receive(:debug).exactly(2).with('API request UUID: fake-uuid')
+        expect(logger).to receive(:debug).exactly(2).with('API response:')
 
         parsed_response = { 'error' => 'Internal Server Error' }
 
-        expect(logger).to receive(:error).exactly(4).with(parsed_response)
+        expect(logger).to receive(:error).exactly(2).with(parsed_response)
 
         server_error = described_class::ServerError.new(parsed_response)
-        expect(logger).to receive(:warn).exactly(4).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
-        expect(logger).to receive(:warn).exactly(4).with('Request failed due to:')
-        expect(logger).to receive(:warn).exactly(4).with(server_error.inspect)
+        expect(logger).to receive(:warn).exactly(2).with("#{expected_http_method} http://api.knapsackpro.localhost:3000/v1/fake_endpoint")
+        expect(logger).to receive(:warn).exactly(2).with('Request failed due to:')
+        expect(logger).to receive(:warn).exactly(2).with(server_error.inspect)
 
         expect(logger).to receive(:warn).with("Wait for 8s before retrying the request to the Knapsack Pro API.")
         expect(logger).to receive(:warn).with("6s left before retry...")
         expect(logger).to receive(:warn).with("4s left before retry...")
         expect(logger).to receive(:warn).with("2s left before retry...")
 
-        expect(logger).to receive(:warn).with("Wait for 16s before retrying the request to the Knapsack Pro API.")
-        expect(logger).to receive(:warn).with("14s left before retry...")
-        expect(logger).to receive(:warn).with("12s left before retry...")
-        expect(logger).to receive(:warn).with("10s left before retry...")
-        expect(logger).to receive(:warn).with("8s left before retry...")
-        expect(logger).to receive(:warn).with("6s left before retry...")
-        expect(logger).to receive(:warn).with("4s left before retry...")
-        expect(logger).to receive(:warn).with("2s left before retry...")
-
-        expect(logger).to receive(:warn).with("Wait for 24s before retrying the request to the Knapsack Pro API.")
-        11.times do |i|
-          expect(logger).to receive(:warn).with("#{(i+1)*2}s left before retry...")
-        end
-
-        expect(Kernel).to receive(:sleep).exactly(4+8+12).with(2)
+        expect(Kernel).to receive(:sleep).exactly(4).with(2)
 
         expect(subject).to eq(parsed_response)
 
@@ -413,7 +414,7 @@ describe KnapsackPro::Client::Connection do
       let(:http_method) { :post }
 
       before do
-        1.upto(3) do |i|
+        1.upto(2) do |i|
           expect(http).to receive(:post).with(
             endpoint_path,
             request_hash.merge(attempt_count: i).to_json,
@@ -428,7 +429,7 @@ describe KnapsackPro::Client::Connection do
           ).and_return(http_response)
         end
 
-        4.upto(6) do |i|
+        3.upto(6) do |i|
           allow(http).to receive(:post).with(
             endpoint_path,
             request_hash.merge(attempt_count: i).to_json,
@@ -455,7 +456,7 @@ describe KnapsackPro::Client::Connection do
       before do
         uri = URI.parse("http://api.knapsackpro.localhost:3000#{endpoint_path}")
         uri.query = URI.encode_www_form(request_hash)
-        expect(http).to receive(:get).at_least(3).with(
+        expect(http).to receive(:get).at_least(2).with(
           uri,
           {
             'Content-Type' => 'application/json',

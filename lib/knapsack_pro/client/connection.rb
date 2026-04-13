@@ -231,7 +231,7 @@ module KnapsackPro
         return 6 if KnapsackPro::Config::Env.regular_mode?
 
         # default number of attempts
-        3
+        4
       end
     end
   end
