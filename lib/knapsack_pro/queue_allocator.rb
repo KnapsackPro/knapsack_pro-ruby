@@ -48,6 +48,7 @@ module KnapsackPro
       @fallback_mode = false
       @batch_index = -1
       @batch_id = nil
+      @node_uuid = SecureRandom.uuid
     end
 
     def test_file_paths(can_initialize_queue, executed_test_files, batch_uuid: SecureRandom.uuid, time_tracker: nil)
@@ -111,16 +112,17 @@ module KnapsackPro
       end
 
       KnapsackPro::Client::API::V2::Queues.queue(
-        can_initialize_queue: can_initialize_queue,
         attempt_connect_to_queue: attempt_connect_to_queue,
-        commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        paths: paths,
-        failed_paths: time_tracker.current_batch_failed_paths,
+        batch_id: @batch_id,
         batch_index: @batch_index,
-        batch_id: @batch_id
+        branch: encrypted_branch,
+        can_initialize_queue: can_initialize_queue,
+        commit_hash: repository_adapter.commit_hash,
+        failed_paths: time_tracker.current_batch_failed_paths,
+        node_index: ci_node_index,
+        node_total: ci_node_total,
+        node_uuid: @node_uuid,
+        paths: paths
       )
     end
 

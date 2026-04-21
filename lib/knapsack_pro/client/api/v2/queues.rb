@@ -18,7 +18,7 @@ module KnapsackPro
                 fixed_queue_split: KnapsackPro::Config::Env.fixed_queue_split_?,
                 node_index: args.fetch(:node_index),
                 node_total: args.fetch(:node_total),
-                node_uuid: KnapsackPro::Config::Env.node_uuid,
+                node_uuid: args.fetch(:node_uuid),
                 test_queue_id: KnapsackPro::Config::Env.test_queue_id,
                 user_seat: KnapsackPro::Config::Env.masked_user_seat
               }
