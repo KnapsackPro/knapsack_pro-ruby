@@ -15,7 +15,6 @@ describe KnapsackPro::Client::API::V2::Queues do
     before(:each) do
       expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split_?).and_return(fixed_queue_split_?)
       expect(KnapsackPro::Config::Env).to receive(:masked_user_seat).and_return(masked_user_seat)
-      expect(KnapsackPro::Config::Env).to receive(:node_uuid).and_return(node_uuid)
       expect(KnapsackPro::Config::Env).to receive(:test_queue_id).and_return(test_queue_id)
     end
 
@@ -31,7 +30,8 @@ describe KnapsackPro::Client::API::V2::Queues do
           can_initialize_queue: can_initialize_queue,
           commit_hash: commit_hash,
           node_index: node_index,
-          node_total: node_total
+          node_total: node_total,
+          node_uuid: node_uuid
         )
 
         expected_request_hash = {
@@ -74,6 +74,7 @@ describe KnapsackPro::Client::API::V2::Queues do
           commit_hash: commit_hash,
           node_index: node_index,
           node_total: node_total,
+          node_uuid: node_uuid,
           paths: paths
         )
 
@@ -95,6 +96,7 @@ describe KnapsackPro::Client::API::V2::Queues do
       it "includes failed_paths" do
         actual = described_class.queue(
           attempt_connect_to_queue: attempt_connect_to_queue,
+          batch_id: batch_id,
           batch_index: batch_index,
           branch: branch,
           can_initialize_queue: can_initialize_queue,
@@ -102,8 +104,8 @@ describe KnapsackPro::Client::API::V2::Queues do
           failed_paths: failed_paths,
           node_index: node_index,
           node_total: node_total,
-          paths: paths,
-          batch_id: batch_id
+          node_uuid: node_uuid,
+          paths: paths
         )
 
         expect(actual.request_hash).to include(failed_paths: failed_paths, batch_id: batch_id)

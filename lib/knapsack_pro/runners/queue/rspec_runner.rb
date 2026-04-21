@@ -13,7 +13,6 @@ module KnapsackPro
           KnapsackPro::Extensions::RSpecExtension.setup!
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-          ENV['KNAPSACK_PRO_NODE_UUID'] = SecureRandom.uuid
 
           rspec_pure = KnapsackPro::Pure::Queue::RSpecPure.new
 
