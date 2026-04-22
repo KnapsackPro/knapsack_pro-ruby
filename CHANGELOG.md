@@ -2,6 +2,10 @@
 
 ### Unreleased
 
+### 10.0.1
+
+* Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
+
 ### 10.0.0
 
 * RSpec & Queue Mode: When you retry one (or all the) nodes, Knapsack Pro only executes the tests that failed last time on that node. See [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).

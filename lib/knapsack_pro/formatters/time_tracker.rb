@@ -35,10 +35,12 @@ module KnapsackPro
         paths =
           examples_by_file_path.flat_map do |file_path, examples|
             failed_id_paths = examples.filter { |example| example.execution_result.status.to_s == "failed" }.map(&:id)
-
+            next [] if failed_id_paths.none?
+            next file_path if KnapsackPro::Config::Env.test_files_encrypted?
             # Other nodes may have run some examples from this file, it's not safe to compact.
             next failed_id_paths if rspec_split_by_test_example?(file_path)
             next file_path if failed_id_paths.size == examples.size
+
             failed_id_paths
           end
 
