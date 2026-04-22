@@ -115,6 +115,13 @@ describe 'TimeTracker' do
 
     it 'rspec split by test example' do
       spec = <<~SPEC
+        RSpec.configure do |config|
+          config.before(:all) do
+            time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+            time_tracker.schedule(["#{@dir}/0_spec.rb[1:1]", "#{@dir}/0_spec.rb[1:2]", "#{@dir}/0_spec.rb[2:1]", "#{@dir}/0_spec.rb[2:2]"])
+          end
+        end
+
         describe 'KnapsackPro::Formatters::TimeTracker 1' do
           it do
             expect(1).to eq 1
@@ -139,7 +146,7 @@ describe 'TimeTracker' do
         end
       SPEC
 
-      run_specs(spec, 'queue', env: 'TEST__SBTE=1') do |spec_paths, queue|
+      run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(4)
 
         spec_path = spec_paths[0]
@@ -240,6 +247,13 @@ describe 'TimeTracker' do
 
     it 'hooks with rspec split by test example' do
       spec = <<~SPEC
+        RSpec.configure do |config|
+          config.before(:all) do
+            time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+            time_tracker.schedule(["#{@dir}/0_spec.rb[1:1]", "#{@dir}/0_spec.rb[1:2]"])
+          end
+        end
+
         describe 'KnapsackPro::Formatters::TimeTracker' do
           before(:all) do
             sleep 0.1
@@ -267,7 +281,7 @@ describe 'TimeTracker' do
         end
       SPEC
 
-      run_specs(spec, 'queue', env: 'TEST__SBTE=1') do |spec_paths, queue|
+      run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(2)
 
         spec_path = spec_paths[0]
@@ -278,6 +292,13 @@ describe 'TimeTracker' do
 
     it 'nested hooks with rspec split by test example' do
       spec = <<~SPEC
+        RSpec.configure do |config|
+          config.before(:all) do
+            time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+            time_tracker.schedule(["#{@dir}/0_spec.rb[1:1]", "#{@dir}/0_spec.rb[1:2:1]", "#{@dir}/0_spec.rb[1:3:1]"])
+          end
+        end
+
         describe 'KnapsackPro::Formatters::TimeTracker' do
           before(:all) do
             sleep 0.1
@@ -321,7 +342,7 @@ describe 'TimeTracker' do
         end
       SPEC
 
-      run_specs(spec, 'queue', env: 'TEST__SBTE=1') do |spec_paths, queue|
+      run_specs(spec, 'queue') do |spec_paths, queue|
         expect(queue.size).to eq(3)
 
         spec_path = spec_paths[0]
@@ -515,6 +536,55 @@ describe 'TimeTracker' do
       run_specs([spec0], 'current_batch_failed_paths') do |spec_paths, failed_paths|
         expect(failed_paths.size).to eq(1)
         expect(failed_paths[0]).to eq("#{spec_paths[0]}[1:1]")
+      end
+    end
+
+    context 'with test_files_encrypted' do
+      it 'returns the file path if any example failed' do
+        spec0 = <<~SPEC
+          RSpec.configure do |config|
+            config.before(:all) do
+              time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+              time_tracker.schedule(["#{@dir}/0_spec.rb"])
+            end
+          end
+
+          describe 'KnapsackPro::Formatters::TimeTracker' do
+            it do
+              expect(1).to eq 2
+            end
+
+            it do
+              expect(2).to eq 2
+            end
+          end
+        SPEC
+
+        run_specs([spec0], 'current_batch_failed_paths', env: 'KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true KNAPSACK_PRO_SALT=123') do |spec_paths, failed_paths|
+          expect(failed_paths.size).to eq(1)
+          expect(failed_paths[0]).to eq("#{spec_paths[0]}")
+        end
+      end
+
+      it 'returns empty list with no failures' do
+        spec0 = <<~SPEC
+          RSpec.configure do |config|
+            config.before(:all) do
+              time_tracker = ::RSpec.configuration.formatters.find { |f| f.class.to_s == 'TestableTimeTracker' }
+              time_tracker.schedule(["#{@dir}/0_spec.rb"])
+            end
+          end
+
+          describe 'KnapsackPro::Formatters::TimeTracker' do
+            it do
+              expect(1).to eq 1
+            end
+          end
+        SPEC
+
+        run_specs([spec0], 'current_batch_failed_paths', env: 'KNAPSACK_PRO_TEST_FILES_ENCRYPTED=true KNAPSACK_PRO_SALT=123') do |spec_paths, failed_paths|
+          expect(failed_paths.size).to eq(0)
+        end
       end
     end
   end

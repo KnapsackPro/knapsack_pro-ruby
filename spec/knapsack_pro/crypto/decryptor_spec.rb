@@ -25,14 +25,13 @@ describe KnapsackPro::Crypto::Decryptor do
 
     context 'when test files encrypted flag enabled' do
       let(:test_files_encrypted?) { true }
-      let(:decryptor) { instance_double(described_class) }
 
       it do
-        expect(described_class).to receive(:new).with(test_files, encrypted_test_files).and_return(decryptor)
-        result = double
-        expect(decryptor).to receive(:call).and_return(result)
-
-        expect(subject).to eq result
+        expect(KnapsackPro::Config::Env).to receive(:salt).at_least(1).and_return('123')
+        expect(subject).to eq [
+          { 'path' => 'a_spec.rb', 'time_execution' => 1.2 },
+          { 'path' => 'b_spec.rb', 'time_execution' => 2.3 },
+        ]
       end
     end
 

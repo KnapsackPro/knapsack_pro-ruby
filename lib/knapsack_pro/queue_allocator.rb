@@ -118,7 +118,7 @@ module KnapsackPro
         branch: encrypted_branch,
         can_initialize_queue: can_initialize_queue,
         commit_hash: repository_adapter.commit_hash,
-        failed_paths: time_tracker.current_batch_failed_paths,
+        failed_paths: KnapsackPro::Crypto::Encryptor.paths(time_tracker.current_batch_failed_paths),
         node_index: ci_node_index,
         node_total: ci_node_total,
         node_uuid: @node_uuid,
