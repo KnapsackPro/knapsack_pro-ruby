@@ -14,7 +14,7 @@ module Cucumber
   # Cucumber 3
   # https://github.com/cucumber/cucumber-ruby/blob/v3.0.0/lib/cucumber/glue/dsl.rb
   module Glue
-    class Dsl
+    module Dsl
       class << self
         def register_rb_hook(phase, tag_names, proc)
           proc.call
