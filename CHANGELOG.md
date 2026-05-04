@@ -2,7 +2,9 @@
 
 ### Unreleased
 
-* (Major) RSpec & Queue Mode: When you retry one (or all the) nodes, Knapsack Pro only executes the tests that failed last time on that node. See [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
+### 10.0.0
+
+* RSpec & Queue Mode: When you retry one (or all the) nodes, Knapsack Pro only executes the tests that failed last time on that node. See [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
    * Introduces `KNAPSACK_PRO_TEST_QUEUE_ID`, a unique ID that identifies a test queue (Knapsack Pro sets it for you)
      * If you are overriding `KNAPSACK_PRO_BRANCH` to share a test-suite with multiple Knapsack Pro commands (e.g., appending a suffix), you will need to do the same for `KNAPSACK_PRO_TEST_QUEUE_ID` (e.g., on [Buildkite](./lib/knapsack_pro/config/ci/buildkite.rb#L51), use `KNAPSACK_PRO_TEST_QUEUE_ID=$BUILDKITE_BUILD_NUMBER-custom-suffix` to match `KNAPSACK_PRO_BRANCH=$MY_BRANCH-custom-suffix`)
      * Whenever possible, create a separate test-suite on the Knapsack Pro dashboard to avoid the above
