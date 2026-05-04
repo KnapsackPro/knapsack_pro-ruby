@@ -86,9 +86,9 @@ module KnapsackPro
       end
 
       def make_request(&block)
-        retries ||= 0
+        attempt_count ||= 1
 
-        @http_response = block.call
+        @http_response = block.call(attempt_count)
         @response_body = parse_response_body(http_response.body)
 
         request_uuid = http_response.header['X-Request-Id'] || 'N/A'
@@ -108,11 +108,11 @@ module KnapsackPro
         response_body
       rescue ServerError, Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, Errno::EPIPE, EOFError,
              SocketError, Net::OpenTimeout, Net::ReadTimeout, OpenSSL::SSL::SSLError => e
-        retries += 1
-        log_diagnostics(e, retries)
-        @http.set_debug_output(@http_debug_output) if retries == max_request_retries - 1
-        if retries < max_request_retries
-          backoff(retries)
+        attempt_count += 1
+        log_diagnostics(e, attempt_count)
+        @http.set_debug_output(@http_debug_output) if attempt_count == max_request_retries
+        if attempt_count <= max_request_retries
+          backoff(attempt_count)
           rotate_ip
           retry
         else
@@ -120,7 +120,7 @@ module KnapsackPro
         end
       end
 
-      def log_diagnostics(error, retries)
+      def log_diagnostics(error, attempt_count)
         message = [
           action.http_method.to_s.upcase,
           endpoint_uri,
@@ -129,7 +129,7 @@ module KnapsackPro
         logger.warn(message)
         logger.warn('Request failed due to:')
         logger.warn(error.inspect)
-        return if retries < max_request_retries
+        return if attempt_count < max_request_retries + 1
 
         error.backtrace.each { |line| logger.warn(line) }
         logger.warn('Net::HTTP debug output:')
@@ -156,8 +156,8 @@ module KnapsackPro
         end
       end
 
-      def backoff(retries)
-        wait = retries * REQUEST_RETRY_TIMEBOX
+      def backoff(attempt_count)
+        wait = (attempt_count - 1) * REQUEST_RETRY_TIMEBOX
         print_every = 2 # seconds
         (wait / print_every).ceil.times do |i|
           if i.zero?
@@ -204,8 +204,8 @@ module KnapsackPro
 
       def post
         build_http(endpoint_uri)
-        make_request do
-          @http.post(endpoint_uri.path, action.request_hash.to_json, json_headers)
+        make_request do |attempt_count|
+          @http.post(endpoint_uri.path, action.request_hash.merge(attempt_count: attempt_count).to_json, json_headers)
         end
       end
 
@@ -213,7 +213,7 @@ module KnapsackPro
         uri = endpoint_uri
         uri.query = URI.encode_www_form(action.request_hash)
         build_http(uri)
-        make_request do
+        make_request do |_attempt_count|
           @http.get(uri, json_headers)
         end
       end
@@ -231,7 +231,7 @@ module KnapsackPro
         return 6 if KnapsackPro::Config::Env.regular_mode?
 
         # default number of attempts
-        3
+        4
       end
     end
   end

@@ -1,4 +1,10 @@
 describe KnapsackPro::Config::Env do
+  around(:each) do |example|
+    $stderr = StringIO.new
+    example.run
+    $stderr = STDERR
+  end
+
   before { stub_const("ENV", {}) }
 
   before(:each) do
@@ -1216,6 +1222,65 @@ describe KnapsackPro::Config::Env do
         stub_const("ENV", env)
 
         expect(described_class.ci_provider).to eq(ci)
+      end
+    end
+  end
+
+  describe '.test_queue_id' do
+    subject { described_class.test_queue_id }
+
+    [
+      [{ 'BUILDKITE' => 'true', 'BUILDKITE_BUILD_NUMBER' => 'abc:123' }, 'abc:123'],
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_PIPELINE_NUMBER' => 'abc:123' }, 'abc:123'],
+      [{ 'GITHUB_ACTIONS' => 'true', 'GITHUB_RUN_ID' => 'abc:123' }, 'abc:123'],
+      [{ 'GITLAB_CI' => 'true', 'CI_PIPELINE_ID' => 'abc:123' }, 'abc:123'],
+    ].each do |env, expected|
+      context "when CI provides an id" do
+        before { stub_const("ENV", env) }
+
+        it do
+          expect(subject).to eq(expected)
+        end
+      end
+
+      context "when CI provides an id and KNAPSACK_PRO_TEST_QUEUE_ID is set" do
+        before { stub_const("ENV", env.merge('KNAPSACK_PRO_TEST_QUEUE_ID' => 'env:456')) }
+
+        it "uses KNAPSACK_PRO_TEST_QUEUE_ID" do
+          expect(subject).to eq('env:456')
+        end
+
+        it 'logs a warning' do
+          expect(described_class).to receive(:warn).with(
+            'You have set the environment variable KNAPSACK_PRO_TEST_QUEUE_ID to env:456 which could be automatically determined from the CI environment as abc:123.'
+          )
+          subject
+        end
+      end
+    end
+
+    [
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" }, '2-feature-branch-ab153653b065dbf22d2caad1bab39d26aa48b883'],
+    ].each do |env, expected|
+      context "when CI does not provide an id" do
+        before { stub_const("ENV", env) }
+
+        it "uses the triplet" do
+          expect(subject).to eq(expected)
+        end
+      end
+    end
+
+    [
+      { 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" },
+      { 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch" }
+    ].each do |env|
+      context "when triplet cannot be calculated" do
+        before { stub_const("ENV", env) }
+
+        it 'raises' do
+          expect { subject }.to raise_error(/Missing test_queue_id/)
+        end
       end
     end
   end

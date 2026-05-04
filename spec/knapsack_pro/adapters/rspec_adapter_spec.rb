@@ -1,6 +1,18 @@
 require_relative '../../../lib/knapsack_pro/formatters/time_tracker'
 
 describe KnapsackPro::Adapters::RSpecAdapter do
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   it 'backwards compatibility with knapsack gem old rspec adapter name' do
     expect(KnapsackPro::Adapters::RspecAdapter.new).to be_kind_of(described_class)
   end
@@ -338,7 +350,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
     end
   end
 
-  describe '.concat_paths' do
+  describe '.concat_test_files' do
     let(:test_files) do
       [
         { 'path' => 'spec/a_spec.rb' },
@@ -359,7 +371,7 @@ describe KnapsackPro::Adapters::RSpecAdapter do
       ]
     end
 
-    subject { described_class.concat_paths(test_files, id_paths) }
+    subject { described_class.concat_test_files(test_files, id_paths) }
 
     it 'concats by replacing test_files with the associated id_paths' do
       expect(subject).to eq([

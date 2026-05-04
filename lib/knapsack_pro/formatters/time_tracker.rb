@@ -23,17 +23,37 @@ module KnapsackPro
         @group = {}
         @paths = {}
         @suite_started = now
-        @scheduled_paths = []
+        @batched_scheduled_paths = []
         @split_by_test_example_file_paths = Set.new
+        @current_batch_examples = []
       end
 
-      def scheduled_paths=(scheduled_paths)
-        @scheduled_paths = scheduled_paths
-        @scheduled_paths.each do |path|
-          if KnapsackPro::Adapters::RSpecAdapter.id_path?(path)
-            file_path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(path)
-            @split_by_test_example_file_paths << file_path
+      def current_batch_failed_paths
+        examples_by_file_path = @current_batch_examples
+          .group_by { |example| file_path_for(example) }
+
+        paths =
+          examples_by_file_path.flat_map do |file_path, examples|
+            failed_id_paths = examples.filter { |example| example.execution_result.status.to_s == "failed" }.map(&:id)
+
+            # Other nodes may have run some examples from this file, it's not safe to compact.
+            next failed_id_paths if rspec_split_by_test_example?(file_path)
+            next file_path if failed_id_paths.size == examples.size
+            failed_id_paths
           end
+
+        paths.map { |path| KnapsackPro::TestFileCleaner.clean(path) }
+      end
+
+      def schedule(paths)
+        @current_batch_examples = []
+        @batched_scheduled_paths << paths
+
+        paths.each do |path|
+          next unless KnapsackPro::Adapters::RSpecAdapter.id_path?(path)
+
+          file_path = KnapsackPro::Adapters::RSpecAdapter.parse_file_path(path)
+          @split_by_test_example_file_paths << KnapsackPro::TestFileCleaner.clean(file_path)
         end
       end
 
@@ -68,7 +88,7 @@ module KnapsackPro
           KnapsackPro::Adapters::RSpecAdapter.parse_file_path(example[:path])
         end
 
-        missing = (@scheduled_paths - recorded_paths).each_with_object({}) do |path, object|
+        missing = (@batched_scheduled_paths.flatten - recorded_paths).each_with_object({}) do |path, object|
           object[path] = { path: path, time_execution: 0.0 }
         end
 
@@ -87,12 +107,12 @@ module KnapsackPro
         now - @suite_started
       end
 
-      def unexecuted_test_files
+      def unexecuted_test_paths
         pending_paths = @paths.values
           .filter { |example| example[:time_execution] == 0.0 }
           .map { |example| example[:path] }
 
-        not_run_paths = @scheduled_paths -
+        not_run_paths = @batched_scheduled_paths.flatten -
           @paths.values
           .map { |example| example[:path] }
 
@@ -122,6 +142,8 @@ module KnapsackPro
       def record_example(accumulator, example, started_at)
         path = path_for(example)
         return if path.nil?
+
+        @current_batch_examples << example
 
         time_execution = time_execution_for(example, started_at)
         if accumulator.key?(path)

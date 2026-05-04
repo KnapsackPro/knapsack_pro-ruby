@@ -81,11 +81,15 @@ module KnapsackPro
         !id.nil?
       end
 
+      def self.concat_test_files(test_files, id_paths)
+        paths = concat_paths(test_files, id_paths)
+        KnapsackPro::TestFilePresenter.test_files(paths)
+      end
+
       def self.concat_paths(test_files, id_paths)
         paths = KnapsackPro::TestFilePresenter.paths(test_files)
         file_paths = id_paths.map { |id_path| parse_file_path(id_path) }
-        acc = paths + id_paths - file_paths
-        KnapsackPro::TestFilePresenter.test_files(acc)
+        paths + id_paths - file_paths
       end
 
       def self.rails_helper_exists?(test_dir)
@@ -138,7 +142,7 @@ module KnapsackPro
         ::RSpec.configure do |config|
           config.append_before(:suite) do
             time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            time_tracker.scheduled_paths = KnapsackPro::Adapters::RSpecAdapter.scheduled_paths
+            time_tracker.schedule(KnapsackPro::Adapters::RSpecAdapter.scheduled_paths)
           end
         end
       end

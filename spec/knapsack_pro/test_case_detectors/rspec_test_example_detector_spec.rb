@@ -3,6 +3,18 @@ describe KnapsackPro::TestCaseDetectors::RSpecTestExampleDetector do
   let(:report_path) { '.knapsack_pro/test_case_detectors/rspec/rspec_dry_run_json_report_node_0.json' }
   let(:rspec_test_example_detector) { described_class.new }
 
+  around(:each) do |example|
+    KnapsackPro.reset_logger!
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+    KnapsackPro.stdout = $stdout
+    example.run
+    KnapsackPro.stdout = STDOUT
+    $stdout = STDOUT
+    $stderr = STDERR
+    KnapsackPro.reset_logger!
+  end
+
   describe '#dry_run_to_file' do
     subject { rspec_test_example_detector.dry_run_to_file(rspec_args) }
 

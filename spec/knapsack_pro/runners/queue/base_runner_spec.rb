@@ -43,7 +43,7 @@ describe KnapsackPro::Runners::Queue::BaseRunner do
         let(:test_file_paths) { double }
 
         before do
-          expect(allocator).to receive(:test_file_paths).with(can_initialize_queue, executed_test_files).and_return(test_file_paths)
+          expect(allocator).to receive(:test_file_paths).with(can_initialize_queue, executed_test_files, time_tracker: nil).and_return(test_file_paths)
         end
 
         it { should eq test_file_paths }

@@ -55,4 +55,36 @@ describe KnapsackPro::Crypto::Encryptor do
       ])
     end
   end
+
+  describe '.paths' do
+    let(:paths) { test_files.map { |test_file| test_file.fetch("path") } }
+
+    subject { described_class.paths(paths) }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:test_files_encrypted?).and_return(test_files_encrypted?)
+    end
+
+    context 'when test files encrypted flag enabled' do
+      let(:test_files_encrypted?) { true }
+
+      before do
+        expect(KnapsackPro::Config::Env).to receive(:salt).at_least(1).and_return('123')
+      end
+
+      it do
+        expect(subject).to eq [
+          '93131469d5aee8158473f9945847cd411ba975644b617897b7c33164adc55038',
+          '716143a50194e2d2173b757b3418564f5efd12ce3c52332c02db60bb70c240bc'
+        ]
+      end
+    end
+
+    context 'when test files encrypted flag disabled' do
+      let(:test_files_encrypted?) { false }
+
+      it { should eq paths }
+    end
+  end
+
 end
