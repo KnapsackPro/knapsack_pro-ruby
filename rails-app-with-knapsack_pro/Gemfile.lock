@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    knapsack_pro (10.0.0)
+    knapsack_pro (10.0.1)
       rake
       thor (~> 1.4)
 
@@ -699,7 +699,7 @@ CHECKSUMS
   json (2.19.5) sha256=218a18553e4801d579ca7e0f5bc72bafd776d7397238a1fb4e74db5b0a812c59
   juniter (0.1.2) sha256=491fd41656b1dc4c4d72b97cf4c5cf92525564baa814d8d076bc15a78717af0b
   kamal (2.11.0) sha256=1408864425e0dec7e0a14d712a3b13f614e9f3a425b7661d3f9d287a51d7dd75
-  knapsack_pro (10.0.0)
+  knapsack_pro (10.0.1)
   language_server-protocol (3.17.0.5) sha256=fd1e39a51a28bf3eec959379985a72e296e9f9acfce46f6a79d31ca8760803cc
   launchy (3.1.1) sha256=72b847b5cc961589dde2c395af0108c86ff0119f42d4648d25b5440ebb10059e
   lint_roller (1.1.0) sha256=2c0c845b632a7d172cb849cc90c1bce937a28c5c8ccccb50dfd46a485003cc87
