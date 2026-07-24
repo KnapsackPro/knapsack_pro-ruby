@@ -4,6 +4,7 @@
 
 * (patch) (Perf) RSpec: Mutate hash instead of allocating a new one when tracking tests' durations
 * (patch) (Perf) RSpec: Resolve test file paths without allocations
+* (patch) (Perf) Avoid building a new logger and reopening the log file on every call when `KNAPSACK_PRO_LOG_DIR` is set
 
 ### 11.0.0
 

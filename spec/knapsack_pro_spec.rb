@@ -51,6 +51,19 @@ describe KnapsackPro do
           end
         end
       end
+
+      it 'reuses the logger instead of reopening the log file on every call' do
+        Dir.mktmpdir do |dir|
+          stub_const('ENV', 'KNAPSACK_PRO_LOG_DIR' => dir)
+
+          expect(::Logger).to receive(:new).once.and_call_original
+
+          logger = described_class.logger
+
+          expect(described_class.logger).to be(logger)
+          expect(described_class.logger).to be(logger)
+        end
+      end
     end
 
     context 'with the default logger' do

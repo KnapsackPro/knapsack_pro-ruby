@@ -110,17 +110,17 @@ module KnapsackPro
     end
 
     def logger
-      if KnapsackPro::Config::Env.log_dir
-        default_logger = Logger.new("#{KnapsackPro::Config::Env.log_dir}/knapsack_pro_node_#{KnapsackPro::Config::Env.ci_node_index}.log")
-        default_logger.level = KnapsackPro::Config::Env.log_level
-        self.logger = default_logger
-      end
+      return @logger if @logger
 
-      unless @logger
-        default_logger = ::Logger.new(stdout)
-        default_logger.level = KnapsackPro::Config::Env.log_level
-        self.logger = default_logger
-      end
+      log_dir = KnapsackPro::Config::Env.log_dir
+      default_logger =
+        if log_dir
+          ::Logger.new("#{log_dir}/knapsack_pro_node_#{KnapsackPro::Config::Env.ci_node_index}.log")
+        else
+          ::Logger.new(stdout)
+        end
+      default_logger.level = KnapsackPro::Config::Env.log_level
+      self.logger = default_logger
 
       @logger
     end
