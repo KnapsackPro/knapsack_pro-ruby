@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (patch) Reduce the number of object allocations the RSpec time tracker makes when adding `before/after(:all)` hooks time to test examples.
+
 ### 10.0.1
 
 * Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
