@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* RSpec: Speed up the time tracker formatter for test suites with many test files by accumulating recorded paths in place instead of rebuilding the hash after each test file.
+
 ### 10.0.1
 
 * Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
