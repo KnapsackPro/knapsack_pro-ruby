@@ -202,9 +202,8 @@ module KnapsackPro
       # once per top level group, so accumulate in place instead.
       def merge_into(accumulator, other)
         other.each do |path, example|
-          recorded = accumulator[path]
-          if recorded
-            recorded[:time_execution] += example[:time_execution]
+          if accumulator.key?(path)
+            accumulator[path][:time_execution] += example[:time_execution]
           else
             accumulator[path] = example
           end
