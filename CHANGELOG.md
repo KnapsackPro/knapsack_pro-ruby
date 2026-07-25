@@ -2,7 +2,7 @@
 
 ### Unreleased
 
-* RSpec: Speed up the time tracker formatter for test suites with many test files by accumulating recorded paths in place instead of rebuilding the hash after each test file.
+* (patch) RSpec: Speed up the time tracker formatter by recording test path timings in place instead of rebuilding the whole collection after each top-level example group.
 
 ### 10.0.1
 
