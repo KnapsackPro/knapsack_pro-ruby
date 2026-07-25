@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (patch) (Perf) RSpec: Mutate hash instead of allocating a new one when tracking tests' durations
+
 ### 11.0.0
 
 * **Breaking**: `KNAPSACK_PRO_TEST_QUEUE_ID` only supports ASCII letters, numbers, hyphens (-), and underscores (_). This is a breaking change only if you set the ENV manually to something that contains other characters.

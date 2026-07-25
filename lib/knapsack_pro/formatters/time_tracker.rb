@@ -81,7 +81,7 @@ module KnapsackPro
 
         add_hooks_time(@group, @time_all_by_group_id_path)
         @time_all_by_group_id_path = Hash.new(0)
-        @paths = merge(@paths, @group)
+        merge!(@paths, @group)
         @group = {}
       end
 
@@ -94,7 +94,9 @@ module KnapsackPro
           object[path] = { path: path, time_execution: 0.0 }
         end
 
-        merge(@paths, missing).values.map do |example|
+        merge!(@paths, missing)
+
+        @paths.values.map do |example|
           example.transform_keys(&:to_s)
         end
       end
@@ -189,12 +191,13 @@ module KnapsackPro
         end
       end
 
-      def merge(h1, h2)
-        h1.merge(h2) do |key, v1, v2|
-          {
-            path: key,
-            time_execution: v1[:time_execution] + v2[:time_execution]
-          }
+      def merge!(h1, h2)
+        h2.each do |path, example|
+          if recorded = h1[path]
+            recorded[:time_execution] += example[:time_execution]
+          else
+            h1[path] = example
+          end
         end
       end
 
