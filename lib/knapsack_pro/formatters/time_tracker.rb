@@ -131,7 +131,7 @@ module KnapsackPro
         return if time_all_by_group_id_path.empty?
 
         # `group_id_path` without its trailing `]` is compared against every
-        # example of the group, so build it once per group instead of per pair.
+        # example of the group, so build it once instead of once per example.
         hooks_time = time_all_by_group_id_path.map do |group_id_path, time|
           [group_id_path, group_id_path[0..-2], time]
         end
@@ -143,10 +143,9 @@ module KnapsackPro
           sum = 0.0
           hooks_time.each do |group_id_path, group_id_path_prefix, time|
             # :path is a file path (a_spec.rb), sum any before/after(:all) in the file
+            next sum += time if group_id_path.start_with?(path)
             # :path is an id path (a_spec.rb[1:1]), sum any before/after(:all) above it
-            if group_id_path.start_with?(path) || path.start_with?(group_id_path_prefix)
-              sum += time
-            end
+            next sum += time if path.start_with?(group_id_path_prefix)
           end
 
           example[:time_execution] += sum
