@@ -7,7 +7,9 @@ module KnapsackPro
     class RSpecAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
       # https://github.com/rspec/rspec/blob/86b5e4218eece4c1913fe9aad24c0a96d8bc9f40/rspec-core/lib/rspec/core/example.rb#L122
-      REGEX = /\A(.*?)(?:\[([\d\s:,]+)\])?\z/.freeze
+      ID_REGEX = /\[[\d\s:,]+\]\z/.freeze
+      ID_PATH_PREFIX = '['
+      ID_PATH_SUFFIX = ']'
 
       def self.split_by_test_cases_enabled?
         return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
@@ -57,28 +59,33 @@ module KnapsackPro
       end
 
       def self.file_path_for(example)
-        [
-          -> { parse_file_path(example.id) },
-          -> { example.metadata[:file_path] },
-          -> { example.metadata[:example_group][:file_path] },
-          -> { top_level_group(example)[:file_path] },
-        ]
-          .each do |path|
-            p = path.call
-            return p if p.include?('_spec.rb') || p.include?('.feature')
-          end
+        p = parse_file_path(example.id)
+        return p if p.include?('_spec.rb') || p.include?('.feature')
 
-        return ''
+        p = example.metadata[:file_path]
+        return p if p.include?('_spec.rb') || p.include?('.feature')
+
+        p = example.metadata[:example_group][:file_path]
+        return p if p.include?('_spec.rb') || p.include?('.feature')
+
+        p = top_level_group(example)[:file_path]
+        return p if p.include?('_spec.rb') || p.include?('.feature')
+
+        ''
       end
 
       def self.parse_file_path(path)
-        file, _id = path.match(REGEX).captures
-        file
+        return path unless path.end_with?(ID_PATH_SUFFIX)
+
+        index = path.rindex(ID_PATH_PREFIX)
+        return path if index.nil?
+        return path unless ID_REGEX.match?(path, index)
+
+        path[0, index]
       end
 
       def self.id_path?(path)
-        _file, id = path.match(REGEX).captures
-        !id.nil?
+        path.end_with?(ID_PATH_SUFFIX) && ID_REGEX.match?(path)
       end
 
       def self.concat_test_files(test_files, id_paths)

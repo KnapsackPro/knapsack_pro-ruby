@@ -3,6 +3,7 @@
 ### Unreleased
 
 * (patch) (Perf) RSpec: Mutate hash instead of allocating a new one when tracking tests' durations
+* (patch) (Perf) RSpec: Resolve test file paths without allocations
 
 ### 11.0.0
 
