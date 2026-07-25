@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (patch) RSpec: Resolve test file paths without allocating per example, reducing the gem's GC pressure inside your test process (12 fewer objects per example).
+
 ### 10.0.1
 
 * Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).

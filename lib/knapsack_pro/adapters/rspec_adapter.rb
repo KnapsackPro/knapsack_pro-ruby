@@ -8,6 +8,11 @@ module KnapsackPro
       TEST_DIR_PATTERN = 'spec/**{,/*/**}/*_spec.rb'
       # https://github.com/rspec/rspec/blob/86b5e4218eece4c1913fe9aad24c0a96d8bc9f40/rspec-core/lib/rspec/core/example.rb#L122
       REGEX = /\A(.*?)(?:\[([\d\s:,]+)\])?\z/.freeze
+      # The id part of the REGEX above. An id path always ends with `]`, so it
+      # is the cheap guard used to skip the regex for plain file paths.
+      ID_REGEX = /\[[\d\s:,]+\]\z/.freeze
+      ID_PATH_PREFIX = '['
+      ID_PATH_SUFFIX = ']'
 
       def self.split_by_test_cases_enabled?
         return false unless KnapsackPro::Config::Env.rspec_split_by_test_examples?
@@ -56,29 +61,41 @@ module KnapsackPro
         cli_args.compact
       end
 
+      # Called for every test example, so the candidate paths are checked
+      # inline instead of being wrapped in lambdas (which allocated an array of
+      # four procs per call).
       def self.file_path_for(example)
-        [
-          -> { parse_file_path(example.id) },
-          -> { example.metadata[:file_path] },
-          -> { example.metadata[:example_group][:file_path] },
-          -> { top_level_group(example)[:file_path] },
-        ]
-          .each do |path|
-            p = path.call
-            return p if p.include?('_spec.rb') || p.include?('.feature')
-          end
+        path = parse_file_path(example.id)
+        return path if test_file_path?(path)
 
-        return ''
+        path = example.metadata[:file_path]
+        return path if test_file_path?(path)
+
+        path = example.metadata[:example_group][:file_path]
+        return path if test_file_path?(path)
+
+        path = top_level_group(example)[:file_path]
+        return path if test_file_path?(path)
+
+        ''
       end
 
+      # Equivalent to matching REGEX and taking the first capture, but without
+      # allocating a MatchData (and a frozen copy of the path) for every test
+      # example. The id characters cannot contain `[`, so the only possible
+      # split point is the last `[` of the path.
       def self.parse_file_path(path)
-        file, _id = path.match(REGEX).captures
-        file
+        return path unless path.end_with?(ID_PATH_SUFFIX)
+
+        index = path.rindex(ID_PATH_PREFIX)
+        return path if index.nil?
+        return path unless ID_REGEX.match?(path, index)
+
+        path[0, index]
       end
 
       def self.id_path?(path)
-        _file, id = path.match(REGEX).captures
-        !id.nil?
+        path.end_with?(ID_PATH_SUFFIX) && ID_REGEX.match?(path)
       end
 
       def self.concat_test_files(test_files, id_paths)
@@ -94,6 +111,11 @@ module KnapsackPro
 
       def self.rails_helper_exists?(test_dir)
         File.exist?("#{test_dir}/rails_helper.rb")
+      end
+
+      # private
+      def self.test_file_path?(path)
+        path.include?('_spec.rb') || path.include?('.feature')
       end
 
       # private
