@@ -6,6 +6,7 @@ module KnapsackPro
       def self.run(args)
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_cucumber
         ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] = 'true'
+        ENV['KNAPSACK_PRO_CUCUMBER_OPTIONS'] = args.to_s
 
         adapter_class = KnapsackPro::Adapters::CucumberAdapter
         KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)

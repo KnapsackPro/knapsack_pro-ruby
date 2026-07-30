@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Cucumber: Add support for [Split by Test Examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/) so slow feature files can be split by scenario (e.g., `features/a.feature:12`) across parallel CI nodes. Opt in with `KNAPSACK_PRO_CUCUMBER_SPLIT_BY_TEST_EXAMPLES=true` (requires Cucumber >= 4.0).
+
 ### 10.0.1
 
 * Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).

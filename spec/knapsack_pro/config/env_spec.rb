@@ -960,6 +960,63 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.cucumber_split_by_test_examples?' do
+    subject { described_class.cucumber_split_by_test_examples? }
+
+    before do
+      described_class.remove_instance_variable(:@cucumber_split_by_test_examples) if described_class.instance_variable_defined?(:@cucumber_split_by_test_examples)
+    end
+    after do
+      described_class.remove_instance_variable(:@cucumber_split_by_test_examples)
+    end
+
+    [
+      ['false', '2', nil, false],
+      ['true',  '2', nil, true],
+      [nil,     '2', nil, false],
+      ['false', '1', nil, false],
+      ['true',  '1', nil, false, :debug, 'Skipping split by test examples because tests are running on a single CI node (no parallelism)'],
+      [nil,     '1', nil, false],
+      ['false', '2', 'true', false],
+      ['true',  '2', 'true', false, :warn, "Skipping split by test examples because test file names encryption is enabled:\nhttps://knapsackpro.com/perma/ruby/encryption\nhttps://knapsackpro.com/perma/ruby/split-by-test-examples"],
+      [nil,     '2', 'true', false],
+      ['false', '1', 'true', false],
+      ['true',  '1', 'true', false, :warn, "Skipping split by test examples because test file names encryption is enabled:\nhttps://knapsackpro.com/perma/ruby/encryption\nhttps://knapsackpro.com/perma/ruby/split-by-test-examples"],
+      [nil,     '1', 'true', false],
+    ].each do |sbte, node_total, encrypted, expected, log_level, log_message|
+      context "KNAPSACK_PRO_CUCUMBER_SPLIT_BY_TEST_EXAMPLES=#{sbte.inspect} AND KNAPSACK_PRO_CI_NODE_TOTAL=#{node_total.inspect} AND KNAPSACK_PRO_TEST_FILES_ENCRYPTED=#{encrypted.inspect}" do
+        before do
+          stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_SPLIT_BY_TEST_EXAMPLES' => sbte, 'KNAPSACK_PRO_CI_NODE_TOTAL' => node_total, 'KNAPSACK_PRO_TEST_FILES_ENCRYPTED' => encrypted }.compact)
+
+          if log_level && log_message
+            logger = instance_double(Logger)
+            expect(KnapsackPro).to receive(:logger).and_return(logger)
+            expect(logger).to receive(log_level).once.with(log_message)
+          end
+        end
+
+        it do
+          expect(described_class.cucumber_split_by_test_examples?).to eq(expected)
+          expect(described_class.cucumber_split_by_test_examples?).to eq(expected)
+        end
+      end
+    end
+  end
+
+  describe '.cucumber_test_example_detector_prefix' do
+    subject { described_class.cucumber_test_example_detector_prefix }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_TEST_EXAMPLE_DETECTOR_PREFIX' => '' }) }
+      it { should eq '' }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should eq 'bundle exec' }
+    end
+  end
+
   describe '.slow_test_file_threshold' do
     subject { described_class.slow_test_file_threshold }
 

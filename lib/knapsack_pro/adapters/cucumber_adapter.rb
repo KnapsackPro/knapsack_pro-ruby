@@ -4,6 +4,75 @@ module KnapsackPro
   module Adapters
     class CucumberAdapter < BaseAdapter
       TEST_DIR_PATTERN = 'features/**{,/*/**}/*.feature'
+      # Matches a test example path like features/a.feature:12
+      REGEX = /\A(.*?)(?::(\d+))?\z/.freeze
+
+      def self.split_by_test_cases_enabled?
+        return false unless KnapsackPro::Config::Env.cucumber_split_by_test_examples?
+
+        require 'cucumber/platform'
+        unless ::Cucumber::VERSION.to_i >= 4
+          raise "Cucumber >= 4.0 is required to split test files by test examples. Learn more: #{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}"
+        end
+
+        true
+      end
+
+      def self.calculate_slow_id_paths
+        # Shell out not to pollute the Cucumber state
+        cmd = [
+          'RACK_ENV=test',
+          'RAILS_ENV=test',
+          KnapsackPro::Config::Env.cucumber_test_example_detector_prefix,
+          'rake knapsack_pro:cucumber_test_example_detector',
+        ].join(' ')
+        raise "Failed to calculate Split by Test Examples: #{cmd}" unless Kernel.system(cmd)
+
+        KnapsackPro::TestCaseDetectors::CucumberTestExampleDetector.new.slow_id_paths!
+      end
+
+      def self.parse_file_path(path)
+        file, _id = path.match(REGEX).captures
+        file
+      end
+
+      def self.id_path?(path)
+        _file, id = path.match(REGEX).captures
+        !id.nil?
+      end
+
+      def self.concat_test_files(test_files, id_paths)
+        paths = concat_paths(test_files, id_paths)
+        KnapsackPro::TestFilePresenter.test_files(paths)
+      end
+
+      def self.concat_paths(test_files, id_paths)
+        paths = KnapsackPro::TestFilePresenter.paths(test_files)
+        file_paths = id_paths.map { |id_path| parse_file_path(id_path) }
+        paths + id_paths - file_paths
+      end
+
+      def self.remove_formatters(cli_args)
+        formatter_options = ['-f', '--format', '-o', '--out']
+        cli_args.dup.each_with_index do |arg, index|
+          if formatter_options.include?(arg)
+            cli_args[index] = nil
+            cli_args[index + 1] = nil
+          end
+        end
+        cli_args.compact
+      end
+
+      # When the test file was split by test examples, track the time execution
+      # per test example path (e.g., features/a.feature:12).
+      # Otherwise, track the time execution per test file path.
+      def self.tracked_test_path(object)
+        file = test_path(object)
+        return file unless split_by_test_cases_enabled?
+
+        id_path = "#{file}:#{object.location.line}"
+        KnapsackPro.tracker.scheduled_test_path?(id_path) ? id_path : file
+      end
 
       def self.test_path(object)
         if ::Cucumber::VERSION.to_i >= 2
@@ -32,7 +101,7 @@ module KnapsackPro
 
       def bind_time_tracker
         Around do |object, block|
-          KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::CucumberAdapter.test_path(object)
+          KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::CucumberAdapter.tracked_test_path(object)
           KnapsackPro.tracker.start_timer
           block.call
           KnapsackPro.tracker.stop_timer

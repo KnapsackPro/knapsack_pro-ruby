@@ -69,6 +69,14 @@ module KnapsackPro
       @prerun_tests_loaded = true
     end
 
+    def scheduled_test_path?(test_file_path)
+      # When the test files are not loaded in the memory then load them from the disk.
+      # Useful for the Regular Mode when the memory is not shared between tracker instances.
+      load_prerun_tests unless prerun_tests_loaded
+
+      @test_files_with_time.key?(KnapsackPro::TestFileCleaner.clean(test_file_path))
+    end
+
     def to_a
       # When the test files are not loaded in the memory then load them from the disk.
       # Useful for the Regular Mode when the memory is not shared between tracker instances.
