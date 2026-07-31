@@ -44,8 +44,11 @@ module KnapsackPro
         cli_args_without_formatters = KnapsackPro::Adapters::CucumberAdapter.remove_formatters(Shellwords.split(args || ''))
         cli_args = cli_args_without_formatters + [
           '--dry-run',
+          # A unique --out path: pointing two formatters at the same stream is an
+          # error in Cucumber, and a profile from cucumber.yml may already use
+          # --out /dev/null (profiles are expanded before the stream conflict check).
           '--format', 'progress',
-          '--out', File::NULL,
+          '--out', dry_run_progress_report_path,
           '--require', test_dir,
         ]
 
@@ -66,6 +69,13 @@ module KnapsackPro
         end
 
         runtime
+      end
+
+      def self.dry_run_progress_report_path
+        KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
+        dir = "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/cucumber_queue_preload"
+        FileUtils.mkdir_p(dir)
+        "#{dir}/dry_run_progress_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
       end
 
       def self.reset_runtime_memoization(runtime)
