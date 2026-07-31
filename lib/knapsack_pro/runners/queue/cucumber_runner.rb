@@ -126,9 +126,10 @@ module KnapsackPro
         # This avoids paying the application boot cost for every batch pulled
         # from the Queue. Requires an OS that supports Process.fork (POSIX).
         def self.preloaded_cucumber_run(runner, test_file_paths, args)
-          runtime = preloaded_cucumber_runtime(runner, args)
+          runtime = preloaded_cucumber_runtime(runner, args, test_file_paths.first)
 
           child_pid = Kernel.fork do
+            KnapsackPro::Hooks::Queue.call_after_preload_fork
             KnapsackPro::Cucumber::RuntimePreloader.reset_runtime_memoization(runtime)
 
             cli_args = Shellwords.split(args || '') + ['--require', runner.test_dir] + test_file_paths
@@ -162,8 +163,8 @@ module KnapsackPro
           status.exitstatus
         end
 
-        def self.preloaded_cucumber_runtime(runner, args)
-          @preloaded_cucumber_runtime ||= KnapsackPro::Cucumber::RuntimePreloader.preload(runner.test_dir, args)
+        def self.preloaded_cucumber_runtime(runner, args, sample_test_file_path)
+          @preloaded_cucumber_runtime ||= KnapsackPro::Cucumber::RuntimePreloader.preload(runner.test_dir, args, sample_test_file_path)
         end
       end
     end

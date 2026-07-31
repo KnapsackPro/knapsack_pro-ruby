@@ -26,7 +26,11 @@ module KnapsackPro
       # features/support/env.rb which usually boots a Rails app) and returns
       # the runtime so batches can be executed in forked child processes
       # without paying the boot cost again.
-      def self.preload(test_dir, args)
+      #
+      # sample_test_file_path limits the dry run to a single test file: the
+      # dry run only exists to load the support code, and dry-running a whole
+      # test suite can take minutes (e.g., step matching on every step).
+      def self.preload(test_dir, args, sample_test_file_path)
         unless Process.respond_to?(:fork)
           raise "KNAPSACK_PRO_CUCUMBER_QUEUE_PRELOAD requires an operating system that supports Process.fork (POSIX). Please disable the preload mode."
         end
@@ -50,6 +54,7 @@ module KnapsackPro
           '--format', 'progress',
           '--out', dry_run_progress_report_path,
           '--require', test_dir,
+          sample_test_file_path,
         ]
 
         # Cucumber's option parser mutates the args array, so build the debug command upfront.
@@ -68,7 +73,22 @@ module KnapsackPro
           raise "Failed to preload Cucumber (exit code #{exit_code}). To reproduce the problem, run: #{command}"
         end
 
+        disconnect_active_record_in_parent!
+
         runtime
+      end
+
+      # Database connections opened while booting the app must not be shared
+      # with the forked children (concurrent use of an inherited socket
+      # corrupts the connection protocol and hangs or fails queries). Clearing
+      # the pools here means both the parent and each forked child lazily
+      # check out fresh connections when they first need one.
+      def self.disconnect_active_record_in_parent!
+        return unless defined?(::ActiveRecord::Base)
+
+        ::ActiveRecord::Base.connection_handler.clear_all_connections!
+      rescue StandardError => e
+        KnapsackPro.logger.warn("Could not clear ActiveRecord connections after preloading Cucumber: #{e.class}: #{e.message}")
       end
 
       def self.dry_run_progress_report_path
