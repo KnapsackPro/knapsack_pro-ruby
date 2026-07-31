@@ -90,6 +90,203 @@ describe KnapsackPro::Adapters::CucumberAdapter do
     end
   end
 
+  describe '.split_by_test_cases_enabled?' do
+    subject { described_class.split_by_test_cases_enabled? }
+
+    before do
+      expect(KnapsackPro::Config::Env).to receive(:cucumber_split_by_test_examples?).and_return(cucumber_split_by_test_examples_enabled)
+    end
+
+    context 'when the Cucumber split by test examples is enabled' do
+      let(:cucumber_split_by_test_examples_enabled) { true }
+
+      before { stub_const('Cucumber::VERSION', '4.1.0') }
+
+      it { expect(subject).to be true }
+
+      context 'when the Cucumber version is < 4.0' do
+        before { stub_const('Cucumber::VERSION', '3.2.0') }
+
+        it do
+          expect { subject }.to raise_error RuntimeError, 'Cucumber >= 4.0 is required to split test files by test examples. Learn more: https://knapsackpro.com/perma/ruby/split-by-test-examples'
+        end
+      end
+    end
+
+    context 'when the Cucumber split by test examples is disabled' do
+      let(:cucumber_split_by_test_examples_enabled) { false }
+
+      it { expect(subject).to be false }
+    end
+  end
+
+  describe '.calculate_slow_id_paths' do
+    subject { described_class.calculate_slow_id_paths }
+
+    before do
+      cmd = 'RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:cucumber_test_example_detector'
+      expect(Kernel).to receive(:system).with(cmd).and_return(cmd_result)
+    end
+
+    context 'when the rake task to detect Cucumber test examples succeeded' do
+      let(:cmd_result) { true }
+
+      it 'returns test example paths for slow test files' do
+        cucumber_test_example_detector = instance_double(KnapsackPro::TestCaseDetectors::CucumberTestExampleDetector)
+        expect(KnapsackPro::TestCaseDetectors::CucumberTestExampleDetector).to receive(:new).and_return(cucumber_test_example_detector)
+
+        slow_id_paths = double
+        expect(cucumber_test_example_detector).to receive(:slow_id_paths!).and_return(slow_id_paths)
+
+        expect(subject).to eq slow_id_paths
+      end
+    end
+
+    context 'when the rake task to detect Cucumber test examples failed' do
+      let(:cmd_result) { false }
+
+      it do
+        expect { subject }.to raise_error(RuntimeError, 'Failed to calculate Split by Test Examples: RACK_ENV=test RAILS_ENV=test bundle exec rake knapsack_pro:cucumber_test_example_detector')
+      end
+    end
+  end
+
+  describe '.parse_file_path' do
+    subject { described_class.parse_file_path(path) }
+
+    context 'when the path is a test example path' do
+      let(:path) { 'features/a.feature:12' }
+
+      it { is_expected.to eq 'features/a.feature' }
+    end
+
+    context 'when the path is a test file path' do
+      let(:path) { 'features/a.feature' }
+
+      it { is_expected.to eq 'features/a.feature' }
+    end
+  end
+
+  describe '.id_path?' do
+    subject { described_class.id_path?(path) }
+
+    context 'when the path is a test example path' do
+      let(:path) { 'features/a.feature:12' }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when the path is a test file path' do
+      let(:path) { 'features/a.feature' }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '.concat_test_files' do
+    let(:test_files) do
+      [
+        { 'path' => 'features/a.feature' },
+        { 'path' => 'features/b.feature' },
+        { 'path' => 'features/c.feature' },
+        { 'path' => 'features/slow_1.feature' },
+        { 'path' => 'features/slow_2.feature' },
+      ]
+    end
+
+    let(:id_paths) do
+      [
+        'features/slow_1.feature:3',
+        'features/slow_1.feature:12',
+        'features/slow_2.feature:5',
+        'features/slow_2.feature:14',
+        'features/slow_2.feature:15',
+      ]
+    end
+
+    subject { described_class.concat_test_files(test_files, id_paths) }
+
+    it 'concats by replacing test_files with the associated id_paths' do
+      expect(subject).to eq([
+        { 'path' => 'features/a.feature' },
+        { 'path' => 'features/b.feature' },
+        { 'path' => 'features/c.feature' },
+        { 'path' => 'features/slow_1.feature:3' },
+        { 'path' => 'features/slow_1.feature:12' },
+        { 'path' => 'features/slow_2.feature:5' },
+        { 'path' => 'features/slow_2.feature:14' },
+        { 'path' => 'features/slow_2.feature:15' },
+      ])
+    end
+  end
+
+  describe '.remove_formatters' do
+    subject { described_class.remove_formatters(cli_args) }
+
+    context 'when CLI args include formatters' do
+      let(:cli_args) { ['--tags', 'not @slow', '-f', 'pretty', '-o', '/tmp/pretty.txt', '--format', 'json', '--out', '/tmp/file.json', '--strict'] }
+
+      it 'removes formatters and the related output file options' do
+        expect(subject).to eq ['--tags', 'not @slow', '--strict']
+      end
+    end
+  end
+
+  describe '.tracked_test_path' do
+    let(:file) { 'features/a.feature' }
+    let(:test_case) { double(location: double(file: file, line: 12)) }
+
+    subject { described_class.tracked_test_path(test_case) }
+
+    before { stub_const('Cucumber::VERSION', '4.1.0') }
+
+    context 'when the split by test examples is disabled' do
+      before do
+        expect(described_class).to receive(:split_by_test_cases_enabled?).and_return(false)
+      end
+
+      it { is_expected.to eq file }
+    end
+
+    context 'when the split by test examples is enabled' do
+      before do
+        expect(described_class).to receive(:split_by_test_cases_enabled?).and_return(true)
+        expect(KnapsackPro.tracker).to receive(:scheduled_test_path?).with('features/a.feature:12').and_return(scheduled)
+      end
+
+      context 'when the test example path is scheduled on this CI node (the test file was split by test examples)' do
+        let(:scheduled) { true }
+
+        it { is_expected.to eq 'features/a.feature:12' }
+      end
+
+      context 'when the test example path is not scheduled on this CI node (the test file was not split)' do
+        let(:scheduled) { false }
+
+        it { is_expected.to eq file }
+      end
+    end
+  end
+
+  describe '.preload_parent_process?' do
+    subject { described_class.preload_parent_process? }
+
+    context 'when the preload parent PID matches the current process' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_PRELOAD_PARENT_PID' => Process.pid.to_s }) }
+      it { should be true }
+    end
+
+    context 'when the preload parent PID is a different process (a forked child)' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_PRELOAD_PARENT_PID' => '0' }) }
+      it { should be false }
+    end
+
+    context 'when the preload mode is not used' do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
   describe 'bind methods' do
     describe '#bind_time_tracker' do
       let(:file) { 'features/a.feature' }

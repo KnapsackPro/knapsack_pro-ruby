@@ -10,6 +10,7 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_cucumber
           ENV['KNAPSACK_PRO_QUEUE_MODE_ENABLED'] = 'true'
           ENV['KNAPSACK_PRO_QUEUE_ID'] = KnapsackPro::Config::EnvGenerator.set_queue_id
+          ENV['KNAPSACK_PRO_CUCUMBER_OPTIONS'] = args.to_s
 
           adapter_class = KnapsackPro::Adapters::CucumberAdapter
           KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)
@@ -91,6 +92,10 @@ module KnapsackPro
         private
 
         def self.cucumber_run(runner, test_file_paths, args)
+          if KnapsackPro::Config::Env.cucumber_queue_preload_enabled?
+            return preloaded_cucumber_run(runner, test_file_paths, args)
+          end
+
           stringify_test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
 
           cmd = [
@@ -113,6 +118,53 @@ module KnapsackPro
           end
 
           child_status.exitstatus
+        end
+
+        # Boots Cucumber (including the support code, e.g. a Rails app loaded by
+        # features/support/env.rb) once in this process, then runs each batch of
+        # tests in a forked child process that reuses the preloaded runtime.
+        # This avoids paying the application boot cost for every batch pulled
+        # from the Queue. Requires an OS that supports Process.fork (POSIX).
+        def self.preloaded_cucumber_run(runner, test_file_paths, args)
+          runtime = preloaded_cucumber_runtime(runner, args, test_file_paths.first)
+
+          child_pid = Kernel.fork do
+            KnapsackPro::Hooks::Queue.call_after_preload_fork
+            KnapsackPro::Cucumber::RuntimePreloader.reset_forked_child_state(runtime)
+
+            cli_args = Shellwords.split(args || '') + ['--require', runner.test_dir] + test_file_paths
+            exit_code =
+              begin
+                ::Cucumber::Cli::Main.new(cli_args).execute!(runtime)
+                0
+              rescue SystemExit => e
+                e.status
+              end
+            # Kernel.exit (not exit!) so that at_exit hooks run in the child:
+            # KnapsackPro::Hooks::Queue.call_after_subset_queue
+            # KnapsackPro::Report.save_subset_queue_to_file
+            # which are registered in lib/knapsack_pro/adapters/cucumber_adapter.rb
+            Kernel.exit(exit_code)
+          end
+          _pid, status = Process.waitpid2(child_pid)
+
+          # it must be set here so when we run the next batch we won't run again:
+          # KnapsackPro::Hooks::Queue.call_before_queue
+          # which is defined in lib/knapsack_pro/adapters/cucumber_adapter.rb
+          ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
+
+          unless status.exited?
+            raise "Cucumber process execution failed. It's likely that your CI server has exceeded"\
+                    " its available memory. Please try changing CI config or retrying the CI build.\n"\
+                    "Failed test files: #{test_file_paths.inspect}\n"\
+                    "Process status: #{status.inspect}"
+          end
+
+          status.exitstatus
+        end
+
+        def self.preloaded_cucumber_runtime(runner, args, sample_test_file_path)
+          @preloaded_cucumber_runtime ||= KnapsackPro::Cucumber::RuntimePreloader.preload(runner.test_dir, args, sample_test_file_path)
         end
       end
     end

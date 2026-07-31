@@ -7,7 +7,8 @@ module KnapsackPro
         attr_reader :before_queue_store,
           :before_subset_queue_store,
           :after_subset_queue_store,
-          :after_queue_store
+          :after_queue_store,
+          :after_preload_fork_store
 
         def reset_before_queue
           @before_queue_store = nil
@@ -23,6 +24,10 @@ module KnapsackPro
 
         def reset_after_queue
           @after_queue_store = nil
+        end
+
+        def reset_after_preload_fork
+          @after_preload_fork_store = nil
         end
 
         def before_queue(&block)
@@ -43,6 +48,20 @@ module KnapsackPro
         def after_queue(&block)
           @after_queue_store ||= []
           @after_queue_store << block
+        end
+
+        # Called in a forked child process right after the fork when the Cucumber
+        # preload mode ( KNAPSACK_PRO_CUCUMBER_QUEUE_PRELOAD ) is enabled.
+        # Use it to re-establish resources that do not survive a fork,
+        # e.g., reopen log appenders or reconnect clients holding sockets.
+        def after_preload_fork(&block)
+          @after_preload_fork_store ||= []
+          @after_preload_fork_store << block
+        end
+
+        def call_after_preload_fork
+          return unless after_preload_fork_store
+          after_preload_fork_store.each(&:call)
         end
 
         def call_before_queue

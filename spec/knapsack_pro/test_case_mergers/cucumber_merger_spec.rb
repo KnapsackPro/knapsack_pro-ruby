@@ -1,0 +1,99 @@
+describe KnapsackPro::TestCaseMergers::CucumberMerger do
+  describe '#call' do
+    subject { KnapsackPro::TestCaseMergers::CucumberMerger.new(test_files).call }
+
+    context 'when test files are regular file paths (not test example paths)' do
+      let(:test_files) do
+        [
+          { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+          { 'path' => 'features/b.feature', 'time_execution' => 2.2 },
+        ]
+      end
+
+      it 'returns the test files unchanged' do
+        expect(subject).to eq([
+          { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+          { 'path' => 'features/b.feature', 'time_execution' => 2.2 },
+        ])
+      end
+    end
+
+    context 'when test files have test example paths' do
+      let(:test_files) do
+        [
+          { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+          # test example paths
+          { 'path' => 'features/test_case.feature:3', 'time_execution' => 2.2 },
+          { 'path' => 'features/test_case.feature:12', 'time_execution' => 0.8 },
+        ]
+      end
+
+      it 'merges the test example paths and sums their execution times' do
+        expect(subject).to eq([
+          { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+          { 'path' => 'features/test_case.feature', 'time_execution' => 3.0 },
+        ])
+      end
+    end
+
+    context 'when test files have test example paths and the full test file path exists simultaneously' do
+      context 'when the full test file path has a higher execution time than the sum of test example paths' do
+        let(:test_files) do
+          [
+            { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+            # full test file path exists alongside test example paths
+            { 'path' => 'features/test_case.feature', 'time_execution' => 3.1 },
+            # test example paths
+            { 'path' => 'features/test_case.feature:3', 'time_execution' => 2.2 },
+            { 'path' => 'features/test_case.feature:12', 'time_execution' => 0.8 },
+          ]
+        end
+
+        it 'returns the full test file path execution time' do
+          expect(subject).to eq([
+            { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+            { 'path' => 'features/test_case.feature', 'time_execution' => 3.1 },
+          ])
+        end
+      end
+
+      context 'when the full test file path has a lower execution time than the sum of test example paths' do
+        let(:test_files) do
+          [
+            { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+            # full test file path exists alongside test example paths
+            { 'path' => 'features/test_case.feature', 'time_execution' => 2.9 },
+            # test example paths
+            { 'path' => 'features/test_case.feature:3', 'time_execution' => 2.2 },
+            { 'path' => 'features/test_case.feature:12', 'time_execution' => 0.8 },
+          ]
+        end
+
+        it "returns the sum of test example paths' execution times" do
+          expect(subject).to eq([
+            { 'path' => 'features/a.feature', 'time_execution' => 1.1 },
+            { 'path' => 'features/test_case.feature', 'time_execution' => 3.0 },
+          ])
+        end
+      end
+
+      context 'with a file path with nil time_execution' do
+        let(:test_files) do
+          [
+            # full test file path with unknown execution time
+            { 'path' => 'features/test_case.feature', 'time_execution' => nil },
+            # test example paths
+            { 'path' => 'features/test_case.feature:3', 'time_execution' => 2.2 },
+            { 'path' => 'features/test_case.feature:12', 'time_execution' => 0.8 },
+          ]
+        end
+
+        it "returns the sum of test example paths' execution times" do
+          expect(subject).to eq([
+            { 'path' => 'features/test_case.feature', 'time_execution' => 3.0 },
+          ])
+        end
+      end
+    end
+  end
+end

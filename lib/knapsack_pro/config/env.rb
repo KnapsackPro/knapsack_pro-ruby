@@ -202,6 +202,32 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_RSPEC_TEST_EXAMPLE_DETECTOR_PREFIX', 'bundle exec')
         end
 
+        def cucumber_split_by_test_examples?
+          return @cucumber_split_by_test_examples if defined?(@cucumber_split_by_test_examples)
+
+          split = ENV['KNAPSACK_PRO_CUCUMBER_SPLIT_BY_TEST_EXAMPLES'].to_s == 'true'
+
+          if split && test_files_encrypted?
+            KnapsackPro.logger.warn("Skipping split by test examples because test file names encryption is enabled:\n#{KnapsackPro::Urls::ENCRYPTION}\n#{KnapsackPro::Urls::SPLIT_BY_TEST_EXAMPLES}")
+            return (@cucumber_split_by_test_examples = false)
+          end
+
+          if split && ci_node_total < 2
+            KnapsackPro.logger.debug('Skipping split by test examples because tests are running on a single CI node (no parallelism)')
+            @cucumber_split_by_test_examples = false
+          else
+            @cucumber_split_by_test_examples = split
+          end
+        end
+
+        def cucumber_test_example_detector_prefix
+          ENV.fetch('KNAPSACK_PRO_CUCUMBER_TEST_EXAMPLE_DETECTOR_PREFIX', 'bundle exec')
+        end
+
+        def cucumber_queue_preload_enabled?
+          ENV['KNAPSACK_PRO_CUCUMBER_QUEUE_PRELOAD'] == 'true'
+        end
+
         def test_suite_token
           env_name = 'KNAPSACK_PRO_TEST_SUITE_TOKEN'
           ENV[env_name] || raise("Missing environment variable #{env_name}. You should set environment variable like #{env_name}_RSPEC (note there is suffix _RSPEC at the end). knapsack_pro gem will set #{env_name} based on #{env_name}_RSPEC value. If you use other test runner than RSpec then use proper suffix.")

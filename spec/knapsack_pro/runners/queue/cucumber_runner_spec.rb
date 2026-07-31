@@ -18,6 +18,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_cucumber)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_MODE_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_QUEUE_ID', queue_id)
+      expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_CUCUMBER_OPTIONS', args.to_s)
 
       expect(KnapsackPro::Config::Env).to receive(:set_test_runner_adapter).with(KnapsackPro::Adapters::CucumberAdapter)
 

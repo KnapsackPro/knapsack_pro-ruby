@@ -155,6 +155,34 @@ describe KnapsackPro::Tracker do
     end
   end
 
+  describe '#scheduled_test_path?' do
+    let(:test_paths) { ['features/a.feature', 'features/slow.feature:12'] }
+
+    before do
+      tracker.set_prerun_tests(test_paths)
+    end
+
+    it 'returns true for scheduled test file paths and test example paths' do
+      expect(tracker.scheduled_test_path?('features/a.feature')).to be true
+      expect(tracker.scheduled_test_path?('features/slow.feature:12')).to be true
+      expect(tracker.scheduled_test_path?('./features/slow.feature:12')).to be true
+    end
+
+    it 'returns false for paths that are not scheduled' do
+      expect(tracker.scheduled_test_path?('features/slow.feature')).to be false
+      expect(tracker.scheduled_test_path?('features/slow.feature:5')).to be false
+      expect(tracker.scheduled_test_path?('features/b.feature')).to be false
+    end
+
+    it '2nd tracker instance loads prerun tests from the disk' do
+      tracker2 = described_class.send(:new)
+      expect(tracker2.prerun_tests_loaded).to be false
+      expect(tracker2.scheduled_test_path?('features/slow.feature:12')).to be true
+      expect(tracker2.scheduled_test_path?('features/slow.feature')).to be false
+      expect(tracker2.prerun_tests_loaded).to be true
+    end
+  end
+
   describe '#reset!' do
     let(:test_file_path) { 'a_spec.rb' }
 
