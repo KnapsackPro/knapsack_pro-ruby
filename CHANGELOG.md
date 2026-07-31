@@ -3,6 +3,7 @@
 ### Unreleased
 
 * Cucumber: Add support for [Split by Test Examples](https://docs.knapsackpro.com/ruby/split-by-test-examples/) so slow feature files can be split by scenario (e.g., `features/a.feature:12`) across parallel CI nodes. Opt in with `KNAPSACK_PRO_CUCUMBER_SPLIT_BY_TEST_EXAMPLES=true` (requires Cucumber >= 4.0).
+* Cucumber & Queue Mode: Add an experimental preload mode (`KNAPSACK_PRO_CUCUMBER_QUEUE_PRELOAD=true`) that boots Cucumber (and the app loaded by the support code) once, then runs each batch of tests from the Queue in a forked child process instead of shelling out a brand new `cucumber` process per batch. This removes the per-batch application boot cost, which is significant for Rails apps and grows with the number of batches (e.g., when Split by Test Examples is enabled). POSIX only (requires `Process.fork`).
 
 ### 10.0.1
 

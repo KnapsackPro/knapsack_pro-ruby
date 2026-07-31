@@ -23,10 +23,11 @@ module KnapsackPro
           '--out', report_path,
           '--require', test_dir,
         ] + KnapsackPro::TestFilePresenter.paths(slow_test_files)
+        # Cucumber's option parser mutates the args array, so build the debug command upfront.
+        command = (['bundle exec cucumber'] + cli_args).join(' ')
         exit_code = dry_run(cli_args)
         return if exit_code.zero?
 
-        command = (['bundle exec cucumber'] + cli_args).join(' ')
         KnapsackPro.logger.error("Failed to calculate Split by Test Examples: #{command}")
         exit exit_code
       end

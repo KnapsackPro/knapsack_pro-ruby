@@ -268,6 +268,25 @@ describe KnapsackPro::Adapters::CucumberAdapter do
     end
   end
 
+  describe '.preload_parent_process?' do
+    subject { described_class.preload_parent_process? }
+
+    context 'when the preload parent PID matches the current process' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_PRELOAD_PARENT_PID' => Process.pid.to_s }) }
+      it { should be true }
+    end
+
+    context 'when the preload parent PID is a different process (a forked child)' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_PRELOAD_PARENT_PID' => '0' }) }
+      it { should be false }
+    end
+
+    context 'when the preload mode is not used' do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
   describe 'bind methods' do
     describe '#bind_time_tracker' do
       let(:file) { 'features/a.feature' }

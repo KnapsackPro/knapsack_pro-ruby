@@ -136,9 +136,19 @@ module KnapsackPro
 
       def bind_after_queue_hook
         ::Kernel.at_exit do
-          KnapsackPro::Hooks::Queue.call_after_subset_queue
-          KnapsackPro::Report.save_subset_queue_to_file
+          # In the preload mode ( KNAPSACK_PRO_CUCUMBER_QUEUE_PRELOAD ) the parent
+          # process loads the support code but never executes tests; only the forked
+          # child processes that ran a batch of tests should save a report.
+          unless KnapsackPro::Adapters::CucumberAdapter.preload_parent_process?
+            KnapsackPro::Hooks::Queue.call_after_subset_queue
+            KnapsackPro::Report.save_subset_queue_to_file
+          end
         end
+      end
+
+      def self.preload_parent_process?
+        !!ENV['KNAPSACK_PRO_CUCUMBER_PRELOAD_PARENT_PID'] &&
+          ENV['KNAPSACK_PRO_CUCUMBER_PRELOAD_PARENT_PID'] == Process.pid.to_s
       end
 
       private

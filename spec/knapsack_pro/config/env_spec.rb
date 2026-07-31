@@ -1003,6 +1003,20 @@ describe KnapsackPro::Config::Env do
     end
   end
 
+  describe '.cucumber_queue_preload_enabled?' do
+    subject { described_class.cucumber_queue_preload_enabled? }
+
+    context 'when ENV exists' do
+      before { stub_const("ENV", { 'KNAPSACK_PRO_CUCUMBER_QUEUE_PRELOAD' => 'true' }) }
+      it { should be true }
+    end
+
+    context "when ENV doesn't exist" do
+      before { stub_const("ENV", {}) }
+      it { should be false }
+    end
+  end
+
   describe '.cucumber_test_example_detector_prefix' do
     subject { described_class.cucumber_test_example_detector_prefix }
 
