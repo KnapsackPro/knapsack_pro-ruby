@@ -130,7 +130,7 @@ module KnapsackPro
 
           child_pid = Kernel.fork do
             KnapsackPro::Hooks::Queue.call_after_preload_fork
-            KnapsackPro::Cucumber::RuntimePreloader.reset_runtime_memoization(runtime)
+            KnapsackPro::Cucumber::RuntimePreloader.reset_forked_child_state(runtime)
 
             cli_args = Shellwords.split(args || '') + ['--require', runner.test_dir] + test_file_paths
             exit_code =

@@ -46,7 +46,14 @@ module KnapsackPro
         KnapsackPro.logger.info('Preloading Cucumber (loading support code once; batches will run in forked processes).')
 
         cli_args_without_formatters = KnapsackPro::Adapters::CucumberAdapter.remove_formatters(Shellwords.split(args || ''))
-        cli_args = cli_args_without_formatters + [
+        # The preload dry run only exists to load the support code. Profiles from
+        # cucumber.yml can register formatters, and a formatter that touches
+        # Capybara would boot the Capybara server (and a browser) in this parent
+        # process; forked children would then reuse the parent's server via
+        # Capybara's inherited session/port registries and run their requests in
+        # the wrong process.
+        cli_args = remove_profiles(cli_args_without_formatters) + [
+          '--no-profile',
           '--dry-run',
           # A unique --out path: pointing two formatters at the same stream is an
           # error in Cucumber, and a profile from cucumber.yml may already use
@@ -86,7 +93,20 @@ module KnapsackPro
       def self.disconnect_active_record_in_parent!
         return unless defined?(::ActiveRecord::Base)
 
-        ::ActiveRecord::Base.connection_handler.clear_all_connections!
+        handler = ::ActiveRecord::Base.connection_handler
+
+        # Connection leases are keyed by thread identity, which survives a fork.
+        # Without releasing the lease acquired while booting the app, a forked
+        # child's first `pool.checkout`/`pin_connection!` returns the parent's
+        # connection object and reconnects it in place (undefined behavior on a
+        # forked libpq handle; observed as a segfault in the pg gem).
+        if handler.respond_to?(:each_connection_pool)
+          handler.each_connection_pool do |pool|
+            pool.release_connection if pool.respond_to?(:release_connection)
+          end
+        end
+
+        handler.clear_all_connections!
       rescue StandardError => e
         KnapsackPro.logger.warn("Could not clear ActiveRecord connections after preloading Cucumber: #{e.class}: #{e.message}")
       end
@@ -98,9 +118,44 @@ module KnapsackPro
         "#{dir}/dry_run_progress_node_#{KnapsackPro::Config::Env.ci_node_index}.txt"
       end
 
+      def self.remove_profiles(cli_args)
+        profile_options = ['-p', '--profile']
+        cli_args.dup.each_with_index do |arg, index|
+          if profile_options.include?(arg)
+            cli_args[index] = nil
+            cli_args[index + 1] = nil
+          elsif arg == '--no-profile' || arg == '-P'
+            cli_args[index] = nil
+          end
+        end
+        cli_args.compact
+      end
+
+      # Called in the forked child process before running a batch of tests.
+      def self.reset_forked_child_state(runtime)
+        reset_runtime_memoization(runtime)
+        reset_capybara!
+      end
+
       def self.reset_runtime_memoization(runtime)
         RUNTIME_MEMOIZED_IVARS.each do |ivar|
           runtime.remove_instance_variable(ivar) if runtime.instance_variable_defined?(ivar)
+        end
+      end
+
+      # Capybara's session registry and app->port registry are inherited by the
+      # fork. If a Capybara server was booted in the parent process, a child
+      # reusing these registries would find the parent's server responsive and
+      # send its requests to the wrong process (which cannot see, e.g., the
+      # child's open database transactions). Clearing them makes each child
+      # boot its own server on first use.
+      def self.reset_capybara!
+        return unless defined?(::Capybara)
+
+        ::Capybara.send(:session_pool).clear if ::Capybara.respond_to?(:session_pool, true)
+
+        if defined?(::Capybara::Server) && ::Capybara::Server.respond_to?(:ports)
+          ::Capybara::Server.ports.clear
         end
       end
     end
