@@ -81,7 +81,7 @@ module KnapsackPro
 
         add_hooks_time(@group, @time_all_by_group_id_path)
         @time_all_by_group_id_path = Hash.new(0)
-        @paths = merge(@paths, @group)
+        merge_into(@paths, @group)
         @group = {}
       end
 
@@ -195,6 +195,18 @@ module KnapsackPro
             path: key,
             time_execution: v1[:time_execution] + v2[:time_execution]
           }
+        end
+      end
+
+      # `merge` rebuilds the whole accumulator, which is quadratic when called
+      # once per top level group, so accumulate in place instead.
+      def merge_into(accumulator, other)
+        other.each do |path, example|
+          if accumulator.key?(path)
+            accumulator[path][:time_execution] += example[:time_execution]
+          else
+            accumulator[path] = example
+          end
         end
       end
 
