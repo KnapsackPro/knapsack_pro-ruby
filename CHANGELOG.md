@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (patch) Fix `KnapsackPro.logger` building a new logger and reopening the log file on every call when `KNAPSACK_PRO_LOG_DIR` is set.
+
 ### 10.0.1
 
 * Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).
