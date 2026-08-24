@@ -2336,9 +2336,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   context 'when the RSpec split by test examples is enabled AND simplecov is used' do
     let(:coverage_dir) { "#{KNAPSACK_PRO_TMP_DIR}/coverage" }
-    # SimpleCov >= 1.0 renders index.html from data stored in coverage_data.js,
-    # so the covered files are listed there instead of in the HTML.
-    let(:coverage_file) { "#{coverage_dir}/coverage_data.js" }
+    let(:coverage_file) { "#{coverage_dir}/coverage.json" }
 
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
