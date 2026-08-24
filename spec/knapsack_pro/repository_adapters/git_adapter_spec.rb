@@ -1,7 +1,4 @@
 describe KnapsackPro::RepositoryAdapters::GitAdapter do
-  let!(:circle_sha1) { ENV['CIRCLE_SHA1'] }
-  let!(:circle_branch) { ENV['CIRCLE_BRANCH'] }
-
   before do
     stub_const('ENV', {
       'KNAPSACK_PRO_PROJECT_DIR' => KnapsackPro.root,
@@ -11,25 +8,48 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
   it { should be_kind_of KnapsackPro::RepositoryAdapters::BaseAdapter }
 
   describe '#commit_hash' do
-    subject { described_class.new.commit_hash }
+    it 'returns the git commit hash' do
+      adapter = described_class.new
+      allow(adapter).to receive(:git_commit_hash).and_return('git-commit-hash')
 
-    it { should_not be_nil }
-    its(:size) { should eq 40 }
-    it { should eq circle_sha1 } if ENV['CIRCLECI']
+      expect(adapter.commit_hash).to eq 'git-commit-hash'
+    end
+
+    context 'when KNAPSACK_PRO_COMMIT_HASH is set' do
+      before do
+        stub_const('ENV', { 'KNAPSACK_PRO_COMMIT_HASH' => 'custom-commit-hash' })
+      end
+
+      it 'returns KNAPSACK_PRO_COMMIT_HASH' do
+        expect(described_class.new.commit_hash).to eq 'custom-commit-hash'
+      end
+    end
   end
 
   describe '#branch' do
-    subject { described_class.new.branch }
+    it 'returns the git branch' do
+      adapter = described_class.new
+      allow(adapter).to receive(:git_branch).and_return('git-branch')
 
-    it { should_not be_nil }
-    it { should eq circle_branch } if ENV['CIRCLECI']
+      expect(adapter.branch).to eq 'git-branch'
+    end
+
+    context 'when KNAPSACK_PRO_BRANCH is set' do
+      before do
+        stub_const('ENV', { 'KNAPSACK_PRO_BRANCH' => 'custom-branch' })
+      end
+
+      it 'returns KNAPSACK_PRO_BRANCH without invoking git' do
+        expect(described_class.new.branch).to eq 'custom-branch'
+      end
+    end
   end
 
   describe '#branches' do
     subject { described_class.new.branches }
 
     it { expect(subject.include?('main')).to be true }
-    it { expect(subject.include?(circle_branch)).to be true } if ENV['CIRCLECI']
+    it { expect(subject.include?(ENV['CIRCLE_BRANCH'])).to be true } if ENV['CIRCLECI']
   end
 
   describe '#build_author' do

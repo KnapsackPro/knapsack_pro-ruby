@@ -3,6 +3,7 @@
 ### Unreleased
 
 * (patch) Use the (encrypted) branch name when generating the test queue id.
+* (patch) Prefer `KNAPSACK_PRO_COMMIT_HASH` and `KNAPSACK_PRO_BRANCH` when using the git repository adapter.
 
 ### 10.0.1
 
