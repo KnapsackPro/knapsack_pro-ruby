@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* (patch) Use the (encrypted) branch name when generating the test queue id.
+
 ### 10.0.1
 
 * Add support for [File Paths Encryption](https://docs.knapsackpro.com/ruby/encryption/) to [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/).

@@ -279,7 +279,7 @@ module KnapsackPro
           id = knapsack_env_value != nil ? knapsack_env_value : ci_env_value
           return id unless id.nil?
 
-          triplet = [ci_node_total, branch, commit_hash]
+          triplet = [ci_node_total, KnapsackPro::Crypto::BranchEncryptor.call(branch), commit_hash]
           return triplet.join('-') if triplet.all?
 
           raise("Missing test_queue_id. See: #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
