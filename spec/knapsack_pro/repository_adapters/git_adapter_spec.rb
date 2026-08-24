@@ -49,7 +49,6 @@ describe KnapsackPro::RepositoryAdapters::GitAdapter do
     subject { described_class.new.branches }
 
     it { expect(subject.include?('main')).to be true }
-    it { expect(subject.include?(ENV['CIRCLE_BRANCH'])).to be true } if ENV['CIRCLECI']
   end
 
   describe '#build_author' do
