@@ -118,10 +118,10 @@ module KnapsackPro
 
         private
 
-        def post_trap_signals
+        def post_trap_signals(debug: false)
           RSpec.world.wants_to_quit = true
 
-          log_current_batch_rspec_command
+          log_current_batch_rspec_command if debug
         end
 
         def log_current_tests(threads)
