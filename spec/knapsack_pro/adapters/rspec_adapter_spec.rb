@@ -181,6 +181,64 @@ describe KnapsackPro::Adapters::RSpecAdapter do
 
       it { is_expected.to be false }
     end
+
+    context 'when the path ends with brackets that are not an id' do
+      let(:path) { 'spec/features/a_spec.rb[not-an-id]' }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when the file path itself contains brackets' do
+      let(:path) { 'spec/features/a[1]_spec.rb' }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when the file path itself contains brackets and the path has an id' do
+      let(:path) { 'spec/features/a[1]_spec.rb[1:2]' }
+
+      it { is_expected.to be true }
+    end
+  end
+
+  describe '.parse_file_path' do
+    subject { described_class.parse_file_path(path) }
+
+    context 'when the path has no id' do
+      let(:path) { 'spec/features/a_spec.rb' }
+
+      it { is_expected.to eq 'spec/features/a_spec.rb' }
+    end
+
+    context 'when the path has an id' do
+      let(:path) { 'spec/features/a_spec.rb[1:1:7:1]' }
+
+      it { is_expected.to eq 'spec/features/a_spec.rb' }
+    end
+
+    context 'when the path has multiple ids' do
+      let(:path) { 'spec/features/a_spec.rb[1:1:7:1, 1:2]' }
+
+      it { is_expected.to eq 'spec/features/a_spec.rb' }
+    end
+
+    context 'when the path ends with brackets that are not an id' do
+      let(:path) { 'spec/features/a_spec.rb[not-an-id]' }
+
+      it { is_expected.to eq 'spec/features/a_spec.rb[not-an-id]' }
+    end
+
+    context 'when the file path itself contains brackets' do
+      let(:path) { 'spec/features/a[1]_spec.rb' }
+
+      it { is_expected.to eq 'spec/features/a[1]_spec.rb' }
+    end
+
+    context 'when the file path itself contains brackets and the path has an id' do
+      let(:path) { 'spec/features/a[1]_spec.rb[1:2]' }
+
+      it { is_expected.to eq 'spec/features/a[1]_spec.rb' }
+    end
   end
 
   describe '.rails_helper_exists?' do

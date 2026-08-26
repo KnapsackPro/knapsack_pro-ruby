@@ -6,6 +6,7 @@
 * (patch) Use the (encrypted) branch name when generating the test queue id.
 * (patch) Prefer `KNAPSACK_PRO_COMMIT_HASH` and `KNAPSACK_PRO_BRANCH` when using the git repository adapter.
 * (minor) Trap only: `SIGTERM` (graceful termination + dump debug logs) and `SIGINT` (graceful termination or forceful termination when gracefully terminating)
+* (patch) RSpec: Resolve test file paths without allocating per example, reducing the gem's GC pressure inside your test process (12 fewer objects per example).
 
 ### 10.0.1
 
