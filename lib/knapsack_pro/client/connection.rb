@@ -136,23 +136,36 @@ module KnapsackPro
         @http_debug_output.string.each_line { |line| logger.warn(line.chomp) }
 
         require 'open3'
+        require 'shellwords'
+
+        host = endpoint_uri.host
+        port = endpoint_uri.port.to_s
+
         [
-          "dig #{endpoint_uri.host}",
-          "nslookup #{endpoint_uri.host}",
-          "curl -v #{endpoint_uri.host}:#{endpoint_uri.port}",
-          "nc -vz #{endpoint_uri.host} #{endpoint_uri.port}",
-          "openssl s_client -connect #{endpoint_uri.host}:#{endpoint_uri.port} < /dev/null",
-          'env | grep KNAPSACK_PRO | grep -v TOKEN'
-        ].each do |cmd|
-          logger.warn(cmd)
-          logger.warn('=' * cmd.size)
+          [['dig', host], {}],
+          [['nslookup', host], {}],
+          [['curl', '-v', "#{host}:#{port}"], {}],
+          [['nc', '-vz', host, port], {}],
+          [['openssl', 's_client', '-connect', "#{host}:#{port}"], { stdin_data: '' }]
+        ].each do |argv, options|
+          command = Shellwords.join(argv)
+          logger.warn(command)
+          logger.warn('=' * command.size)
           begin
-            outerr, status = Open3.capture2e(cmd)
+            outerr, status = Open3.capture2e(*argv, **options)
             logger.warn("Exit status: #{status.exitstatus}")
             outerr.each_line { |line| logger.warn(line.chomp) }
           rescue Errno::ENOENT => e
             logger.warn("Error: #{e}")
           end
+        end
+
+        logger.warn('KNAPSACK_PRO_*')
+        logger.warn('==============')
+        ENV.each do |key, value|
+          next unless key.start_with?('KNAPSACK_PRO')
+          next if key.include?('TOKEN')
+          logger.warn("#{key}=#{value}")
         end
       end
 

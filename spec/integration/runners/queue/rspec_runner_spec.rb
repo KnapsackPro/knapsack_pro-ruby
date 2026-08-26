@@ -1314,7 +1314,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
     end
   end
 
-  context 'when a termination signal is received by the process' do
+  context 'with SIGINT' do
     it 'terminates the process after tests from the current RSpec ExampleGroup are executed and sets 1 as exit code' do
       rspec_options = '--format documentation'
 
@@ -1385,7 +1385,219 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
       actual = subject
 
       expect(actual.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
-      expect(actual.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
+      expect(actual.stdout).to include('SIGINT received: Terminating Knapsack Pro... Interrupt again to force quit.')
+      expect(actual.stdout).to include('B1.1.2 test example')
+      expect(actual.stdout).to_not include('B1.1.3 test example (FAILED - 1)')
+      expect(actual.stdout).to_not include('B1.2.1 test example')
+
+      # next ExampleGroup within the same b_spec.rb is not executed
+      expect(actual.stdout).to_not include('B2.1 test example')
+
+      # next test file from the same batch is not executed
+      expect(actual.stdout).to_not include('C1 test example')
+
+      # next batch of tests is not pulled from the Queue API and is not executed
+      expect(actual.stdout).to_not include('D1 test example')
+
+      expect(actual.stdout).to include(
+        <<~OUTPUT
+        Pending: (Failures listed here are expected and do not affect your suite's status)
+
+          1) B1_describe B1.1_describe B1.1.1 test example
+        OUTPUT
+      )
+
+      expect(actual.stdout).to_not match(/To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:.*bundle exec rspec --format documentation --default-path spec_integration "spec_integration\/b_spec.rb" "spec_integration\/c_spec.rb"/m)
+
+      expect(actual.stdout).to_not include('Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.')
+      expect(actual.stdout).to_not include('Running specs in the main thread:')
+      expect(actual.stdout).to_not include('Running specs in non-main thread:')
+      expect(actual.stdout).to_not include('Main thread backtrace:')
+      expect(actual.stdout).to_not include('Non-main thread backtrace:')
+
+      expect(actual.exit_code).to eq 1
+    end
+
+    it 'terminates the process forcefully the second time' do
+      rspec_options = '--format documentation'
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+
+            Thread.new do
+              sleep 10
+            end
+
+            sleep 1 # wait for the above async thread to start
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        describe 'B1_describe' do
+          describe 'B1.1_describe' do
+            xit 'B1.1.1 test example' do
+              expect(1).to eq 1
+            end
+            it 'B1.1.2 test example' do
+              Process.kill("INT", Process.pid)
+              Process.kill("INT", Process.pid)
+            end
+            it 'B1.1.3 test example' do
+              expect(1).to eq 1
+            end
+          end
+
+          describe 'B1.2_describe' do
+            it 'B1.2.1 test example' do
+              expect(1).to eq 1
+            end
+          end
+        end
+
+        describe 'B2_describe' do
+          it 'B2.1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_d = Spec.new('d_spec.rb', <<~SPEC)
+        describe 'D_describe' do
+          it 'D1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper_with_knapsack, rspec_options, [
+        [spec_a],
+        [spec_b, spec_c],
+        [spec_d],
+      ])
+
+      actual = subject
+
+      expect(actual.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
+      expect(actual.stdout).to include('SIGINT received: Terminating Knapsack Pro... Interrupt again to force quit.')
+      expect(actual.stdout).to_not include('B1.1.2 test example')
+      expect(actual.stdout).to_not include('B1.1.3 test example (FAILED - 1)')
+      expect(actual.stdout).to_not include('B1.2.1 test example')
+
+      # next ExampleGroup within the same b_spec.rb is not executed
+      expect(actual.stdout).to_not include('B2.1 test example')
+
+      # next test file from the same batch is not executed
+      expect(actual.stdout).to_not include('C1 test example')
+
+      # next batch of tests is not pulled from the Queue API and is not executed
+      expect(actual.stdout).to_not include('D1 test example')
+
+
+      expect(actual.stdout).to_not include(
+        <<~OUTPUT
+        Pending: (Failures listed here are expected and do not affect your suite's status)
+
+          1) B1_describe B1.1_describe B1.1.1 test example
+        OUTPUT
+      )
+
+      expect(actual.stdout).to_not match(/To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:.*bundle exec rspec --format documentation --default-path spec_integration "spec_integration\/b_spec.rb" "spec_integration\/c_spec.rb"/m)
+
+      expect(actual.stdout).to_not include('Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.')
+      expect(actual.stdout).to_not include('Running specs in the main thread:')
+      expect(actual.stdout).to_not include('Running specs in non-main thread:')
+      expect(actual.stdout).to_not include('Main thread backtrace:')
+      expect(actual.stdout).to_not include('Non-main thread backtrace:')
+
+      expect(actual.stdout).to include('SIGINT received: Terminated Knapsack Pro.')
+
+      expect(actual.exit_code).to eq 1
+    end
+  end
+
+  context 'with SIGTERM' do
+    it 'terminates the process after tests from the current RSpec ExampleGroup are executed and sets 1 as exit code' do
+      rspec_options = '--format documentation'
+
+      spec_a = Spec.new('a_spec.rb', <<~SPEC)
+        describe 'A_describe' do
+          it 'A1 test example' do
+            expect(1).to eq 1
+
+            Thread.new do
+              sleep 10
+            end
+
+            sleep 1 # wait for the above async thread to start
+          end
+        end
+      SPEC
+
+      spec_b = Spec.new('b_spec.rb', <<~SPEC)
+        describe 'B1_describe' do
+          describe 'B1.1_describe' do
+            xit 'B1.1.1 test example' do
+              expect(1).to eq 1
+            end
+            it 'B1.1.2 test example' do
+              Process.kill("TERM", Process.pid)
+            end
+            it 'B1.1.3 test example' do
+              expect(1).to eq 0
+            end
+          end
+
+          describe 'B1.2_describe' do
+            it 'B1.2.1 test example' do
+              expect(1).to eq 1
+            end
+          end
+        end
+
+        describe 'B2_describe' do
+          it 'B2.1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_c = Spec.new('c_spec.rb', <<~SPEC)
+        describe 'C_describe' do
+          it 'C1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      spec_d = Spec.new('d_spec.rb', <<~SPEC)
+        describe 'D_describe' do
+          it 'D1 test example' do
+            expect(1).to eq 1
+          end
+        end
+      SPEC
+
+      generate_specs(spec_helper_with_knapsack, rspec_options, [
+        [spec_a],
+        [spec_b, spec_c],
+        [spec_d],
+      ])
+
+      actual = subject
+
+      expect(actual.stdout).to include('B1.1.1 test example (PENDING: Temporarily skipped with xit)')
+      expect(actual.stdout).to include('SIGTERM received: Terminating Knapsack Pro...')
       expect(actual.stdout).to include('B1.1.2 test example')
       expect(actual.stdout).to_not include('B1.1.3 test example (FAILED - 1)')
       expect(actual.stdout).to_not include('B1.2.1 test example')
@@ -1408,8 +1620,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
         OUTPUT
       )
 
-      expect(actual.stdout).to include('To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:')
-      expect(actual.stdout).to include('bundle exec rspec --format documentation --default-path spec_integration "spec_integration/b_spec.rb" "spec_integration/c_spec.rb"')
+      expect(actual.stdout).to match(/To retry the last batch of tests fetched from the Queue API, please run the following command on your machine:.*bundle exec rspec --format documentation --default-path spec_integration "spec_integration\/b_spec.rb" "spec_integration\/c_spec.rb"/m)
 
       expect(actual.stdout).to include('Use the following backtrace(s) to find the line of code that got stuck if the CI node hung and terminated your tests.')
       expect(actual.stdout).to include('Running specs in the main thread:')
@@ -1460,7 +1671,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout).to include('INT signal has been received. Terminating Knapsack Pro...')
+      expect(actual.stdout).to include('SIGINT received: Terminating Knapsack Pro...')
 
       expect(actual.exit_code).to eq 3
     end
@@ -2336,9 +2547,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
   context 'when the RSpec split by test examples is enabled AND simplecov is used' do
     let(:coverage_dir) { "#{KNAPSACK_PRO_TMP_DIR}/coverage" }
-    # SimpleCov >= 1.0 renders index.html from data stored in coverage_data.js,
-    # so the covered files are listed there instead of in the HTML.
-    let(:coverage_file) { "#{coverage_dir}/coverage_data.js" }
+    let(:coverage_file) { "#{coverage_dir}/coverage.json" }
 
     before do
       ENV['KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES'] = 'true'
@@ -2615,7 +2824,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout).not_to include('A1 test example')
+      expect(actual.stdout).to_not include('A1 test example')
 
       expect(actual.stdout).to include('1 example, 0 failures')
 

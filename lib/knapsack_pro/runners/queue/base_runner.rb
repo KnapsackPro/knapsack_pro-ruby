@@ -5,7 +5,6 @@ module KnapsackPro
     module Queue
       class BaseRunner
         TerminationError = Class.new(StandardError)
-        TERMINATION_SIGNALS = %w(HUP INT TERM ABRT QUIT USR1 USR2)
 
         @@terminate_process = false
 
@@ -56,17 +55,27 @@ module KnapsackPro
         end
 
         def trap_signals
-          TERMINATION_SIGNALS.each do |signal|
-            Signal.trap(signal) {
-              puts "#{signal} signal has been received. Terminating Knapsack Pro..."
+          Signal.trap("TERM") {
+            puts "SIGTERM received: Terminating Knapsack Pro..."
+            @@terminate_process = true
+            post_trap_signals(debug: true)
+            log_threads
+          }
+
+          Signal.trap("INT") {
+            if @@terminate_process
+              puts "SIGINT received: Terminated Knapsack Pro."
+              $stdout.flush
+              exit!(1)
+            else
+              puts "SIGINT received: Terminating Knapsack Pro... Interrupt again to force quit."
               @@terminate_process = true
               post_trap_signals
-              log_threads
-            }
-          end
+            end
+          }
         end
 
-        def post_trap_signals
+        def post_trap_signals(debug: false)
         end
 
         def log_threads

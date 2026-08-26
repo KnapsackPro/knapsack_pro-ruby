@@ -1261,6 +1261,7 @@ describe KnapsackPro::Config::Env do
 
     [
       [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" }, '2-feature-branch-ab153653b065dbf22d2caad1bab39d26aa48b883'],
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883", 'KNAPSACK_PRO_BRANCH_ENCRYPTED' => 'true', 'KNAPSACK_PRO_SALT' => '123' }, '2-49e5bb1-ab153653b065dbf22d2caad1bab39d26aa48b883'],
     ].each do |env, expected|
       context "when CI does not provide an id" do
         before { stub_const("ENV", env) }

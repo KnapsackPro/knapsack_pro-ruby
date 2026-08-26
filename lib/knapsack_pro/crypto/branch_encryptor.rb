@@ -22,11 +22,10 @@ module KnapsackPro
       ]
 
       def self.call(branch)
-        if KnapsackPro::Config::Env.branch_encrypted?
-          new(branch).call
-        else
-          branch
-        end
+        return branch if branch.nil?
+        return branch unless KnapsackPro::Config::Env.branch_encrypted?
+
+        new(branch).call
       end
 
       def initialize(branch)

@@ -4,11 +4,11 @@ module KnapsackPro
   module RepositoryAdapters
     class GitAdapter < BaseAdapter
       def commit_hash
-        `git -C "#{working_dir}" rev-parse HEAD`.strip
+        ENV['KNAPSACK_PRO_COMMIT_HASH'] || git_commit_hash
       end
 
       def branch
-        `git -C "#{working_dir}" rev-parse --abbrev-ref HEAD`.strip
+        ENV['KNAPSACK_PRO_BRANCH'] || git_branch
       end
 
       def branches
@@ -41,6 +41,14 @@ module KnapsackPro
       end
 
       private
+
+      def git_commit_hash
+        `git -C "#{working_dir}" rev-parse HEAD`.strip
+      end
+
+      def git_branch
+        `git -C "#{working_dir}" rev-parse --abbrev-ref HEAD`.strip
+      end
 
       def git_commit_authors
         git_unshallow if KnapsackPro::Config::Env.ci? && shallow_repository?
