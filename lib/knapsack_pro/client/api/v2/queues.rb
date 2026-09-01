@@ -47,59 +47,23 @@ module KnapsackPro
               )
             end
 
-            def connect
-              git_adapter = KnapsackPro::RepositoryAdapters::GitAdapter.new
-              repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
-
-              request_hash = {
-                attempt_connect_to_queue: true,
-                batch_index: 0,
-                branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
-                build_author: git_adapter.build_author,
-                can_initialize_queue: true,
-                commit_authors: git_adapter.commit_authors,
-                commit_hash: repository_adapter.commit_hash,
-                fixed_queue_split: KnapsackPro::Config::Env.fixed_queue_split_?,
-                node_index: KnapsackPro::Config::Env.ci_node_index,
-                node_total: KnapsackPro::Config::Env.ci_node_total,
-                node_uuid: SecureRandom.uuid,
-                skip_pull: true,
-                test_queue_id: KnapsackPro::Config::Env.test_queue_id,
-                user_seat: KnapsackPro::Config::Env.masked_user_seat,
-              }
-
-              action_class.new(
-                endpoint_path: '/v2/queues/queue',
-                http_method: :post,
-                request_hash: request_hash
-              )
-            end
-
             def initialize(paths)
               git_adapter = KnapsackPro::RepositoryAdapters::GitAdapter.new
               repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
 
               request_hash = {
-                attempt_connect_to_queue: false,
-                batch_index: 0,
                 branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
                 build_author: git_adapter.build_author,
-                can_initialize_queue: true,
                 commit_authors: git_adapter.commit_authors,
                 commit_hash: repository_adapter.commit_hash,
-                fixed_queue_split: KnapsackPro::Config::Env.fixed_queue_split_?,
-                node_index: KnapsackPro::Config::Env.ci_node_index,
-                node_total: KnapsackPro::Config::Env.ci_node_total,
-                node_uuid: SecureRandom.uuid,
-                skip_pull: true,
+                max_node_total: KnapsackPro::Config::Env.ci_node_total,
                 paths: KnapsackPro::Crypto::Encryptor.paths(paths),
-                test_queue_id: KnapsackPro::Config::Env.test_queue_id,
                 user_seat: KnapsackPro::Config::Env.masked_user_seat,
               }
 
               action_class.new(
-                endpoint_path: '/v2/queues/queue',
-                http_method: :post,
+                endpoint_path: "/v2/test_queues/#{KnapsackPro::Config::Env.test_queue_id}",
+                http_method: :put,
                 request_hash: request_hash
               )
             end

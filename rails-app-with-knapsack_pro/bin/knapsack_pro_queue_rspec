@@ -11,3 +11,4 @@ KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_QUEUE_ID=${3:-$TEST_QUEUE_ID} \
   KNAPSACK_PRO_LOG_LEVEL=debug \
   bundle exec rake "knapsack_pro:queue:rspec[--format d]"
+  # bundle exec rake "knapsack_pro:queue:rspec:initialize"

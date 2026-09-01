@@ -34,6 +34,15 @@ module Net
         response.instance_variable_set(:@read, true)
       end
     end
+
+    def put(path, body, headers)
+      puts Zlib.gunzip(body)
+      hash = { recommended_node_total: 2, url: "http://example.com" }
+      Net::HTTPOK.new("1.1", "200", "OK").tap do |response|
+        response.body = JSON.dump(hash)
+        response.instance_variable_set(:@read, true)
+      end
+    end
   end
 end
 

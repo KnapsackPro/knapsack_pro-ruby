@@ -6,6 +6,7 @@
 * (patch) Use the (encrypted) branch name when generating the test queue id.
 * (patch) Prefer `KNAPSACK_PRO_COMMIT_HASH` and `KNAPSACK_PRO_BRANCH` when using the git repository adapter.
 * (minor) Trap only: `SIGTERM` (graceful termination + dump debug logs) and `SIGINT` (graceful termination or forceful termination when gracefully terminating)
+* (minor) Return recommended `node_total` when using `rake knapsack_pro:queue:rspec:initialize` (`KNAPSACK_PRO_CI_NODE_TOTAL` is treated as a ceiling for the initialization)
 
 ### 10.0.1
 

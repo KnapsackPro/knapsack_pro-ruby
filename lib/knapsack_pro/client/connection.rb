@@ -222,6 +222,18 @@ module KnapsackPro
         end
       end
 
+      def put
+        require "zlib"
+
+        build_http(endpoint_uri)
+        make_request do |attempt_count|
+          body = action.request_hash.merge(attempt_count: attempt_count).to_json
+          body = Zlib.gzip(body, level: Zlib::BEST_COMPRESSION)
+          headers = json_headers.merge("Content-Encoding" => "gzip")
+          @http.put(endpoint_uri.path, body, headers)
+        end
+      end
+
       def get
         uri = endpoint_uri
         uri.query = URI.encode_www_form(action.request_hash)
