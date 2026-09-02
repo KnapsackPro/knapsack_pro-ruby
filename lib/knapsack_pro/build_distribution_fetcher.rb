@@ -45,7 +45,7 @@ module KnapsackPro
         node_total: KnapsackPro::Config::Env.ci_node_total,
         node_index: KnapsackPro::Config::Env.ci_node_index,
         test_queue_id: KnapsackPro::Config::Env.test_queue_id_
-      }.merge(additional_params)
+      }.merge(additional_params).compact
 
       KnapsackPro::Client::API::V1::BuildDistributions.last(request_hash)
     end

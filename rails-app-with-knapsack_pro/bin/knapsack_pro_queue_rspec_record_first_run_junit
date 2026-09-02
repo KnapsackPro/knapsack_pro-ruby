@@ -13,7 +13,7 @@ mkdir -p tmp/test-reports/rspec/queue_mode/
 RANDOM_COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
 COMMIT_HASH=${3:-$RANDOM_COMMIT_HASH}
 
-RANDOM_TEST_QUEUE_ID=$(openssl rand -base64 32)
+RANDOM_TEST_QUEUE_ID=$(openssl rand -hex 16)
 TEST_QUEUE_ID=${4:-$RANDOM_TEST_QUEUE_ID}
 
 BRANCH_NAME=fake-junit-branch

@@ -10,7 +10,7 @@ describe KnapsackPro::Client::API::V2::Queues do
     let(:node_index) { double }
     let(:node_total) { double }
     let(:node_uuid) { SecureRandom.uuid }
-    let(:test_queue_id) { "123:abc" }
+    let(:test_queue_id) { SecureRandom.uuid }
 
     before(:each) do
       expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split_?).and_return(fixed_queue_split_?)

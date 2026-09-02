@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_QUEUE_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -hex 16)
 
 # we use random branch name in order to create a new Build record on API side
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \

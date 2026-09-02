@@ -5,7 +5,7 @@ mkdir -p tmp/test-reports/rspec/queue_mode/
 # must be exported to read value in below knapsack_pro command
 export KNAPSACK_PRO_CI_NODE_INDEX=${1:-0}
 
-TEST_QUEUE_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -hex 16)
 
 export RSPEC_CUSTOM_OPTIONS_ENABLED=true
 

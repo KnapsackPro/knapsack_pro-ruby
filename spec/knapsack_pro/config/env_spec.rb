@@ -1230,10 +1230,10 @@ describe KnapsackPro::Config::Env do
     subject { described_class.test_queue_id }
 
     [
-      [{ 'BUILDKITE' => 'true', 'BUILDKITE_BUILD_NUMBER' => 'abc:123' }, 'abc:123'],
-      [{ 'CIRCLECI' => 'true', 'CIRCLE_PIPELINE_NUMBER' => 'abc:123' }, 'abc:123'],
-      [{ 'GITHUB_ACTIONS' => 'true', 'GITHUB_RUN_ID' => 'abc:123' }, 'abc:123'],
-      [{ 'GITLAB_CI' => 'true', 'CI_PIPELINE_ID' => 'abc:123' }, 'abc:123'],
+      [{ 'BUILDKITE' => 'true', 'BUILDKITE_BUILD_NUMBER' => 'abc:123' }, 'abc-123'],
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_PIPELINE_NUMBER' => 'abc:123' }, 'abc-123'],
+      [{ 'GITHUB_ACTIONS' => 'true', 'GITHUB_RUN_ID' => 'abc:123' }, 'abc-123'],
+      [{ 'GITLAB_CI' => 'true', 'CI_PIPELINE_ID' => 'abc:123' }, 'abc-123'],
     ].each do |env, expected|
       context "when CI provides an id" do
         before { stub_const("ENV", env) }
@@ -1244,15 +1244,15 @@ describe KnapsackPro::Config::Env do
       end
 
       context "when CI provides an id and KNAPSACK_PRO_TEST_QUEUE_ID is set" do
-        before { stub_const("ENV", env.merge('KNAPSACK_PRO_TEST_QUEUE_ID' => 'env:456')) }
+        before { stub_const("ENV", env.merge('KNAPSACK_PRO_TEST_QUEUE_ID' => 'env-456')) }
 
         it "uses KNAPSACK_PRO_TEST_QUEUE_ID" do
-          expect(subject).to eq('env:456')
+          expect(subject).to eq('env-456')
         end
 
         it 'logs a warning' do
           expect(described_class).to receive(:warn).with(
-            'You have set the environment variable KNAPSACK_PRO_TEST_QUEUE_ID to env:456 which could be automatically determined from the CI environment as abc:123.'
+            'You have set the environment variable KNAPSACK_PRO_TEST_QUEUE_ID to env-456 which could be automatically determined from the CI environment as abc-123.'
           )
           subject
         end
@@ -1260,8 +1260,8 @@ describe KnapsackPro::Config::Env do
     end
 
     [
-      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" }, '2-feature-branch-ab153653b065dbf22d2caad1bab39d26aa48b883'],
-      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883", 'KNAPSACK_PRO_BRANCH_ENCRYPTED' => 'true', 'KNAPSACK_PRO_SALT' => '123' }, '2-49e5bb1-ab153653b065dbf22d2caad1bab39d26aa48b883'],
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883" }, '2_feature-branch_ab153653b065dbf22d2caad1bab39d26aa48b883'],
+      [{ 'CIRCLECI' => 'true', 'CIRCLE_NODE_TOTAL' => 2, 'CIRCLE_BRANCH' => "feature-branch", 'CIRCLE_SHA1' => "ab153653b065dbf22d2caad1bab39d26aa48b883", 'KNAPSACK_PRO_BRANCH_ENCRYPTED' => 'true', 'KNAPSACK_PRO_SALT' => '123' }, '2_49e5bb1_ab153653b065dbf22d2caad1bab39d26aa48b883'],
     ].each do |env, expected|
       context "when CI does not provide an id" do
         before { stub_const("ENV", env) }
@@ -1282,6 +1282,22 @@ describe KnapsackPro::Config::Env do
         it 'raises' do
           expect { subject }.to raise_error(/Missing test_queue_id/)
         end
+      end
+    end
+
+    context "when KNAPSACK_PRO_TEST_QUEUE_ID is set to an invalid value" do
+      before { stub_const("ENV", 'KNAPSACK_PRO_TEST_QUEUE_ID' => 'env.456') }
+
+      it "raises" do
+        expect { subject }.to raise_error("Invalid test_queue_id `env.456`: Only ASCII letters, numbers, hyphens (-), and underscores (_) are allowed.")
+      end
+    end
+
+    context "when KNAPSACK_PRO_TEST_QUEUE_ID is empty" do
+      before { stub_const("ENV", 'KNAPSACK_PRO_TEST_QUEUE_ID' => '') }
+
+      it "raises" do
+        expect { subject }.to raise_error("Invalid test_queue_id ``: Only ASCII letters, numbers, hyphens (-), and underscores (_) are allowed.")
       end
     end
   end

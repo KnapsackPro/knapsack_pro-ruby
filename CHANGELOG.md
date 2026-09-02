@@ -5,8 +5,9 @@
 * (minor) Avoid invoking a shell when logging connection diagnostics.
 * (patch) Use the (encrypted) branch name when generating the test queue id.
 * (patch) Prefer `KNAPSACK_PRO_COMMIT_HASH` and `KNAPSACK_PRO_BRANCH` when using the git repository adapter.
-* (minor) Trap only: `SIGTERM` (graceful termination + dump debug logs) and `SIGINT` (graceful termination or forceful termination when gracefully terminating)
-* (minor) Return recommended `node_total` when using `rake knapsack_pro:queue:rspec:initialize` (`KNAPSACK_PRO_CI_NODE_TOTAL` is treated as a ceiling for the initialization)
+* (minor) Trap only: `SIGTERM` (graceful termination + dump debug logs) and `SIGINT` (graceful termination or forceful termination when gracefully terminating).
+* (minor) Return recommended `node_total` when using `rake knapsack_pro:queue:rspec:initialize` (`KNAPSACK_PRO_CI_NODE_TOTAL` is treated as a ceiling for the initialization).
+* (major) `KNAPSACK_PRO_TEST_QUEUE_ID` only supports ASCII letters, numbers, hyphens (-), and underscores (_). This is a breaking change only if you set the ENV manually to something that contains other characters.
 
 ### 10.0.1
 

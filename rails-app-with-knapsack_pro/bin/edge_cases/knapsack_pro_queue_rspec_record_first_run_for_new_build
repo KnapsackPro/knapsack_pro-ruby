@@ -8,7 +8,7 @@
 # This file can be used to test how to optimise the first run of Queue Mode
 # You must set a unique CI build ID, commit hash or branch.
 
-TEST_QUEUE_ID=2023-08-28-v5
+TEST_QUEUE_ID=$(openssl rand -hex 16)
 COMMIT_HASH=abc1234
 BRANCH_NAME=redis-test
 

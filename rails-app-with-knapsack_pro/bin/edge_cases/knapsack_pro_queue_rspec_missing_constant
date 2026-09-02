@@ -13,7 +13,7 @@
 
 # We expect CI node to return exit code 1 because test fails.
 
-TEST_QUEUE_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -hex 16)
 
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf \

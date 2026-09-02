@@ -269,8 +269,11 @@ module KnapsackPro
         def test_queue_id_
           knapsack_env_name = 'KNAPSACK_PRO_TEST_QUEUE_ID'
           knapsack_env_value = ENV[knapsack_env_name]
+          if knapsack_env_value == '' || knapsack_env_value&.match?(/[^a-z0-9\-_]+/i)
+            raise "Invalid test_queue_id `#{knapsack_env_value}`: Only ASCII letters, numbers, hyphens (-), and underscores (_) are allowed."
+          end
 
-          ci_env_value = detected_ci.new.test_queue_id
+          ci_env_value = detected_ci.new.test_queue_id&.gsub(/[^a-z0-9\-_]+/i, "-")
 
           if !knapsack_env_value.nil? && !ci_env_value.nil? && knapsack_env_value != ci_env_value.to_s
             warn("You have set the environment variable #{knapsack_env_name} to #{knapsack_env_value} which could be automatically determined from the CI environment as #{ci_env_value}.")
@@ -280,7 +283,7 @@ module KnapsackPro
           return id unless id.nil?
 
           triplet = [ci_node_total, KnapsackPro::Crypto::BranchEncryptor.call(branch), commit_hash]
-          triplet.join('-') if triplet.all?
+          triplet.join('_').gsub(/[^a-z0-9\-_]+/i, "-") if triplet.all?
         end
 
         def test_queue_id

@@ -13,7 +13,7 @@
 # CI node 1 for commit-v2
 # bin/edge_cases/knapsack_pro_queue_rspec_record_first_run 1 2 commit-v1 ci-build-1
 
-RANDOM_TEST_QUEUE_ID=$(openssl rand -base64 32)
+RANDOM_TEST_QUEUE_ID=$(openssl rand -hex 16)
 TEST_QUEUE_ID=${4:-$RANDOM_TEST_QUEUE_ID}
 COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
 BRANCH_NAME=fake-branch

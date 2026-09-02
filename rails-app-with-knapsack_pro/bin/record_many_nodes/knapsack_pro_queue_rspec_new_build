@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_QUEUE_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -hex 16)
 COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
 
 bin/knapsack_pro_queue_rspec_record_first_run 0 4 $COMMIT_HASH $TEST_QUEUE_ID &

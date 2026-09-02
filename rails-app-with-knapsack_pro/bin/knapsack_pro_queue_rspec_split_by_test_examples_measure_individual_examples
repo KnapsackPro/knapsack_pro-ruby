@@ -6,7 +6,7 @@
 # Run tests on a single CI node:
 # bin/knapsack_pro_queue_rspec_split_by_test_examples_measure_individual_examples 0 1
 
-RANDOM_TEST_QUEUE_ID=$(openssl rand -base64 32)
+RANDOM_TEST_QUEUE_ID=$(openssl rand -hex 16)
 TEST_QUEUE_ID=${4:-$RANDOM_TEST_QUEUE_ID}
 COMMIT_HASH=$(ruby -e "require 'securerandom'; puts SecureRandom.hex")
 BRANCH_NAME=fake-branch

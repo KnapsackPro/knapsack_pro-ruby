@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_QUEUE_ID=$(openssl rand -base64 32)
+TEST_QUEUE_ID=$(openssl rand -hex 16)
 
 mkdir -p tmp/test-reports/rspec/queue_mode/
 
