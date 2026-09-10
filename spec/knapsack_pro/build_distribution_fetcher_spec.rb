@@ -35,16 +35,16 @@ describe KnapsackPro::BuildDistributionFetcher do
     before do
       expect(KnapsackPro::RepositoryAdapterInitiator).to receive(:call).and_return(repository_adapter)
 
-      allow(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(ci_node_total)
+      expect(KnapsackPro::Config::Env).to receive(:ci_node_total).and_return(ci_node_total)
       expect(KnapsackPro::Config::Env).to receive(:ci_node_index).and_return(ci_node_index)
 
       action = double
-      expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:last).with(hash_including(
+      expect(KnapsackPro::Client::API::V1::BuildDistributions).to receive(:last).with({
         commit_hash: repository_adapter.commit_hash,
         branch: repository_adapter.branch,
         node_total: ci_node_total,
         node_index: ci_node_index
-      )).and_return(action)
+      }).and_return(action)
 
       connection = instance_double(KnapsackPro::Client::Connection,
                                    call: response,

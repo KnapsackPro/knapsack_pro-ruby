@@ -266,7 +266,7 @@ module KnapsackPro
           ENV.fetch('KNAPSACK_PRO_FALLBACK_MODE_ERROR_EXIT_CODE', 1).to_i
         end
 
-        def test_queue_id_
+        def test_queue_id
           knapsack_env_name = 'KNAPSACK_PRO_TEST_QUEUE_ID'
           knapsack_env_value = ENV[knapsack_env_name]
           if knapsack_env_value == '' || knapsack_env_value&.match?(/[^a-z0-9\-_]+/i)
@@ -283,11 +283,9 @@ module KnapsackPro
           return id unless id.nil?
 
           triplet = [ci_node_total, KnapsackPro::Crypto::BranchEncryptor.call(branch), commit_hash]
-          triplet.join('_').gsub(/[^a-z0-9\-_]+/i, "-") if triplet.all?
-        end
+          return triplet.join('_').gsub(/[^a-z0-9\-_]+/i, "-") if triplet.all?
 
-        def test_queue_id
-          test_queue_id_ || raise("Missing test_queue_id. See: #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
+          raise("Missing test_queue_id. See: #{KnapsackPro::Urls::KNAPSACK_PRO_TEST_QUEUE_ID}")
         end
 
         private
