@@ -15,3 +15,10 @@ KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_COMMIT_HASH=test-commit \
   KNAPSACK_PRO_TEST_QUEUE_ID=${4:-$TEST_QUEUE_ID} \
   bundle exec rake knapsack_pro:queue:minitest[--verbose]
+
+  KNAPSACK_PRO_REPOSITORY_ADAPTER=git \
+  KNAPSACK_PRO_PROJECT_DIR=. \
+  KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
+  KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
+  KNAPSACK_PRO_TEST_QUEUE_ID=${3:-$TEST_QUEUE_ID} \
+  bundle exec rake knapsack_pro:minitest[--verbose]
