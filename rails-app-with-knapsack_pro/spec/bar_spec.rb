@@ -1,4 +1,4 @@
-describe 'Bar', :tag_a do
+describe 'Bar' do
   it 'Bar 1' do
     expect(Article.new).to be_kind_of Article
   end

@@ -1,4 +1,4 @@
-describe 'Calculator Page', :tag_a do
+describe 'Calculator Page' do
   before do
     visit calculator_index_path
   end
