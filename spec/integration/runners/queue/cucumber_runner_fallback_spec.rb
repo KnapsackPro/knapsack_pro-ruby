@@ -37,7 +37,7 @@ describe "#{KnapsackPro::Runners::Queue::CucumberRunner} Fallback - Integration 
         require 'knapsack_pro'
 
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_CUCUMBER'] = SecureRandom.hex
-        ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = SecureRandom.uuid
+        ENV['KNAPSACK_PRO_TEST_QUEUE_ID'] = SecureRandom.uuid
 
         #{KnapsackPro::Runners::Queue::CucumberRunner}.run('')
       CONTENT

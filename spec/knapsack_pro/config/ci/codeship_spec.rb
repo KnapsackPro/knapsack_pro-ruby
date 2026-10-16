@@ -19,19 +19,6 @@ describe KnapsackPro::Config::CI::Codeship do
     it { should be nil }
   end
 
-  describe '#node_build_id' do
-    subject { described_class.new.node_build_id }
-
-    context 'when the environment exists' do
-      let(:env) { { 'CI_BUILD_NUMBER' => 2013 } }
-      it { should eql 2013 }
-    end
-
-    context "when the environment doesn't exist" do
-      it { should be nil }
-    end
-  end
-
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 

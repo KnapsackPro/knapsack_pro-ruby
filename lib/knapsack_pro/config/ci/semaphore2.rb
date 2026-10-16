@@ -14,10 +14,6 @@ module KnapsackPro
           index.to_i - 1 if index
         end
 
-        def node_build_id
-          ENV['SEMAPHORE_WORKFLOW_ID']
-        end
-
         def commit_hash
           ENV['SEMAPHORE_GIT_SHA']
         end

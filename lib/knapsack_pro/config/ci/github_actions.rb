@@ -13,11 +13,6 @@ module KnapsackPro
           # not provided
         end
 
-        def node_build_id
-          # A unique number for each run within a repository. This number does not change if you re-run the workflow run.
-          ENV['GITHUB_RUN_ID']
-        end
-
         def node_retry_count
           # A unique number for each attempt of a particular workflow run in a repository.
           # This number begins at 1 for the workflow run's first attempt, and increments with each re-run.
@@ -58,8 +53,9 @@ module KnapsackPro
           "GitHub Actions"
         end
 
+        # A unique number for each run within a repository. This number does not change if you re-run the workflow run.
         def test_queue_id
-          node_build_id
+          ENV['GITHUB_RUN_ID']
         end
       end
     end

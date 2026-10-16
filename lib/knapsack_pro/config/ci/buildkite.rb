@@ -12,10 +12,6 @@ module KnapsackPro
           ENV['BUILDKITE_PARALLEL_JOB']
         end
 
-        def node_build_id
-          ENV['BUILDKITE_BUILD_NUMBER']
-        end
-
         def node_retry_count
           ENV['BUILDKITE_RETRY_COUNT']
         end
@@ -49,7 +45,7 @@ module KnapsackPro
         end
 
         def test_queue_id
-          node_build_id
+          ENV['BUILDKITE_BUILD_NUMBER']
         end
       end
     end

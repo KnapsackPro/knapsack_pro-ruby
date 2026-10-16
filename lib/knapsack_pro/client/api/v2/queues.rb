@@ -19,6 +19,7 @@ module KnapsackPro
                 node_index: args.fetch(:node_index),
                 node_total: args.fetch(:node_total),
                 node_uuid: args.fetch(:node_uuid),
+                single_batch: KnapsackPro::Config::Env.single_batch? || args.fetch(:single_batch, false),
                 test_queue_id: KnapsackPro::Config::Env.test_queue_id,
                 user_seat: KnapsackPro::Config::Env.masked_user_seat
               }

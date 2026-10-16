@@ -33,19 +33,6 @@ describe KnapsackPro::Config::CI::Buildkite do
     end
   end
 
-  describe '#node_build_id' do
-    subject { described_class.new.node_build_id }
-
-    context 'when the environment exists' do
-      let(:env) { { 'BUILDKITE_BUILD_NUMBER' => 1514 } }
-      it { should eql 1514 }
-    end
-
-    context "when the environment doesn't exist" do
-      it { should be nil }
-    end
-  end
-
   describe '#node_retry_count' do
     subject { described_class.new.node_retry_count }
 

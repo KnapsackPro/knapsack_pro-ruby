@@ -12,7 +12,7 @@ module KnapsackPro
 
       def exists?
         raise "Connection failed. Please report this as a bug: #{KnapsackPro::Urls::SUPPORT}" if connection_failed?
-        return false if connection.api_code == KnapsackPro::Client::API::V1::BuildDistributions::TEST_SUITE_SPLIT_CACHE_MISS_CODE
+        return false if connection.api_code == KnapsackPro::Client::API::V2::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED
 
         true
       end
@@ -22,7 +22,11 @@ module KnapsackPro
       end
 
       def test_files
-        response.fetch('test_files')
+        response.fetch('paths').map { |path| { "path" => path, "time_execution" => nil } }
+      end
+
+      def id
+        response.fetch('batch_id', nil)
       end
 
       private
@@ -74,33 +78,53 @@ module KnapsackPro
     end
 
     def build_action(cache_read_attempt:, test_files: nil)
-      unless cache_read_attempt
+      if cache_read_attempt # connect
+        KnapsackPro::Client::API::V2::Queues.queue(
+          attempt_connect_to_queue: true,
+          batch_index: 0,
+          branch: encrypted_branch,
+          can_initialize_queue: true,
+          commit_hash: repository_adapter.commit_hash,
+          node_index: ci_node_index,
+          node_total: ci_node_total,
+          node_uuid: ENV.fetch('KNAPSACK_PRO_NODE_UUID'),
+          single_batch: true
+        )
+      else # initialize
         raise 'Test files are required when initializing a new test suite split.' if test_files.nil?
-        test_files = KnapsackPro::Crypto::Encryptor.call(test_files)
-      end
+        paths = test_files.map { |test_file| test_file.fetch("path") }
 
-      KnapsackPro::Client::API::V1::BuildDistributions.subset(
-        cache_read_attempt: cache_read_attempt,
-        commit_hash: repository_adapter.commit_hash,
-        branch: encrypted_branch,
-        node_total: ci_node_total,
-        node_index: ci_node_index,
-        test_files: test_files,
-      )
+        KnapsackPro::Client::API::V2::Queues.queue(
+          attempt_connect_to_queue: false,
+          batch_index: 0,
+          branch: encrypted_branch,
+          can_initialize_queue: true,
+          commit_hash: repository_adapter.commit_hash,
+          node_index: ci_node_index,
+          node_total: ci_node_total,
+          node_uuid: ENV.fetch('KNAPSACK_PRO_NODE_UUID'),
+          paths: KnapsackPro::Crypto::Encryptor.paths(paths),
+          single_batch: true
+        )
+      end
     end
 
     def pull_tests
       action = build_action(cache_read_attempt: true)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
-      Split.new(connection, response)
+      Split.new(connection, response).tap do |batch|
+        ENV['KNAPSACK_PRO_BATCH_ID'] = batch.id.to_s unless batch.connection_failed?
+      end
     end
 
     def initialize_test_suite_split(tests_to_run)
       action = build_action(cache_read_attempt: false, test_files: tests_to_run)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
-      Split.new(connection, response)
+      Split.new(connection, response).tap do |batch|
+        ENV['KNAPSACK_PRO_BATCH_ID'] = batch.id.to_s unless batch.connection_failed?
+      end
     end
 
     def try_initializing_test_suite_split(tests)

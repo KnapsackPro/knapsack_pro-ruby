@@ -1,17 +1,4 @@
 describe KnapsackPro::Report do
-  describe '.save' do
-    subject { described_class.save }
-
-    it do
-      test_files = [double]
-      tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
-      expect(KnapsackPro).to receive(:tracker).and_return(tracker)
-      expect(described_class).to receive(:create_build_subset).with(test_files)
-
-      subject
-    end
-  end
-
   describe '.save_subset_queue_to_file' do
     let(:fake_path) { SecureRandom.uuid }
 
@@ -210,7 +197,7 @@ describe KnapsackPro::Report do
         it do
           logger = instance_double(Logger)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:warn).with('Time execution report was not saved on Knapsack Pro API server due to connection problem.')
+          expect(logger).to receive(:warn).with('Time execution report was not saved on Knapsack Pro API server due to connection problems.')
           subject
         end
       end

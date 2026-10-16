@@ -7,6 +7,7 @@
 * (patch) Prefer `KNAPSACK_PRO_COMMIT_HASH` and `KNAPSACK_PRO_BRANCH` when using the git repository adapter.
 * (minor) Trap only: `SIGTERM` (graceful termination + dump debug logs) and `SIGINT` (graceful termination or forceful termination when gracefully terminating).
 * (major) `KNAPSACK_PRO_TEST_QUEUE_ID` only supports ASCII letters, numbers, hyphens (-), and underscores (_). This is a breaking change only if you set the ENV manually to something that contains other characters.
+* (minor) Set `KNAPSACK_PRO_SINGLE_BATCH=true` to get only one batch of tests per node
 
 ### 10.0.1
 

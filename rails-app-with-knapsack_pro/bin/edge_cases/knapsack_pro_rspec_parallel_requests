@@ -15,7 +15,7 @@
 # The request should fail due to 1st command still initializing the test suite split on the API side.
 # This is expected. The request should be retried and get tests assigned to node index 1.
 
-export KNAPSACK_PRO_CI_NODE_BUILD_ID=ci-build-id-${1:-1}
+export KNAPSACK_PRO_TEST_QUEUE_ID=ci-build-id-${1:-1}
 export KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000
 export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=a28ce51204d7c7dbd25c3352fea222cf
 export KNAPSACK_PRO_CI_NODE_TOTAL=2

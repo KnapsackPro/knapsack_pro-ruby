@@ -10,9 +10,6 @@ module KnapsackPro
         def node_index
         end
 
-        def node_build_id
-        end
-
         def node_retry_count
         end
 

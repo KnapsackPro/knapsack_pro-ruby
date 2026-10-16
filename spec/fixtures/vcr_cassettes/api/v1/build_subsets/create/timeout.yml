@@ -1,0 +1,129 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://api.fake-knapsackpro.localhost:3000/v1/build_subsets
+    body:
+      encoding: UTF-8
+      string: '{"commit_hash":"abcdefg","branch":"main","node_total":"2","node_index":"1","test_files":[{"path":"a_spec.rb","time_execution":1.2},{"path":"b_spec.rb","time_execution":0.3}],"attempt_count":1}'
+    headers:
+      Content-Type:
+      - application/json
+      Accept:
+      - application/json
+      Knapsack-Pro-Client-Name:
+      - knapsack_pro-ruby
+      Knapsack-Pro-Client-Version:
+      - 10.0.1
+      Knapsack-Pro-Test-Suite-Token:
+      - 3fa64859337f6e56409d49f865d13fd7
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 403
+      message: Forbidden
+    headers:
+      Content-Type:
+      - text/html; charset=UTF-8
+      Set-Cookie:
+      - __profilin=p%3Dt; path=/; httponly; samesite=lax
+      Content-Length:
+      - '7683'
+    body:
+      encoding: UTF-8
+      string: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\"
+        />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n
+        \ <meta name=\"turbo-visit-control\" content=\"reload\">\n  <title>Action
+        Controller: Exception caught</title>\n  <style>\n    body {\n      background-color:
+        #FAFAFA;\n      color: #333;\n      color-scheme: light dark;\n      supported-color-schemes:
+        light dark;\n      margin: 0px;\n    }\n\n    body, p, ol, ul, td {\n      font-family:
+        helvetica, verdana, arial, sans-serif;\n      font-size:   13px;\n      line-height:
+        18px;\n    }\n\n    pre {\n      font-size: 11px;\n      white-space: pre-wrap;\n
+        \   }\n\n    pre.box {\n      border: 1px solid #EEE;\n      padding: 10px;\n
+        \     margin: 0px;\n      width: 958px;\n    }\n\n    header {\n      color:
+        #F0F0F0;\n      background: #C00;\n      padding: 0.5em 1.5em;\n    }\n\n
+        \   header button {\n      appearance: none;\n      background-color: hsl(0
+        0% 0% / 0.2);\n      border: 0;\n      border-radius: 14px;\n      color:
+        white;\n      float: right;\n      font-weight: 500;\n      height: 28px;\n
+        \     padding-inline: 14px;\n      margin: 0.35em 0;\n    }\n    header button:active
+        {\n      background-color: hsl(0 0% 0% / 0.25);\n    }\n\n    h1 {\n      overflow-wrap:
+        break-word;\n      margin: 0.2em 0;\n      line-height: 1.1em;\n      font-size:
+        2em;\n    }\n\n    h2 {\n      color: #C00;\n      line-height: 25px;\n    }\n\n
+        \   code.traces {\n      font-size: 11px;\n    }\n\n    .trace-container {\n
+        \     margin-top: 10px;\n    }\n\n    code.traces .trace {\n      display:
+        flex;\n      align-items: center;\n      gap: 2px;\n    }\n\n    .edit-icon
+        {\n      width: 16px;\n      height: 16px;\n      display: flex;\n      font-size:
+        13px;\n      align-items: center;\n      justify-content: center;\n      text-decoration:
+        none;\n    }\n\n    .edit-icon:hover {\n      scale: 1.05;\n    }\n\n    .response-heading,
+        .request-heading {\n      margin-top: 30px;\n    }\n\n    .exception-message
+        {\n      padding: 8px 0;\n    }\n\n    .exception-message .message {\n      margin-bottom:
+        8px;\n      line-height: 25px;\n      font-size: 1.5em;\n      font-weight:
+        bold;\n      color: #C00;\n    }\n\n    .details {\n      border: 1px solid
+        #D0D0D0;\n      border-radius: 4px;\n      margin: 1em 0px;\n      display:
+        block;\n      max-width: 978px;\n    }\n\n    .summary {\n      padding: 8px
+        15px;\n      border-bottom: 1px solid #D0D0D0;\n      display: block;\n    }\n\n
+        \   a.summary {\n      color: #F0F0F0;\n      text-decoration: none;\n      background:
+        #C52F24;\n      border-bottom: none;\n    }\n\n    .details pre {\n      margin:
+        5px;\n      border: none;\n    }\n\n    #container {\n      box-sizing: border-box;\n
+        \     width: 100%;\n      padding: 0 1.5em;\n    }\n\n    .source * {\n      margin:
+        0px;\n      padding: 0px;\n    }\n\n    .source {\n      border: 1px solid
+        #D9D9D9;\n      background: #ECECEC;\n      max-width: 978px;\n    }\n\n    .source
+        pre {\n      padding: 10px 0px;\n      border: none;\n    }\n\n    .source
+        .data {\n      font-size: 80%;\n      overflow: auto;\n      background-color:
+        #FFF;\n    }\n\n    .info {\n      padding: 0.5em;\n    }\n\n    .source .data
+        .line_numbers {\n      background-color: #ECECEC;\n      color: #555;\n      padding:
+        1em .5em;\n      border-right: 1px solid #DDD;\n      text-align: right;\n
+        \   }\n\n    .line {\n      padding-left: 10px;\n      white-space: pre;\n
+        \   }\n\n    .line:hover {\n      background-color: #F6F6F6;\n    }\n\n    .line.active
+        {\n      background-color: #FCC;\n    }\n\n    .error_highlight {\n      display:
+        inline-block;\n      background-color: #FF9;\n      text-decoration: #F00
+        wavy underline;\n    }\n\n    .error_highlight_tip {\n      color: #666;\n
+        \     padding: 2px 2px;\n      font-size: 10px;\n    }\n\n    .button_to {\n
+        \     display: inline-block;\n      margin-top: 0.75em;\n      margin-bottom:
+        0.75em;\n    }\n\n    .hidden {\n      display: none;\n    }\n\n    .correction
+        {\n      list-style-type: none;\n    }\n\n    input[type=\"submit\"] {\n      color:
+        white;\n      background-color: #C00;\n      border: none;\n      border-radius:
+        12px;\n      box-shadow: 0 3px #F99;\n      font-size: 13px;\n      font-weight:
+        bold;\n      margin: 0;\n      padding: 10px 18px;\n      cursor: pointer;\n
+        \     -webkit-appearance: none;\n    }\n    input[type=\"submit\"]:focus,\n
+        \   input[type=\"submit\"]:hover {\n      opacity: 0.8;\n    }\n    input[type=\"submit\"]:active
+        {\n      box-shadow: 0 2px #F99;\n      transform: translateY(1px)\n    }\n\n
+        \   a { color: #980905; }\n    a:visited { color: #666; }\n    a.trace-frames
+        {\n      color: #666;\n      overflow-wrap: break-word;\n    }\n    a:hover,
+        a.trace-frames.selected { color: #C00; }\n    a.summary:hover { color: #FFF;
+        }\n\n    @media (prefers-color-scheme: dark) {\n      body {\n        background-color:
+        #222;\n        color: #ECECEC;\n      }\n\n      .details, .summary {\n        border-color:
+        #666;\n      }\n\n      .source {\n        border-color: #555;\n        background-color:
+        #333;\n      }\n\n      .source .data {\n        background: #444;\n      }\n\n
+        \     .source .data .line_numbers {\n        background: #333;\n        border-color:
+        #222;\n      }\n\n      .line:hover {\n        background: #666;\n      }\n\n
+        \     .line.active {\n        background-color: #900;\n      }\n\n      .error_highlight
+        {\n        color: #333;\n      }\n\n      input[type=\"submit\"] {\n        box-shadow:
+        0 3px #800;\n      }\n      input[type=\"submit\"]:active {\n        box-shadow:
+        0 2px #800;\n      }\n\n      a { color: #C00; }\n      a.trace-frames { color:
+        #999; }\n      a:hover, a.trace-frames.selected { color: #E9382B; }\n    }\n\n
+        \   \n  </style>\n\n  <script>\n    var toggle = function(id) {\n      document.getElementById(id).classList.toggle('hidden');\n
+        \     return false;\n    }\n    var show = function(id) {\n      document.getElementById(id).style.display
+        = 'block';\n    }\n    var hide = function(id) {\n      document.getElementById(id).style.display
+        = 'none';\n    }\n    var toggleSessionDump = function() {\n      return toggle('session_dump');\n
+        \   }\n    var toggleEnvDump = function() {\n      return toggle('env_dump');\n
+        \   }\n    var copyAsText = function() {\n      const text = document.getElementById(\"exception-message-for-copy\").value;\n\n
+        \     navigator.clipboard.writeText(text).then(() => {\n        const beforeText
+        = this.innerText;\n        this.innerText = \"Copied!\"\n        setTimeout(()
+        => this.innerText = beforeText, 1000)\n      })\n    }\n  </script>\n</head>\n<body>\n\n
+        \ <!-- BEGIN /Users/ricodo/.local/share/mise/installs/ruby/4.0.7/lib/ruby/gems/4.0.0/gems/actionpack-8.1.4/lib/action_dispatch/middleware/templates/rescues/blocked_host.html.erb\n--><header>\n
+        \ <!-- BEGIN /Users/ricodo/.local/share/mise/installs/ruby/4.0.7/lib/ruby/gems/4.0.0/gems/actionpack-8.1.4/lib/action_dispatch/middleware/templates/rescues/_copy_button.html.erb\n--><button
+        onclick=\"copyAsText.bind(this)()\">Copy as text</button>\n<!-- END /Users/ricodo/.local/share/mise/installs/ruby/4.0.7/lib/ruby/gems/4.0.0/gems/actionpack-8.1.4/lib/action_dispatch/middleware/templates/rescues/_copy_button.html.erb
+        -->\n  <h1>Blocked hosts: api.fake-knapsackpro.localhost:3000</h1>\n</header>\n<main
+        role=\"main\" id=\"container\">\n  <h2>To allow requests to these hosts, make
+        sure they are valid hostnames (containing only numbers, letters, dashes and
+        dots), then add the following to your environment configuration:</h2>\n  <pre>\n
+        \   config.hosts &lt;&lt; \"api.fake-knapsackpro.localhost:3000\"\n  </pre>\n
+        \ <p>For more details view: <a href=\"https://guides.rubyonrails.org/configuring.html#actiondispatch-hostauthorization\">the
+        Host Authorization guide</a></p>\n</main>\n<!-- END /Users/ricodo/.local/share/mise/installs/ruby/4.0.7/lib/ruby/gems/4.0.0/gems/actionpack-8.1.4/lib/action_dispatch/middleware/templates/rescues/blocked_host.html.erb
+        -->\n  <textarea hidden id=\"exception-message-for-copy\"></textarea>\n\n</body>\n</html>\n"
+  recorded_at: Fri, 16 Oct 2026 17:00:12 GMT
+recorded_with: VCR 6.4.0

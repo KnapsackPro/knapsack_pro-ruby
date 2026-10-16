@@ -33,24 +33,6 @@ describe KnapsackPro::Config::CI::GitlabCI do
     end
   end
 
-  describe '#node_build_id' do
-    subject { described_class.new.node_build_id }
-
-    context 'when Gitlab Release 9.0+ and environment exists' do
-      let(:env) { { 'CI_PIPELINE_ID' => 7046507 } }
-      it { should eql 7046507 }
-    end
-
-    context 'when Gitlab Release 8.x and environment exists' do
-      let(:env) { { 'CI_BUILD_ID' => 7046508 } }
-      it { should eql 7046508 }
-    end
-
-    context "when the environment doesn't exist" do
-      it { should be nil }
-    end
-  end
-
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 

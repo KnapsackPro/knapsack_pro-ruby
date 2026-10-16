@@ -20,16 +20,16 @@ end
 module KnapsackProExtensions
   module QueueAllocatorExtension
     # Succeeds to initialize on the first request
-    def initialize_queue_v2(paths, time_tracker)
+    def initialize_queue(paths, time_tracker:)
       # Ensure the stubbed batches match the paths Knapsack Pro wants to run
       raise unless paths.sort == BATCHES.flatten.sort
       test__pull
     end
 
     # On the first request it fails, but succeeds on the second request
-    def pull_tests_from_queue_v2(can_initialize_queue, time_tracker)
+    def pull_tests_from_queue(can_initialize_queue, time_tracker:)
       if can_initialize_queue
-        connection = OpenStruct.new(success?: true, api_code: KnapsackPro::Client::API::V1::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED)
+        connection = OpenStruct.new(success?: true, api_code: KnapsackPro::Client::API::V2::Queues::CODE_ATTEMPT_CONNECT_TO_QUEUE_FAILED)
         KnapsackPro::QueueAllocator::Batch.new(connection, {})
       else
         test__pull

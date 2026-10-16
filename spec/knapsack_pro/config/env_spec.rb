@@ -123,60 +123,6 @@ describe KnapsackPro::Config::Env do
     end
   end
 
-  describe '.ci_node_build_id' do
-    subject { described_class.ci_node_build_id }
-
-    context 'when KNAPSACK_PRO_CI_NODE_BUILD_ID has value' do
-      before { stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_BUILD_ID' => '7' }) }
-      it { should eq '7' }
-    end
-
-    context 'when CI environment has value' do
-      before do
-        expect(described_class).to receive(:ci_env_for).with(:node_build_id).and_return('8')
-      end
-
-      it { should eq '8' }
-    end
-
-    context 'when both KNAPSACK_PRO_CI_NODE_BUILD_ID and CI environment have value' do
-      before do
-        stub_const("ENV", { 'KNAPSACK_PRO_CI_NODE_BUILD_ID' => env_value })
-        expect(described_class).to receive(:ci_env_for).with(:node_build_id).and_return(ci_value)
-      end
-
-      context 'when values are different' do
-        let(:env_value) { '7' }
-        let(:ci_value) { '8' }
-
-        it { should eq '7' }
-
-        it 'logs a warning' do
-          expect(described_class).to receive(:warn).with(
-            'You have set the environment variable KNAPSACK_PRO_CI_NODE_BUILD_ID to 7 which could be automatically determined from the CI environment as 8.'
-          )
-          subject
-        end
-      end
-
-      context 'when values are the same' do
-        let(:env_value) { '7' }
-        let(:ci_value) { '7' }
-
-        it 'does not log a warning' do
-          expect(described_class).not_to receive(:warn)
-          subject
-        end
-      end
-    end
-
-    context "when ENV does not exist" do
-      it 'raises' do
-        expect { subject }.to raise_error(/Missing environment variable KNAPSACK_PRO_CI_NODE_BUILD_ID/)
-      end
-    end
-  end
-
   describe '.ci_node_retry_count' do
     subject { described_class.ci_node_retry_count }
 

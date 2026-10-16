@@ -33,19 +33,6 @@ describe KnapsackPro::Config::CI::Semaphore2 do
     end
   end
 
-  describe '#node_build_id' do
-    subject { described_class.new.node_build_id }
-
-    context 'when the environment exists' do
-      let(:env) { { 'SEMAPHORE_WORKFLOW_ID' => 123 } }
-      it { should eql 123 }
-    end
-
-    context "when the environment doesn't exist" do
-      it { should be nil }
-    end
-  end
-
   describe '#commit_hash' do
     subject { described_class.new.commit_hash }
 

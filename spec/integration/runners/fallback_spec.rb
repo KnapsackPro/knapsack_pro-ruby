@@ -38,7 +38,7 @@ require 'tempfile'
           require 'knapsack_pro'
 
           ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN_#{runner.upcase}'] = SecureRandom.hex
-          ENV['KNAPSACK_PRO_CI_NODE_BUILD_ID'] = SecureRandom.uuid
+          ENV['KNAPSACK_PRO_TEST_QUEUE_ID'] = SecureRandom.uuid
 
           #{Object.const_get("KnapsackPro::Runners::#{runner}Runner")}.run('')
         CONTENT

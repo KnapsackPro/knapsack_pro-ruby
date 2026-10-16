@@ -19,19 +19,6 @@ describe KnapsackPro::Config::CI::GithubActions do
     it { should be nil }
   end
 
-  describe '#node_build_id' do
-    subject { described_class.new.node_build_id }
-
-    context 'when the environment exists' do
-      let(:env) { { 'GITHUB_RUN_ID' => 2706 } }
-      it { should eql 2706 }
-    end
-
-    context "when the environment doesn't exist" do
-      it { should be nil }
-    end
-  end
-
   describe '#node_retry_count' do
     subject { described_class.new.node_retry_count }
 

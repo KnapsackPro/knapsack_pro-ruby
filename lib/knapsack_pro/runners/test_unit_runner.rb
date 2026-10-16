@@ -6,6 +6,7 @@ module KnapsackPro
       def self.run(args)
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_test_unit
         ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] = 'true'
+        ENV['KNAPSACK_PRO_NODE_UUID'] = SecureRandom.uuid
 
         adapter_class = KnapsackPro::Adapters::TestUnitAdapter
         KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)

@@ -15,11 +15,11 @@
 #
 #   bin/knapsack_pro_rspec_cache_read_attempt 1 2 branch-v1
 
-RANDOM_VALUE=$(openssl rand -base64 32)
+RANDOM_VALUE=$(openssl rand -hex 8)
 
 export KNAPSACK_PRO_BRANCH=${3:-$RANDOM_VALUE}
-export KNAPSACK_PRO_COMMIT_HASH=commit-attempt-to-read-from-cache
-export KNAPSACK_PRO_CI_NODE_BUILD_ID=ci-build-id-1
+export KNAPSACK_PRO_COMMIT_HASH=$(openssl rand -hex 8)
+export KNAPSACK_PRO_TEST_QUEUE_ID=$(openssl rand -hex 8)
 
 #export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
 

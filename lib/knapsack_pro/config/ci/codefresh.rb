@@ -13,10 +13,6 @@ module KnapsackPro
           # not provided
         end
 
-        def node_build_id
-          ENV['CF_BUILD_ID']
-        end
-
         def commit_hash
           ENV['CF_REVISION']
         end

@@ -20,12 +20,6 @@ module KnapsackPro
           @ci_node_index ||= (env_for('KNAPSACK_PRO_CI_NODE_INDEX', :node_index) || 0).to_i
         end
 
-        def ci_node_build_id
-          env_name = 'KNAPSACK_PRO_CI_NODE_BUILD_ID'
-          env_for(env_name, :node_build_id) ||
-            raise("Missing environment variable #{env_name}. Read more at #{KnapsackPro::Urls::KNAPSACK_PRO_CI_NODE_BUILD_ID}")
-        end
-
         def ci_node_retry_count
           (env_for('KNAPSACK_PRO_CI_NODE_RETRY_COUNT', :node_retry_count) || 0).to_i
         end
@@ -172,6 +166,10 @@ module KnapsackPro
 
         def fixed_queue_split?
           fixed_queue_split.to_s == 'true'
+        end
+
+        def single_batch?
+          ENV.fetch('KNAPSACK_PRO_SINGLE_BATCH', 'false') == 'true'
         end
 
         def cucumber_queue_prefix

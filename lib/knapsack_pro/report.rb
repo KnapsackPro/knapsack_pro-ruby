@@ -2,17 +2,17 @@
 
 module KnapsackPro
   class Report
-    def self.save(tests = nil)
-      if tests.nil?
-        tests = KnapsackPro.tracker.to_a
+    def self.save(test_files = nil)
+      if test_files.nil?
+        test_files = KnapsackPro.tracker.to_a
       end
 
-      if tests.empty?
-        KnapsackPro.logger.warn("No test files were executed on this CI node.")
-        KnapsackPro.logger.debug("When you use knapsack_pro Regular Mode, the reason for no tests executing might be a very narrow tests list. Most likely, you run only tests with a specified tag, and there were fewer test files with the tag than parallel CI nodes.")
+      if test_files.empty?
+        KnapsackPro.logger.info("No tests were executed because the test queue is empty.")
       end
 
-      create_build_subset(tests)
+      acknowledge_single_batch(test_files)
+      create_build_subset(test_files)
     end
 
     def self.save_subset_queue_to_file
@@ -59,6 +59,35 @@ module KnapsackPro
       create_build_subset(test_files)
     end
 
+    # TODO: Add support for Retry-only-Failures
+    def self.acknowledge_single_batch(test_files)
+      repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
+      paths = KnapsackPro::Utils.unsymbolize(test_files).map { |test_file| test_file.fetch('path') }
+      failed_paths = KnapsackPro::Crypto::Encryptor.paths(paths)
+      action = KnapsackPro::Client::API::V2::Queues.queue(
+        attempt_connect_to_queue: false,
+        batch_id: ENV['KNAPSACK_PRO_BATCH_ID'], # nil in Fallback Mode
+        batch_index: 1,
+        branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
+        can_initialize_queue: false,
+        commit_hash: repository_adapter.commit_hash,
+        failed_paths: failed_paths,
+        node_total: KnapsackPro::Config::Env.ci_node_total,
+        node_index: KnapsackPro::Config::Env.ci_node_index,
+        node_uuid: ENV.fetch('KNAPSACK_PRO_NODE_UUID'),
+        single_batch: true
+      )
+
+      connection = KnapsackPro::Client::Connection.new(action)
+      response = connection.call
+      if connection.success?
+        raise ArgumentError.new(response) if connection.errors?
+        KnapsackPro.logger.debug('Acknowledged single batch.')
+      else
+        KnapsackPro.logger.warn('Single batch was not acknowledged due to connection problems.')
+      end
+    end
+
     def self.create_build_subset(test_files)
       repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
       test_files = KnapsackPro::Utils.unsymbolize(test_files)
@@ -77,7 +106,7 @@ module KnapsackPro
         raise ArgumentError.new(response) if connection.errors?
         KnapsackPro.logger.debug('Saved time execution report on Knapsack Pro API server.')
       else
-        KnapsackPro.logger.warn('Time execution report was not saved on Knapsack Pro API server due to connection problem.')
+        KnapsackPro.logger.warn('Time execution report was not saved on Knapsack Pro API server due to connection problems.')
       end
     end
 

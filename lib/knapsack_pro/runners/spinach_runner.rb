@@ -5,6 +5,7 @@ module KnapsackPro
     class SpinachRunner < BaseRunner
       def self.run(args)
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_spinach
+        ENV['KNAPSACK_PRO_NODE_UUID'] = SecureRandom.uuid
 
         adapter_class = KnapsackPro::Adapters::SpinachAdapter
         KnapsackPro::Config::Env.set_test_runner_adapter(adapter_class)

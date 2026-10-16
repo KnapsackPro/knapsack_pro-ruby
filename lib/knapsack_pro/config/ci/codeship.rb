@@ -12,10 +12,6 @@ module KnapsackPro
           # not provided
         end
 
-        def node_build_id
-          ENV['CI_BUILD_NUMBER']
-        end
-
         def commit_hash
           ENV['CI_COMMIT_ID']
         end

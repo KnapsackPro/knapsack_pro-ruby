@@ -12,10 +12,6 @@ module KnapsackPro
           ENV['CI_NODE_INDEX']
         end
 
-        def node_build_id
-          ENV['HEROKU_TEST_RUN_ID']
-        end
-
         def commit_hash
           ENV['HEROKU_TEST_RUN_COMMIT_VERSION']
         end
@@ -25,7 +21,7 @@ module KnapsackPro
         end
 
         def project_dir
-          '/app' if node_build_id
+          '/app' if ENV['HEROKU_TEST_RUN_ID']
         end
 
         def user_seat

@@ -12,10 +12,6 @@ module KnapsackPro
           ENV['CI_NODE_INDEX']
         end
 
-        def node_build_id
-          ENV['CIRRUS_BUILD_ID']
-        end
-
         def commit_hash
           ENV['CIRRUS_CHANGE_IN_REPO']
         end
