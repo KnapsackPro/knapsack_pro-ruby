@@ -112,8 +112,7 @@ module KnapsackPro
         node_index: ci_node_index,
         node_total: ci_node_total,
         node_uuid: @node_uuid,
-        paths: paths,
-        single_batch: time_tracker.nil?
+        paths: paths
       )
     end
 
