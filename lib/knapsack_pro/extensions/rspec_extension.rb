@@ -77,7 +77,7 @@ module KnapsackPro
         # Based on:
         # https://github.com/rspec/rspec-core/blob/f8c8880dabd8f0544a6f91d8d4c857c1bd8df903/lib/rspec/core/runner.rb#L113
         #
-        # Ignore `configuration.fail_if_no_examples` in Queue Mode:
+        # Ignore `configuration.fail_if_no_examples`:
         #   * a late CI node, started after all tests were executed by other nodes, is expected to receive an empty batch
         #   * a batch could contain tests with no examples (e.g. commented out)
         #

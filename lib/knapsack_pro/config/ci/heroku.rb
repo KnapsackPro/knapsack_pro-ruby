@@ -32,10 +32,6 @@ module KnapsackPro
           ENV.key?('HEROKU_TEST_RUN_ID') ? self.class : nil
         end
 
-        def fixed_queue_split
-          false
-        end
-
         def ci_provider
           "Heroku CI"
         end

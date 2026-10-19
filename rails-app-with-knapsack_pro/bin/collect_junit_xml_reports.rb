@@ -9,7 +9,7 @@
 
 require 'juniter'
 
-report_directory = 'tmp/test-reports/rspec/queue_mode'
+report_directory = 'tmp/test-reports/rspec/normal_mode'
 xml_files = Dir.glob("#{report_directory}/rspec_final_results_*.xml")
 tests = []
 

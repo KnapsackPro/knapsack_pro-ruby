@@ -12,19 +12,15 @@ module KnapsackPro
 
     FALLBACK_MODE = "#{HOST}/perma/ruby/fallback-mode"
 
-    FIXED_QUEUE_SPLIT = "#{HOST}/perma/ruby/fixed-queue-split"
-
-    FIXED_TEST_SUITE_SPLIT = "#{HOST}/perma/ruby/fixed-test-suite-split"
-
     INSTALLATION_GUIDE = "#{HOST}/perma/ruby/installation-guide"
 
-    QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false"
+    NORMAL_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-false"
 
-    QUEUE_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_TRUE_AND_POSITIVE_RETRY_COUNT = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count"
+    NORMAL_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_TRUE_AND_POSITIVE_RETRY_COUNT = "#{HOST}/perma/ruby/queue-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count"
 
-    REGULAR_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE = "#{HOST}/perma/ruby/regular-mode-connection-error-with-fallback-enabled-false"
+    SINGLE_BATCH_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_FALSE = "#{HOST}/perma/ruby/regular-mode-connection-error-with-fallback-enabled-false"
 
-    REGULAR_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_TRUE_AND_POSITIVE_RETRY_COUNT = "#{HOST}/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count"
+    SINGLE_BATCH_MODE__CONNECTION_ERROR_WITH_FALLBACK_ENABLED_TRUE_AND_POSITIVE_RETRY_COUNT = "#{HOST}/perma/ruby/regular-mode-connection-error-with-fallback-enabled-true-and-positive-retry-count"
 
     RSPEC__DEPRECATED_RUN_ALL_WHEN_EVERYTHING_FILTERED = "#{HOST}/perma/ruby/rspec-deprecated-run-all-when-everything-filtered"
 

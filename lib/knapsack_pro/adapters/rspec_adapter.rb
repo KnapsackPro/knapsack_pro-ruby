@@ -107,7 +107,7 @@ module KnapsackPro
 
       def bind_time_tracker
         ensure_no_focus!
-        bind_regular_mode_time_tracker
+        bind_single_batch_mode_time_tracker
         log_tests_duration
       end
 
@@ -136,8 +136,8 @@ module KnapsackPro
         end
       end
 
-      def bind_regular_mode_time_tracker
-        return unless KnapsackPro::Config::Env.regular_mode?
+      def bind_single_batch_mode_time_tracker
+        return unless KnapsackPro::Config::Env.single_batch_mode?
 
         ::RSpec.configure do |config|
           config.append_before(:suite) do

@@ -142,7 +142,7 @@ describe "#{KnapsackPro::Runners::Queue::RSpecRunner} - Integration tests", :cle
 
       actual = subject
 
-      expect(actual.stdout).to include('DEBUG -- knapsack_pro: Queue Mode enabled.')
+      expect(actual.stdout).to include('DEBUG -- knapsack_pro: Enabled.')
 
       expect(actual.stdout).to include('A1 test example')
       expect(actual.stdout).to include('B1 test example')

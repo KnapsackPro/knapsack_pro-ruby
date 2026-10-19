@@ -5,7 +5,6 @@ describe KnapsackPro::Client::API::V2::Queues do
     let(:branch) { double }
     let(:can_initialize_queue) { [false, true].sample }
     let(:commit_hash) { double }
-    let(:fixed_queue_split_?) { [false, true].sample }
     let(:masked_user_seat) { double }
     let(:node_index) { double }
     let(:node_total) { double }
@@ -13,7 +12,6 @@ describe KnapsackPro::Client::API::V2::Queues do
     let(:test_queue_id) { SecureRandom.uuid }
 
     before(:each) do
-      expect(KnapsackPro::Config::Env).to receive(:fixed_queue_split_?).and_return(fixed_queue_split_?)
       expect(KnapsackPro::Config::Env).to receive(:masked_user_seat).and_return(masked_user_seat)
       expect(KnapsackPro::Config::Env).to receive(:test_queue_id).and_return(test_queue_id)
     end
@@ -40,7 +38,6 @@ describe KnapsackPro::Client::API::V2::Queues do
           branch: branch,
           can_initialize_queue: can_initialize_queue,
           commit_hash: commit_hash,
-          fixed_queue_split: fixed_queue_split_?,
           node_index: node_index,
           node_total: node_total,
           node_uuid: node_uuid,

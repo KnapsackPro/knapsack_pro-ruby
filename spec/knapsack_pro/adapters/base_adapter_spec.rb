@@ -111,21 +111,21 @@ describe KnapsackPro::Adapters::BaseAdapter do
 
   describe '#bind' do
     let(:temp_directory_path) { '.knapsack_pro' }
-    let(:regular_mode?) { false }
-    let(:queue_mode?) { false }
+    let(:single_batch_mode?) { false }
+    let(:normal_mode?) { false }
 
     before do
       expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
       expect(File).to receive(:write).with('.knapsack_pro/KnapsackPro-Adapters-BaseAdapter-bind_method_called_for_node_0.txt', nil)
 
-      expect(KnapsackPro::Config::Env).to receive(:regular_mode?).and_return(regular_mode?)
-      expect(KnapsackPro::Config::Env).to receive(:queue_mode?).and_return(queue_mode?)
+      expect(KnapsackPro::Config::Env).to receive(:single_batch_mode?).and_return(single_batch_mode?)
+      expect(KnapsackPro::Config::Env).to receive(:normal_mode?).and_return(normal_mode?)
     end
 
     after { subject.bind }
 
-    context 'when regular mode enabled' do
-      let(:regular_mode?) { true }
+    context 'when single_batch mode enabled' do
+      let(:single_batch_mode?) { true }
 
       before do
         allow(subject).to receive(:bind_time_tracker)
@@ -135,19 +135,19 @@ describe KnapsackPro::Adapters::BaseAdapter do
       it do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with('Regular Mode enabled.')
+        expect(logger).to receive(:debug).with('Single-Batch enabled.')
       end
       it { expect(subject).to receive(:bind_time_tracker) }
       it { expect(subject).to receive(:bind_save_report) }
     end
 
-    context 'when queue mode enabled' do
-      let(:queue_mode?) { true }
+    context 'when normal mode enabled' do
+      let(:normal_mode?) { true }
 
       it 'calls queue hooks in proper order before binding time tracker' do
         logger = instance_double(Logger)
         expect(KnapsackPro).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with('Queue Mode enabled.')
+        expect(logger).to receive(:debug).with('Enabled.')
 
         expect(subject).to receive(:bind_before_queue_hook).ordered
         expect(subject).to receive(:bind_after_queue_hook).ordered
@@ -155,7 +155,7 @@ describe KnapsackPro::Adapters::BaseAdapter do
       end
     end
 
-    context 'when regular mode and queue mode disabled' do
+    context 'when single-batch mode and normal mode disabled' do
       it { expect(subject).not_to receive(:bind_save_report) }
       it { expect(subject).not_to receive(:bind_before_queue_hook) }
       it { expect(subject).not_to receive(:bind_after_queue_hook) }

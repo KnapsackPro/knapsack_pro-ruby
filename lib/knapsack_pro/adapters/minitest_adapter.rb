@@ -54,7 +54,7 @@ module KnapsackPro
         @@parent_of_test_dir = File.expand_path('../', test_dir_path)
       end
 
-      module BindQueueModeMinitestPlugin
+      module BindNormalModeMinitestPlugin
         def before_setup
           super
 
@@ -74,8 +74,8 @@ module KnapsackPro
         end
       end
 
-      def bind_queue_mode
-        ::Minitest::Test.send(:include, BindQueueModeMinitestPlugin)
+      def bind_normal_mode
+        ::Minitest::Test.send(:include, BindNormalModeMinitestPlugin)
 
         add_post_run_callback do
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)

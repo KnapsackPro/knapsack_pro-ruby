@@ -45,10 +45,6 @@ module KnapsackPro
           ENV.key?('GITHUB_ACTIONS') ? self.class : nil
         end
 
-        def fixed_queue_split
-          true
-        end
-
         def ci_provider
           "GitHub Actions"
         end

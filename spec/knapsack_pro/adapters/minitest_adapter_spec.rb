@@ -3,8 +3,8 @@ module FakeMinitest
     include KnapsackPro::Adapters::MinitestAdapter::BindTimeTrackerMinitestPlugin
   end
 
-  class TestQueueMode < ::Minitest::Test
-    include KnapsackPro::Adapters::MinitestAdapter::BindQueueModeMinitestPlugin
+  class TestNormalMode < ::Minitest::Test
+    include KnapsackPro::Adapters::MinitestAdapter::BindNormalModeMinitestPlugin
   end
 end
 
@@ -87,10 +87,10 @@ describe KnapsackPro::Adapters::MinitestAdapter do
     end
   end
 
-  describe 'BindQueueModeMinitestPlugin' do
+  describe 'BindNormalModeMinitestPlugin' do
     let(:tracker) { instance_double(KnapsackPro::Tracker) }
 
-    subject { ::FakeMinitest::TestQueueMode.new }
+    subject { ::FakeMinitest::TestNormalMode.new }
 
     before do
       allow(KnapsackPro).to receive(:tracker).and_return(tracker)
@@ -156,12 +156,12 @@ describe KnapsackPro::Adapters::MinitestAdapter do
       end
     end
 
-    describe '#bind_queue_mode' do
+    describe '#bind_normal_mode' do
       let(:logger) { instance_double(Logger) }
       let(:global_time) { 'Global time: 01m 05s' }
 
       it do
-        expect(::Minitest::Test).to receive(:send).with(:include, KnapsackPro::Adapters::MinitestAdapter::BindQueueModeMinitestPlugin)
+        expect(::Minitest::Test).to receive(:send).with(:include, KnapsackPro::Adapters::MinitestAdapter::BindNormalModeMinitestPlugin)
 
         expect(::Minitest).to receive(:after_run).and_yield
 
@@ -169,7 +169,7 @@ describe KnapsackPro::Adapters::MinitestAdapter do
         expect(KnapsackPro).to receive(:logger).and_return(logger)
         expect(logger).to receive(:debug).with(global_time)
 
-        subject.bind_queue_mode
+        subject.bind_normal_mode
       end
     end
   end

@@ -33,10 +33,6 @@ module KnapsackPro
           ENV.key?('CF_BUILD_ID') ? self.class : nil
         end
 
-        def fixed_queue_split
-          false
-        end
-
         def ci_provider
           "Codefresh"
         end

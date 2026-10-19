@@ -38,10 +38,6 @@ module KnapsackPro
           ENV.key?('SEMAPHORE') && ENV.key?('SEMAPHORE_WORKFLOW_ID') ? self.class : nil
         end
 
-        def fixed_queue_split
-          false
-        end
-
         def ci_provider
           "Semaphore CI 2.0"
         end

@@ -16,7 +16,7 @@ describe KnapsackPro::Runners::RSpecRunner do
       expect(KnapsackPro::Config::Env).to receive(:test_suite_token_rspec).and_return(test_suite_token_rspec)
 
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_TEST_SUITE_TOKEN', test_suite_token_rspec)
-      expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_REGULAR_MODE_ENABLED', 'true')
+      expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SINGLE_BATCH_MODE_ENABLED', 'true')
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_RSPEC_OPTIONS', args)
       expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_NODE_UUID', anything)
 

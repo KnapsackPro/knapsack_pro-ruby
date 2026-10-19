@@ -32,10 +32,6 @@ module KnapsackPro
           ENV.key?('CIRRUS_CI') ? self.class : nil
         end
 
-        def fixed_queue_split
-          false
-        end
-
         def ci_provider
           "Cirrus CI"
         end

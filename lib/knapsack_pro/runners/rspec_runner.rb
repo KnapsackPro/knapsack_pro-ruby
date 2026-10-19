@@ -7,7 +7,7 @@ module KnapsackPro
         require 'rspec/core'
 
         ENV['KNAPSACK_PRO_TEST_SUITE_TOKEN'] = KnapsackPro::Config::Env.test_suite_token_rspec
-        ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] = 'true'
+        ENV['KNAPSACK_PRO_SINGLE_BATCH_MODE_ENABLED'] = 'true'
         ENV['KNAPSACK_PRO_RSPEC_OPTIONS'] = args.to_s
         ENV['KNAPSACK_PRO_NODE_UUID'] = SecureRandom.uuid
 

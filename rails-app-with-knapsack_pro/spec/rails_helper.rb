@@ -8,8 +8,6 @@ require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'timecop'
 
-# https://github.com/rails/rails-controller-testing#rspec
-# Thanks to that Knapsack Pro Queue Mode works
 require 'rails-controller-testing'
 RSpec.configure do |config|
   [:controller, :view, :request].each do |type|

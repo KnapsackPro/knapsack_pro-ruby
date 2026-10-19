@@ -32,10 +32,6 @@ module KnapsackPro
           ENV.key?('CIRCLECI') ? self.class : nil
         end
 
-        def fixed_queue_split
-          false
-        end
-
         def ci_provider
           "CircleCI"
         end

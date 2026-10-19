@@ -106,7 +106,7 @@ jobs:
             [ "<< parameters.rspec >>" != "latest" ] && [ "$RSPEC" != "<< parameters.rspec >>" ] && exit 1 || echo "Correct version of RSpec installed: << parameters.rspec >>"
       - run: bundle exec rspec spec/integration/runners/queue/rspec_runner_spec.rb
 
-  e2e-regular-rspec:
+  e2e-single-batch-rspec:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
     resource_class: small
@@ -150,13 +150,13 @@ jobs:
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch"
             bundle exec rake knapsack_pro:rspec
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # retry the same split ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch"
             bundle exec rake knapsack_pro:rspec
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
@@ -169,7 +169,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # ensures KnapsackPro::Formatters::TimeTracker works when the .rspec file does not exist
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--no-dot-rspec-file"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch--no-dot-rspec-file"
             mv .rspec .rspec.off
             # load test files that require spec_helper explicitly
             export KNAPSACK_PRO_TEST_FILE_PATTERN="{spec/time_tracker_spec.rb}"
@@ -181,7 +181,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # split custom files by test examples ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch--split-custom-files"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/features/calculator_spec.rb"
             bundle exec rake knapsack_pro:rspec
@@ -189,13 +189,13 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # split custom files by test examples AND the --tag option passed ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular--split-custom-files--tag-option"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch--split-custom-files--tag-option"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
             export KNAPSACK_PRO_SLOW_TEST_FILE_PATTERN="spec/bar_spec.rb"
             export SKIP_ME_OR_I_WILL_FAIL=true
             bundle exec rake "knapsack_pro:rspec[--tag tag_x -t ~tag_y --tag ~skip_me_or_i_will_fail --format documentation]"
 
-  e2e-queue-rspec:
+  e2e-rspec:
     parameters:
       ruby:
         type: string
@@ -240,7 +240,7 @@ jobs:
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             bundle exec rake knapsack_pro:queue:rspec
@@ -248,7 +248,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # run 0 tests because nothing failed in the previous step ||
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             bundle exec rake knapsack_pro:queue:rspec
@@ -256,7 +256,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # fallback ||
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--fallback" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--fallback" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             export KNAPSACK_PRO_ENDPOINT=https://api-fake.knapsackpro.com
@@ -266,7 +266,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # split by test examples above the slow test file threshold ||
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--split-above-slow-test-file-threshold" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--split-above-slow-test-file-threshold" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
@@ -276,7 +276,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # split by test examples AND a single CI node ||
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--split--single-node" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--split--single-node" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
@@ -287,7 +287,7 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # split custom files by test examples AND the --tag option passed ||
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--split-custom-files--tag-option" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--split-custom-files--tag-option" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             export KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES=true
@@ -300,7 +300,7 @@ jobs:
             # turnip ||
             mv .rspec .rspec.off
             cp .rspec.turnip .rspec
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--turnip" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--turnip" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             export KNAPSACK_PRO_TEST_DIR=turnip
@@ -317,7 +317,7 @@ jobs:
             # turnip retry ||
             mv .rspec .rspec.off
             cp .rspec.turnip .rspec
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--turnip" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--turnip" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             export KNAPSACK_PRO_TEST_DIR=turnip
@@ -332,13 +332,13 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # separate queue initialization
-            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--queue--init" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
+            suffix=$(printf '%s' "$CIRCLE_BUILD_NUM--$CIRCLE_JOB--init" | sed -E 's/[^a-zA-Z0-9_-]+/-/g')
             export KNAPSACK_PRO_TEST_QUEUE_ID="$suffix"
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$suffix"
             bundle exec rake knapsack_pro:queue:rspec:initialize
             bundle exec rake knapsack_pro:queue:rspec
 
-  e2e-regular-minitest:
+  e2e-single-batch-minitest:
     parallelism: 2
     working_directory: ~/knapsack_pro-ruby
     resource_class: small
@@ -375,16 +375,16 @@ jobs:
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch"
             bundle exec rake knapsack_pro:minitest[--verbose]
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # retry the same split ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--regular"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch"
             bundle exec rake knapsack_pro:minitest[--verbose]
 
-  e2e-queue-minitest:
+  e2e-minitest:
     parameters:
       ruby:
         type: string
@@ -422,14 +422,14 @@ jobs:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # minitest ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--minitest"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--minitest"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             bundle exec rake knapsack_pro:queue:minitest[--verbose]
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
             # minitest retry ||
-            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--queue--minitest"
+            export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--minitest"
             export KNAPSACK_PRO_FIXED_QUEUE_SPLIT=true
             bundle exec rake knapsack_pro:queue:minitest[--verbose]
 
@@ -443,25 +443,25 @@ workflows:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
               rspec: ["3.12", "latest"]
-      - e2e-regular-rspec:
-          name: e2e-regular__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec-rails >>
+      - e2e-single-batch-rspec:
+          name: e2e-single-batch__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec-rails >>
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
               rspec-rails: ["6.1.1", "latest"] # 6.1.1 uses rspec 3.12
-      - e2e-queue-rspec:
-          name: e2e-queue__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec-rails >>
+      - e2e-rspec:
+          name: e2e__ruby-<< matrix.ruby >>__rspec-<< matrix.rspec-rails >>
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
               rspec-rails: ["6.1.1", "latest"] # 6.1.1 uses rspec 3.12
-      - e2e-regular-minitest:
-          name: e2e-regular__ruby-<< matrix.ruby >>__minitest
+      - e2e-single-batch-minitest:
+          name: e2e-single-batch__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]
-      - e2e-queue-minitest:
-          name: e2e-queue__ruby-<< matrix.ruby >>__minitest
+      - e2e-minitest:
+          name: e2e__ruby-<< matrix.ruby >>__minitest
           matrix:
             parameters:
               ruby: ["3.3", "3.4", "4.0"]

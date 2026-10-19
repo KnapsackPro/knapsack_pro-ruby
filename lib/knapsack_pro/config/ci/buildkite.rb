@@ -36,10 +36,6 @@ module KnapsackPro
           ENV.key?('BUILDKITE') ? self.class : nil
         end
 
-        def fixed_queue_split
-          true
-        end
-
         def ci_provider
           "Buildkite"
         end

@@ -216,9 +216,9 @@ shared_examples 'when retry request' do
       end
     end
 
-    context 'when Regular Mode' do
+    context 'when Single-Batch Mode' do
       before do
-        expect(KnapsackPro::Config::Env).to receive(:regular_mode?).at_least(1).and_return(true)
+        expect(KnapsackPro::Config::Env).to receive(:single_batch_mode?).at_least(1).and_return(true)
       end
 
       it do

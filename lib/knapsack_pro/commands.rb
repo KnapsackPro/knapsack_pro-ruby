@@ -12,49 +12,49 @@ module KnapsackPro
       true
     end
 
-    desc "rspec ['arguments']", "Parallelize RSpec with Knapsack Pro in Regular Mode"
+    desc "rspec ['arguments']", "Parallelize RSpec with Knapsack Pro (single batch)"
     def rspec(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::RSpecRunner.run(arguments)
     end
 
-    desc "queue:rspec ['arguments']", "Parallelize RSpec with Knapsack Pro in Queue Mode"
+    desc "queue:rspec ['arguments']", "Parallelize RSpec with Knapsack Pro"
     def queue_rspec(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::Queue::RSpecRunner.run(arguments)
     end
 
-    desc "cucumber ['arguments']", "Parallelize Cucumber with Knapsack Pro in Regular Mode"
+    desc "cucumber ['arguments']", "Parallelize Cucumber with Knapsack Pro (single batch)"
     def cucumber(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::CucumberRunner.run(arguments)
     end
 
-    desc "queue:cucumber ['arguments']", "Parallelize Cucumber with Knapsack Pro in Queue Mode"
+    desc "queue:cucumber ['arguments']", "Parallelize Cucumber with Knapsack Pro"
     def queue_cucumber(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::Queue::CucumberRunner.run(arguments)
     end
 
-    desc "minitest ['arguments']", "Parallelize Minitest with Knapsack Pro in Regular Mode"
+    desc "minitest ['arguments']", "Parallelize Minitest with Knapsack Pro (single batch)"
     def minitest(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::MinitestRunner.run(arguments)
     end
 
-    desc "queue:minitest ['arguments']", "Parallelize Minitest with Knapsack Pro in Queue Mode"
+    desc "queue:minitest ['arguments']", "Parallelize Minitest with Knapsack Pro"
     def queue_minitest(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::Queue::MinitestRunner.run(arguments)
     end
 
-    desc "test_unit ['arguments']", "Parallelize TestUnit with Knapsack Pro in Regular Mode"
+    desc "test_unit ['arguments']", "Parallelize TestUnit with Knapsack Pro (single batch)"
     def test_unit(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::TestUnitRunner.run(arguments)
     end
 
-    desc "spinach ['arguments']", "Parallelize Spinach with Knapsack Pro in Regular Mode"
+    desc "spinach ['arguments']", "Parallelize Spinach with Knapsack Pro (single batch)"
     def spinach(arguments = "")
       require "knapsack_pro"
       KnapsackPro::Runners::SpinachRunner.run(arguments)

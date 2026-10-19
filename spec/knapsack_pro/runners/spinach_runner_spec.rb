@@ -36,7 +36,7 @@ describe KnapsackPro::Runners::SpinachRunner do
         expect(KnapsackPro).to receive(:tracker).and_return(tracker)
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
-        expect(Kernel).to receive(:exec).with('KNAPSACK_PRO_REGULAR_MODE_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature')
+        expect(Kernel).to receive(:exec).with('KNAPSACK_PRO_SINGLE_BATCH_MODE_ENABLED=true KNAPSACK_PRO_TEST_SUITE_TOKEN=spinach-token bundle exec spinach --custom-arg --features_path fake-test-dir -- features/a.feature features/b.feature')
 
         subject
       end

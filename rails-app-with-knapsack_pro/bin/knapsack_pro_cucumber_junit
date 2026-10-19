@@ -9,4 +9,4 @@ KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
   KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
   KNAPSACK_PRO_TEST_QUEUE_ID=${3:-$TEST_QUEUE_ID} \
-  bundle exec rake "knapsack_pro:cucumber[--format junit --out tmp/test-reports/cucumber/regular_mode --retry 5 --no-strict-flaky]"
+  bundle exec rake "knapsack_pro:cucumber[--format junit --out tmp/test-reports/cucumber/single_batch_mode --retry 5 --no-strict-flaky]"

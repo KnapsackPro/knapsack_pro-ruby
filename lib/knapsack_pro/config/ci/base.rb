@@ -28,10 +28,6 @@ module KnapsackPro
         def detected
         end
 
-        def fixed_queue_split
-          true
-        end
-
         def ci_provider
           return 'AWS CodeBuild' if ENV.key?('CODEBUILD_BUILD_ARN')
           return 'Azure Pipelines' if ENV.key?('SYSTEM_TEAMFOUNDATIONCOLLECTIONURI')

@@ -4,8 +4,6 @@ module KnapsackPro
   class Tracker
     include Singleton
 
-    # when test file is pending, empty with no tests or has syntax error then assume time execution
-    # to better allocate it in Queue Mode for future CI build runs
     DEFAULT_TEST_FILE_TIME = 0.0 # seconds
 
     attr_reader :global_time, :test_files_with_time, :prerun_tests_loaded
@@ -22,7 +20,7 @@ module KnapsackPro
 
       # Remove report only when the reset! method is called explicitly.
       # The report should be persisted on the disk so that multiple tracker instances can share the report state.
-      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec) in Regular Mode.
+      # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec) in Single-Batch Mode.
       File.delete(prerun_tests_report_path) if File.exist?(prerun_tests_report_path)
     end
 
@@ -71,7 +69,7 @@ module KnapsackPro
 
     def to_a
       # When the test files are not loaded in the memory then load them from the disk.
-      # Useful for the Regular Mode when the memory is not shared between tracker instances.
+      # Useful for the Single-Batch Mode when the memory is not shared between tracker instances.
       # Tracker instance can be created by knapsack_pro process and a separate tracker is created by rake task (e.g., RSpec)
       load_prerun_tests unless prerun_tests_loaded
 

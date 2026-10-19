@@ -89,12 +89,12 @@ module KnapsackPro
           ENV['KNAPSACK_PRO_REPOSITORY_ADAPTER']
         end
 
-        def regular_mode?
-          ENV['KNAPSACK_PRO_REGULAR_MODE_ENABLED'] == 'true'
+        def single_batch_mode?
+          ENV['KNAPSACK_PRO_SINGLE_BATCH_MODE_ENABLED'] == 'true'
         end
 
-        def queue_mode?
-          ENV['KNAPSACK_PRO_QUEUE_MODE_ENABLED'] == 'true'
+        def normal_mode?
+          ENV['KNAPSACK_PRO_NORMAL_MODE_ENABLED'] == 'true'
         end
 
         def queue_id
@@ -135,37 +135,6 @@ module KnapsackPro
 
         def endpoint
           ENV.fetch('KNAPSACK_PRO_ENDPOINT', 'https://api.knapsackpro.com')
-        end
-
-        def fixed_test_suite_split
-          ENV.fetch('KNAPSACK_PRO_FIXED_TEST_SUITE_SPLIT', true)
-        end
-
-        def fixed_test_suite_split?
-          fixed_test_suite_split.to_s == 'true'
-        end
-
-        def fixed_queue_split
-          @fixed_queue_split ||= begin
-            env_name = 'KNAPSACK_PRO_FIXED_QUEUE_SPLIT'
-            computed = env_for(env_name, :fixed_queue_split).to_s
-
-            if !ENV.key?(env_name)
-              KnapsackPro.logger.info("#{env_name} is not set. Using default value: #{computed}. Learn more at #{KnapsackPro::Urls::FIXED_QUEUE_SPLIT}")
-            end
-
-            computed
-          end
-        end
-
-        def fixed_queue_split_?
-          return @fixed_queue_split_ if defined?(@fixed_queue_split_)
-
-          @fixed_queue_split_ = env_for('KNAPSACK_PRO_FIXED_QUEUE_SPLIT', :fixed_queue_split).to_s == "true"
-        end
-
-        def fixed_queue_split?
-          fixed_queue_split.to_s == 'true'
         end
 
         def single_batch?

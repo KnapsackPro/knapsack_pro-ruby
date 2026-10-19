@@ -2,7 +2,7 @@
 
 TEST_QUEUE_ID=$(openssl rand -hex 8)
 
-mkdir -p tmp/test-reports/rspec/regular_mode/
+mkdir -p tmp/test-reports/rspec/single_batch_mode/
 
 KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=3fa64859337f6e56409d49f865d13fd7 \
@@ -11,4 +11,4 @@ KNAPSACK_PRO_ENDPOINT=http://api.knapsackpro.localhost:3000 \
   KNAPSACK_PRO_CI_NODE_TOTAL=${2:-2} \
   KNAPSACK_PRO_CI_NODE_INDEX=${1:-0} \
   KNAPSACK_PRO_TEST_QUEUE_ID=${3:-$TEST_QUEUE_ID} \
-  bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/test-reports/rspec/regular_mode/rspec.xml]"
+  bundle exec rake "knapsack_pro:rspec[--format documentation --format RspecJunitFormatter --out tmp/test-reports/rspec/single_batch_mode/rspec.xml]"

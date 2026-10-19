@@ -31,10 +31,6 @@ module KnapsackPro
           ENV.key?('SEMAPHORE_BUILD_NUMBER') ? self.class : nil
         end
 
-        def fixed_queue_split
-          false
-        end
-
         def ci_provider
           "Semaphore CI 1.0"
         end

@@ -24,10 +24,6 @@ module KnapsackPro
           ENV.key?('TRAVIS') ? self.class : nil
         end
 
-        def fixed_queue_split
-          true
-        end
-
         def ci_provider
           "Travis CI"
         end
