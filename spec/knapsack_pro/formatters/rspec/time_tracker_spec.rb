@@ -12,7 +12,7 @@ describe 'TimeTracker' do
   describe '#queue' do
     it 'single example' do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             sleep 0.1
             expect(1).to eq 1
@@ -29,7 +29,7 @@ describe 'TimeTracker' do
 
     it 'two files' do
       spec0 = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker 1' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker 1' do
           it do
             sleep 0.1
             expect(1).to eq 1
@@ -38,7 +38,7 @@ describe 'TimeTracker' do
       SPEC
 
       spec1 = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker 2' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker 2' do
           it do
             sleep 0.2
             expect(1).to eq 1
@@ -57,7 +57,7 @@ describe 'TimeTracker' do
 
     it 'failing example' do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             sleep 0.1
             expect(1).to eq 2
@@ -74,7 +74,7 @@ describe 'TimeTracker' do
 
     it 'pending example' do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           xit do
             sleep 0.1
             expect(1).to eq 2
@@ -91,14 +91,14 @@ describe 'TimeTracker' do
 
     it 'multiple top level groups' do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker 1' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker 1' do
           it do
             sleep 0.1
             expect(1).to eq 1
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker 2' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker 2' do
           it do
             sleep 0.2
             expect(1).to eq 1
@@ -122,7 +122,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker 1' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker 1' do
           it do
             expect(1).to eq 1
           end
@@ -133,7 +133,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker 2' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker 2' do
           it do
             sleep 0.2
             expect(1).to eq 1
@@ -159,7 +159,7 @@ describe 'TimeTracker' do
 
     it 'hooks' do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           before(:all) do
             sleep 0.1
           end
@@ -195,7 +195,7 @@ describe 'TimeTracker' do
 
     it 'nested hooks' do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           before(:all) do
             sleep 0.1
           end
@@ -254,7 +254,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           before(:all) do
             sleep 0.1
           end
@@ -299,7 +299,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           before(:all) do
             sleep 0.1
           end
@@ -361,7 +361,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             expect(1).to eq 1
           end
@@ -384,7 +384,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
         end
       SPEC
 
@@ -399,7 +399,7 @@ describe 'TimeTracker' do
   describe '#duration' do
     it do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             expect(1).to eq 1
           end
@@ -422,7 +422,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           xit do
           end
         end
@@ -437,7 +437,7 @@ describe 'TimeTracker' do
   describe '#batch' do
     it do
       spec = <<~SPEC
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             sleep 0.1
             expect(1).to eq 1
@@ -463,7 +463,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             expect(1).to eq 2
           end
@@ -478,7 +478,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             expect(1).to eq 2
           end
@@ -504,7 +504,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             expect(1).to eq 2
           end
@@ -526,7 +526,7 @@ describe 'TimeTracker' do
           end
         end
 
-        describe 'KnapsackPro::Formatters::TimeTracker' do
+        describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
           it do
             expect(1).to eq 2
           end
@@ -549,7 +549,7 @@ describe 'TimeTracker' do
             end
           end
 
-          describe 'KnapsackPro::Formatters::TimeTracker' do
+          describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
             it do
               expect(1).to eq 2
             end
@@ -575,7 +575,7 @@ describe 'TimeTracker' do
             end
           end
 
-          describe 'KnapsackPro::Formatters::TimeTracker' do
+          describe 'KnapsackPro::Formatters::RSpec::TimeTracker' do
             it do
               expect(1).to eq 1
             end

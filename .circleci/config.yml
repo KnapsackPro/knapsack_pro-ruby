@@ -168,7 +168,7 @@ jobs:
       - run:
           working_directory: ~/knapsack_pro-ruby/rails-app-with-knapsack_pro
           command: |
-            # ensures KnapsackPro::Formatters::TimeTracker works when the .rspec file does not exist
+            # ensures KnapsackPro::Formatters::RSpec::TimeTracker works when the .rspec file does not exist
             export KNAPSACK_PRO_BRANCH="$CIRCLE_BRANCH--$CIRCLE_BUILD_NUM--single-batch--no-dot-rspec-file"
             mv .rspec .rspec.off
             # load test files that require spec_helper explicitly

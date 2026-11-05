@@ -6,7 +6,7 @@ describe KnapsackPro::Runners::CucumberRunner do
   it { should be_kind_of KnapsackPro::Runners::BaseRunner }
 
   describe '.run' do
-    let(:args) { '--custom-arg' }
+    let(:args) { '--no-color' }
 
     let(:test_suite_token_cucumber) { 'fake-token' }
 
@@ -49,7 +49,7 @@ describe KnapsackPro::Runners::CucumberRunner do
 
         t = double
         expect(Cucumber::Rake::Task).to receive(:new).with('knapsack_pro:cucumber_run').and_yield(t)
-        expect(t).to receive(:cucumber_opts=).with('--custom-arg --require fake-test-dir -- features/fake1.scenario features/fake2.scenario')
+        expect(t).to receive(:cucumber_opts=).with('--no-color --require fake-test-dir --format pretty --format KnapsackPro::Formatters::Cucumber::FailuresTracker --out /dev/null -- features/fake1.scenario features/fake2.scenario')
       end
 
       context 'when task already exists' do

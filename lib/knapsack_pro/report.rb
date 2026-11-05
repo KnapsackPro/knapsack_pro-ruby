@@ -2,7 +2,7 @@
 
 module KnapsackPro
   class Report
-    def self.save(test_files = nil)
+    def self.save(test_files = nil, failed_paths = nil)
       if test_files.nil?
         test_files = KnapsackPro.tracker.to_a
       end
@@ -11,31 +11,39 @@ module KnapsackPro
         KnapsackPro.logger.info("No tests were executed because the test queue is empty.")
       end
 
-      acknowledge_single_batch(test_files)
+      acknowledge_single_batch(test_files, failed_paths)
       create_build_subset(test_files)
     end
 
     def self.save_subset_queue_to_file
       test_files = KnapsackPro.tracker.to_a
-
       subset_queue_id = KnapsackPro::Config::Env.subset_queue_id
-
       KnapsackPro::Config::TempFiles.ensure_temp_directory_exists!
       FileUtils.mkdir_p(queue_path)
-
       subset_queue_file_name = "#{subset_queue_id}.json"
       report_path = File.join(queue_path, subset_queue_file_name)
       report_json = JSON.pretty_generate(test_files)
-
       File.open(report_path, 'w+') do |f|
         f.write(report_json)
       end
+
+      failed_paths = KnapsackPro.tracker.current_batch_failed_paths
+      json = JSON.pretty_generate(failed_paths)
+      File.open(current_batch_failed_paths_path, 'w+') do |f|
+        f.write(json)
+      end
+    end
+
+    def self.current_batch_failed_paths
+      JSON.parse(File.read(current_batch_failed_paths_path))
     end
 
     def self.save_node_queue_to_api(test_files = nil)
       if test_files.nil?
         test_files = []
         Dir.glob("#{queue_path}/*.json").each do |file|
+          next if file == current_batch_failed_paths_path
+
           report = JSON.parse(File.read(file))
           test_files += report
         end
@@ -59,11 +67,10 @@ module KnapsackPro
       create_build_subset(test_files)
     end
 
-    # TODO: Add support for Retry-only-Failures
-    def self.acknowledge_single_batch(test_files)
+    def self.acknowledge_single_batch(test_files, failed_paths)
       repository_adapter = KnapsackPro::RepositoryAdapterInitiator.call
       paths = KnapsackPro::Utils.unsymbolize(test_files).map { |test_file| test_file.fetch('path') }
-      failed_paths = KnapsackPro::Crypto::Encryptor.paths(paths)
+      failed_paths = paths if failed_paths.nil?
       action = KnapsackPro::Client::API::V2::Queues.queue(
         attempt_connect_to_queue: false,
         batch_id: ENV['KNAPSACK_PRO_BATCH_ID'], # nil in Fallback Mode
@@ -71,7 +78,7 @@ module KnapsackPro
         branch: KnapsackPro::Crypto::BranchEncryptor.call(repository_adapter.branch),
         can_initialize_queue: false,
         commit_hash: repository_adapter.commit_hash,
-        failed_paths: failed_paths,
+        failed_paths: KnapsackPro::Crypto::Encryptor.paths(failed_paths),
         node_total: KnapsackPro::Config::Env.ci_node_total,
         node_index: KnapsackPro::Config::Env.ci_node_index,
         node_uuid: ENV.fetch('KNAPSACK_PRO_NODE_UUID'),
@@ -114,6 +121,10 @@ module KnapsackPro
 
     def self.queue_path
       "#{KnapsackPro::Config::TempFiles::TEMP_DIRECTORY_PATH}/queue/#{KnapsackPro::Config::Env.queue_id}"
+    end
+
+    def self.current_batch_failed_paths_path
+      File.join(KnapsackPro::Report.queue_path, "current_batch_failed_paths.json")
     end
   end
 end

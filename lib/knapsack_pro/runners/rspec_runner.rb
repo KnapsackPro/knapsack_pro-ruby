@@ -39,7 +39,7 @@ module KnapsackPro
 
       # Use RSpec::Core::ConfigurationOptions to respect external configurations like .rspec
       def self.formatters
-        require_relative '../formatters/time_tracker'
+        require_relative '../formatters/rspec/time_tracker'
 
         formatters = ::RSpec::Core::ConfigurationOptions
           .new([])
@@ -51,7 +51,7 @@ module KnapsackPro
             arg
           end
         formatters = ['--format progress'] if formatters.empty?
-        formatters += ["--format #{KnapsackPro::Formatters::TimeTracker}"]
+        formatters += ["--format #{KnapsackPro::Formatters::RSpec::TimeTracker}"]
         formatters.join(' ')
       end
     end

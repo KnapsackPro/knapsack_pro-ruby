@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "thor", "~> 1.4"
 
   spec.add_development_dependency 'bundler', '>= 1.6'
-  spec.add_development_dependency 'cucumber', '>= 0'
+  spec.add_development_dependency 'cucumber', '>= 8'
   spec.add_development_dependency 'minitest', '>= 5.0.0'
   spec.add_development_dependency 'ostruct', '>= 0.6.0'
   spec.add_development_dependency 'pry', '~> 0'

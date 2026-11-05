@@ -21,7 +21,7 @@ module KnapsackPro
             can_initialize_queue: true,
             args: args,
             exitstatus: 0,
-            node_test_file_paths: [],
+            node_test_file_paths: []
           }
           while accumulator[:status] == :next
             handle_signal!
@@ -43,7 +43,8 @@ module KnapsackPro
 
           test_file_paths = runner.test_file_paths(
             can_initialize_queue: can_initialize_queue,
-            executed_test_files: node_test_file_paths
+            executed_test_files: node_test_file_paths,
+            failed_paths: can_initialize_queue ? [] : KnapsackPro::Report.current_batch_failed_paths
           )
 
           if test_file_paths.empty?
@@ -83,7 +84,7 @@ module KnapsackPro
               can_initialize_queue: false,
               args: args,
               exitstatus: exitstatus,
-              node_test_file_paths: node_test_file_paths,
+              node_test_file_paths: node_test_file_paths
             }
           end
         end
@@ -91,11 +92,22 @@ module KnapsackPro
         private
 
         def self.cucumber_run(runner, test_file_paths, args)
+          require "cucumber/cli/main"
+          require "shellwords"
+          formats = Cucumber::Cli::Main.new(Shellwords.split(args || "")).configuration.formats
+          formats << ["KnapsackPro::Formatters::Cucumber::FailuresTracker", {}, File::NULL]
+          formats_arg = formats.flat_map do |name, options, output|
+            format = [name, *options.map { |key, value| "#{key}=#{value}" }].join(",")
+            formats = ["--format", format]
+            formats.concat(["--out", output]) if output.is_a?(String)
+            formats
+          end
+
           stringify_test_file_paths = KnapsackPro::TestFilePresenter.stringify_paths(test_file_paths)
 
           cmd = [
             KnapsackPro::Config::Env.cucumber_queue_prefix,
-            %Q[cucumber #{args} --require #{runner.test_dir} -- #{stringify_test_file_paths}]
+            %Q[cucumber #{args} --require #{runner.test_dir} #{formats_arg.shelljoin} -- #{stringify_test_file_paths}]
           ].join(' ')
 
           Kernel.system(cmd)

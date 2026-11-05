@@ -23,29 +23,33 @@ module KnapsackPro
       end
 
       module BindTimeTrackerMinitestPlugin
-        def before_setup
-          super
-          KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::MinitestAdapter.test_path(self)
-          KnapsackPro.tracker.start_timer
-        end
+        def run
+          path = KnapsackPro::Adapters::MinitestAdapter.test_path(self)
+          started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
-        def after_teardown
-          KnapsackPro.tracker.stop_timer
-          super
+          result = super
+          elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at
+
+          failed = result.failures.any? { |failure| !failure.is_a?(::Minitest::Skip) }
+          KnapsackPro.tracker.stage(path, elapsed, failed: failed)
+
+          result
         end
       end
 
       def bind_time_tracker
-        ::Minitest::Test.send(:include, BindTimeTrackerMinitestPlugin)
+        ::Minitest::Test.send(:prepend, BindTimeTrackerMinitestPlugin)
 
         add_post_run_callback do
+          KnapsackPro.tracker.flush_staged_tests
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end
 
       def bind_save_report
         add_post_run_callback do
-          KnapsackPro::Report.save
+          KnapsackPro.tracker.flush_staged_tests
+          KnapsackPro::Report.save(KnapsackPro.tracker.to_a, KnapsackPro.tracker.current_batch_failed_paths)
         end
       end
 
@@ -55,29 +59,30 @@ module KnapsackPro
       end
 
       module BindNormalModeMinitestPlugin
-        def before_setup
-          super
-
+        def run
           unless ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED']
             KnapsackPro::Hooks::Queue.call_before_queue
             ENV['KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED'] = 'true'
           end
 
-          KnapsackPro.tracker.current_test_path = KnapsackPro::Adapters::MinitestAdapter.test_path(self)
-          KnapsackPro.tracker.start_timer
-        end
+          path = KnapsackPro::Adapters::MinitestAdapter.test_path(self)
+          started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
-        def after_teardown
-          KnapsackPro.tracker.stop_timer
+          result = super
+          elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at
 
-          super
+          failed = result.failures.any? { |failure| !failure.is_a?(::Minitest::Skip) }
+          KnapsackPro.tracker.stage(path, elapsed, failed: failed)
+
+          result
         end
       end
 
       def bind_normal_mode
-        ::Minitest::Test.send(:include, BindNormalModeMinitestPlugin)
+        ::Minitest::Test.send(:prepend, BindNormalModeMinitestPlugin)
 
         add_post_run_callback do
+          KnapsackPro.tracker.flush_staged_tests
           KnapsackPro.logger.debug(KnapsackPro::Presenter.global_time)
         end
       end

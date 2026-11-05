@@ -3,91 +3,22 @@ describe KnapsackPro::Adapters::CucumberAdapter do
     expect(described_class::TEST_DIR_PATTERN).to eq 'features/**{,/*/**}/*.feature'
   end
 
-  context do
-    context 'when Cucumber version 1' do
-      before do
-        stub_const('Cucumber::VERSION', '1.3.20')
-        allow(::Cucumber::RbSupport::RbDsl).to receive(:register_rb_hook)
-        allow(Kernel).to receive(:at_exit)
-      end
-
-      it_behaves_like 'adapter'
+  context 'with Cucumber hooks' do
+    before do
+      allow(::Cucumber::Glue::Dsl).to receive(:register_rb_hook)
+      allow(Kernel).to receive(:at_exit)
     end
 
-    context 'when Cucumber version 2' do
-      before do
-        stub_const('Cucumber::VERSION', '2')
-        allow(::Cucumber::RbSupport::RbDsl).to receive(:register_rb_hook)
-        allow(Kernel).to receive(:at_exit)
-      end
-
-      it_behaves_like 'adapter'
-    end
-
-    context 'when Cucumber version 3' do
-      before do
-        stub_const('Cucumber::VERSION', '3.0.0')
-        allow(::Cucumber::Glue::Dsl).to receive(:register_rb_hook)
-        allow(Kernel).to receive(:at_exit)
-      end
-
-      it_behaves_like 'adapter'
-    end
+    it_behaves_like 'adapter'
   end
 
   describe '.test_path' do
-    context 'when Cucumber version 1' do
-      subject { described_class.test_path(scenario_or_outline_table) }
+    let(:file) { 'features/a.feature' }
+    let(:test_case) { double(location: double(file: file)) }
 
-      before { stub_const('Cucumber::VERSION', '1') }
+    subject { described_class.test_path(test_case) }
 
-      context 'when cucumber >= 1.3' do
-        context 'when scenario' do
-          let(:scenario_file) { 'features/scenario.feature' }
-          let(:scenario_or_outline_table) { double(file: scenario_file) }
-
-          it { should eql scenario_file }
-        end
-
-        context 'when scenario outline' do
-          let(:scenario_outline_file) { 'features/scenario_outline.feature' }
-          let(:scenario_or_outline_table) do
-            double(scenario_outline: double(file: scenario_outline_file))
-          end
-
-          it { should eql scenario_outline_file }
-        end
-      end
-
-      context 'when cucumber < 1.3' do
-        context 'when scenario' do
-          let(:scenario_file) { 'features/scenario.feature' }
-          let(:scenario_or_outline_table) { double(feature: double(file: scenario_file)) }
-
-          it { should eql scenario_file }
-        end
-
-        context 'when scenario outline' do
-          let(:scenario_outline_file) { 'features/scenario_outline.feature' }
-          let(:scenario_or_outline_table) do
-            double(scenario_outline: double(feature: double(file: scenario_outline_file)))
-          end
-
-          it { should eql scenario_outline_file }
-        end
-      end
-    end
-
-    context 'when Cucumber version 2' do
-      let(:file) { 'features/a.feature' }
-      let(:test_case) { double(location: double(file: file)) } # Cucumber 2
-
-      subject { described_class.test_path(test_case) }
-
-      before { stub_const('Cucumber::VERSION', '2') }
-
-      it { should eql file }
-    end
+    it { should eql file }
   end
 
   describe 'bind methods' do
@@ -98,33 +29,8 @@ describe KnapsackPro::Adapters::CucumberAdapter do
       let(:logger) { instance_double(Logger) }
       let(:global_time) { 'Global time: 01m 05s' }
 
-      context 'when Cucumber version 1' do
-        let(:scenario) { double(file: file) }
-
-        before { stub_const('Cucumber::VERSION', '1.3.20') }
-
-        it do
-          expect(subject).to receive(:Around).and_yield(scenario, block)
-          allow(KnapsackPro).to receive(:tracker).and_return(tracker)
-          expect(tracker).to receive(:current_test_path=).with(file)
-          expect(tracker).to receive(:start_timer)
-          expect(block).to receive(:call)
-          expect(tracker).to receive(:stop_timer)
-
-          expect(::Kernel).to receive(:at_exit).and_yield
-          expect(KnapsackPro::Presenter).to receive(:global_time).and_return(global_time)
-          expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:debug).with(global_time)
-
-          subject.bind_time_tracker
-        end
-      end
-
-      context 'when Cucumber version 2' do
+      context 'when running a test case' do
         let(:test_case) { double(location: double(file: file)) }
-
-        # complex version name to ensure we can catch that too
-        before { stub_const('Cucumber::VERSION', '2.0.0.rc.5') }
 
         it do
           expect(subject).to receive(:Around).and_yield(test_case, block)
@@ -145,10 +51,18 @@ describe KnapsackPro::Adapters::CucumberAdapter do
     end
 
     describe '#bind_save_report' do
+      let(:times) { [{ 'path' => 'features/a.feature', 'time_execution' => 1.0 }] }
+      let(:failed_paths) { ['features/a.feature'] }
+      let(:tracker) { instance_double(KnapsackPro::Tracker, to_a: times, current_batch_failed_paths: failed_paths) }
+
+      before do
+        allow(KnapsackPro).to receive(:tracker).and_return(tracker)
+      end
+
       it do
         expect(::Kernel).to receive(:at_exit).and_yield
 
-        expect(KnapsackPro::Report).to receive(:save)
+        expect(KnapsackPro::Report).to receive(:save).with(times, failed_paths)
 
         subject.bind_save_report
       end
@@ -161,7 +75,7 @@ describe KnapsackPro::Adapters::CucumberAdapter do
           expect(::Kernel).to receive(:at_exit).and_yield
 
           expect(latest_error).to receive(:is_a?).with(SystemExit).and_return(true)
-          expect(KnapsackPro::Report).to receive(:save)
+          expect(KnapsackPro::Report).to receive(:save).with(times, failed_paths)
           expect(::Kernel).to receive(:exit).with(exit_status)
 
           subject.bind_save_report(latest_error)

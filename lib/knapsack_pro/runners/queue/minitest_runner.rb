@@ -54,7 +54,8 @@ module KnapsackPro
 
           test_file_paths = runner.test_file_paths(
             can_initialize_queue: can_initialize_queue,
-            executed_test_files: node_test_file_paths
+            executed_test_files: node_test_file_paths,
+            failed_paths: can_initialize_queue ? [] : KnapsackPro::Report.current_batch_failed_paths
           )
 
           if test_file_paths.empty?
@@ -86,6 +87,7 @@ module KnapsackPro
 
             KnapsackPro::Hooks::Queue.call_after_subset_queue
 
+            KnapsackPro.tracker.flush_staged_tests
             KnapsackPro::Report.save_subset_queue_to_file
 
             return {

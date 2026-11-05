@@ -25,8 +25,8 @@ module KnapsackPro
         def test_file_paths(args)
           can_initialize_queue = args.fetch(:can_initialize_queue)
           executed_test_files = args.fetch(:executed_test_files)
-          time_tracker = args.fetch(:time_tracker, nil)
-          allocator.test_file_paths(can_initialize_queue, executed_test_files, time_tracker: time_tracker)
+          failed_paths = args.fetch(:failed_paths)
+          allocator.test_file_paths(can_initialize_queue, executed_test_files, failed_paths)
         end
 
         def test_dir

@@ -1,6 +1,6 @@
-require(KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker')
+require(KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec/time_tracker')
 
-describe KnapsackPro::Formatters::TimeTrackerFetcher do
+describe KnapsackPro::Formatters::RSpec::TimeTrackerFetcher do
   describe '.unexecuted_test_paths' do
     subject { described_class.unexecuted_test_paths }
 
@@ -11,7 +11,7 @@ describe KnapsackPro::Formatters::TimeTrackerFetcher do
     end
 
     context 'when the time tracker formatter is found' do
-      let(:time_tracker) { instance_double(KnapsackPro::Formatters::TimeTracker) }
+      let(:time_tracker) { instance_double(KnapsackPro::Formatters::RSpec::TimeTracker) }
       let(:unexecuted_test_paths) { double(:unexecuted_test_paths) }
 
       before do

@@ -1,4 +1,4 @@
-require(KnapsackPro.root + '/lib/knapsack_pro/formatters/time_tracker')
+require(KnapsackPro.root + '/lib/knapsack_pro/formatters/rspec/time_tracker')
 require(KnapsackPro.root + '/lib/knapsack_pro/extensions/rspec_extension')
 
 describe KnapsackPro::Pure::Queue::RSpecPure do
@@ -16,7 +16,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
     end
 
     context 'when spec_opts have Knapsack Pro formatters' do
-      let(:spec_opts) { '--color --format d --format KnapsackPro::Formatters::TimeTracker' }
+      let(:spec_opts) { '--color --format d --format KnapsackPro::Formatters::RSpec::TimeTracker' }
 
       it 'returns spec_opts' do
         expect(subject).to eq spec_opts
@@ -27,7 +27,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
       let(:spec_opts) { '--color --format d' }
 
       it 'returns spec_opts with added Knapsack Pro formatters' do
-        expect(subject).to eq '--color --format d --format KnapsackPro::Formatters::TimeTracker'
+        expect(subject).to eq '--color --format d --format KnapsackPro::Formatters::RSpec::TimeTracker'
       end
     end
   end
@@ -132,7 +132,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
           expect(subject).to eq [
             '--format', 'progress',
             '--default-path', 'spec',
-            '--format', 'KnapsackPro::Formatters::TimeTracker',
+            '--format', 'KnapsackPro::Formatters::RSpec::TimeTracker',
           ]
         end
       end
@@ -145,7 +145,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
             '--format', 'progress',
             '--require', 'rails_helper',
             '--default-path', 'spec',
-            '--format', 'KnapsackPro::Formatters::TimeTracker',
+            '--format', 'KnapsackPro::Formatters::RSpec::TimeTracker',
           ]
         end
       end
@@ -165,7 +165,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
           '--require', 'rails_helper',
           '--format', 'progress',
           '--default-path', 'custom_spec_dir',
-          '--format', 'KnapsackPro::Formatters::TimeTracker',
+          '--format', 'KnapsackPro::Formatters::RSpec::TimeTracker',
         ]
       end
     end
@@ -184,7 +184,7 @@ describe KnapsackPro::Pure::Queue::RSpecPure do
           '--format', 'd',
           '--require', 'rails_helper',
           '--default-path', 'spec',
-          '--format', 'KnapsackPro::Formatters::TimeTracker',
+          '--format', 'KnapsackPro::Formatters::RSpec::TimeTracker',
         ]
       end
     end

@@ -25,7 +25,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
     end
 
     context 'when args are provided' do
-      let(:args) { '--retry 5 --no-strict-flaky' }
+      let(:args) { '--retry 5 --no-color' }
 
       it do
         expected_exitstatus = 0
@@ -83,7 +83,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
       instance_double(described_class, test_dir: test_dir)
     end
     let(:can_initialize_queue) { double(:can_initialize_queue) }
-    let(:args) { '--retry 5 --no-strict-flaky' }
+    let(:args) { '--retry 5 --no-color' }
     let(:exitstatus) { 0 }
     let(:node_test_file_paths) { [] }
     let(:accumulator) do
@@ -99,7 +99,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
     subject { described_class.run_tests(accumulator) }
 
     before do
-      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: node_test_file_paths).and_return(test_file_paths)
+      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: node_test_file_paths, failed_paths: []).and_return(test_file_paths)
     end
 
     context 'when test files exist' do
@@ -120,7 +120,7 @@ describe KnapsackPro::Runners::Queue::CucumberRunner do
         expect(KnapsackPro::Hooks::Queue).to receive(:call_before_subset_queue)
 
         # .cucumber_run
-        expect(Kernel).to receive(:system).with('bundle exec cucumber --retry 5 --no-strict-flaky --require fake-features-dir -- "features/a.feature" "features/b.feature"')
+        expect(Kernel).to receive(:system).with('bundle exec cucumber --retry 5 --no-color --require fake-features-dir --format pretty --format KnapsackPro::Formatters::Cucumber::FailuresTracker --out /dev/null -- "features/a.feature" "features/b.feature"')
 
         expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_BEFORE_QUEUE_HOOK_CALLED', 'true')
 

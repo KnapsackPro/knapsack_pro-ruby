@@ -47,7 +47,7 @@ describe KnapsackPro::Runners::RSpecRunner do
 
         expect(RSpec::Core::RakeTask).to receive(:new).with('knapsack_pro:rspec_run').and_yield(task_config)
         expect(RSpec::Core::ConfigurationOptions).to receive_message_chain(:new, :options).and_return({})
-        expect(task_config).to receive(:rspec_opts=).with('--profile --color --format progress --format KnapsackPro::Formatters::TimeTracker --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
+        expect(task_config).to receive(:rspec_opts=).with('--profile --color --format progress --format KnapsackPro::Formatters::RSpec::TimeTracker --default-path fake-test-dir spec/a_spec.rb spec/b_spec.rb[1:1]')
         expect(task_config).to receive(:pattern=).with([])
       end
 

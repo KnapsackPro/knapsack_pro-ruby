@@ -6,7 +6,7 @@ module KnapsackPro
 
     DEFAULT_TEST_FILE_TIME = 0.0 # seconds
 
-    attr_reader :global_time, :test_files_with_time, :prerun_tests_loaded
+    attr_reader :global_time, :test_files_with_time, :prerun_tests_loaded, :current_batch_failed_paths
     attr_writer :current_test_path
 
     def initialize
@@ -74,20 +74,48 @@ module KnapsackPro
       load_prerun_tests unless prerun_tests_loaded
 
       test_files = []
+
       @test_files_with_time.each do |path, hash|
         test_files << {
           path: path,
           time_execution: hash[:time_execution]
         }
       end
+
       test_files
+    end
+
+    def mark_failed(path)
+      @current_batch_failed_paths << KnapsackPro::TestFileCleaner.clean(path)
+    end
+
+    # Thread-safe: first stage then flush_staged_tests
+    def stage(path, execution_time, failed: false)
+      @staged_tests << [KnapsackPro::TestFileCleaner.clean(path), execution_time, failed]
+    end
+
+    # Thread-safe: first stage then flush_staged_tests
+    def flush_staged_tests
+      loop do
+        begin
+          path, execution_time, failed = @staged_tests.pop(true)
+        rescue ThreadError
+          break
+        end
+
+        update_global_time(execution_time)
+        update_test_file_time(execution_time, path)
+        mark_failed(path) if failed
+      end
     end
 
     private
 
     def set_defaults
+      @staged_tests = ::Queue.new
       @global_time = 0
       @test_files_with_time = {}
+      @current_batch_failed_paths = []
       @current_test_path = nil
       @prerun_tests_loaded = false
     end
@@ -134,13 +162,13 @@ module KnapsackPro
       @global_time += execution_time
     end
 
-    def update_test_file_time(execution_time)
-      @test_files_with_time[current_test_path] ||= {
+    def update_test_file_time(execution_time, path = current_test_path)
+      @test_files_with_time[path] ||= {
         time_execution: 0,
         measured_time: false,
       }
 
-      hash = @test_files_with_time[current_test_path]
+      hash = @test_files_with_time[path]
 
       if hash[:measured_time]
         hash[:time_execution] += execution_time
@@ -149,7 +177,7 @@ module KnapsackPro
         hash[:measured_time] = true
       end
 
-      @test_files_with_time[current_test_path] = hash
+      @test_files_with_time[path] = hash
     end
 
     def now_without_mock_time

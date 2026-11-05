@@ -15,6 +15,37 @@ describe KnapsackPro::Tracker do
 
   it_behaves_like 'default trakcer attributes'
 
+  describe '#flush_staged_tests' do
+    it 'defers aggregation and drains each measurement only once' do
+      tracker.set_prerun_tests(['a_test.rb', 'pending_test.rb'])
+      tracker.stage('./a_test.rb', 3.0)
+      tracker.stage('./a_test.rb', 4.0, failed: true)
+
+      expect(tracker.global_time).to eq(0)
+      expect(tracker.current_batch_failed_paths).to be_empty
+
+      2.times { tracker.flush_staged_tests }
+
+      expect(tracker.global_time).to eq(7.0)
+      expect(tracker.test_files_with_time).to eq(
+        'a_test.rb' => { time_execution: 7.0, measured_time: true },
+        'pending_test.rb' => { time_execution: 0.0, measured_time: false }
+      )
+      expect(tracker.current_batch_failed_paths).to eq(['a_test.rb'])
+    end
+
+    it 'discards queued measurements when resetting for another batch' do
+      tracker.stage('old_test.rb', 3.0, failed: true)
+      tracker.reset!
+      tracker.stage('new_test.rb', 4.0)
+      tracker.flush_staged_tests
+
+      expect(tracker.global_time).to eq(4.0)
+      expect(tracker.test_files_with_time.keys).to eq(['new_test.rb'])
+      expect(tracker.current_batch_failed_paths).to be_empty
+    end
+  end
+
   describe '#current_test_path' do
     subject { tracker.current_test_path }
 

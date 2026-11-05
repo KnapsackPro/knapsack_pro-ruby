@@ -37,3 +37,5 @@ build/
 
 # dynamically generated specs
 spec_integration/
+
+spec/example_status_persistence.txt

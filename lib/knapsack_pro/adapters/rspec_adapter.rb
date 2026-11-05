@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../formatters/time_tracker_fetcher'
+require_relative '../formatters/rspec/time_tracker_fetcher'
 
 module KnapsackPro
   module Adapters
@@ -136,7 +136,7 @@ module KnapsackPro
       def log_tests_duration
         ::RSpec.configure do |config|
           config.append_after(:suite) do
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            time_tracker = KnapsackPro::Formatters::RSpec::TimeTrackerFetcher.call
             formatted = KnapsackPro::Presenter.global_time(time_tracker.duration)
             KnapsackPro.logger.debug(formatted)
           end
@@ -148,7 +148,7 @@ module KnapsackPro
 
         ::RSpec.configure do |config|
           config.append_before(:suite) do
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+            time_tracker = KnapsackPro::Formatters::RSpec::TimeTrackerFetcher.call
             time_tracker.schedule(KnapsackPro::Adapters::RSpecAdapter.scheduled_paths)
           end
         end
@@ -157,8 +157,8 @@ module KnapsackPro
       def bind_save_report
         ::RSpec.configure do |config|
           config.after(:suite) do
-            time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
-            KnapsackPro::Report.save(time_tracker.batch)
+            time_tracker = KnapsackPro::Formatters::RSpec::TimeTrackerFetcher.call
+            KnapsackPro::Report.save(time_tracker.batch, time_tracker.current_batch_failed_paths)
           end
         end
       end

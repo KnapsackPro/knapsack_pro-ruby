@@ -1,4 +1,4 @@
-require_relative '../../../lib/knapsack_pro/formatters/time_tracker'
+require_relative '../../../lib/knapsack_pro/formatters/rspec/time_tracker'
 
 describe KnapsackPro::Adapters::RSpecAdapter do
   around(:each) do |example|
@@ -507,11 +507,13 @@ describe KnapsackPro::Adapters::RSpecAdapter do
         expect(config).to receive(:after).with(:suite).and_yield
         expect(::RSpec).to receive(:configure).and_yield(config)
 
-        time_tracker = instance_double(KnapsackPro::Formatters::TimeTracker)
+        time_tracker = instance_double(KnapsackPro::Formatters::RSpec::TimeTracker)
         times = [{ path: "foo_spec.rb", time_execution: 1.0 }]
         expect(time_tracker).to receive(:batch).and_return(times)
-        expect(KnapsackPro::Formatters::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
-        expect(KnapsackPro::Report).to receive(:save).with(times)
+        failed_paths = []
+        expect(time_tracker).to receive(:current_batch_failed_paths).and_return(failed_paths)
+        expect(KnapsackPro::Formatters::RSpec::TimeTrackerFetcher).to receive(:call).and_return(time_tracker)
+        expect(KnapsackPro::Report).to receive(:save).with(times, failed_paths)
 
         subject.bind_save_report
       end

@@ -51,27 +51,27 @@ module KnapsackPro
       @current_batch = nil
     end
 
-    def test_file_paths(can_initialize_queue, executed_test_files, time_tracker: nil)
+    def test_file_paths(can_initialize_queue, executed_test_files, failed_paths)
       @batch_index += 1
       return [] if @fallback_mode
 
-      batch = pull_tests_from_queue(can_initialize_queue, time_tracker: time_tracker)
+      batch = pull_tests_from_queue(can_initialize_queue, failed_paths)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
       return normalize_test_files(batch.test_files) if batch.queue_exists?
 
       test_files_result = test_suite.calculate_test_files
 
-      return try_initializing_queue(test_files_result.test_files.map { |test| test.fetch("path") }, time_tracker: time_tracker) if test_files_result.quick?
+      return try_initializing_queue(test_files_result.test_files.map { |test| test.fetch("path") }, failed_paths) if test_files_result.quick?
 
       # The tests to run were found slowly. By that time, the queue could have already been initialized by another CI node.
       # Attempt to pull tests from the queue to avoid the attempt to initialize the queue unnecessarily (queue initialization is an expensive request with a big test files payload).
-      batch = pull_tests_from_queue(can_initialize_queue, time_tracker: time_tracker)
+      batch = pull_tests_from_queue(can_initialize_queue, failed_paths)
 
       return switch_to_fallback_mode(executed_test_files: executed_test_files) if batch.connection_failed?
       return normalize_test_files(batch.test_files) if batch.queue_exists?
 
-      try_initializing_queue(test_files_result.test_files.map { |test| test.fetch("path") }, time_tracker: time_tracker)
+      try_initializing_queue(test_files_result.test_files.map { |test| test.fetch("path") }, failed_paths)
     end
 
     private
@@ -87,16 +87,15 @@ module KnapsackPro
       KnapsackPro::TestFilePresenter.paths(decrypted_test_files)
     end
 
-    # time_tracker is nil for non-RSpec queue runners
-    def build_action(can_initialize_queue:, attempt_connect_to_queue:, time_tracker:, paths: nil)
+    def build_action(can_initialize_queue:, attempt_connect_to_queue:, failed_paths:, paths: nil)
       if can_initialize_queue && !attempt_connect_to_queue
         raise 'Test files are required when initializing a new queue.' if paths.nil?
         paths = KnapsackPro::Crypto::Encryptor.paths(paths)
       end
 
       failed_paths =
-        if time_tracker
-          KnapsackPro::Crypto::Encryptor.paths(time_tracker.current_batch_failed_paths)
+        if failed_paths
+          KnapsackPro::Crypto::Encryptor.paths(failed_paths)
         elsif @batch_index.positive?
           KnapsackPro::Crypto::Encryptor.paths(@current_batch.paths)
         end
@@ -116,22 +115,22 @@ module KnapsackPro
       )
     end
 
-    def pull_tests_from_queue(can_initialize_queue, time_tracker: nil)
-      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue, time_tracker: time_tracker)
+    def pull_tests_from_queue(can_initialize_queue, failed_paths)
+      action = build_action(can_initialize_queue: can_initialize_queue, attempt_connect_to_queue: can_initialize_queue, failed_paths: failed_paths)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       @current_batch = Batch.new(connection, response)
     end
 
-    def initialize_queue(paths, time_tracker: nil)
-      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, paths: paths, time_tracker: time_tracker)
+    def initialize_queue(paths, failed_paths)
+      action = build_action(can_initialize_queue: true, attempt_connect_to_queue: false, paths: paths, failed_paths: failed_paths)
       connection = KnapsackPro::Client::Connection.new(action)
       response = connection.call
       @current_batch = Batch.new(connection, response)
     end
 
-    def try_initializing_queue(paths, time_tracker: nil)
-      result = initialize_queue(paths, time_tracker: time_tracker)
+    def try_initializing_queue(paths, failed_paths)
+      result = initialize_queue(paths, failed_paths)
       return switch_to_fallback_mode(executed_test_files: []) if result.connection_failed?
 
       normalize_test_files(result.test_files)

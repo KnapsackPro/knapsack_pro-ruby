@@ -77,7 +77,7 @@ describe KnapsackPro::Runners::BaseRunner do
         before do
           logger = instance_double(Logger)
           expect(KnapsackPro).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:info).with("Knapsack Pro API returned no test files to execute for the node this time. The reason might be that you changed recently a number of total nodes or you removed some test files. Please create a new commit to get a better test suite split next time.")
+          expect(logger).to receive(:info).with("No tests were executed because the test queue is empty.")
         end
 
         it { should be false }

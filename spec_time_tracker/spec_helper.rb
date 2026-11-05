@@ -1,7 +1,7 @@
 require 'knapsack_pro'
-require_relative '../lib/knapsack_pro/formatters/time_tracker'
+require_relative '../lib/knapsack_pro/formatters/rspec/time_tracker'
 
-class TestableTimeTracker < KnapsackPro::Formatters::TimeTracker
+class TestableTimeTracker < KnapsackPro::Formatters::RSpec::TimeTracker
   ::RSpec::Core::Formatters.register self, :dump_summary
 
   if ENV['TEST__EMPTY_FILE_PATH']

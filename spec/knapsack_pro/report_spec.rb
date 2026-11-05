@@ -7,7 +7,8 @@ describe KnapsackPro::Report do
     before do
       test_files = [{path: fake_path}]
       tracker = instance_double(KnapsackPro::Tracker, to_a: test_files)
-      expect(KnapsackPro).to receive(:tracker).and_return(tracker)
+      expect(tracker).to receive(:current_batch_failed_paths).and_return([])
+      expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
 
       subset_queue_id = 'fake-subset-queue-id'
       expect(KnapsackPro::Config::Env).to receive(:subset_queue_id).and_return(subset_queue_id)
@@ -15,7 +16,7 @@ describe KnapsackPro::Report do
       expect(KnapsackPro::Config::TempFiles).to receive(:ensure_temp_directory_exists!)
 
       queue_id = 'fake-queue-id'
-      expect(KnapsackPro::Config::Env).to receive(:queue_id).twice.and_return(queue_id)
+      expect(KnapsackPro::Config::Env).to receive(:queue_id).thrice.and_return(queue_id)
     end
 
     it do
@@ -43,7 +44,7 @@ describe KnapsackPro::Report do
 
       before do
         queue_id = 'fake-queue-id'
-        expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
+        allow(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
         expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([
           json_test_file_a_path,
@@ -76,7 +77,7 @@ describe KnapsackPro::Report do
 
       before do
         queue_id = 'fake-queue-id'
-        expect(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
+        allow(KnapsackPro::Config::Env).to receive(:queue_id).and_return(queue_id)
 
         expect(Dir).to receive(:glob).with('.knapsack_pro/queue/fake-queue-id/*.json').and_return([
           json_test_file_a_path,

@@ -44,4 +44,6 @@ RSpec.configure do |config|
   config.before(:each) do
     allow_any_instance_of(KnapsackPro::Client::Connection).to receive(:net_http).and_return(Net::HTTP)
   end
+
+  config.example_status_persistence_file_path = "spec/example_status_persistence.txt"
 end

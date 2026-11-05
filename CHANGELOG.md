@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+* (minor) Add [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/) for all the remaining test runners (except TestUnit and Spinach).
+
 ### 11.0.1
 
 * (patch) (Perf) RSpec: Mutate hash instead of allocating a new one when tracking tests' durations

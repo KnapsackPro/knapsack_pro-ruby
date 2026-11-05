@@ -7,8 +7,8 @@ module KnapsackPro
         def self.run(args, stream_error = $stderr, stream_out = $stdout)
           require 'rspec/core'
           require_relative '../../extensions/rspec_extension'
-          require_relative '../../formatters/time_tracker'
-          require_relative '../../formatters/time_tracker_fetcher'
+          require_relative '../../formatters/rspec/time_tracker'
+          require_relative '../../formatters/rspec/time_tracker_fetcher'
 
           KnapsackPro::Extensions::RSpecExtension.setup!
 
@@ -163,7 +163,7 @@ module KnapsackPro
 
           log_rspec_queue_command
 
-          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          time_tracker = KnapsackPro::Formatters::RSpec::TimeTrackerFetcher.call
           KnapsackPro::Report.save_node_queue_to_api(time_tracker&.queue)
 
           Kernel.exit(exit_code)
@@ -178,11 +178,11 @@ module KnapsackPro
         end
 
         def pull_tests_from_queue(can_initialize_queue: false)
-          time_tracker = KnapsackPro::Formatters::TimeTrackerFetcher.call
+          time_tracker = KnapsackPro::Formatters::RSpec::TimeTrackerFetcher.call
           test_file_paths = test_file_paths(
             can_initialize_queue: can_initialize_queue,
             executed_test_files: @node_test_file_paths,
-            time_tracker: time_tracker
+            failed_paths: time_tracker.current_batch_failed_paths
           )
           @node_test_file_paths += test_file_paths
           time_tracker.schedule(test_file_paths)
@@ -225,7 +225,7 @@ module KnapsackPro
         end
 
         def unexecuted_test_paths
-          KnapsackPro::Formatters::TimeTrackerFetcher.unexecuted_test_paths
+          KnapsackPro::Formatters::RSpec::TimeTrackerFetcher.unexecuted_test_paths
         end
       end
     end

@@ -6,28 +6,7 @@ module KnapsackPro
       TEST_DIR_PATTERN = 'features/**{,/*/**}/*.feature'
 
       def self.test_path(object)
-        if ::Cucumber::VERSION.to_i >= 2
-          test_case = object
-          test_case.location.file
-        else
-          if object.respond_to?(:scenario_outline)
-            if object.scenario_outline.respond_to?(:feature)
-              # Cucumber < 1.3
-              object.scenario_outline.feature.file
-            else
-              # Cucumber >= 1.3
-              object.scenario_outline.file
-            end
-          else
-            if object.respond_to?(:feature)
-              # Cucumber < 1.3
-              object.feature.file
-            else
-              # Cucumber >= 1.3
-              object.file
-            end
-          end
-        end
+        object.location.file
       end
 
       def bind_time_tracker
@@ -50,7 +29,7 @@ module KnapsackPro
           exit_status = latest_error.status if latest_error.is_a?(SystemExit)
           # saving report makes API call which changes exit status
           # from cucumber so we need to preserve cucumber exit status
-          KnapsackPro::Report.save
+          KnapsackPro::Report.save(KnapsackPro.tracker.to_a, KnapsackPro.tracker.current_batch_failed_paths)
           ::Kernel.exit exit_status if exit_status
         end
       end
@@ -75,11 +54,7 @@ module KnapsackPro
       private
 
       def Around(*tag_expressions, &proc)
-        if ::Cucumber::VERSION.to_i >= 3
-          ::Cucumber::Glue::Dsl.register_rb_hook('around', tag_expressions, proc)
-        else
-          ::Cucumber::RbSupport::RbDsl.register_rb_hook('around', tag_expressions, proc)
-        end
+        ::Cucumber::Glue::Dsl.register_rb_hook('around', tag_expressions, proc)
       end
     end
   end

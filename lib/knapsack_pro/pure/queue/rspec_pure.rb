@@ -6,7 +6,7 @@ module KnapsackPro
       class RSpecPure
         FAILURE_EXIT_CODE = 1
         FORMATTERS = [
-          'KnapsackPro::Formatters::TimeTracker',
+          'KnapsackPro::Formatters::RSpec::TimeTracker',
         ]
 
         def add_knapsack_pro_formatters_to(spec_opts)

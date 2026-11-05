@@ -110,7 +110,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
     subject { described_class.run_tests(accumulator) }
 
     before do
-      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: node_test_file_paths).and_return(test_file_paths)
+      expect(runner).to receive(:test_file_paths).with(can_initialize_queue: can_initialize_queue, executed_test_files: node_test_file_paths, failed_paths: []).and_return(test_file_paths)
     end
 
     context 'when test files exist' do
@@ -123,7 +123,7 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
         expect(ENV).to receive(:[]=).with('KNAPSACK_PRO_SUBSET_QUEUE_ID', subset_queue_id)
 
         tracker = instance_double(KnapsackPro::Tracker)
-        expect(KnapsackPro).to receive(:tracker).twice.and_return(tracker)
+        expect(KnapsackPro).to receive(:tracker).exactly(3).times.and_return(tracker)
         expect(tracker).to receive(:reset!)
         expect(tracker).to receive(:set_prerun_tests).with(test_file_paths)
 
@@ -144,7 +144,8 @@ describe KnapsackPro::Runners::Queue::MinitestRunner do
 
         expect(KnapsackPro::Hooks::Queue).to receive(:call_after_subset_queue)
 
-        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file)
+        expect(tracker).to receive(:flush_staged_tests).ordered
+        expect(KnapsackPro::Report).to receive(:save_subset_queue_to_file).ordered
       end
 
       context 'when tests are passing' do
