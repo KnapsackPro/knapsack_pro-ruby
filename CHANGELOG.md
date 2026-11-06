@@ -2,7 +2,9 @@
 
 ### Unreleased
 
-* (minor) Add [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/) for all the remaining test runners (except TestUnit and Spinach).
+### 11.1.0
+
+* Add [Retry only Failures](https://docs.knapsackpro.com/ruby/retry-only-failures/) for all the remaining test runners (except TestUnit and Spinach).
 
 ### 11.0.1
 
